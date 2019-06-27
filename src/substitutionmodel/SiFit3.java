@@ -22,6 +22,7 @@ public class SiFit3 extends GeneralSubstitutionModel {
     protected double beta;
     protected double lambdaD;
     protected double lambdaL;
+    protected double[][] errorMatrix;
 
     @Override
     public void initAndValidate() {
@@ -37,6 +38,7 @@ public class SiFit3 extends GeneralSubstitutionModel {
         lambdaD = lambdaDInput.get().getValue();
         lambdaL = lambdaLInput.get().getValue();
         setupRateMatrix(lambdaD, lambdaL);
+        setupErrorMatrix(alpha, beta);
     }
 
     @Override
@@ -58,6 +60,18 @@ public class SiFit3 extends GeneralSubstitutionModel {
     @Override
     public double[] getRateMatrix(Node node) {
         return rateMatrix;
+    }
+
+    public void setupErrorMatrix(double alpha, double beta) {
+        errorMatrix = {
+                {1 - alpha - (alpha * beta / 2), alpha, alpha * beta / 2},
+                {beta / 2, 1 - beta, beta / 2},
+                {0, 0, 1}
+        };
+    }
+
+    public double getProbability(int observedState, int trueState) {
+        return errorMatrix[observedState][trueState];
     }
 
     @Override
