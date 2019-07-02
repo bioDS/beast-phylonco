@@ -2,7 +2,7 @@ package datatype;
 
 import beast.evolution.datatype.DataType;
 
-public class NucleotideDiploid extends DataType.Base implements DataTypeWithError {
+public class NucleotideDiploid extends DataType.Base {
     int[][] x = {
             {0}, // AA - A
             {1}, // CC - C

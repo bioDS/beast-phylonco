@@ -3,75 +3,73 @@ package substitutionmodel;
 import beast.core.parameter.RealParameter;
 import beast.core.Input;
 import beast.evolution.datatype.DataType;
-import datatype.DataTypeWithError;
+import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.tree.Node;
-
-//import beast.core.CalculationNode;
-//import beast.evolution.substitutionmodel.EigenDecomposition;
-//import beast.evolution.substitutionmodel.SubstitutionModel;
+import datatype.TernaryWithError;
 
 public class SiFit3 extends GeneralSubstitutionModel {
-    public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
-    public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
-    public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda deletions parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
-    public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda LOH parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda deletions parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda LOH parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
 
-    protected double[] rateMatrix;
-    protected double alpha;
-    protected double beta;
-    protected double lambdaD;
-    protected double lambdaL;
-    protected double[][] errorMatrix;
+    private RealParameter lambdaD;
+    private RealParameter lambdaL;
+
+    protected double[] frequencies;
+
+    public SiFit3() {
+        try {
+            initAndValidate();
+        } catch (Exception e) {
+            e.printStackTrace();;
+            throw new RuntimeException("initAndValidate() call failed when constructing SiFit3()");
+        }
+    }
 
     @Override
     public void initAndValidate() {
         if (ratesInput.get() != null) {
             throw new IllegalArgumentException("the rates attribute should not be used.");
         }
-        // set Frequency.estimateInput flag to false for uniform frequencies or disallow use of flag
-        frequencies = frequenciesInput.get();
+        if (frequenciesInput.get() != null) {
+            throw new IllegalArgumentException("the frequencies should not be set, these can be calculated from the model parameters.");
+        }
+        lambdaD = lambdaDInput.get();
+        lambdaL = lambdaLInput.get();
         updateMatrix = true;
         nrOfStates = 3;
-        alpha = alphaInput.get().getValue();
-        beta = betaInput.get().getValue();
-        lambdaD = lambdaDInput.get().getValue();
-        lambdaL = lambdaLInput.get().getValue();
-        setupRateMatrix(lambdaD, lambdaL);
-        setupErrorMatrix(alpha, beta);
+        setupRateMatrix();
+        // setupFrequencies();
     }
 
     @Override
     protected void setupRateMatrix() {
-        setupRateMatrix(lambdaD, lambdaL);
+        setupRateMatrix(lambdaD.getValue(), lambdaL.getValue());
     }
 
     // instantaneous matrix Q
     private void setupRateMatrix(double lambdaD, double lambdaL) {
         double lambdaSum = lambdaD + lambdaL;
-        double[] matrix = {
-                -1, 1, 0,
-                lambdaSum / 2, -lambdaSum, lambdaSum / 2,
-                0, lambdaD, -lambdaD
+        double[][] matrix = {
+                {-1, 1, 0},
+                {lambdaSum / 2, -lambdaSum, lambdaSum / 2},
+                {0, lambdaD, -lambdaD}
         };
         rateMatrix = matrix;
     }
 
+    private void setupFrequencies(double lambdaD, double lambdaL) {
+        double lambdaSum = lambdaD + lambdaL;
+        double x = 1 + 2 / (lambdaSum) + 1/lambdaD;
+        double pi0 = 1 / x;
+        double pi1 = 2 / (x * lambdaSum);
+        double pi2 = 1 / (x * lambdaD);
+        double[] freqs = {pi0, pi1, pi2};
+        this.frequencies = freqs;
+    }
+
     @Override
-    public double[] getRateMatrix(Node node) {
-        return rateMatrix;
-    }
-
-    public void setupErrorMatrix(double alpha, double beta) {
-        errorMatrix = {
-                {1 - alpha - (alpha * beta / 2), alpha, alpha * beta / 2},
-                {beta / 2, 1 - beta, beta / 2},
-                {0, 0, 1}
-        };
-    }
-
-    public double getProbability(int observedState, int trueState) {
-        return errorMatrix[observedState][trueState];
+    protected double[][] getRateMatrix() {
+        return rateMatrix.clone();
     }
 
     @Override
@@ -81,17 +79,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof DataTypeWithError;
+        return dataType instanceof TernaryWithError;
     }
-
-//    @Override
-//    protected void setupRelativeRates() {
-//        double lambdaSum = lambdaD + lambdaL;
-//        relativeRates[0] = 1;
-//        relativeRates[1] = 0;
-//        relativeRates[2] = lambdaSum / 2;
-//        relativeRates[3] = lambdaSum / 2;
-//        relativeRates[4] = 0;
-//        relativeRates[5] = lambdaD;
-//    }
 }
