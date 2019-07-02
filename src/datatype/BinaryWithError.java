@@ -1,14 +1,15 @@
 package datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.Binary;
 
-// Binary error model from SiFit paper
+@Description("Binary error model from SiFit paper")
 public class BinaryWithError extends Binary implements DataTypeWithError {
 
-    public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Binary model", Input.Validate.REQUIRED);
-    public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Binary model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Binary model", Input.Validate.REQUIRED);
+    final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Binary model",  Input.Validate.REQUIRED);
 
     private RealParameter alpha;
     private RealParameter beta;

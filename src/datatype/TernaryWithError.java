@@ -1,10 +1,11 @@
 package datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 
-// Ternary error model from SiFit paper
+@Description("Ternary error model from SiFit paper")
 public class TernaryWithError extends DataType.Base implements DataTypeWithError {
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
