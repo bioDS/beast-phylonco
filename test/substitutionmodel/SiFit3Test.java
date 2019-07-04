@@ -58,7 +58,50 @@ public class SiFit3Test extends TestCase {
         }
     };
 
-    Instance[] allTests = {test0};
+    /**
+     * results obtained from running the following code in R:
+     *
+     * library(expm)
+     * op <- options(digits=12)
+     * t <- 0.1
+     * lambdaD <- 2
+     * lambdaL <- 3
+     * lambdaSum <- lambdaD + lambdaL
+     * Q <- matrix(c(
+     *	 -1, 1, 0,
+     *	 lambdaSum / 2, -lambdaSum, lambdaSum / 2,
+     *	 0, lambdaD, -lambdaD
+     * ), nrow=3, byrow=TRUE)
+     * expm(Q*t)
+     *
+     */
+    protected Instance test1 = new Instance() {
+        @Override
+        public Double getLambdaD() {
+            return 2.0;
+        }
+
+        @Override
+        public Double getLambdaL() {
+            return 3.0;
+        }
+
+        @Override
+        public double getDistance() {
+            return 0.1;
+        }
+
+        @Override
+        public double[] getExpectedResult() {
+            return new double[] {
+                    0.9148390890826, 0.0754940428491, 0.00966686806831,
+                    0.1887351071226, 0.6321966538230, 0.17906823905434,
+                    0.0193337361366, 0.1432545912435, 0.83741167261991
+            };
+        }
+    };
+
+    Instance[] allTests = {test0, test1};
 
     public void  testSiFit3() throws Exception {
         for (Instance test: allTests) {
@@ -77,7 +120,7 @@ public class SiFit3Test extends TestCase {
                 assertEquals(matrix[k], expectedResult[k], 1e-10);
                 System.out.println(k + " : " + (matrix[k] - expectedResult[k]));
                 System.out.println(expectedResult[k]);
-                System.out.println(matrix[k]);
+                System.out.println(matrix[k] + "\n");
             }
         }
     }

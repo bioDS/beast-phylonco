@@ -10,8 +10,8 @@ public class TernaryWithError extends DataType.Base implements DataTypeWithError
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
 
-    private RealParameter alpha;
-    private RealParameter beta;
+    private RealParameter alpha; // FP rate
+    private RealParameter beta; // FN rate
 
     protected double[][] errorMatrix;
 
