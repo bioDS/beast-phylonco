@@ -8,6 +8,23 @@ import datatype.TernaryWithError;
 
 import java.lang.reflect.InvocationTargetException;
 
+/**
+ * Implements the SiFit model of genotype substitution from Zafar et al 2017
+ *
+ * Q matrix
+ *              0           1           2
+ *	0 |        -1,          1,          0  |
+ *	1 | (D+L) / 2,       -D-L,  (D+L) / 2  |
+ *	2 |         0,          D,         -D  |
+ *
+ * with stationary distribution
+ *
+ *  x = 1 + 2 / (D+L) + 1/D;
+ *
+ *  pi0 = 1 / (x);
+ *  pi1 = 2 / (x * (D+L));
+ *  pi2 = 1 / (x * D)
+ */
 public class SiFit3 extends GeneralSubstitutionModel {
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda deletions parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda LOH parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
@@ -73,11 +90,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
         double pi1 = 2 / (x * lambdaSum);
         double pi2 = 1 / (x * lambdaD);
         frequencies = new double[] {pi0, pi1, pi2};
-    }
-
-    @Override
-    protected double[][] getRateMatrix() {
-        return rateMatrix.clone();
     }
 
     @Override
