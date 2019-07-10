@@ -1,9 +1,8 @@
-package datatype;
+package beast.evolution.datatype;
 
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.Binary;
 
 @Description("Binary error model from SiFit paper")
 public class BinaryWithError extends Binary implements DataTypeWithError {
@@ -18,6 +17,11 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
 
     public BinaryWithError() {
         super();
+    }
+
+    @Override
+    public void initAndValidate() {
+        super.initAndValidate();
         alpha = alphaInput.get();
         beta = betaInput.get();
         setupErrorMatrix();

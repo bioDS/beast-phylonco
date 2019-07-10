@@ -1,4 +1,4 @@
-package datatype;
+package beast.evolution.datatype;
 
 import beast.evolution.datatype.DataType;
 

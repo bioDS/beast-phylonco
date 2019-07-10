@@ -1,9 +1,8 @@
-package datatype;
+package beast.evolution.datatype;
 
 import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
 
 @Description("Ternary error model from SiFit paper")
 public class TernaryWithError extends DataType.Base implements DataTypeWithError {
@@ -27,7 +26,11 @@ public class TernaryWithError extends DataType.Base implements DataTypeWithError
         mapCodeToStateSet = x;
         codeLength = 1;
         codeMap = "012" + MISSING_CHAR;
+    }
 
+    @Override
+    public void initAndValidate() {
+        super.initAndValidate();
         alpha = alphaInput.get();
         beta = betaInput.get();
         setupErrorMatrix();

@@ -4,12 +4,15 @@ import beast.core.parameter.RealParameter;
 import beast.core.Input;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import datatype.TernaryWithError;
+import beast.evolution.datatype.TernaryWithError;
 
 import java.lang.reflect.InvocationTargetException;
 
 /**
- * Implements the SiFit model of genotype substitution from Zafar et al 2017
+ * Implements the SiFit model of genotype substitution from Zafar et al. (2017)
+ *
+ * SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.
+ * https://doi.org/10.1186/s13059-017-1311-2
  *
  * Q matrix
  *              0           1           2
@@ -19,10 +22,10 @@ import java.lang.reflect.InvocationTargetException;
  *
  * with stationary distribution
  *
- *  x = 1 + 2 / (D+L) + 1/D;
+ *  x = 1 + 2 / (D+L) + 1/D
  *
- *  pi0 = 1 / (x);
- *  pi1 = 2 / (x * (D+L));
+ *  pi0 = 1 / (x)
+ *  pi1 = 2 / (x * (D+L))
  *  pi2 = 1 / (x * D)
  */
 public class SiFit3 extends GeneralSubstitutionModel {
