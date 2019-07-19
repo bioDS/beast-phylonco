@@ -13,15 +13,18 @@
             beast.evolution.substitutionmodel:
             beast.evolution.likelihood'>
 
-    <!-- Some random diploid sequence alignment             -->
-    <!-- number of taxa = 2                                 -->
-    <!-- nchar = 16                                         -->
+    <!-- Simulated diploid sequence alignment               -->
+    <!-- number of taxa = 3                                 -->
+    <!-- nchar = 20                                         -->
     <data id='alignment' dataType='ternaryWithError'>
-        <sequence taxon='cell_1'>
-            0111011101120121
+        <sequence taxon='A'>
+            00000100202010001000
         </sequence>
-        <sequence taxon='cell_2'>
-            0111022101120122
+        <sequence taxon='B'>
+            00010211201000100200
+        </sequence>
+        <sequence taxon='C'>
+            10102000200120020100
         </sequence>
     </data>
 
@@ -48,25 +51,22 @@
     <tree id='tree'/>
 
     <!-- The initial tree (upgma or coalescent)             -->
-    <tree spec='beast.util.ClusterTree' id='upgmatree' clusterType='upgma' initial='@tree'>
+    <tree spec='beast.util.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
         <taxa idref='alignment'/>
     </tree>
 
-    <!--<tree spec='beast.evolution.tree.RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>-->
-        <!--<populationModel spec='ConstantPopulation'>-->
-            <!--<popSize spec='parameter.RealParameter' value='1'/>-->
-        <!--</populationModel>-->
-    <!--</tree>-->
+    <tree spec='beast.util.TreeParser' id='newickTree' IsLabelledNewick='true' taxa='@alignment'
+          initial='@tree' newick='((A:0.5, B:0.5):0.5, C:1);'/>
 
-    <run spec='MCMC' id='mcmc' chainLength='1000000' preBurnin='50000'>
+    <run spec='MCMC' id='mcmc' chainLength='10000000' preBurnin='50000'>
 
-        <init idref='upgmatree'/>
+        <init idref='newickTree'/>
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaD'>
-                <distr spec='beast.math.distributions.OneOnX'/>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
             </distribution>
             <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaL'>
-                <distr spec='beast.math.distributions.OneOnX'/>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
             </distribution>
             <distribution id='likelihood' idref='treeLikelihood'/>
         </distribution>
@@ -74,19 +74,12 @@
         <operator id='lambdaDScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaD'/>
         <operator id='lambdaLScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaL'/>
 
-        <!--<operator id='treeScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' tree='@tree'/>-->
-        <!--<operator id='subtreeSlide' spec='SubtreeSlide' weight='5' gaussian='true' size='1.0' tree='@tree'/>-->
-        <!--<operator id='uniform' spec='Uniform' weight='10' tree='@tree'/>-->
-        <!--<operator id='narrow' spec='Exchange' isNarrow='true' weight='1' tree='@tree'/>-->
-        <!--<operator id='wide' spec='Exchange' isNarrow='false' weight='1' tree='@tree'/>-->
-        <!--<operator id='wilsonBalding' spec='WilsonBalding' weight='1' tree='@tree'/>-->
-
         <logger logEvery='10000' fileName='testSiFit3.$(seed).log'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <log idref='siFit.lambdaD'/>
             <log idref='siFit.lambdaL'/>
-            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
+            <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
         </logger>
 
         <logger logEvery='10000' fileName='testSiFit3.$(seed).trees'>

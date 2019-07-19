@@ -44,13 +44,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public void initAndValidate() {
-        if (ratesInput.get() != null) {
-            throw new IllegalArgumentException("the rates attribute should not be used.");
-        }
-        if (frequenciesInput.get() != null) {
-            throw new IllegalArgumentException("the frequencies should not be set, these can be calculated from the model parameters.");
-        }
-
         lambdaD = lambdaDInput.get();
         lambdaL = lambdaLInput.get();
         updateMatrix = true;
@@ -59,7 +52,7 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
         try {
             eigenSystem = createEigenSystem();
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | InvocationTargetException e) {
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
