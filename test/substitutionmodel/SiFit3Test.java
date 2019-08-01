@@ -25,11 +25,18 @@ public class SiFit3Test extends TestCase {
      * lambdaL <- 3
      * lambdaSum <- lambdaD + lambdaL
      * Q <- matrix(c(
-     *	 -1, 1, 0,
-     *	 lambdaSum / 2, -lambdaSum, lambdaSum / 2,
-     *	 0, lambdaD, -lambdaD
-     * ), nrow=3, byrow=TRUE)
-     * expm(Q*t)
+     *     -1, 1, 0,
+     *     lambdaSum / 2, -lambdaSum, lambdaSum / 2,
+     *     0, lambdaD, -lambdaD
+     * ), nrow = 3, byrow = T)
+     * x <- 1 + 2 / lambdaSum + 1 / lambdaD
+     * pi0 <- 1 / x
+     * pi1 <- 2 / (x * lambdaSum)
+     * pi2 <- 1 / (x * lambdaD)
+     * freq <- c(pi0, pi1, pi2)
+     * diag <- -diag(Q)
+     * beta <- as.vector(1 / (freq %*% diag))
+     * expm(beta * Q * t)
      *
      */
     protected Instance test0 = new Instance() {
@@ -51,9 +58,9 @@ public class SiFit3Test extends TestCase {
         @Override
         public double[] getExpectedResult() {
             return new double[] {
-                0.526315996407, 0.210526278501, 0.263157725092,
-                0.526315696252, 0.210526332588, 0.263157971160,
-                0.526315450185, 0.210526376928, 0.263158172887
+                0.526735561965, 0.210450674425, 0.262813763610,
+                0.526126686062, 0.210560391486, 0.263312922452,
+                0.525627527220, 0.210650337962, 0.263722134819
             };
         }
     };
@@ -68,11 +75,18 @@ public class SiFit3Test extends TestCase {
      * lambdaL <- 3
      * lambdaSum <- lambdaD + lambdaL
      * Q <- matrix(c(
-     *	 -1, 1, 0,
-     *	 lambdaSum / 2, -lambdaSum, lambdaSum / 2,
-     *	 0, lambdaD, -lambdaD
-     * ), nrow=3, byrow=TRUE)
-     * expm(Q*t)
+     *     -1, 1, 0,
+     *     lambdaSum / 2, -lambdaSum, lambdaSum / 2,
+     *     0, lambdaD, -lambdaD
+     * ), nrow = 3, byrow = T)
+     * x <- 1 + 2 / lambdaSum + 1 / lambdaD
+     * pi0 <- 1 / x
+     * pi1 <- 2 / (x * lambdaSum)
+     * pi2 <- 1 / (x * lambdaD)
+     * freq <- c(pi0, pi1, pi2)
+     * diag <- -diag(Q)
+     * beta <- as.vector(1 / (freq %*% diag))
+     * expm(beta * Q * t)
      *
      */
     protected Instance test1 = new Instance() {
@@ -94,9 +108,9 @@ public class SiFit3Test extends TestCase {
         @Override
         public double[] getExpectedResult() {
             return new double[] {
-                    0.9148390890826, 0.0754940428491, 0.00966686806831,
-                    0.1887351071226, 0.6321966538230, 0.17906823905434,
-                    0.0193337361366, 0.1432545912435, 0.83741167261991
+                    0.95614090897870, 0.0413688413513, 0.00249024967001,
+                    0.10342210337822, 0.7956460429136, 0.10093185370821,
+                    0.00498049934002, 0.0807454829666, 0.91427401769341
             };
         }
     };
@@ -119,8 +133,6 @@ public class SiFit3Test extends TestCase {
             for (int k = 0; k < matrix.length; ++k) {
                 assertEquals(matrix[k], expectedResult[k], 1e-10);
                 System.out.println(k + " : " + (matrix[k] - expectedResult[k]));
-                System.out.println(expectedResult[k]);
-                System.out.println(matrix[k] + "\n");
             }
         }
     }

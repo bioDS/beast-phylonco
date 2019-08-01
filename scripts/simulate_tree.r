@@ -1,73 +1,120 @@
 source("simulate_seq.r")
 
+# Simulates a small fixed tree with sequences at the leaves
+# and generates a beast runnable xml from the sequence data
+# ---------------------------------------------------------------
+
 # simulate tree with newick format
 #  (((A:t2, B:t2)D:t1, C:t1 + t2)E);
-# with sequence length l = 20
-# and substitution model parameters
-#  lambdaD = 3 and lambdaL = 2
-# the default tree is 
-#  (((A:0.5, B:0.5)D:0.5, C:1)E);
-simulate_tree_small <- function(lambdaD=3, lambdaL=2, l=20, t1=0.5, t2=0.5) {    
-    state = c("0", "1", "2")
-    Q <- get_Q(lambdaD, lambdaL)
-    
-    e <- rep(1, l)
-    d <- mutate_seq(e, get_P(Q, t1))
-    a <- mutate_seq(d, get_P(Q, t2))
-    b <- mutate_seq(d, get_P(Q, t2))
-    c <- mutate_seq(e, get_P(Q, t1 + t2))
-    
-    a_seq <- translate_seq(a, state)
-    b_seq <- translate_seq(b, state)
-    c_seq <- translate_seq(c, state)
-    d_seq <- translate_seq(d, state)
-    e_seq <- translate_seq(e, state)
-    
-    list(a_seq, b_seq, c_seq)
+# lambdaD - substitution model parameter
+# lambdaL - substitution model parameter
+# t1 - branch times
+# t2 - branch times
+# l - sequence length
+simulateTree <- function(lambdaD, lambdaL, t1, t2, l) {  
+  Q <- getQ(lambdaD, lambdaL)
+  freq <- getPi(lambdaD, lambdaL)
+
+  e <- generateSeq(l, freq)
+  d <- mutateSeq(e, getP(Q, t1))  
+  c <- mutateSeq(e, getP(Q, t1 + t2)) 
+  b <- mutateSeq(d, getP(Q, t2))
+  a <- mutateSeq(d, getP(Q, t2))
+
+  a <- translateSeq(a)
+  b <- translateSeq(b)
+  c <- translateSeq(c)  
+
+  list(a, b, c)
 }
 
-# generate 100 trees with fixed lambdas
-#  lambdaD = 3
-#  lambdaL = 2
-sim_1 <- function(filename, N=100, lambdaD=3, lambdaL=2, seed=777) {
-    set.seed(seed)
-    cat("writing sim_1() to file: ", filename, "\n")
-    sink(filename)
-    cat("tree, lambdaD, lambdaL, node, sequence\n")
-    for (i in 1:N) {
-        tree <- simulate_tree_small()
-        cat(i, lambdaD, lambdaL, "a", "", sep=", ")
-        cat(tree[[1]], "\n", sep="")
-        cat(i, lambdaD, lambdaL, "b", "", sep=", ")
-        cat(tree[[2]], "\n", sep="")
-        cat(i, lambdaD, lambdaL, "c", "", sep=", ")
-        cat(tree[[3]], "\n", sep="")
-    }
-    sink()
+# generate 100 trees with fixed lambdas 
+simulateFixed <- function(fileName, lambdaD, lambdaL, seed=777) {
+  t1 <- 0.05 # 0.1
+  t2 <- 0.05 # 0.1
+  l <- 200
+  N <- 100
+
+  set.seed(seed)
+  dir.create(file.path("output", "sequences"), showWarnings=F)
+  sink(file.path("output", "sequences", fileName))
+  cat("tree,lambdaD,lambdaL,node,sequence\n")
+  for (i in 1:N) {
+    tree <- simulateTree(lambdaD, lambdaL, t1, t2, l)
+    cat(i, lambdaD, lambdaL, "a", "", sep=",")
+    cat(tree[[1]], "\n", sep="")
+    cat(i, lambdaD, lambdaL, "b", "", sep=",")
+    cat(tree[[2]], "\n", sep="")
+    cat(i, lambdaD, lambdaL, "c", "", sep=",")
+    cat(tree[[3]], "\n", sep="")
+  }
+  sink()
 }
 
-# generate 100 trees with lambdas
-#  lambdaD ~ LogNorm(mu = -1)
-#  lambdaL ~ LogNorm(mu = 0.5)
-sim_2 <- function(filename, N=100, seed=777) {
-    set.seed(seed)
-    cat("writing sim_2() to file: ", filename, "\n")
-    sink(filename)
-    cat("tree, lambdaD, lambdaL, node, sequence\n")
-    for (i in 1:N) {
-        lambdaD <- rlnorm(1, -1)
-        lambdaL <- rlnorm(1, 0.5)
-        tree <- simulate_tree_small(lambdaD, lambdaL)
-        cat(i, lambdaD, lambdaL, "a", "", sep=", ")
-        cat(tree[[1]], "\n", sep="")
-        cat(i, lambdaD, lambdaL, "b", "", sep=", ")
-        cat(tree[[2]], "\n", sep="")
-        cat(i, lambdaD, lambdaL, "c", "", sep=", ")
-        cat(tree[[3]], "\n", sep="")
-    }
-    sink()
+# generate 100 trees with lognormal lambdas
+simulateLognorm <- function(fileName, muD, muL, seed=777) {
+  t1 <- 0.05
+  t2 <- 0.05
+  l <- 200
+  N <- 100
+
+  set.seed(seed)
+  dir.create(file.path("output", "sequences"), showWarnings=F)
+  sink(file.path("output", "sequences", fileName))
+  cat("tree,lambdaD,lambdaL,node,sequence\n")
+  for (i in 1:N) {
+    lambdaD <- rlnorm(1, muD)
+    lambdaL <- rlnorm(1, muL)
+    tree <- simulateTree(lambdaD, lambdaL, t1, t2, l)
+    cat(i, lambdaD, lambdaL, "a", "", sep=",")
+    cat(tree[[1]], "\n", sep="")
+    cat(i, lambdaD, lambdaL, "b", "", sep=",")
+    cat(tree[[2]], "\n", sep="")
+    cat(i, lambdaD, lambdaL, "c", "", sep=",")
+    cat(tree[[3]], "\n", sep="")
+  }
+  sink()
+}
+
+# create single xml
+createXml <- function(seqData, i, newick, xmlTemplate, logName) {
+  a <- seqData$sequence[seqData$tree == i & seqData$node == "a"]
+  b <- seqData$sequence[seqData$tree == i & seqData$node == "b"]
+  c <- seqData$sequence[seqData$tree == i & seqData$node == "c"]
+  s <- gsub(pattern="REPLACE_SEQA", replace=a, x=xmlTemplate)
+  s <- gsub(pattern="REPLACE_SEQB", replace=b, x=s)
+  s <- gsub(pattern="REPLACE_SEQC", replace=c, x=s)
+  s <- gsub(pattern="REPLACE_NEWICK", replace=newick, x=s)
+  gsub(pattern="REPLACE_NAME", replace=logName, x=s)
+}
+
+# create xmls
+createXmls <- function(seqName, templateName, newick) {
+  outputFmt <- sub(".csv", "_NUM.xml", seqName)
+  templatePath <- file.path("templates", templateName)
+  seqPath <- file.path("output", "sequences", seqName)
+  xmlTemplate <- readLines(templatePath)  
+  seqData <- read.csv(seqPath, colClasses=c("sequence"="character"))
+  N <- length(unique(seqData$tree))
+  
+  dir.create(file.path("output", "xml"), recursive=T, showWarnings=F)  
+  
+  for (i in 1:N) {
+    fileName <- file.path("output", "xml", sub("NUM", i, outputFmt))
+    logName <- sub(".xml", "", basename(fileName))
+    s <- createXml(seqData, i, newick, xmlTemplate, logName)
+    writeLines(s, fileName)
+  }  
 }
 
 # run simulations
-sim_1("tree_small_fixed.csv")
-sim_2("tree_small_lognorm.csv")
+simulateFixed("tree_fixed.csv", 3, 2)
+simulateLognorm("tree_lognorm1.csv", -1, 0.5)
+simulateLognorm("tree_lognorm2.csv", 0.5, -1)
+
+# generate xmls
+templateName <- "testSiFit3_template.xml"
+newick = "((A:0.05, B:0.05)D:0.05, C:0.1)E;"
+createXmls("tree_fixed.csv", templateName, newick)
+createXmls("tree_lognorm1.csv", templateName, newick)
+createXmls("tree_lognorm2.csv", templateName, newick)

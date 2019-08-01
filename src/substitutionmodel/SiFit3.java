@@ -73,6 +73,18 @@ public class SiFit3 extends GeneralSubstitutionModel {
                 {lambdaSum / 2, -lambdaSum, lambdaSum / 2},
                 {0, lambdaD, -lambdaD}
         };
+        // normalize rate matrix
+        double[] frequencies = getFrequencies();
+        double f = 0.0;
+        for (int i = 0; i < nrOfStates; i++) {
+            f += frequencies[i] * -rateMatrix[i][i];
+        }
+        f = 1 / f;
+        for (int i = 0; i < nrOfStates; i++) {
+            for (int j = 0; j < nrOfStates; j++) {
+                rateMatrix[i][j] = f * rateMatrix[i][j];
+            }
+        }
     }
 
     protected void setupFrequencies() {
@@ -96,7 +108,7 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public int getStateCount() {
-        return 3;
+        return nrOfStates;
     }
 
     @Override

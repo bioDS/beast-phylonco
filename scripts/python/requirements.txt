@@ -1,0 +1,6 @@
+# package requirements for python simulations
+numpy
+scipy
+newick
+matplotlib 
+pandas
