@@ -47,7 +47,7 @@ class SiFit3(SubstitutionModel):
 		l = self.lambda_l
 		x = 1 + 2 / (d + l) + 1 / d
 		pi_0 = 1 / x
-		pi_1 = 2 / (x * (d + l)) 
+		pi_1 = 2 / (x * (d + l))
 		pi_2 = 1 / (x * d)
 		return np.array([pi_0, pi_1, pi_2])
 
@@ -71,6 +71,6 @@ class SiFit3(SubstitutionModel):
 	def __init__(self, lambda_d, lambda_l):
 		if lambda_d > 0 and lambda_l > 0:
 			self.lambda_d = lambda_d
-			self.lambda_l = lambda_l			
+			self.lambda_l = lambda_l
 		else:
 			raise Exception("SiFit3.init() lambda_d and lambda_l parameters must be greater than zero.")

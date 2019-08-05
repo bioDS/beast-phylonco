@@ -31,7 +31,7 @@ def normalize_mutation(q, state):
 	prob = np.copy(q[state, :].A1)
 	prob[state] = 0
 	scalor = 1 / np.sum(prob)
-	return prob * scalor	
+	return prob * scalor
 
 def mutate_seq_pois(ancestor, subs_model, t):
 	"""Mutates sequence using draws from a Poisson distribution"""
@@ -64,20 +64,20 @@ def simulate_tree(newick_tree, subs_model, l, mode='expm'):
 	seq_map = {}
 	tree = newick.loads(newick_tree) 
 	root = tree[0]
-	freq = subs_model.get_pi()	
+	freq = subs_model.get_pi()
 	seq_map[root.name] = generate_seq(l, freq) # generate ancestor
 	nodes = root.descendants.copy()
 	while len(nodes) > 0:
 		child = nodes.pop()
-		t = child.length		
+		t = child.length:
 		ancestor = child.ancestor
 		ancestor_seq = seq_map[ancestor.name]
-		if mode == 'expm':			
+		if mode == 'expm':
 			child_seq = mutate_seq_expm(ancestor_seq, subs_model, t)
-		elif mode == 'pois':			
+		elif mode == 'pois':
 			child_seq, _ = mutate_seq_pois(ancestor_seq, subs_model, t)
 		seq_map[child.name] = child_seq
-		nodes.extend(child.descendants.copy())	
+		nodes.extend(child.descendants.copy())
 	states = subs_model.get_states()
 	for i in seq_map: # translate sequence to states
 		seq_map[i] = translate_seq(seq_map[i], states)
