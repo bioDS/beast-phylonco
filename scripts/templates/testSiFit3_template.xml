@@ -15,7 +15,7 @@
 
     <!-- Simulated diploid sequence alignment               -->
     <!-- number of taxa = 3                                 -->
-    <!-- nchar = 20                                         -->
+    <!-- nchar = 200                                        -->
     <data id='alignment' dataType='ternaryWithError'>
         <sequence taxon='A'>
             REPLACE_SEQA
@@ -36,7 +36,7 @@
     <tree spec='beast.util.TreeParser' id='newickTree' IsLabelledNewick='true' taxa='@alignment'
           initial='@tree' newick='REPLACE_NEWICK'/>
 
-    <!-- The SiFit3 substitution model (Zafar et al. 1985)  -->
+    <!-- The SiFit3 substitution model (Zafar et al. 2017)  -->
     <input spec='SiFit3' id='siFit'>
         <lambdaD idref='siFit.lambdaD'/>
         <lambdaL idref='siFit.lambdaL'/>
@@ -56,15 +56,19 @@
     <parameter id='siFit.lambdaD' value='1.0' lower='0.0'/>
     <parameter id='siFit.lambdaL' value='1.0' lower='0.0'/>
 
-    <run spec='MCMC' id='mcmc' chainLength='10000000' preBurnin='50000'>
+    <run spec='MCMC' id='mcmc' chainLength='2000000' preBurnin='50000'>
 
         <init idref='newickTree'/>
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaD'>
-                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'>
+                    <parameter name='M' id='dMu' value='REPLACE_LAMBDA_D_MU'/>
+                </distr>
             </distribution>
             <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaL'>
-                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'>
+                    <parameter name='M' id='lMu' value='REPLACE_LAMBDA_L_MU'/>
+                </distr>
             </distribution>
             <distribution id='likelihood' idref='treeLikelihood'/>
         </distribution>
@@ -72,7 +76,7 @@
         <operator id='lambdaDScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaD'/>
         <operator id='lambdaLScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaL'/>
 
-        <logger logEvery='10000' fileName='testSiFit3.REPLACE_NAME.$(seed).log'>
+        <logger logEvery='2000' fileName='testSiFit3.REPLACE_NAME.$(seed).log'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <log idref='siFit.lambdaD'/>
@@ -80,11 +84,11 @@
             <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
         </logger>
 
-        <logger logEvery='10000' fileName='testSiFit3.REPLACE_NAME.$(seed).trees'>
+        <logger logEvery='2000' fileName='testSiFit3.REPLACE_NAME.$(seed).trees'>
             <log idref='tree'/>
         </logger>
 
-        <logger logEvery='10000'>
+        <logger logEvery='2000'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <ESS spec='ESS' name='log' arg='@likelihood'/>

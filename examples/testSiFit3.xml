@@ -18,7 +18,7 @@
     <!-- nchar = 20                                         -->
     <data id='alignment' dataType='ternaryWithError'>
         <sequence taxon='A'>
-            00000100202010001000
+            00000???202010001000
         </sequence>
         <sequence taxon='B'>
             00010211201000100200
@@ -28,7 +28,7 @@
         </sequence>
     </data>
 
-    <!-- The SiFit3 substitution model (Zafar et al. 1985)  -->
+    <!-- The SiFit3 substitution model (Zafar et al. 2017)  -->
     <input spec='SiFit3' id='siFit'>
         <lambdaD idref='siFit.lambdaD'/>
         <lambdaL idref='siFit.lambdaL'/>
@@ -58,7 +58,7 @@
     <tree spec='beast.util.TreeParser' id='newickTree' IsLabelledNewick='true' taxa='@alignment'
           initial='@tree' newick='((A:0.5, B:0.5):0.5, C:1);'/>
 
-    <run spec='MCMC' id='mcmc' chainLength='10000000' preBurnin='50000'>
+    <run spec='MCMC' id='mcmc' chainLength='2000000' preBurnin='50000'>
 
         <init idref='newickTree'/>
         <distribution spec='CompoundDistribution' id='posterior'>
@@ -74,7 +74,7 @@
         <operator id='lambdaDScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaD'/>
         <operator id='lambdaLScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaL'/>
 
-        <logger logEvery='10000' fileName='testSiFit3.$(seed).log'>
+        <logger logEvery='2000' fileName='testSiFit3.$(seed).log'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <log idref='siFit.lambdaD'/>
@@ -82,11 +82,11 @@
             <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
         </logger>
 
-        <logger logEvery='10000' fileName='testSiFit3.$(seed).trees'>
+        <logger logEvery='2000' fileName='testSiFit3.$(seed).trees'>
             <log idref='tree'/>
         </logger>
 
-        <logger logEvery='10000'>
+        <logger logEvery='2000'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <ESS spec='ESS' name='log' arg='@likelihood'/>
