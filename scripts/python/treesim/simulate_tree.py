@@ -9,7 +9,7 @@ def sample_from(freq):
 	r = np.random.rand()
 	for i in range(len(cum_freq)):
 		if r < cum_freq[i]:
-			return i 
+			return i
 
 def generate_seq(l, freq):
 	seq = np.zeros(l, dtype=int)
@@ -62,14 +62,14 @@ def simulate_tree(newick_tree, subs_model, l, mode='expm'):
 	               'pois': mutation by poisson process
 	"""
 	seq_map = {}
-	tree = newick.loads(newick_tree) 
+	tree = newick.loads(newick_tree)
 	root = tree[0]
 	freq = subs_model.get_pi()
 	seq_map[root.name] = generate_seq(l, freq) # generate ancestor
 	nodes = root.descendants.copy()
 	while len(nodes) > 0:
 		child = nodes.pop()
-		t = child.length:
+		t = child.length
 		ancestor = child.ancestor
 		ancestor_seq = seq_map[ancestor.name]
 		if mode == 'expm':
