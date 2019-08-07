@@ -13,4 +13,4 @@
 
 3. Leung et al. (2016). Highly multiplexed targeted DNA sequencing from single nuclei. https://doi.org/10.1038/nprot.2016.005
 
-NCBI SRA: https://www.ncbi.nlm.nih.gov/sra
+4. NCBI Sequence Read Archive (SRA). https://www.ncbi.nlm.nih.gov/sra
