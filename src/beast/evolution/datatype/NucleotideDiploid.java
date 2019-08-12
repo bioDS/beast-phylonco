@@ -14,7 +14,7 @@ public class NucleotideDiploid extends DataType.Base {
             {7}, // GT - K
             {8}, // AG - R
             {9}, // CT - Y
-            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // any base - N
+            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // any base - ?
     };
 
     public NucleotideDiploid() {

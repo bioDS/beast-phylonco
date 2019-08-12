@@ -28,7 +28,7 @@ public class SiFit3Test extends TestCase {
      *     -1, 1, 0,
      *     lambdaSum / 2, -lambdaSum, lambdaSum / 2,
      *     0, lambdaD, -lambdaD
-     * ), nrow = 3, byrow = T)
+     * ), nrow=3, byrow=T)
      * x <- 1 + 2 / lambdaSum + 1 / lambdaD
      * pi0 <- 1 / x
      * pi1 <- 2 / (x * lambdaSum)
@@ -78,7 +78,7 @@ public class SiFit3Test extends TestCase {
      *     -1, 1, 0,
      *     lambdaSum / 2, -lambdaSum, lambdaSum / 2,
      *     0, lambdaD, -lambdaD
-     * ), nrow = 3, byrow = T)
+     * ), nrow=3, byrow=T)
      * x <- 1 + 2 / lambdaSum + 1 / lambdaD
      * pi0 <- 1 / x
      * pi1 <- 2 / (x * lambdaSum)
@@ -119,17 +119,18 @@ public class SiFit3Test extends TestCase {
 
     public void  testSiFit3() throws Exception {
         for (Instance test: allTests) {
-            SiFit3 siFit = new SiFit3();
-            siFit.initByName(
+            SiFit3 model = new SiFit3();
+            model.initByName(
                     "lambdaD", new RealParameter(test.getLambdaD().toString()),
                     "lambdaL", new RealParameter(test.getLambdaL().toString())
             );
 
+            int nrStates = model.getStateCount();
             double distance = test.getDistance();
             double[] expectedResult = test.getExpectedResult();
-            double[] matrix = new double[3 * 3];
+            double[] matrix = new double[nrStates * nrStates];
 
-            siFit.getTransitionProbabilities(null, distance, 0, 1, matrix);
+            model.getTransitionProbabilities(null, distance, 0, 1, matrix);
             for (int k = 0; k < matrix.length; ++k) {
                 assertEquals(matrix[k], expectedResult[k], 1e-10);
                 System.out.println(k + " : " + (matrix[k] - expectedResult[k]));
