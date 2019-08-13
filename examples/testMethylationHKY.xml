@@ -1,0 +1,135 @@
+<beast version='2.0'
+       namespace='beast.evolution.alignment:beast.core:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood'>
+
+    <data id="alignment" dataType="NucleotideMethylation">
+        <sequence taxon="AX2">
+            CCCCAAGAGGACGTGCTTGGGCCAGGCTTGCGGGAGCACGGTCGGGTTGGGPPCJJCGPCCCPCGGCJGCCPGGJPCJPPPJPJCCCGPCJGJGPPJPPJ
+        </sequence>
+        <sequence taxon="AY4">
+            TGTTAAAACGACATGCTTGATATAGGCTTGCGGGGGCACGGGCGGACCGTGPPCJJCGCCPCCPGGCGGCPPGGGCCGPCPGPJCPCGPPGJGGPPJPCG
+        </sequence>
+        <sequence taxon="BU">
+            CCCCAAGTGGAAGTGCTTGGGCCAGGCTTGCGGGGGCGCGGTCGGGCTGGGCPPGGCGCCCCCPGGCJGCCPGJGCCGPCPGPGCPCGPCGGGGPPGCCJ
+        </sequence>
+        <sequence taxon="CV">
+            CCCCAAGAGAGCGTACTAGGGCCAGGCTCGCGATGGCACGATCGGGCTGGGCPCJJCGCCCCCCGGCJGCCPGGGCCGCPCGPJCCCGPCJGJGPCGCCJ
+        </sequence>
+        <sequence taxon="DJ2">
+            CCCCAAGAGAGCGTGCTTGGGCCAGGCTTGCGATGGCACGATCGGGCTGGGPPCJGPGCCCCCCGGCJGCPPGGJCCGPPPGPGCCCGPPJJJGPPJPCJ
+        </sequence>
+        <sequence taxon="EJ">
+            CCCCAAGAGAGCGTGCTTGGGCCAGGCTTGCGATGGCACGGTCGGGCTGGGCPCJGPGCCCCCCGJCJJCCPGGJCCGPPCGPJCPCGPPJJGGPCJPPJ
+        </sequence>
+        <sequence taxon="DN1">
+            CCCCAAGAGAACGTGCTTGGGCCAGGCTTGCGATGGCACGATCGGGCTGGGCPCJJPGCCCCCCJGCGGCCCGGJCCGCPPGPGCPCGPCJGGGPCJPCJ
+        </sequence>
+        <sequence taxon="AS1">
+            CCCCAAGAGAACGTGCTTAGGCCAGGCATGCGATGGTACGGTCGGGCTGGGPPCJGCJCCPCCCGGCJGPPPJJJCCJPPPJPJCPCGPPJGJGPPJCCJ
+        </sequence>
+        <sequence taxon="EN3">
+            CCCCTAGAGAACGTGCCTGGGCCAAACTTGTGGGGGCAGAGTTGGGCTGGGPCCGJCGCCPCCPGJCJGCCCGGGCCGPCCGPGCPCGCCGGGGPCGCCJ
+        </sequence>
+        <sequence taxon="CZ1">
+            CCCCTAGAGAACGTGCCTGGGCCAAACTTGCGGGGACAGAGTTCGGCTGGGCPCJGCGCCCCCCGGCGGCPCGGGCCGCPPGPGCCCGPCGGJGCCJCCJ
+        </sequence>
+        <sequence taxon="EC">
+            CCCCTAGAGAACGAGACTGGGCCAAACTTATGGGGGCAGAGTTGGGCTGGGCPCGGCGCCPCCCGGCGGCCCGGJCCGPPCJPGCCCJPCGGJJPCJCCJ
+        </sequence>
+        <sequence taxon="BB">
+            CCCCTCGAGAACGTGCCTGGGCCGAATTTGCTGGGGCAGAGTCGTGCTGGGPPCJGCGCCPCCCGGCJGCPCGGGCCJPPPJPGCPCGPCJJJGPCJCCJ
+        </sequence>
+        <sequence taxon="CQ">
+            CCCCTAGAGAACGTGCCTGGGCCAAACTTGCGATGGCAGAGTCGGGCTGGJPPPJJPJCCPPCCGGPJGCPCGGJCCGPPCGPJCPCGPPJJJGPCJPCJ
+        </sequence>
+        <sequence taxon="BS">
+            CCCCAAGAGAGCGTGCCTGGGCCAAACTTGCGATGGCAGAATCGGGCTGGGCPPJGCJCCPCCCGGCJGCPPGGGCCGPCPJPJCPCGPCJGJGPCJPPJ
+        </sequence>
+        <sequence taxon="AD3">
+            CCCCTAGAGAACGTGCTTGGGCCAGACTTGCGGGGGCACGGTCGGGCTTGGCCPJJPGCPPPCCGGCGGCPCGJJCPGPPPJPJPCPGPPJGJJPCGCCJ
+        </sequence>
+        <sequence taxon="DL2">
+            CCCCAAGAGAACGTGCTTGGGCCAGACTTGCGGTGGCACAGTCGGGCTGGGCPCGGCJCCPCCCJGCJGCCCGGGCCGCPCGCJCPCGPCJGGGPCJCCJ
+        </sequence>
+    </data>
+
+    <!-- The MethylationHKY substitution model -->
+    <input spec='MethylationHKY' id='MethylationHKY'>
+        <kappa idref='MethylationHKY.kappa'/>
+        <alpha idref='MethylationHKY.alpha'/>
+        <beta idref='MethylationHKY.beta'/>
+        <gamma idref='MethylationHKY.gamma'/>
+    </input>
+
+    <!-- site model -->
+    <input spec='SiteModel' id="siteModel" gammaCategoryCount='1'>
+        <!--
+            <parameter name='shape' id='shape' value='0.5'/>
+            <parameter name='proportionInvariant' id='propInvar' value='0.2'/>
+        -->
+        <substModel idref='MethylationHKY'/>
+    </input>
+
+    <input spec='TreeLikelihood' id="treeLikelihood">
+        <data idref="alignment"/>
+        <tree idref="tree"/>
+        <siteModel idref="siteModel"/>
+    </input>
+
+    <parameter id="MethylationHKY.kappa" value="1.0" lower="0.0"/>
+    <parameter id="MethylationHKY.alpha" value="0.0" lower="0.0"/>
+    <parameter id="MethylationHKY.beta" value="1.0" lower="0.0"/>
+    <parameter id="MethylationHKY.gamma" value="0.0" lower="0.0"/>
+    <tree id='tree'/>
+
+    <tree spec='beast.util.ClusterTree' id='upgmatree' clusterType='upgma' initial='@tree'>
+        <taxa idref='alignment'/>
+    </tree>
+    <tree spec='beast.evolution.tree.RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
+        <populationModel spec='ConstantPopulation'>
+            <popSize spec='parameter.RealParameter' value='1'/>
+        </populationModel>
+    </tree>
+
+
+    <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
+
+        <init idref='coalescentSimulator'/>
+        <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution spec='beast.math.distributions.Prior' x='@MethylationHKY.kappa'>
+                <distr spec='beast.math.distributions.OneOnX'/>
+            </distribution>
+            <distribution id='likelihood' idref="treeLikelihood"/>
+        </distribution>
+
+        <operator id='kappaScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@MethylationHKY.kappa"/>
+        <operator id='alphaScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@MethylationHKY.alpha"/>
+        <operator id='betaScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@MethylationHKY.beta"/>
+        <operator id='gammaScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@MethylationHKY.gamma"/>
+        <operator id='treeScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" tree="@tree"/>
+
+        <operator id='subtreeSlide' spec='SubtreeSlide' weight="5" gaussian="true" size="1.0" tree="@tree"/>
+
+        <operator id='uniform' spec='Uniform' weight="10" tree="@tree"/>
+        <operator id='narrow' spec='Exchange' isNarrow='true' weight="1" tree="@tree"/>
+        <operator id='wide' spec='Exchange' isNarrow='false' weight="1" tree="@tree"/>
+        <operator id='wilsonBalding' spec='WilsonBalding' weight="1" tree="@tree"/>
+
+        <logger logEvery="10000" fileName="test.$(seed).log">
+            <model idref='likelihood'/>
+            <log idref="likelihood"/>
+            <log idref='MethylationHKY.kappa'/>
+            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
+        </logger>
+        <logger logEvery="10000" fileName="test.$(seed).trees">
+            <log idref="tree"/>
+        </logger>
+        <logger logEvery="10000">
+            <model idref='likelihood'/>
+            <log idref="likelihood"/>
+            <ESS spec='ESS' name='log' arg="@likelihood"/>
+            <log idref='MethylationHKY.kappa'/>
+            <ESS spec='ESS' name='log' arg="@MethylationHKY.kappa"/>
+        </logger>
+    </run>
+
+</beast>
