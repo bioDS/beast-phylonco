@@ -158,7 +158,6 @@ public class SiFit2Test extends TestCase {
             // expect equilibrium frequencies
             int nrStates = model.getStateCount();
             double[] freq = model.getFrequencies();
-            System.out.println(freq);
             double[] result = new double[nrStates * nrStates];
             for (int i = 0; i < result.length; i++) {
                 result[i] = freq[i % nrStates];

@@ -2,9 +2,9 @@ package substitutionmodel;
 
 import beast.core.parameter.RealParameter;
 import beast.core.Input;
+import beast.evolution.datatype.Binary;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.datatype.BinaryWithError;
 
 /**
  * Implements the SiFit model of genotype substitution from Zafar et al. (2017)
@@ -25,8 +25,8 @@ import beast.evolution.datatype.BinaryWithError;
  *  pi1 = 1 / (x)
  */
 public class SiFit2 extends GeneralSubstitutionModel {
-    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda deletions parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda LOH parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
 
     private RealParameter lambdaD;
     private RealParameter lambdaL;
@@ -68,7 +68,10 @@ public class SiFit2 extends GeneralSubstitutionModel {
                 {-1, 1},
                 {lambdaSum / 2, -lambdaSum / 2}
         };
-        // normalize rate matrix
+        normalize(rateMatrix);
+    }
+
+    private void normalize(double[][] rateMatrix) {
         double[] frequencies = getFrequencies();
         double f = 0.0;
         for (int i = 0; i < nrOfStates; i++) {
@@ -107,6 +110,6 @@ public class SiFit2 extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof BinaryWithError;
+        return dataType instanceof Binary;
     }
 }

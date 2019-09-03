@@ -1,43 +1,21 @@
 package substitutionmodel;
 
-import beast.core.parameter.RealParameter;
 import beast.core.Input;
+import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
+import beast.evolution.datatype.Quinary;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.datatype.TernaryWithError;
 
-import java.lang.reflect.InvocationTargetException;
-
-/**
- * Implements the SiFit model of genotype substitution from Zafar et al. (2017)
- *
- * SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.
- * https://doi.org/10.1186/s13059-017-1311-2
- *
- * Q matrix
- *              0           1           2
- *	0 |        -1,          1,          0  |
- *	1 | (D+L) / 2,       -D-L,  (D+L) / 2  |
- *	2 |         0,          D,         -D  |
- *
- * with stationary distribution
- *
- *  x = 1 + 2 / (D+L) + 1/D
- *
- *  pi0 = 1 / (x)
- *  pi1 = 2 / (x * (D+L))
- *  pi2 = 1 / (x * D)
- */
-public class SiFit3 extends GeneralSubstitutionModel {
-    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
+public class SiFit5 extends GeneralSubstitutionModel {
+    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of recurrent point mutation in SiFit model",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the combined rate of deletion and loss of heterozygosity in SiFit model",  Input.Validate.REQUIRED);
 
     private RealParameter lambdaD;
     private RealParameter lambdaL;
 
     protected double[] frequencies;
 
-    public SiFit3() {
+    public SiFit5() {
         ratesInput.setRule(Input.Validate.OPTIONAL);
         frequenciesInput.setRule(Input.Validate.OPTIONAL);
     }
@@ -47,7 +25,7 @@ public class SiFit3 extends GeneralSubstitutionModel {
         lambdaD = lambdaDInput.get();
         lambdaL = lambdaLInput.get();
         updateMatrix = true;
-        nrOfStates = 3;
+        nrOfStates = 5;
         rateMatrix = new double[nrOfStates][nrOfStates];
 
         try {
@@ -69,9 +47,11 @@ public class SiFit3 extends GeneralSubstitutionModel {
     private void setupRateMatrix(double lambdaD, double lambdaL) {
         double lambdaSum = lambdaD + lambdaL;
         rateMatrix = new double[][] {
-                {-1, 1, 0},
-                {lambdaSum / 2, -lambdaSum, lambdaSum / 2},
-                {0, lambdaD, -lambdaD}
+                {0, 0, 0, 0, 0},
+                {lambdaL, -1 - lambdaL, 1, 0, 0},
+                {lambdaL / 2, lambdaD / 2, -lambdaSum, lambdaL / 2, lambdaD / 2},
+                {0, 0, 0, 0, 0},
+                {0, 0, lambdaD, lambdaL, -lambdaSum}
         };
         normalize(rateMatrix);
     }
@@ -95,12 +75,13 @@ public class SiFit3 extends GeneralSubstitutionModel {
     }
 
     private void setupFrequencies(double lambdaD, double lambdaL) {
-        double lambdaSum = lambdaD + lambdaL;
-        double x = 1 + 2 / (lambdaSum) + 1/lambdaD;
-        double pi0 = 1 / x;
-        double pi1 = 2 / (x * lambdaSum);
-        double pi2 = 1 / (x * lambdaD);
-        frequencies = new double[] {pi0, pi1, pi2};
+        // equilibrium frequencies
+        double pi0 = 0; // non-zero
+        double pi1 = 0;
+        double pi2 = 0;
+        double pi3 = 1 - pi0; // non-zero
+        double pi4 = 0;
+        frequencies = new double[] {pi0, pi1, pi2, pi3, pi4};
     }
 
     @Override
@@ -116,6 +97,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof TernaryWithError;
+        return dataType instanceof Quinary;
     }
 }

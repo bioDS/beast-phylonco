@@ -28,7 +28,7 @@ import beast.core.parameter.RealParameter;
  *
  */
 @Description("Ternary error model from SiFit paper")
-public class TernaryWithError extends DataType.Base implements DataTypeWithError {
+public class TernaryWithError extends Ternary implements DataTypeWithError {
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
 
@@ -37,18 +37,8 @@ public class TernaryWithError extends DataType.Base implements DataTypeWithError
 
     protected double[][] errorMatrix;
 
-    int[][] x = {
-            {0},
-            {1},
-            {2},
-            {0, 1, 2},
-    };
-
     public TernaryWithError() {
-        stateCount = 3;
-        mapCodeToStateSet = x;
-        codeLength = 1;
-        codeMap = "012" + MISSING_CHAR;
+        super();
     }
 
     @Override
