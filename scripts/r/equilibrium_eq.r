@@ -2,12 +2,12 @@ library(matlib)
 
 # Modified SiFit3 matrix
 rows <- 3
-lambdaD <- 2
-lambdaL <- 3
+lambdaD <- 3
+lambdaL <- 2
 lambdaSum <- lambdaD + lambdaL
 Q <- matrix(c(
      -1, 1, 0,
-     1/6 + lambdaSum / 2, -lambdaSum, 1/2 + lambdaSum / 2,
+     1/6 + lambdaSum / 2, -lambdaSum - 1/6 - 1/2, 1/2 + lambdaSum / 2,
      0, lambdaD, -lambdaD
  ), nrow=rows, byrow=T)
 
