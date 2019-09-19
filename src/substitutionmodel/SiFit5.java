@@ -1,12 +1,37 @@
 package substitutionmodel;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.Quinary;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 
+/**
+ * Implements the five state SiFit model of genotype substitution from the correspondence by Zafar et al. (2017)
+ *
+ * Comments on the model parameters in “SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models"
+ * https://doi.org/10.1186/s13059-019-1692-5
+ *
+ * Q matrix
+ *              0           1           2           3           4
+ *	0 |        -1,          1,          0  |
+ *	1 | (D+L) / 2,       -D-L,  (D+L) / 2  |
+ *	2 |         0,          D,         -D  |
+ *  3 |
+ *  4 |
+ *
+ * with the states
+ *  0: genotype 0/-
+ *  1: genotype 0/0
+ *  2: genotype 0/1
+ *  3: genotype 1/-
+ *  4: genotype 1/1
+ */
 public class SiFit5 extends GeneralSubstitutionModel {
+    // Note: Model is not working because there is no equilibrium distribution
+    // The states 0 and 3 are absorbing states
+
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of recurrent point mutation in SiFit model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the combined rate of deletion and loss of heterozygosity in SiFit model",  Input.Validate.REQUIRED);
 
@@ -75,13 +100,7 @@ public class SiFit5 extends GeneralSubstitutionModel {
     }
 
     private void setupFrequencies(double lambdaD, double lambdaL) {
-        // equilibrium frequencies
-        double pi0 = 0; // non-zero
-        double pi1 = 0;
-        double pi2 = 0;
-        double pi3 = 1 - pi0; // non-zero
-        double pi4 = 0;
-        frequencies = new double[] {pi0, pi1, pi2, pi3, pi4};
+        // Calculate equilibrium frequencies
     }
 
     @Override

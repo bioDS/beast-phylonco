@@ -7,7 +7,7 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 /**
- * Implements the SiFit model of genotype substitution from Zafar et al. (2017)
+ * Implements the two state SiFit model of genotype substitution from Zafar et al. (2017)
  *
  * SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.
  * https://doi.org/10.1186/s13059-017-1311-2

@@ -42,43 +42,49 @@ public class K80Diploid extends GeneralSubstitutionModel {
 
     @Override
     protected void setupRateMatrix() {
-        setupRateMatrix(kappa.getValue(), lambdaL.getValue());
+        setupFrequencies();
+        setupRateMatrixUnnormalized();
+        normalize();
+    }
+
+    @Override
+    protected void setupRateMatrixUnnormalized() {
+        setupRateMatrixUnnormalized(kappa.getValue(), lambdaL.getValue());
     }
 
     // instantaneous matrix Q
-    private void setupRateMatrix(double kappa, double lambdaL) {
+    private void setupRateMatrixUnnormalized(double kappa, double lambdaL) {
         rateMatrix = new double[][] {
                 {0, 1, kappa, 1, 0, 0, 0, 0, 0, 0},
-                {1, 0, 1 / 2, kappa / 2, 1, kappa / 2, 1 / 2, 0, 0, 0},
-                {kappa, 1 / 2, 0, 1 / 2, 0, 1 / 2, 0, kappa, 1 / 2, 0},
-                {1, kappa / 2, 1 / 2, 0, 0, 0, 1 / 2, 0, kappa / 2, 1},
+                {1, 0, 0.5, kappa / 2, 1, kappa / 2, 0.5, 0, 0, 0},
+                {kappa, 0.5, 0, 0.5, 0, 0.5, 0, kappa, 0.5, 0},
+                {1, kappa / 2, 0.5, 0, 0, 0, 0.5, 0, kappa / 2, 1},
                 {0, 1, 0, 0, 0, 1, kappa, 0, 0, 0},
-                {0, kappa / 2, 1 / 2, 0, 1, 0, 1 / 2, 1, kappa / 2, 0},
-                {0, 1 / 2, 0, 1 / 2, kappa, 1 / 2, 0, 0, 1 / 2, kappa},
+                {0, kappa / 2, 0.5, 0, 1, 0, 0.5, 1, kappa / 2, 0},
+                {0, 0.5, 0, 0.5, kappa, 0.5, 0, 0, 0.5, kappa},
                 {0, 0, kappa, 0, 0, 1, 0, 0, 1, 0},
-                {0, 0, 1 / 2, kappa / 2, 0, kappa / 2, 1 / 2, 1, 0, 1},
+                {0, 0, 0.5, kappa / 2, 0, kappa / 2, 0.5, 1, 0, 1},
                 {0, 0, 0, 1, 0, 0, kappa, 0, 1, 0}
         };
         // deletion of one allele
         setupDeletion(rateMatrix, lambdaL);
         // calculate diagonal entries
         setupDiagonal(rateMatrix);
-        normalize(rateMatrix);
     }
 
     private void setupDeletion(double[][] rateMatrix, double lambdaL) {
         rateMatrix[1][0] += lambdaL; // AC to A-
         rateMatrix[2][0] += lambdaL; // AG to A-
         rateMatrix[3][0] += lambdaL; // AT to A-
-        rateMatrix[1][4] += lambdaL; // AC to -C
+        rateMatrix[1][4] += lambdaL; // AC to C-
         rateMatrix[5][4] += lambdaL; // CG to C-
         rateMatrix[6][4] += lambdaL; // CT to C-
-        rateMatrix[2][7] += lambdaL; // AG to -G
-        rateMatrix[5][7] += lambdaL; // CG to -G
+        rateMatrix[2][7] += lambdaL; // AG to G-
+        rateMatrix[5][7] += lambdaL; // CG to G-
         rateMatrix[8][7] += lambdaL; // GT to G-
-        rateMatrix[3][9] += lambdaL; // AT to -T
-        rateMatrix[6][9] += lambdaL; // CT to -T
-        rateMatrix[8][9] += lambdaL; // GT to -T
+        rateMatrix[3][9] += lambdaL; // AT to T-
+        rateMatrix[6][9] += lambdaL; // CT to T-
+        rateMatrix[8][9] += lambdaL; // GT to T-
     }
 
     private void setupDiagonal(double[][] rateMatrix) {
@@ -91,7 +97,7 @@ public class K80Diploid extends GeneralSubstitutionModel {
         }
     }
 
-    private void normalize(double[][] rateMatrix) {
+    private void normalize() {
         double[] frequencies = getFrequencies();
         double f = 0.0;
         for (int i = 0; i < nrOfStates; i++) {
@@ -106,26 +112,14 @@ public class K80Diploid extends GeneralSubstitutionModel {
     }
 
     protected void setupFrequencies() {
-        setupFrequencies(kappa.getValue(), lambdaL.getValue());
-    }
-
-    private void setupFrequencies(double kappa, double lambdaL) {
-        // equilibrium frequencies
-//        double[] matrix = new double[nrOfStates * nrOfStates];
-//        getTransitionProbabilities(null, 10, 0, 1, matrix);
-//        frequencies = new double[nrOfStates];
-//        for (int i = 0; i < nrOfStates; i++) {
-//            frequencies[i] = matrix[i];
-//        }
-
-        // frequencies with no deletion
-//        frequencies = new double[nrOfStates];
-//        for (int i = 0; i < nrOfStates; i++) {
-//            frequencies[i] = 1 / nrOfStates;
-//        }
-
-        // kappa = 3, lambdaL = 2
-        frequencies = new double[] {0.0573932493193, 0.0717236568348, 0.0525823333895, 0.1722820882320, 0.0675356817034, 0.0560973336477, 0.1600000482827, 0.0414018951317, 0.1587727223692, 0.1622109910899};
+        double t = 10000;
+        double[] matrix = new double[nrOfStates * nrOfStates];
+        // get equilibrium frequencies using un-normalized matrix
+        getTransitionProbabilities(null, t, 0, 1, matrix, false);
+        frequencies = new double[nrOfStates];
+        for (int i = 0; i < frequencies.length; i++) {
+            frequencies[i] = matrix[i];
+        }
     }
 
     @Override
