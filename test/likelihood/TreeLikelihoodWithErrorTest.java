@@ -87,7 +87,7 @@ public class TreeLikelihoodWithErrorTest {
     }
 
     @Test
-    public void testJC69Likelihood() throws Exception {
+    public void testJC69Likelihood() {
         // Set up JC69 model: uniform freqs, kappa = 1, 0 gamma categories
         Alignment data = getAlignmentShort();
 
@@ -125,6 +125,6 @@ public class TreeLikelihoodWithErrorTest {
     }
 
     @Test
-    public void testJC69LikelihoodWithUncertainCharacters() throws Exception { }
+    public void testJC69LikelihoodWithUncertainCharacters() { }
 
 }

@@ -44,6 +44,14 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
         return errorMatrix[observedState][trueState];
     }
 
+    public double[] getProbabilities(int observedState) {
+        double[] prob = new double[errorMatrix.length];
+        for (int i = 0; i < errorMatrix.length; i++) {
+            prob[i] = getProbability(observedState, i);
+        }
+        return prob;
+    }
+
     @Override
     public String getTypeDescription() {
         return "binaryWithError";

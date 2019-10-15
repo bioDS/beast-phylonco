@@ -9,11 +9,13 @@ public interface DataTypeWithError extends DataType {
      * @param trueState index of true state
      * @return probability of observed state given the true state
      */
-    public abstract double getProbability(int observedState, int trueState);
+    public double getProbability(int observedState, int trueState);
+
+    public double[] getProbabilities(int observedState);
 
     /**
      * set up the error matrix according to the error model parameters
      */
-    public abstract void setupErrorMatrix();
+    public void setupErrorMatrix();
 
 }

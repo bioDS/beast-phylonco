@@ -6,8 +6,6 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 
-import java.util.Arrays;
-
 public class K80Diploid extends GeneralSubstitutionModel {
     final public Input<RealParameter> kappaInput = new Input<>("kappa", "kappa the transition-transversion ratio in the Kimura model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the combined rate of LOH and deletions in the SiFit model",  Input.Validate.REQUIRED);
