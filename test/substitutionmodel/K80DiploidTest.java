@@ -9,7 +9,7 @@ public class K80DiploidTest {
     private static double DELTA = 1e-10;
 
     private K80Diploid model;
-    private int nrStates;
+    private int nrOfStates;
 
     public void setupModel(Double kappa, Double lambdaL) {
         model = new K80Diploid();
@@ -17,7 +17,7 @@ public class K80DiploidTest {
                 "kappa", new RealParameter(kappa.toString()),
                 "lambdaL", new RealParameter(lambdaL.toString())
         );
-        nrStates = model.getStateCount();
+        nrOfStates = model.getStateCount();
     }
 
     @Test
@@ -37,7 +37,7 @@ public class K80DiploidTest {
                 0.139413971453, 0.0552565272733, 0.0777225228670, 0.0558540893483, 0.162497231911, 0.0552565272733, 0.0926481768687, 0.139413971453, 0.0558540893483, 0.166082892204
 
         };
-        double[] observed = new double[nrStates * nrStates];
+        double[] observed = new double[nrOfStates * nrOfStates];
         model.getTransitionProbabilities(null, t, 0, 1, observed);
         assertArrayEquals(expected, observed, DELTA);
     }

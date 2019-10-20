@@ -7,9 +7,6 @@ import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Node;
 
 public class TreeLikelihoodWithError extends TreeLikelihood {
-    // set fields from TreeLikelihood class
-    // "useAmbiguities": true
-    // "useTipLikelihoods": true
 
     final public Input<DataTypeWithError> errorModelInput = new Input<>("errorModel", "error model to use for partials");
     final public Input<Boolean> useTipsEmpiricalInput = new Input<>("useTipsEmpirical", "use tip ambiguities from data", false);
@@ -19,58 +16,62 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
 
     @Override
     public void initAndValidate() {
-        super.initAndValidate();
+        // get error model
         errorModel = errorModelInput.get();
         useTipsEmpirical = useTipsEmpiricalInput.get();
+        // set fields from TreeLikelihood class
+        super.m_useAmbiguities.set(true);
+        super.m_useTipLikelihoods.set(true);
+        super.initAndValidate();
     }
 
     @Override
-    protected void setPartials(Node node, int patternCount) {
+    protected void setPartials(Node node, int nrOfPatterns) {
         if (node.isLeaf()) {
             Alignment data = dataInput.get();
-            int states = data.getDataType().getStateCount();
-            double[] partials = new double[patternCount * states];
-            int k = 0;
-            int taxonIndex = getTaxonIndex(node.getID(), data);
-            for (int patternIndex_ = 0; patternIndex_ < patternCount; patternIndex_++) {
+            int nrOfStates = data.getDataType().getStateCount();
+            double[] partials = new double[nrOfPatterns * nrOfStates];
+            int t = getTaxonIndex(node.getID(), data); // taxon index
+            int i = 0;
+            for (int p = 0; p < nrOfPatterns; p++) {
+                int state = data.getPattern(t, p);
                 double[] tipLikelihoods;
                 if (useTipsEmpirical) {
-                    tipLikelihoods = data.getTipLikelihoods(taxonIndex, patternIndex_);
+                    tipLikelihoods = data.getTipLikelihoods(t, p);
                 } else {
-                    int stateIndex = data.getPattern(taxonIndex, patternIndex_);
-                    tipLikelihoods = errorModelInput.get().getProbabilities(stateIndex);
+                    tipLikelihoods = errorModelInput.get().getProbabilities(state);
                 }
-                if (tipLikelihoods != null) {
-                    for (int state = 0; state < states; state++) {
-                        partials[k++] = tipLikelihoods[state];
+                for (int s = 0; s < nrOfStates; s++) {
+                    if (tipLikelihoods == null) {
+                        boolean[] stateSet = data.getStateSet(state);
+                        if (stateSet[s]) {
+                            partials[i] = 1.0;
+                        } else {
+                            partials[i] = 0.0;
+                        }
+                    } else {
+                        partials[i] = tipLikelihoods[s];
                     }
-                } else {
-                    int stateIndex = data.getPattern(taxonIndex, patternIndex_);
-                    boolean[] stateSet = data.getStateSet(stateIndex);
-                    for (int state = 0; state < states; state++) {
-                        partials[k++] = (stateSet[state] ? 1.0 : 0.0);
-                    }
+                    i++;
                 }
             }
             likelihoodCore.setNodePartials(node.getNr(), partials);
-            // print partials for debugging
-            boolean debug = true;
-            if (debug) {
-                System.out.println("partials " + data.getTaxaNames().get(taxonIndex));
-                int count = 1;
-                for (double p : partials) {
-                    System.out.print(p + " ");
-                    if (count % states == 0) {
-                        System.out.println("; ");
-                    }
-                    count++;
-                }
-                System.out.println();
-            }
-            // end debug
+//            boolean debug = true;
+//            if (debug) {
+//                System.out.println("partials " + data.getTaxaNames().get(t));
+//                int count = 1;
+//                for (double p : partials) {
+//                    System.out.print(p + " ");
+//                    if (count % nrOfStates == 0) {
+//                        System.out.println("; ");
+//                    }
+//                    count++;
+//                }
+//                System.out.println();
+//            }
         } else {
-            setPartials(node.getLeft(), patternCount);
-            setPartials(node.getRight(), patternCount);
+            setPartials(node.getLeft(), nrOfPatterns);
+            setPartials(node.getRight(), nrOfPatterns);
         }
     }
 

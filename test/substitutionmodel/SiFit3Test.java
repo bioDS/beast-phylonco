@@ -13,7 +13,7 @@ public class SiFit3Test extends TestCase {
     private static double DELTA = 1e-10;
 
     private SiFit3 model;
-    private int nrStates;
+    private int nrOfStates;
 
     public void setupModel(Double lambdaD, Double lambdaL) {
         model = new SiFit3();
@@ -21,7 +21,7 @@ public class SiFit3Test extends TestCase {
                 "lambdaD", new RealParameter(lambdaD.toString()),
                 "lambdaL", new RealParameter(lambdaL.toString())
         );
-        nrStates = model.getStateCount();
+        nrOfStates = model.getStateCount();
     }
 
     /**
@@ -57,7 +57,7 @@ public class SiFit3Test extends TestCase {
                 0.526126686062, 0.210560391486, 0.263312922452,
                 0.525627527220, 0.210650337962, 0.263722134819
         };
-        double[] observed = new double[nrStates * nrStates];
+        double[] observed = new double[nrOfStates * nrOfStates];
         model.getTransitionProbabilities(null, t, 0, 1, observed);
         assertArrayEquals(expected, observed, DELTA);
     }
@@ -95,7 +95,7 @@ public class SiFit3Test extends TestCase {
                 0.10342210337822, 0.7956460429136, 0.10093185370821,
                 0.00498049934002, 0.0807454829666, 0.91427401769341
         };
-        double[] observed = new double[nrStates * nrStates];
+        double[] observed = new double[nrOfStates * nrOfStates];
         model.getTransitionProbabilities(null, t, 0, 1, observed);
         assertArrayEquals(expected, observed, DELTA);
     }

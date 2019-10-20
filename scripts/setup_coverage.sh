@@ -39,6 +39,7 @@ mkdir /evol/pvol/Tamsin
 mkdir /evol/pvol/Tamsin/BAM
 # launch screen and run samtools
 ls /pvol/Tamsin/BAM/*.bam | parallel "samtools depth {} > /evol{}.txt" 
-# count number of sites per depth
-# output: number of sites, depth
-ls /evol/pvol/Tamsin/BAM/*.txt | parallel "cat {} | awk '{print $3}' | sort -n | uniq -c > {}.count"
+# run script to count coverage histogram
+cd ~/repos/phylonco/scripts
+chmod +x count_coverage.sh
+./count_coverage.sh /evol/pvol/Tamsin/BAM/*.txt  

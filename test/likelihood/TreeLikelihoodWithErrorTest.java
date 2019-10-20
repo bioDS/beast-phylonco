@@ -8,6 +8,7 @@ import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.JukesCantor;
 import beast.util.TreeParser;
+import beast.util.treeparser.NewickParser;
 import org.junit.Test;
 
 import java.util.List;
@@ -16,12 +17,9 @@ import static junit.framework.Assert.assertEquals;
 
 public class TreeLikelihoodWithErrorTest {
 
-    protected TreeLikelihood newTreeLikelihood() {
-        System.setProperty("java.only","true");
-        return new TreeLikelihood();
-    }
+    private static double DELTA = 1e-10;
 
-    static public Alignment getAlignmentLong() {
+    public Alignment getAlignmentLong() {
         Sequence human = new Sequence("human", "AGAAATATGTCTGATAAAAGAGTTACTTTGATAGAGTAAATAATAGGAGCTTAAACCCCCTTATTTCTACTAGGACTATGAGAATCGAACCCATCCCTGAGAATCCAAAATTCTCCGTGCCACCTATCACACCCCATCCTAAGTAAGGTCAGCTAAATAAGCTATCGGGCCCATACCCCGAAAATGTTGGTTATACCCTTCCCGTACTAAGAAATTTAGGTTAAATACAGACCAAGAGCCTTCAAAGCCCTCAGTAAGTTG-CAATACTTAATTTCTGTAAGGACTGCAAAACCCCACTCTGCATCAACTGAACGCAAATCAGCCACTTTAATTAAGCTAAGCCCTTCTAGACCAATGGGACTTAAACCCACAAACACTTAGTTAACAGCTAAGCACCCTAATCAAC-TGGCTTCAATCTAAAGCCCCGGCAGG-TTTGAAGCTGCTTCTTCGAATTTGCAATTCAATATGAAAA-TCACCTCGGAGCTTGGTAAAAAGAGGCCTAACCCCTGTCTTTAGATTTACAGTCCAATGCTTCA-CTCAGCCATTTTACCACAAAAAAGGAAGGAATCGAACCCCCCAAAGCTGGTTTCAAGCCAACCCCATGGCCTCCATGACTTTTTCAAAAGGTATTAGAAAAACCATTTCATAACTTTGTCAAAGTTAAATTATAGGCT-AAATCCTATATATCTTA-CACTGTAAAGCTAACTTAGCATTAACCTTTTAAGTTAAAGATTAAGAGAACCAACACCTCTTTACAGTGA");
         Sequence chimp = new Sequence("chimp", "AGAAATATGTCTGATAAAAGAATTACTTTGATAGAGTAAATAATAGGAGTTCAAATCCCCTTATTTCTACTAGGACTATAAGAATCGAACTCATCCCTGAGAATCCAAAATTCTCCGTGCCACCTATCACACCCCATCCTAAGTAAGGTCAGCTAAATAAGCTATCGGGCCCATACCCCGAAAATGTTGGTTACACCCTTCCCGTACTAAGAAATTTAGGTTAAGCACAGACCAAGAGCCTTCAAAGCCCTCAGCAAGTTA-CAATACTTAATTTCTGTAAGGACTGCAAAACCCCACTCTGCATCAACTGAACGCAAATCAGCCACTTTAATTAAGCTAAGCCCTTCTAGATTAATGGGACTTAAACCCACAAACATTTAGTTAACAGCTAAACACCCTAATCAAC-TGGCTTCAATCTAAAGCCCCGGCAGG-TTTGAAGCTGCTTCTTCGAATTTGCAATTCAATATGAAAA-TCACCTCAGAGCTTGGTAAAAAGAGGCTTAACCCCTGTCTTTAGATTTACAGTCCAATGCTTCA-CTCAGCCATTTTACCACAAAAAAGGAAGGAATCGAACCCCCTAAAGCTGGTTTCAAGCCAACCCCATGACCTCCATGACTTTTTCAAAAGATATTAGAAAAACTATTTCATAACTTTGTCAAAGTTAAATTACAGGTT-AACCCCCGTATATCTTA-CACTGTAAAGCTAACCTAGCATTAACCTTTTAAGTTAAAGATTAAGAGGACCGACACCTCTTTACAGTGA");
         Sequence bonobo = new Sequence("bonobo", "AGAAATATGTCTGATAAAAGAATTACTTTGATAGAGTAAATAATAGGAGTTTAAATCCCCTTATTTCTACTAGGACTATGAGAGTCGAACCCATCCCTGAGAATCCAAAATTCTCCGTGCCACCTATCACACCCCATCCTAAGTAAGGTCAGCTAAATAAGCTATCGGGCCCATACCCCGAAAATGTTGGTTATACCCTTCCCGTACTAAGAAATTTAGGTTAAACACAGACCAAGAGCCTTCAAAGCTCTCAGTAAGTTA-CAATACTTAATTTCTGTAAGGACTGCAAAACCCCACTCTGCATCAACTGAACGCAAATCAGCCACTTTAATTAAGCTAAGCCCTTCTAGATTAATGGGACTTAAACCCACAAACATTTAGTTAACAGCTAAACACCCTAATCAGC-TGGCTTCAATCTAAAGCCCCGGCAGG-TTTGAAGCTGCTTCTTTGAATTTGCAATTCAATATGAAAA-TCACCTCAGAGCTTGGTAAAAAGAGGCTTAACCCCTGTCTTTAGATTTACAGTCCAATGCTTCA-CTCAGCCATTTTACCACAAAAAAGGAAGGAATCGAACCCCCTAAAGCTGGTTTCAAGCCAACCCCATGACCCCCATGACTTTTTCAAAAGATATTAGAAAAACTATTTCATAACTTTGTCAAAGTTAAATTACAGGTT-AAACCCCGTATATCTTA-CACTGTAAAGCTAACCTAGCATTAACCTTTTAAGTTAAAGATTAAGAGGACCAACACCTCTTTACAGTGA");
@@ -43,7 +41,7 @@ public class TreeLikelihoodWithErrorTest {
         return data;
     }
 
-    static public Alignment getUncertainAlignment() {
+    public Alignment getUncertainAlignment() {
         String seq1Probs = "0.7,0.0,0.3,0.0; 0.0,0.3,0.0,0.7; 0.0,0.0,0.0,1.0;";
         String seq2Probs = "0.7,0.0,0.3,0.0; 0.0,0.3,0.0,0.7; 0.0,1.0,0.0,0.0;";
         String seq3Probs = "0.4,0.0,0.6,0.0; 0.0,0.6,0.0,0.4; 0.0,1.0,0.0,0.0;";
@@ -72,41 +70,72 @@ public class TreeLikelihoodWithErrorTest {
         return data;
     }
 
-    static public Alignment getAlignmentShort() {
+    public Alignment getAlignmentShort() {
         Sequence human = new Sequence("human", "ACGTAAA");
         Sequence chimp = new Sequence("chimp", "ACTTTAA");
-
         Alignment data = new Alignment();
         data.initByName(
                 "sequence", human,
                 "sequence", chimp,
                 "dataType", "nucleotideWithError"
         );
-
         return data;
     }
 
+    /**
+     * results obtained from running the following code in R:
+     *
+     * op <- options(digits=20)
+     * mu <- 1.0
+     * t <- 0.5
+     * delta <- (4.0 / 3.0) * t
+     * p <- 0.25 * (1.0 + 3.0 * exp(-delta * mu))
+     * q <- 0.25 * (1.0 - exp(-delta * mu))
+     * P <- matrix(
+     *   c(p, q, q, q,
+     *   q, p, q, q,
+     *   q, q, p, q,
+     *   q, q, q, p), nrow=4, byrow=T)
+     * err <- matrix(
+     *   c(1.0 - 3.0 * ep, ep, ep, ep,
+     *   ep, 1.0 - 3.0 * ep, ep, ep,
+     *   ep, ep, 1.0 - 3.0 * ep, ep,
+     *   ep, ep, ep, 1.0 - 3.0 * ep), nrow=4, byrow=T)
+     * p1 <- P %*% err[1,]
+     * p2 <- P %*% err[2,]
+     * p3 <- P %*% err[3,]
+     * p4 <- P %*% err[4,]
+     * prob <- 0.25 * (p1[1] ** 2 + p2[1] ** 2 + p3[1] ** 2 + p4[1] ** 2)
+     * log(prob)
+     */
     @Test
-    public void testJC69Likelihood() {
-        // Set up JC69 model: uniform freqs, kappa = 1, 0 gamma categories
-        Alignment data = getAlignmentShort();
+    public void testJCLikelihoodSmall() {
+        Alignment data = new Alignment();
+        Sequence seqA = new Sequence("a", "A");
+        Sequence seqB = new Sequence("b", "A");
+        data.initByName(
+                "sequence", seqA,
+                "sequence", seqB,
+                "dataType", "nucleotideWithError"
+        );
 
         TreeParser tree = new TreeParser();
         tree.initByName(
                 "taxa", data,
-                "newick", "(human: 0.5, chimp: 0.5): 0.2;",
+                "newick", "(a: 0.5, b: 0.5);",
                 "IsLabelledNewick", true
         );
 
-        JukesCantor jc = new JukesCantor();
-        jc.initAndValidate();
+        JukesCantor subsModel = new JukesCantor();
+        subsModel.initAndValidate();
 
         SiteModel siteModel = new SiteModel();
-        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", jc);
+        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
+        siteModel.initAndValidate();
 
         NucleotideWithError errorModel = new NucleotideWithError();
         errorModel.initByName("epsilon", "0.1");
-//        errorModel.initAndValidate();
+        errorModel.initAndValidate();
 
         TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();
         likelihood.initByName(
@@ -116,15 +145,15 @@ public class TreeLikelihoodWithErrorTest {
                 "useAmbiguities", true,
                 "useTipLikelihoods", true,
                 "errorModel", errorModel);
-        double logP = 0;
-        logP = likelihood.calculateLogP();
 
-        System.out.println("human: " + data.getSequenceAsString("human"));
-        System.out.println("chimp: " + data.getSequenceAsString("chimp"));
+        double logP = likelihood.calculateLogP();
+        double expectedLogP = -2.5220752408362181;
+        assertEquals(logP, expectedLogP, DELTA);
+
+        System.out.println("seq A: " + data.getSequenceAsString("a"));
+        System.out.println("seq B: " + data.getSequenceAsString("b"));
         System.out.println("likelihood: " + logP);
     }
 
-    @Test
-    public void testJC69LikelihoodWithUncertainCharacters() { }
 
 }
