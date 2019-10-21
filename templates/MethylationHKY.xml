@@ -1,0 +1,67 @@
+<beast version='2.0' 
+	namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
+
+    <mergewith point='substModelTemplates'>
+		
+		<subtemplate id='MethylationHKY' class='beast.evolution.substitutionmodel.MethylationHKY' mainid='MethylationHKY.s:$(n)'>
+		<![CDATA[
+			<plugin spec='MethylationHKY' id='MethylationHKY.s:$(n)'>
+				<parameter id="kappa.s:$(n)" name='kappa' value="1.0" lower="0.0" estimate='true'/>
+				<parameter id="alpha.s:$(n)" name='alpha' value="0.0" lower="0.0" estimate='true'/>
+				<parameter id="beta.s:$(n)" name='beta' value="1.0" lower="0.0" estimate='true'/>
+				<parameter id="gamma.s:$(n)" name='gamma' value="0.0" lower="0.0" estimate='true'/>
+			</plugin>
+			
+			<operator id='kappaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@kappa.s:$(n)"/>
+			<operator id='alphaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@kappa.s:$(n)"/>
+			<operator id='betaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@kappa.s:$(n)"/>
+			<operator id='gammaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@kappa.s:$(n)"/>
+
+			<prior id='kappaPrior.s:$(n)' x='@kappa.s:$(n)'>
+				<distr spec="LogNormalDistributionModel" meanInRealSpace='true'>
+					<parameter name='M' value="1.0" estimate='false'/>
+					<parameter name='S' value="1.25" estimate='false'/>
+				</distr>
+			</prior>
+			<prior id='alphaPrior.s:$(n)' x='@alpha.s:$(n)'>
+				<distr spec="LogNormalDistributionModel" meanInRealSpace='true'>
+					<parameter name='M' value="1.0" estimate='false'/>
+					<parameter name='S' value="1.25" estimate='false'/>
+				</distr>
+			</prior>
+			<prior id='betaPrior.s:$(n)' x='@beta.s:$(n)'>
+				<distr spec="LogNormalDistributionModel" meanInRealSpace='true'>
+					<parameter name='M' value="1.0" estimate='false'/>
+					<parameter name='S' value="1.25" estimate='false'/>
+				</distr>
+			</prior>
+			<prior id='gammaPrior.s:$(n)' x='@gamma.s:$(n)'>
+				<distr spec="LogNormalDistributionModel" meanInRealSpace='true'>
+					<parameter name='M' value="1.0" estimate='false'/>
+					<parameter name='S' value="1.25" estimate='false'/>
+				</distr>
+			</prior>
+		]]>
+		
+		<connect srcID='kappa.s:$(n)' targetID='state' inputName='stateNode' if='inposterior(MethylationHKY.s:$(n)) and kappa.s:$(n)/estimate=true'/>
+		<connect srcID='alpha.s:$(n)' targetID='state' inputName='stateNode' if='inposterior(MethylationHKY.s:$(n)) and alpha.s:$(n)/estimate=true'/>
+		<connect srcID='beta.s:$(n)' targetID='state' inputName='stateNode' if='inposterior(MethylationHKY.s:$(n)) and beta.s:$(n)/estimate=true'/>
+		<connect srcID='gamma.s:$(n)' targetID='state' inputName='stateNode' if='inposterior(MethylationHKY.s:$(n)) and gamma.s:$(n)/estimate=true'/>
+
+		<connect srcID='kappaScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inposterior(MethylationHKY.s:$(n)) and kappa.s:$(n)/estimate=true'>Scale MethylationHKY transition-transversion parameter of partition $(n)</connect>
+		<connect srcID='alphaScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inposterior(MethylationHKY.s:$(n)) and alpha.s:$(n)/estimate=true'>Scale MethylationHKY transition-transversion parameter of partition $(n)</connect>
+		<connect srcID='betaScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inposterior(MethylationHKY.s:$(n)) and beta.s:$(n)/estimate=true'>Scale MethylationHKY transition-transversion parameter of partition $(n)</connect>
+		<connect srcID='gammaScaler.s:$(n)' targetID='mcmc' inputName='operator' if='inposterior(MethylationHKY.s:$(n)) and gamma.s:$(n)/estimate=true'>Scale MethylationHKY transition-transversion parameter of partition $(n)</connect>
+
+		<connect srcID='kappa.s:$(n)' targetID='tracelog' inputName='log' if='inposterior(MethylationHKY.s:$(n)) and kappa.s:$(n)/estimate=true'/>
+		<connect srcID='alpha.s:$(n)' targetID='tracelog' inputName='log' if='inposterior(MethylationHKY.s:$(n)) and alpha.s:$(n)/estimate=true'/>
+		<connect srcID='beta.s:$(n)' targetID='tracelog' inputName='log' if='inposterior(MethylationHKY.s:$(n)) and beta.s:$(n)/estimate=true'/>
+		<connect srcID='gamma.s:$(n)' targetID='tracelog' inputName='log' if='inposterior(MethylationHKY.s:$(n)) and gamma.s:$(n)/estimate=true'/>
+
+		<connect srcID='kappaPrior.s:$(n)' targetID='prior' inputName='distribution' if='inposterior(MethylationHKY.s:$(n)) and kappa.s:$(n)/estimate=true'>MethylationHKY transition-transversion parameter of partition $(n)</connect>
+		<connect srcID='alphaPrior.s:$(n)' targetID='prior' inputName='distribution' if='inposterior(MethylationHKY.s:$(n)) and alpha.s:$(n)/estimate=true'>MethylationHKY methylation parameter of partition $(n)</connect>
+		<connect srcID='betaPrior.s:$(n)' targetID='prior' inputName='distribution' if='inposterior(MethylationHKY.s:$(n)) and beta.s:$(n)/estimate=true'>MethylationHKY demethylation parameter of partition $(n)</connect>
+		<connect srcID='gammaPrior.s:$(n)' targetID='prior' inputName='distribution' if='inposterior(MethylationHKY.s:$(n)) and gamma.s:$(n)/estimate=true'>MethylationHKY demethylation to T parameter of partition $(n)</connect>
+		</subtemplate>
+	</mergewith>
+</beast>
