@@ -1,4 +1,4 @@
-package likelihood;
+package beast.evolution.likelihood;
 
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;

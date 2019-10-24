@@ -1,4 +1,4 @@
-package substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.Input;
