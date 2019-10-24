@@ -1,0 +1,100 @@
+<beast version='2.0'
+       namespace='
+            alignment:
+            datatype:
+            substitutionmodel:
+            beast.evolution.alignment:
+            beast.core:
+            beast.evolution.tree.coalescent:
+            beast.core.util:
+            beast.evolution.nuc:
+            beast.evolution.operators:
+            beast.evolution.sitemodel:
+            beast.evolution.substitutionmodel:
+            beast.evolution.likelihood'>
+
+    <!-- Simulated diploid sequence alignment               -->
+    <!-- number of taxa = 3                                 -->
+    <!-- nchar = 20                                         -->
+    <data id='alignment' dataType='ternaryWithError'>
+        <sequence taxon='A'>
+            00000???202010001000
+        </sequence>
+        <sequence taxon='B'>
+            00010211201000100200
+        </sequence>
+        <sequence taxon='C'>
+            10102000200120020100
+        </sequence>
+    </data>
+
+    <!-- The SiFit3 substitution model (Zafar et al. 2017)  -->
+    <input spec='SiFit3' id='siFit'>
+        <lambdaD idref='siFit.lambdaD'/>
+        <lambdaL idref='siFit.lambdaL'/>
+    </input>
+
+    <!-- The site model                                     -->
+    <input spec='SiteModel' id='siteModel'>
+        <substModel idref='siFit'/>
+    </input>
+
+    <input spec='TreeLikelihood' id='treeLikelihood'>
+        <data idref='alignment'/>
+        <tree idref='tree'/>
+        <siteModel idref='siteModel'/>
+    </input>
+
+    <parameter id='siFit.lambdaD' value='1.0' lower='0.0'/>
+    <parameter id='siFit.lambdaL' value='1.0' lower='0.0'/>
+
+    <tree id='tree'/>
+
+    <!-- The initial tree (upgma or coalescent)             -->
+    <tree spec='beast.util.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
+        <taxa idref='alignment'/>
+    </tree>
+
+    <tree spec='beast.util.TreeParser' id='newickTree' IsLabelledNewick='true' taxa='@alignment'
+          initial='@tree' newick='((A:0.5, B:0.5):0.5, C:1);'/>
+
+    <run spec='MCMC' id='mcmc' chainLength='2000000' preBurnin='50000'>
+
+        <init idref='newickTree'/>
+        <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaD'>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+            </distribution>
+            <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaL'>
+                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+            </distribution>
+            <distribution id='likelihood' idref='treeLikelihood'/>
+        </distribution>
+
+        <operator id='lambdaDScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaD'/>
+        <operator id='lambdaLScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@siFit.lambdaL'/>
+
+        <logger logEvery='2000' fileName='testSiFit3.$(seed).log'>
+            <model idref='likelihood'/>
+            <log idref='likelihood'/>
+            <log idref='siFit.lambdaD'/>
+            <log idref='siFit.lambdaL'/>
+            <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
+        </logger>
+
+        <logger logEvery='2000' fileName='testSiFit3.$(seed).trees'>
+            <log idref='tree'/>
+        </logger>
+
+        <logger logEvery='2000'>
+            <model idref='likelihood'/>
+            <log idref='likelihood'/>
+            <ESS spec='ESS' name='log' arg='@likelihood'/>
+            <log idref='siFit.lambdaD'/>
+            <ESS spec='ESS' name='log' arg='@siFit.lambdaD'/>
+            <log idref='siFit.lambdaL'/>
+            <ESS spec='ESS' name='log' arg='@siFit.lambdaL'/>
+        </logger>
+    </run>
+
+</beast>
