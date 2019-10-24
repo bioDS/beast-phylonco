@@ -1,4 +1,4 @@
-package substitutionmodel;
+package test.beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
