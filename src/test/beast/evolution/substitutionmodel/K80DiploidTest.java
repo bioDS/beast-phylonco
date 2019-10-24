@@ -1,4 +1,4 @@
-package substitutionmodel;
+package test.beast.evolution.substitutionmodel;
 
 import beast.core.parameter.RealParameter;
 import org.junit.Test;
