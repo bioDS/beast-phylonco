@@ -6,22 +6,23 @@ import beast.core.Description;
 public class NucleotideMethylation extends DataType.Base {
     // TODO currently without all ambiguity codes
     int[][] x = {
-            {1, 2}, // 0 = A and T
-            {4, 5}, // 1 = P and J = C' and G'
-            {0, 3}, // W
             {0},  // A
             {1},  // C
             {2},  // G
             {3},  // T
-            // {3},  // U
             {4},  // P = MetC = C'
             {5},  // J = MetC on opposite strand = G'
+
+            {0, 3}, // W = A and T
+            {1, 2}, // 0 = C and G
+            {4, 5}, // 1 = P and J = C' and G'
 
             {0, 1, 2, 3, 4, 5}, // N
             {0, 1, 2, 3, 4, 5}, // X
             {0, 1, 2, 3, 4, 5}, // -
             {0, 1, 2, 3, 4, 5}, // ?
 
+            // {3},  // U
             /*
             {0, 2}, // R
             {1, 3}, // Y
@@ -44,7 +45,7 @@ public class NucleotideMethylation extends DataType.Base {
         stateCount = 6;
         mapCodeToStateSet = x;
         codeLength = 1;
-        codeMap = "ACGTPJO1WNX" + GAP_CHAR + MISSING_CHAR;
+        codeMap = "ACGTPJWO1NX" + GAP_CHAR + MISSING_CHAR;
     }
 
     @Override
