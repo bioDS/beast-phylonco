@@ -76,7 +76,7 @@ public class MethylationHKY extends ComplexSubstitutionModel {
         // Used only for root in likelihood function
         // assume equal distribution of A and T, and C and G; and C' and G'
         // stationary distribution depends on the values of kappa, alpha, beta and gamma, not on frequencies of 0, 1 and W in data
-        return stationary_distribution();
+        return backward_stationary_distribution();
     }
 
 
@@ -131,7 +131,7 @@ public class MethylationHKY extends ComplexSubstitutionModel {
      *
      * @return stationary distribution pi
      */
-    private double[] stationary_distribution(){
+    private double[] forward_stationary_distribution(){
         double kappa = kappaPar.getValue();
         double alpha = alphaPar.getValue();
         double beta = betaPar.getValue();
@@ -150,6 +150,61 @@ public class MethylationHKY extends ComplexSubstitutionModel {
             pi[4] = pi[5] = C;
             pi[0] = pi[3] = C * (A + B);
             pi[1] = pi[2] = C * A;
+        }
+
+        return pi;
+    }
+
+
+    /** Calculate stationary distribution of the reverse process
+     *
+     * This is an analytical solution to pi*Q = 0 with condition sum(pi) = 1 that was calculated manually.
+     *
+     * In BEAST, the stationary distribution is assigned to the root node. For time-reversible process, this is fine
+     * as the stationary distribution is the same if we go infinitely into the future and infinitely into the past.
+     * For non-reversible stationary process this is however not true.
+     * Since the transition or transition rate matrix describe an evolution in forward time, its stationary distribution
+     * is less interesting than the stationary distribution of the backward process, which describe the distribution
+     * on the root.
+     *
+     * This function calculate distribution of such process.
+     *
+     * The calculation was done manually by first getting the Q' of the reverse process by first transposing Q and then
+     * recalculating the diagonal elements. After that, the process is identical to calculation of standard stationary
+     * distribution: solving pi Q' = 0, sum(pi) = 1.
+     *
+     * The equations are:
+     * pi(A) and pi(T) = C
+     * pi(C) and pi(G) = AC
+     * pi(C') and pi(C') = BC
+     *
+     * where:
+     *  C = 1 / 2(A + B + 1)
+     *  B = (1 + A*beta + A + kappa + gamma) / alpha
+     *  A = (2 + 2*kappa + gamma) / (kappa + 1)
+     *
+     * @return stationary distribution pi
+     */
+        private double[] backward_stationary_distribution(){
+        double kappa = kappaPar.getValue();
+        double alpha = alphaPar.getValue();
+        double beta = betaPar.getValue();
+        double gamma = gammaPar.getValue();
+
+        double[] pi = new double[6];
+        if(alpha == 0){
+            // degenerated case with C' and G' being absorbing states, but stationary distribution does not exist.
+            // Assuming C' = G' (no solution otherwise):
+            pi[4] = pi[5] = 0.5;
+        } else {
+
+            double A = (2 + 2*kappa + gamma) / (kappa + 1);
+            double B = (1 + A*beta + A + kappa + gamma) / alpha;
+            double C = 1 / ( 2*(A + B + 1) );
+
+            pi[4] = pi[5] = C * B;
+            pi[1] = pi[2] = C * A;
+            pi[0] = pi[3] = C;
         }
 
         return pi;
@@ -281,7 +336,7 @@ public class MethylationHKY extends ComplexSubstitutionModel {
      *
      */
     private void normalize(double[][] unnormalizedRateMatrix){
-        double[] pi = stationary_distribution();
+        double[] pi = forward_stationary_distribution();
 
         // get the expected rate of non-normalized matrix
         double mu = 0;
