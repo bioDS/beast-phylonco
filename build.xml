@@ -69,7 +69,7 @@
         <echo message="Classpath = ${myclasspath}"/>
         <mkdir dir="${build}" />
         <!-- Compile the java code from ${src} into ${build} /bin -->
-        <javac srcdir="${src}" destdir="${build}" classpathref="classpath" fork="true" memoryinitialsize="256m" memorymaximumsize="256m">
+        <javac srcdir="${src}" destdir="${build}" classpathref="classpath" fork="true" memoryinitialsize="256m" memorymaximumsize="256m" includeantruntime="false">
             <include name="beast/**/**" />
             <!-- compile JUnit test classes -->
             <include name="test/beast/**" />
