@@ -1,11 +1,4 @@
-# python cache
-scripts/python/treesim/__pycache__/
-scripts/python/tests/__pycache__/
-
-# output files
-scripts/output/
-
-# other artifacts
+# artifacts
 *.iml
 src/META-INF/
 
