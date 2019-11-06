@@ -6,14 +6,14 @@ import beast.core.Description;
 public class NucleotideMethylation extends DataType.Base {
     // TODO currently without all ambiguity codes
     int[][] x = {
-            {1, 2}, // 0 = A and T
-            {4, 5}, // 1 = P and J = C' and G'
-            {0, 3}, // W
             {0},  // A
             {1},  // C
             {2},  // G
             {3},  // T
-            // {3},  // U
+
+            {1, 2}, // 0 = C and G
+            {4, 5}, // 1 = P and J = C' and G'
+            {0, 3}, // W = A and T
             {4},  // P = MetC = C'
             {5},  // J = MetC on opposite strand = G'
 
@@ -23,6 +23,7 @@ public class NucleotideMethylation extends DataType.Base {
             {0, 1, 2, 3, 4, 5}, // ?
 
             /*
+            {3},  // U
             {0, 2}, // R
             {1, 3}, // Y
             {0, 1}, // M
