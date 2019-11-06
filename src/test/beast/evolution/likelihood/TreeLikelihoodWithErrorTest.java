@@ -4,11 +4,10 @@ import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideWithError;
-import beast.evolution.likelihood.TreeLikelihood;
+import beast.evolution.likelihood.TreeLikelihoodWithError;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.JukesCantor;
 import beast.util.TreeParser;
-import beast.util.treeparser.NewickParser;
 import org.junit.Test;
 
 import java.util.List;
