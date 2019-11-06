@@ -9,3 +9,7 @@ scripts/output/
 *.iml
 src/META-INF/
 
+# build directory
+build
+# idea directory
+.idea
