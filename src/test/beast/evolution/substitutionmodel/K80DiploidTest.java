@@ -1,6 +1,7 @@
 package test.beast.evolution.substitutionmodel;
 
 import beast.core.parameter.RealParameter;
+import beast.evolution.substitutionmodel.K80Diploid;
 import org.junit.Test;
 
 import static org.junit.Assert.assertArrayEquals;

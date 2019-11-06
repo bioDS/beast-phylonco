@@ -3,6 +3,7 @@ package test.beast.evolution.substitutionmodel;
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
 
+import beast.evolution.substitutionmodel.SiFit2;
 import org.junit.*;
 import static org.junit.Assert.*;
 
