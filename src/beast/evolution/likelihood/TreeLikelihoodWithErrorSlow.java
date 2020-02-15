@@ -1,7 +1,7 @@
-package likelihood;
+package beast.evolution.likelihood;
 
+// slow implementation of sampled error rates
 public class TreeLikelihoodWithErrorSlow  extends TreeLikelihoodWithError {
-    // slow implementation of sampled error rates
 
     /**
      * check state for changed variables and update temp results if necessary *
