@@ -3,9 +3,11 @@ package beast.evolution.datatype;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
+@Description("Binary error model with sampled error rates")
 public class BinaryWithErrorSampled extends DataTypeWithErrorBase {
-    final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Binary model", Input.Validate.REQUIRED);
-    final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Binary model",  Input.Validate.REQUIRED);
+	
+    final public Input<RealParameter> alphaInput = new Input<>("alpha", "false positive probability", Input.Validate.REQUIRED);
+    final public Input<RealParameter> betaInput = new Input<>("beta", "false negative probability",  Input.Validate.REQUIRED);
 
     private RealParameter alpha;
     private RealParameter beta;

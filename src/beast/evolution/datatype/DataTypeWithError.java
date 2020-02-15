@@ -11,6 +11,11 @@ public interface DataTypeWithError extends DataType {
      */
     public double getProbability(int observedState, int trueState);
 
+	/**
+     * returns a probability vector of the conditional probability of the observed state given each true state
+     * @param observedState index of observed state
+     * @return conditional probabilities of the observed state given the true state, for each possible true state
+     */
     public double[] getProbabilities(int observedState);
 
     /**

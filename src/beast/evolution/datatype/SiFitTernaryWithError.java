@@ -22,13 +22,13 @@ import beast.core.parameter.RealParameter;
  *
  * and error matrix
  *                      0           1                 2
- *	0 |   1-A-(A * B / 2),          A,        A * B / 2  |
- *	1 |             B / 2,      1 - B,            B / 2  |
- *	2 |                 0,          0,                1  |
+ *	0 |   1-A-(A * B / 2),      B / 2,                0  |
+ *	1 |                 A,      1 - B,                0  |
+ *	2 |        A * B / 2 ,      B / 2,                1  |
  *
  */
 @Description("Ternary error model from SiFit paper")
-public class TernaryWithError extends Ternary implements DataTypeWithError {
+public class SiFitTernaryWithError extends Ternary implements DataTypeWithError {
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
 
@@ -37,7 +37,7 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     protected double[][] errorMatrix;
 
-    public TernaryWithError() {
+    public SiFitTernaryWithError() {
         super();
     }
 
@@ -56,14 +56,16 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     private void setupErrorMatrix(double alpha, double beta) {
         double[][] matrix = {
-                {1 - alpha - (alpha * beta / 2), alpha, alpha * beta / 2},
-                {beta / 2, 1 - beta, beta / 2},
-                {0, 0, 1}
+                {1 - alpha - (alpha * beta / 2), beta / 2, 0},
+                {alpha, 1 - beta, 0},
+                {alpha * beta / 2, beta / 2, 1}
         };
         errorMatrix = matrix;
     }
 
     public double getProbability(int observedState, int trueState) {
+        // if observed state is ?
+        // return new double[]{1.0 / 3, 1.0 / 3, 1.0 / 3};
         return errorMatrix[observedState][trueState];
     }
 
@@ -77,6 +79,6 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     @Override
     public String getTypeDescription() {
-        return "ternaryWithError";
+        return "sifitTernaryWithError";
     }
 }
