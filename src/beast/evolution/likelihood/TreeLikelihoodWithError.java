@@ -3,7 +3,6 @@ package beast.evolution.likelihood;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.datatype.DataTypeWithError;
-import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Node;
 
 public class TreeLikelihoodWithError extends TreeLikelihood {
@@ -34,7 +33,7 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
      * @return the taxon index of the given taxon name for accessing its sequence data in the given alignment,
      *         or -1 if the taxon is not in the alignment.
      */
-    private int getTaxonIndex(String taxon, Alignment data) {
+    protected int getTaxonIndex(String taxon, Alignment data) {
         int taxonIndex = data.getTaxonIndex(taxon);
         if (taxonIndex == -1) {
             if (taxon.startsWith("'") || taxon.startsWith("\"")) {
