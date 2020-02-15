@@ -3,7 +3,7 @@ package beast.evolution.datatype;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
-public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
+public class SiFitTernaryWithErrorSampled extends DataTypeWithErrorBase {
 
     int[][] x = {
             {0},
@@ -12,7 +12,7 @@ public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
             {0, 1, 2},
     };
 
-    public TernaryWithErrorSampled() {
+    public SiFitTernaryWithErrorSampled() {
         stateCount = 3;
         mapCodeToStateSet = x;
         codeLength = 1;
@@ -60,7 +60,6 @@ public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
     }
 
     public double[] getProbabilities(int observedState) {
-        setupErrorMatrix();
         double[] prob = new double[errorMatrix.length];
         for (int i = 0; i < errorMatrix.length; i++) {
             prob[i] = getProbability(observedState, i);
@@ -70,6 +69,6 @@ public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
 
     @Override
     public String getTypeDescription() {
-        return "ternaryWithErrorSampled";
+        return "sifitTernaryWithErrorSampled";
     }
 }

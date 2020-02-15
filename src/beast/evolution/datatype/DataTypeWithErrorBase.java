@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public abstract class DataTypeWithErrorBase extends CalculationNode implements DataTypeWithError {
-
+	// code duplicated from DataType.Base
     public int stateCount;
     public String codeMap;
     public int codeLength;
@@ -16,13 +16,15 @@ public abstract class DataTypeWithErrorBase extends CalculationNode implements D
 
     @Override
     public void initAndValidate() {
-		// initialize base 
+        // init base
         if (mapCodeToStateSet != null) {
             if (mapCodeToStateSet.length != codeMap.length() / codeLength) {
                 throw new IllegalArgumentException("codeMap and mapCodeToStateSet have incompatible lengths");
             }
         }
     }
+
+    // Property getters
 
     /**
      * size of the state space *
