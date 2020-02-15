@@ -1,5 +1,6 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
