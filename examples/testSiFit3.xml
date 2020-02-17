@@ -13,7 +13,7 @@
     <!-- Example diploid sequence alignment                 -->
     <!-- number of taxa = 3                                 -->
     <!-- nchar = 20                                         -->
-    <data id='alignment' dataType='SiFitTernaryWithError'>
+    <data id='alignment' dataType='siFitTernaryWithError'>
         <sequence taxon='A'>
             00000???202010001000
         </sequence>
