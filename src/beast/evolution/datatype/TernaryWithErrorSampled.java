@@ -1,41 +1,38 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
-@Description("Binary error model from SiFit paper with fixed error rates")
-public class BinaryWithError extends Binary implements DataTypeWithError {
+public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
+    final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "epsilon parameter in ternary error model (total error probability)", Input.Validate.REQUIRED);
 
-    final public Input<RealParameter> alphaInput = new Input<>("alpha", "false positive probability", Input.Validate.REQUIRED);
-    final public Input<RealParameter> betaInput = new Input<>("beta", "false negative probability",  Input.Validate.REQUIRED);
-
-    private RealParameter alpha;
-    private RealParameter beta;
+    private RealParameter epsilon;
 
     protected double[][] errorMatrix;
 
-    public BinaryWithError() {
+    public TernaryWithErrorSampled() {
         super();
     }
 
     @Override
     public void initAndValidate() {
+        // init base
         super.initAndValidate();
-        alpha = alphaInput.get();
-        beta = betaInput.get();
+        // init error parameters
+        epsilon = epsilonInput.get();
         setupErrorMatrix();
     }
 
     @Override
     public void setupErrorMatrix() {
-        setupErrorMatrix(alpha.getValue(), beta.getValue());
+        setupErrorMatrix(epsilon.getValue());
     }
 
-    private void setupErrorMatrix(double alpha, double beta) {
+    private void setupErrorMatrix(double epsilon) {
         double[][] matrix = {
-                {1 - alpha, beta},
-                {alpha, 1 - beta}
+                {1 - epsilon, epsilon / 2, 0},
+				{epsilon, 1 - epsilon, epsilon},
+				{0, epsilon / 2, 1 - epsilon}
         };
         errorMatrix = matrix;
     }
@@ -54,6 +51,6 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
 
     @Override
     public String getTypeDescription() {
-        return "binaryWithError";
+        return "ternaryWithErrorSampled";
     }
 }

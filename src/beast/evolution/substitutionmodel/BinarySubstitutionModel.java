@@ -7,41 +7,23 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 /**
- * Implements the two state SiFit model of genotype substitution from Zafar et al. (2017)
- *
- * SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.
- * https://doi.org/10.1186/s13059-017-1311-2
- *
- * Q matrix
- *              0           1
- *	0 |        -1,          1  |
- *	1 | (D+L) / 2, -(D+L) / 2  |
- *
- * with stationary distribution
- *
- *  x = 1 + (D+L) / 2
- *
- *  pi0 = (D+L) / (2 * x)
- *  pi1 = 1 / (x)
+ * Implements a general binary substitution model
  */
-public class SiFit2 extends GeneralSubstitutionModel {
-    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
+public class BinarySubstitutionModel extends GeneralSubstitutionModel {
+    final public Input<RealParameter> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
 
-    private RealParameter lambdaD;
-    private RealParameter lambdaL;
+    private RealParameter lambda;
 
     protected double[] frequencies;
 
-    public SiFit2() {
+    public BinarySubstitutionModel() {
         ratesInput.setRule(Input.Validate.OPTIONAL);
         frequenciesInput.setRule(Input.Validate.OPTIONAL);
     }
 
     @Override
     public void initAndValidate() {
-        lambdaD = lambdaDInput.get();
-        lambdaL = lambdaLInput.get();
+        lambda = lambdaInput.get();
         updateMatrix = true;
         nrOfStates = 2;
         rateMatrix = new double[nrOfStates][nrOfStates];
@@ -58,15 +40,14 @@ public class SiFit2 extends GeneralSubstitutionModel {
 
     @Override
     protected void setupRateMatrix() {
-        setupRateMatrix(lambdaD.getValue(), lambdaL.getValue());
+        setupRateMatrix(lambda.getValue());
     }
 
     // instantaneous matrix Q
-    private void setupRateMatrix(double lambdaD, double lambdaL) {
-        double lambdaSum = lambdaD + lambdaL;
+    private void setupRateMatrix(double lambda) {
         rateMatrix = new double[][] {
                 {-1, 1},
-                {lambdaSum / 2, -lambdaSum / 2}
+                {lambda, -lambda}
         };
         normalize(rateMatrix);
     }
@@ -86,14 +67,12 @@ public class SiFit2 extends GeneralSubstitutionModel {
     }
 
     protected void setupFrequencies() {
-        setupFrequencies(lambdaD.getValue(), lambdaL.getValue());
+        setupFrequencies(lambda.getValue());
     }
 
-    private void setupFrequencies(double lambdaD, double lambdaL) {
-        double lambdaSum = lambdaD + lambdaL;
-        double x = 1 + lambdaSum / 2;
-        double pi0 = lambdaSum / (2 * x);
-        double pi1 = 1 / x;
+    private void setupFrequencies(double lambda) {
+        double pi0 = lambda / (lambda + 1);
+        double pi1 = 1 / (lambda + 1);
         frequencies = new double[] {pi0, pi1};
     }
 

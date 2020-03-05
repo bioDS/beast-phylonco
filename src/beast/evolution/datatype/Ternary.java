@@ -1,6 +1,6 @@
 package beast.evolution.datatype;
 
-public class Ternary  extends DataType.Base  {
+public class Ternary extends DataType.Base  {
 
     int[][] x = {
             {0},

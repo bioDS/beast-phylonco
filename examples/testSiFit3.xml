@@ -1,22 +1,19 @@
 <beast version='2.0'
        namespace='
-            alignment:
-            datatype:
-            substitutionmodel:
-            beast.evolution.alignment:
             beast.core:
-            beast.evolution.tree.coalescent:
             beast.core.util:
+            beast.evolution.alignment:
+            beast.evolution.tree.coalescent:
             beast.evolution.nuc:
             beast.evolution.operators:
             beast.evolution.sitemodel:
             beast.evolution.substitutionmodel:
             beast.evolution.likelihood'>
 
-    <!-- Simulated diploid sequence alignment               -->
+    <!-- Example diploid sequence alignment                 -->
     <!-- number of taxa = 3                                 -->
     <!-- nchar = 20                                         -->
-    <data id='alignment' dataType='ternaryWithError'>
+    <data id='alignment' dataType='siFitTernaryWithError'>
         <sequence taxon='A'>
             00000???202010001000
         </sequence>
@@ -50,11 +47,12 @@
 
     <tree id='tree'/>
 
-    <!-- The initial tree (upgma or coalescent)             -->
+    <!-- The initial tree as upgma                          -->
     <tree spec='beast.util.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
         <taxa idref='alignment'/>
     </tree>
 
+    <!-- The initial tree as newick string                  -->
     <tree spec='beast.util.TreeParser' id='newickTree' IsLabelledNewick='true' taxa='@alignment'
           initial='@tree' newick='((A:0.5, B:0.5):0.5, C:1);'/>
 

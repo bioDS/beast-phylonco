@@ -4,9 +4,9 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
-@Description("Binary error model from SiFit paper with fixed error rates")
-public class BinaryWithError extends Binary implements DataTypeWithError {
-
+@Description("Binary error model with sampled error rates")
+public class BinaryWithErrorSampled extends DataTypeWithErrorBase {
+	
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "false positive probability", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "false negative probability",  Input.Validate.REQUIRED);
 
@@ -15,13 +15,15 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
 
     protected double[][] errorMatrix;
 
-    public BinaryWithError() {
+    public BinaryWithErrorSampled() {
         super();
     }
 
     @Override
     public void initAndValidate() {
+        // init base
         super.initAndValidate();
+        // init error parameters
         alpha = alphaInput.get();
         beta = betaInput.get();
         setupErrorMatrix();
@@ -54,6 +56,6 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
 
     @Override
     public String getTypeDescription() {
-        return "binaryWithError";
+        return "binaryWithErrorSampled";
     }
 }

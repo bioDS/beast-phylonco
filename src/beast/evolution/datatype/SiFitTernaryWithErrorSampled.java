@@ -1,34 +1,24 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
-/**
- * Implements the SiFit error model for ternary data from Zafar et al. (2017)
- *
- * SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.
- * https://doi.org/10.1186/s13059-017-1311-2
- *
- * The three states
- *  0 = Homozygous reference     (2 non-mutant alleles)
- *  1 = Heterozygous             (1 mutant allele)
- *  2 = Homozygous non-reference (2 mutant alleles)
- *  ? = Missing data             (0, 1 or 2 mutant alleles)
- *
- * with error parameters
- *  A = False positive rate
- *  B = False negative rate
- *
- * and error matrix
- *                      0           1                 2
- *	0 |   1-A-(A * B / 2),          A,        A * B / 2  |
- *	1 |             B / 2,      1 - B,            B / 2  |
- *	2 |                 0,          0,                1  |
- *
- */
-@Description("Ternary error model from SiFit paper")
-public class TernaryWithError extends Ternary implements DataTypeWithError {
+public class SiFitTernaryWithErrorSampled extends DataTypeWithErrorBase {
+
+    int[][] x = {
+            {0},
+            {1},
+            {2},
+            {0, 1, 2},
+    };
+
+    public SiFitTernaryWithErrorSampled() {
+        stateCount = 3;
+        mapCodeToStateSet = x;
+        codeLength = 1;
+        codeMap = "012" + MISSING_CHAR;
+    }
+
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "alpha parameter in SiFit Ternary model", Input.Validate.REQUIRED);
     final public Input<RealParameter> betaInput = new Input<>("beta", "beta parameter in SiFit Ternary model",  Input.Validate.REQUIRED);
 
@@ -37,13 +27,11 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     protected double[][] errorMatrix;
 
-    public TernaryWithError() {
-        super();
-    }
-
     @Override
     public void initAndValidate() {
+        // init base
         super.initAndValidate();
+        // init error parameters
         alpha = alphaInput.get();
         beta = betaInput.get();
         setupErrorMatrix();
@@ -56,15 +44,19 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     private void setupErrorMatrix(double alpha, double beta) {
         double[][] matrix = {
-                {1 - alpha - (alpha * beta / 2), alpha, alpha * beta / 2},
-                {beta / 2, 1 - beta, beta / 2},
-                {0, 0, 1}
+                {1 - alpha - (alpha * beta / 2), beta / 2, 0},
+                {alpha, 1 - beta, 0},
+                {alpha * beta / 2, beta / 2, 1}
         };
         errorMatrix = matrix;
     }
 
     public double getProbability(int observedState, int trueState) {
-        return errorMatrix[observedState][trueState];
+        if (isAmbiguousCode(observedState)) {
+            return 1.0 / stateCount;
+        } else {
+            return errorMatrix[observedState][trueState];
+        }
     }
 
     public double[] getProbabilities(int observedState) {
@@ -77,6 +69,6 @@ public class TernaryWithError extends Ternary implements DataTypeWithError {
 
     @Override
     public String getTypeDescription() {
-        return "ternaryWithError";
+        return "sifitTernaryWithErrorSampled";
     }
 }
