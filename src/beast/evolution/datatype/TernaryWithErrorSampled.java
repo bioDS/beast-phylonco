@@ -10,8 +10,18 @@ public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
 
     protected double[][] errorMatrix;
 
+    int[][] x = {
+            {0},
+            {1},
+            {2},
+            {0, 1, 2},
+    };
+
     public TernaryWithErrorSampled() {
-        super();
+        stateCount = 3;
+        mapCodeToStateSet = x;
+        codeLength = 1;
+        codeMap = "012" + MISSING_CHAR;
     }
 
     @Override
@@ -38,7 +48,11 @@ public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
     }
 
     public double getProbability(int observedState, int trueState) {
-        return errorMatrix[observedState][trueState];
+        if (isAmbiguousCode(observedState)) {
+            return 1.0 / stateCount;
+        } else {
+            return errorMatrix[observedState][trueState];
+        }
     }
 
     public double[] getProbabilities(int observedState) {

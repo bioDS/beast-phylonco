@@ -41,7 +41,11 @@ public class BinaryWithError extends Binary implements DataTypeWithError {
     }
 
     public double getProbability(int observedState, int trueState) {
-        return errorMatrix[observedState][trueState];
+        if (isAmbiguousCode(observedState)) {
+            return 1.0 / stateCount;
+        } else {
+            return errorMatrix[observedState][trueState];
+        }
     }
 
     public double[] getProbabilities(int observedState) {

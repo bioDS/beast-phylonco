@@ -64,9 +64,11 @@ public class SiFitTernaryWithError extends Ternary implements DataTypeWithError 
     }
 
     public double getProbability(int observedState, int trueState) {
-        // if observed state is ?
-        // return new double[]{1.0 / 3, 1.0 / 3, 1.0 / 3};
-        return errorMatrix[observedState][trueState];
+        if (isAmbiguousCode(observedState)) {
+            return 1.0 / stateCount;
+        } else {
+            return errorMatrix[observedState][trueState];
+        }
     }
 
     public double[] getProbabilities(int observedState) {

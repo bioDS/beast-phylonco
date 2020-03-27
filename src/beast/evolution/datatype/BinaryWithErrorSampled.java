@@ -15,8 +15,18 @@ public class BinaryWithErrorSampled extends DataTypeWithErrorBase {
 
     protected double[][] errorMatrix;
 
+    int[][] x = {
+            {0},  // 0
+            {1},  // 1
+            {0, 1}, // -
+            {0, 1}, // ?
+    };
+
     public BinaryWithErrorSampled() {
-        super();
+        stateCount = 2;
+        mapCodeToStateSet = x;
+        codeLength = 1;
+        codeMap = "01" + GAP_CHAR + MISSING_CHAR;
     }
 
     @Override
@@ -43,7 +53,11 @@ public class BinaryWithErrorSampled extends DataTypeWithErrorBase {
     }
 
     public double getProbability(int observedState, int trueState) {
-        return errorMatrix[observedState][trueState];
+        if (isAmbiguousCode(observedState)) {
+            return 1.0 / stateCount;
+        } else {
+            return errorMatrix[observedState][trueState];
+        }
     }
 
     public double[] getProbabilities(int observedState) {
