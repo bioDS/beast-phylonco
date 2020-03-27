@@ -1,8 +1,14 @@
 # artifacts
 *.iml
 src/META-INF/
+out/
 
 # build directory
 build
 # idea directory
 .idea
+
+# output files
+*.log
+*.trees
+*.state
