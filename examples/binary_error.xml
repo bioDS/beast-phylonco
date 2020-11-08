@@ -280,7 +280,7 @@
         <operator id="yuleModelWide" spec="Exchange" isNarrow="false" tree="@tree" weight="3.0"/>
         <operator id="yuleModelWilsonBalding" spec="WilsonBalding" tree="@tree" weight="3.0"/>
 
-        <logger logEvery='1000' fileName='binary_error_fixed.$(seed).log'>
+        <logger logEvery='1000' fileName='binary_error.$(seed).log'>
             <model idref='likelihood'/>
             <log idref='likelihood'/>
             <log idref='subsModel.lambda'/>
@@ -290,7 +290,7 @@
             <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
         </logger>
 
-        <logger logEvery='1000' fileName='binary_error_fixed.$(seed).trees'>
+        <logger logEvery='1000' fileName='binary_error.$(seed).trees'>
             <log idref='tree'/>
         </logger>
 
