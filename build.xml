@@ -10,8 +10,11 @@
     </description>
 
     <!-- set global properties for this build-->
-    <property name="pkg" value="phylonco"/>
-    <property name="version" value="1.0.0" />
+    <xmlproperty file="version.xml" collapseAttributes="true"/>
+    <property name="package_name" value="${addon.name}"/>
+    <property name="package_version" value="v${addon.version}"/>
+    <property name="package_full" value="${package_name}.${package_version}"/>    
+
     <property name="src" location="src" />
     <property name="build" location="build" />
     <property name="lib" location="lib" />
@@ -80,12 +83,12 @@
     </target>
 
   <!-- make the phylonco.jar -->
-    <target name="dist_all" depends="compile_all" description="create ${pkg} jar">
+    <target name="dist_all" depends="compile_all" description="create ${package_full} jar">
         <!-- Create the distribution directory -->
-        <echo message="Building ${pkg}.jar"/>
+        <echo message="Building ${package_full}.jar"/>
         <mkdir dir="${dist}" />
         <!-- Put everything in ${build} into the beast.jar file -->
-        <jar jarfile="${dist}/${pkg}.jar">
+        <jar jarfile="${dist}/${package_full}.jar">
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
                 <attribute name="Main-Class" value="${main_class_BEAST}" />
@@ -108,7 +111,7 @@
             <zipgroupfileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar" />
             <zipgroupfileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar"/>
         </jar>
-        <jar jarfile="${dist}/${pkg}.src.jar">
+        <jar jarfile="${dist}/${package_full}.src.jar">
             <fileset dir="${src}">
                 <include name="beast/**/*.java" />
                 <include name="test/**/*.java" />
@@ -117,7 +120,7 @@
                 <include name="org/**/*.class" />
             </fileset>
         </jar>
-        <jar jarfile="${dist}/${pkg}.addon.jar">
+        <jar jarfile="${dist}/${package_name}.addon.${package_version}.jar">
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
             </manifest>
@@ -133,7 +136,7 @@
 
     <!-- run beast.jar -->
     <target name="run">
-        <java jar="${dist}/${pkg}.jar" fork="true" />
+        <java jar="${dist}/${package_full}.jar" fork="true" />
     </target>
 
     <!-- JUnit test -->
@@ -168,7 +171,7 @@
 
     <target name="addon"
         depends="build_jar_all_nojunit"
-        description="release BEAST 2 package version of ${pkg}">
+        description="release BEAST 2 package version of ${package_full}">
         <delete dir="${add_on_dir}" />
         <!-- Create the release directory -->
         <mkdir dir="${add_on_dir}" />
@@ -176,10 +179,10 @@
         <mkdir dir="${add_on_dir}/templates" />
         <mkdir dir="${add_on_dir}/examples" />
         <copy todir="${add_on_dir}/lib">
-            <fileset dir="${dist}" includes="${pkg}.addon.jar" />
+            <fileset dir="${dist}" includes="${package_name}.addon.${package_version}.jar" />
         </copy>
         <copy todir="${add_on_dir}">
-            <fileset dir="${dist}" includes="${pkg}.src.jar" />
+            <fileset dir="${dist}" includes="${package_full}.src.jar" />
         </copy>
         <copy todir="${add_on_dir}">
             <fileset file="version.xml"/>
@@ -190,7 +193,7 @@
         <copy todir="${add_on_dir}/templates">
             <fileset file="templates/*.xml" />
         </copy>
-        <jar jarfile="${dist}/${pkg}.addon.zip">
+        <jar jarfile="${dist}/${package_name}.addon.${package_version}.zip">
             <fileset dir="${add_on_dir}">
             <include name="**/*" />
             </fileset>
