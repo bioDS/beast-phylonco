@@ -7,8 +7,8 @@ import beast.core.parameter.RealParameter;
 @Description("Binary error model with sampled error parameters as false positive and false negative probabilities")
 public class BinaryWithErrorSampled extends DataTypeWithErrorBase {
 	
-    final public Input<RealParameter> alphaInput = new Input<>("alpha", "false positive probability", Input.Validate.REQUIRED);
-    final public Input<RealParameter> betaInput = new Input<>("beta", "false negative probability",  Input.Validate.REQUIRED);
+    final public Input<RealParameter> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);
+    final public Input<RealParameter> betaInput = new Input<>("beta", "the false negative probability",  Input.Validate.REQUIRED);
 
     private RealParameter alpha;
     private RealParameter beta;
