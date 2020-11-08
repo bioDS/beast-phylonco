@@ -1,14 +1,16 @@
 package beast.evolution.datatype;
 
 import beast.core.CalculationNode;
+import beast.core.Description;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Description("Base class for Data type and error model with sampled error parameters")
 public abstract class DataTypeWithErrorBase extends CalculationNode implements DataTypeWithError {
-	// code duplicated from DataType.Base
+    // code duplicated from DataType.Base
     public int stateCount;
     public String codeMap;
     public int codeLength;

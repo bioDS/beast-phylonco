@@ -1,8 +1,10 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
+@Description("Ternary error model from SiFit paper with sampled error parameters")
 public class SiFitTernaryWithErrorSampled extends DataTypeWithErrorBase {
 
     int[][] x = {

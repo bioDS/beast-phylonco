@@ -4,7 +4,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
-@Description("Binary error model from SiFit paper with fixed error rates")
+@Description("Binary error model from SiFit paper with fixed error parameters as false positive and false negative probabilities")
 public class BinaryWithError extends Binary implements DataTypeWithError {
 
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "false positive probability", Input.Validate.REQUIRED);

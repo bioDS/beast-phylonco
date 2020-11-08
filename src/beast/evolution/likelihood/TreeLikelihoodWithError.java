@@ -1,10 +1,12 @@
 package beast.evolution.likelihood;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.datatype.DataTypeWithError;
 import beast.evolution.tree.Node;
 
+@Description("Tree likelihood calculation with error models")
 public class TreeLikelihoodWithError extends TreeLikelihood {
 
     final public Input<DataTypeWithError> errorModelInput = new Input<>("errorModel", "error model to use for partials");

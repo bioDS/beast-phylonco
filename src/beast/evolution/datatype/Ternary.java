@@ -1,5 +1,8 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
+
+@Description("Ternary data type")
 public class Ternary extends DataType.Base  {
 
     int[][] x = {

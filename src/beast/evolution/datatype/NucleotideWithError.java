@@ -1,8 +1,10 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
+@Description("Nucleotide error model to model sequencing error at tips with a fixed error probability")
 public class NucleotideWithError extends Nucleotide implements DataTypeWithError{
 
     final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "epsilon parameter for error", Input.Validate.REQUIRED);

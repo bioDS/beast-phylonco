@@ -1,5 +1,6 @@
 package beast.evolution.substitutionmodel;
 
+import beast.core.Description;
 import beast.core.parameter.RealParameter;
 import beast.core.Input;
 import beast.evolution.datatype.Binary;
@@ -24,6 +25,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
  *  pi0 = (D+L) / (2 * x)
  *  pi1 = 1 / (x)
  */
+@Description("SiFit binary substitution model")
 public class SiFit2 extends GeneralSubstitutionModel {
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);

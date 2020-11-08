@@ -1,8 +1,10 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 
+@Description("Ternary error model with sampled error parameter")
 public class TernaryWithErrorSampled extends DataTypeWithErrorBase {
     final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "epsilon parameter in ternary error model (total error probability)", Input.Validate.REQUIRED);
 

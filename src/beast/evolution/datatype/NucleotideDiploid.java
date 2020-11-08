@@ -1,7 +1,9 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.evolution.datatype.DataType;
 
+@Description("Diploid nucleotide data type")
 public class NucleotideDiploid extends DataType.Base {
     int[][] x = {
             {0}, // AA - A

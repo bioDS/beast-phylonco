@@ -1,7 +1,9 @@
 package beast.evolution.datatype;
 
+import beast.core.Description;
 import beast.evolution.datatype.DataType;
 
+@Description("Data type and error model where the error parameters can be sampled or fixed")
 public interface DataTypeWithError extends DataType {
     /**
      * returns the probability of observed state given the true state based on the error model
