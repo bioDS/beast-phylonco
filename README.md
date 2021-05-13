@@ -12,9 +12,17 @@ The current release has the following features:
 
 * SiFit substitution models
 
+## How to run
+
+Download the executable jar file `phylonco.vx.x.x.jar`.
+
+Execute the jar, and set the input file to `filepath/examples/*.xml`.
+
 ## How to build
 
-To build the package manually, use `ant addon`
+Build BEAST 2 using `ant build_all_BEAST` for Linux/Mac or `ant windows` for Windows.
+
+Then build BEAST Labs and Phylonco using `ant addon`.
 
 ## References
 1. Bouckaert at al. (2019). [BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis.](https://doi.org/10.1371/journal.pcbi.1006650)
