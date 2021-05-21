@@ -1,10 +1,9 @@
 package beast.evolution.datatype;
 
 import beast.core.Description;
-import beast.evolution.datatype.DataType;
 
-@Description("Diploid nucleotide data type")
-public class NucleotideDiploid extends DataType.Base {
+@Description("Unphased diploid nucleotide data type")
+public class NucleotideDiploid10 extends DataType.Base {
     int[][] x = {
             {0}, // AA - A
             {1}, // AC - M
@@ -16,19 +15,20 @@ public class NucleotideDiploid extends DataType.Base {
             {7}, // GG - G
             {8}, // GT - K
             {9}, // TT - T
-            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // any base - ?
+            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}, // gap -
+            {0, 1, 2, 3, 4, 5, 6, 7, 8, 9} // missing ?
     };
 
-    public NucleotideDiploid() {
+    public NucleotideDiploid10() {
         stateCount = 10;
         mapCodeToStateSet = x;
         codeLength = 1;
-        codeMap = "AMRWCSYGKT" + MISSING_CHAR;
+        codeMap = "AMRWCSYGKT" + GAP_CHAR + + MISSING_CHAR;
     }
 
     @Override
     public String getTypeDescription() {
-        return "nucleotideDiploid";
+        return "nucleotideDiploid10";
     }
 
 }

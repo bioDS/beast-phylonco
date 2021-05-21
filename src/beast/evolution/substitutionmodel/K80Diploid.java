@@ -4,7 +4,7 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideDiploid;
+import beast.evolution.datatype.NucleotideDiploid10;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 
 @Description("SiFit diploid substitution model combined with Kimura model")
@@ -135,7 +135,7 @@ public class K80Diploid extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof NucleotideDiploid;
+        return dataType instanceof NucleotideDiploid10;
     }
 
 }
