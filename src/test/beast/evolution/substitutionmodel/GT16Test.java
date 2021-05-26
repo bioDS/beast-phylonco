@@ -11,7 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 public class GT16Test {
 
-    private static double DELTA = 1e-10;
+    private static double DELTA = 1e-8;
 
     private GT16 gt16;
     private int nrOfStates = 16;
@@ -82,14 +82,13 @@ public class GT16Test {
     public void testTransitionLong() {
         double t = 10;
 
-        Double p = 1.0 / nrOfStates;
-
-        Double[] pi = {p, p, p, p, p, p, p, p, p, p, p, p, p, p, p, p};
+        Double[] pi = new Double[nrOfStates];
+        Arrays.fill(pi, 1.0 / nrOfStates);
 
         // rates AC, AG, AT, CG, CT, GT
         Double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 
-//        setupModel(pi, rates);
+        setupModel(pi, rates);
 
         double[] expected = new double[] {
             0.07211852, 0.06463233, 0.06567749, 0.06612057, 0.06463233, 0.05792324, 0.05885991, 0.05925699, 0.06567749, 0.05885991, 0.05981172, 0.06021523, 0.06612057, 0.05925699, 0.06021523, 0.06062146,
@@ -112,8 +111,8 @@ public class GT16Test {
 
         double[] observed = new double[nrOfStates * nrOfStates];
 
-//        model.getTransitionProbabilities(null, t, 0, 1, observed);
-//        assertArrayEquals(expected, observed, DELTA);
+        gt16.getTransitionProbabilities(null, t, 0, 1, observed);
+        assertArrayEquals(expected, observed, DELTA);
     }
 
 }
