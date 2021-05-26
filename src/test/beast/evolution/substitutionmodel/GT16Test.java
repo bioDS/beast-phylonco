@@ -51,7 +51,24 @@ public class GT16Test {
      * rateCT <- rates[5]
      * rateGT <- rates[6]
      *
-     * Q <- matrix(c(), nrow=16, byrow=T)
+     * Q <- matrix(c(
+     * 0, rateAC, rateAG, rateAT, rateAC, 0, 0, 0, rateAG, 0, 0, 0, rateAT, 0, 0, 0,
+     * rateAC, 0, rateCG, rateCT, 0, rateAC, 0, 0, 0, rateAG, 0, 0, 0, rateAT, 0, 0,
+     * rateAG, rateCG, 0, rateGT, 0, 0, rateAC, 0, 0, 0, rateAG, 0, 0, 0, rateAT, 0,
+     * rateAT, rateCT, rateGT, 0, 0, 0, 0, rateAC, 0, 0, 0, rateAG, 0, 0, 0, rateAT,
+     * rateAC, 0, 0, 0, 0, rateAC, rateAG, rateAT, rateCG, 0, 0, 0, rateCT, 0, 0, 0,
+     * 0, rateAC, 0, 0, rateAC, 0, rateCG, rateCT, 0, rateCG, 0, 0, 0, rateCT, 0, 0,
+     * 0, 0, rateAC, 0, rateAG, rateCG, 0, rateGT, 0, 0, rateCG, 0, 0, 0, rateCT, 0,
+     * 0, 0, 0, rateAC, rateAT, rateCT, rateGT, 0, 0, 0, 0, rateCG, 0, 0, 0, rateCT,
+     * rateAG, 0, 0, 0, rateCG, 0, 0, 0, 0, rateAC, rateAG, rateAT, rateGT, 0, 0, 0,
+     * 0, rateAG, 0, 0, 0, rateCG, 0, 0, rateAC, 0, rateCG, rateCT, 0, rateGT, 0, 0,
+     * 0, 0, rateAG, 0, 0, 0, rateCG, 0, rateAG, rateCG, 0, rateGT, 0, 0, rateGT, 0,
+     * 0, 0, 0, rateAG, 0, 0, 0, rateCG, rateAT, rateCT, rateGT, 0, 0, 0, 0, rateGT,
+     * rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, 0, 0, 0, 0, rateAC, rateAG, rateAT,
+     * 0, rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, 0, 0, rateAC, 0, rateCG, rateCT,
+     * 0, 0, rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, 0, rateAG, rateCG, 0, rateGT,
+     * 0, 0, 0, rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, rateAT, rateCT, rateGT, 0
+     * ), nrow=16, byrow=T)
      *
      * d <- -1 * rowSums(Q)
      * diag(Q) <- d
