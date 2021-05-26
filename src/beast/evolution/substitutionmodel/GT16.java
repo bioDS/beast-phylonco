@@ -45,7 +45,6 @@ public class GT16 extends GeneralSubstitutionModel {
         updateMatrix = true;
         nrOfStates = 16;
         rateMatrix = new double[nrOfStates][nrOfStates];
-
         try {
             eigenSystem = createEigenSystem();
         } catch(Exception e) {
@@ -54,11 +53,7 @@ public class GT16 extends GeneralSubstitutionModel {
     }
 
     @Override
-    protected void setupRelativeRates() {
-        relativeRates[0] = rateAC.getValue(); // AA -> AC
-        relativeRates[1] = rateAG.getValue(); // AA -> AG
-        relativeRates[2] = rateAT.getValue(); // AA -> AT
-    }
+    protected void setupRelativeRates() { }
 
     @Override
     protected void setupRateMatrix() {
@@ -77,9 +72,54 @@ public class GT16 extends GeneralSubstitutionModel {
     private void setupRateMatrixUnnormalized(double rateAC, double rateAG, double rateAT,
                                              double rateCG, double rateCT, double rateGT) {
         double[] pi = frequencies.getFreqs();
-        rateMatrix = new double[][] {
-
-        };
+        rateMatrix = new double[nrOfStates][nrOfStates];
+        int bases = 4;
+        for (int i = 0; i < nrOfStates; i++) {
+            for (int j = 0; j < nrOfStates; j++) {
+                double result = 0.0;
+                int fromFirst = i / bases; // first allele in from state
+                int fromSecond = i % bases; // second allele in from state
+                int toFirst = j / bases; // first allele in to state
+                int toSecond = j % bases; // second allele in to state
+                if (i != j && (fromFirst == toFirst || fromSecond == toSecond)) {
+                        int first, second;
+                        if (fromFirst == toFirst) {
+                            first = Math.min(fromSecond, toSecond);
+                            second = Math.max(fromSecond, toSecond);
+                        } else {
+                            first = Math.min(fromFirst, toFirst);
+                            second = Math.max(fromFirst, toFirst);
+                        }
+                        int orderedPair = first * 10 + second;
+                        switch (orderedPair) {
+                            case 1: // 01 - AC
+                                result = rateAC; // A -> C or C -> A
+                                break;
+                            case 2: // 02 - AG
+                                result = rateAG; // A -> G or G -> A
+                                break;
+                            case 3: // 03 - AT
+                                result = rateAT; // A -> T or T -> A
+                                break;
+                            case 12: // 12 - CG
+                                result = rateCG; // C -> G or G -> C
+                                break;
+                            case 13: // 13 - CT
+                                result = rateCT; // C -> T or T -> C
+                                break;
+                            case 23: // 23 - GT
+                                result = rateGT; // G -> T or T -> G
+                                break;
+                            default:
+                                result = 0.0;
+                                break;
+                        }
+                } else {
+                    result = 0.0; // not reachable in single mutation or diagonal
+                }
+                rateMatrix[i][j] = result;
+            }
+        }
         // calculate diagonal entries
         setupDiagonal(rateMatrix);
     }
@@ -88,9 +128,10 @@ public class GT16 extends GeneralSubstitutionModel {
         for (int i = 0; i < nrOfStates; i++) {
             double sum = 0;
             for (int j = 0; j < nrOfStates; j++) {
-                sum += rateMatrix[i][j];
+                if (i != j)
+                    sum += rateMatrix[i][j];
             }
-            rateMatrix[i][i] = -sum + rateMatrix[i][i];
+            rateMatrix[i][i] = -sum;
         }
     }
 
@@ -110,11 +151,6 @@ public class GT16 extends GeneralSubstitutionModel {
 
     protected void setupFrequencies() {
         frequencies.initAndValidate();
-    }
-
-    @Override
-    public double[] getFrequencies() {
-        return frequencies.getFreqs();
     }
 
     @Override
