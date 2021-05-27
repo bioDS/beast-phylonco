@@ -1,156 +1,96 @@
-<beast version='2.6'
-       namespace='
-            beast.core:
-            beast.core.util:
-            beast.evolution.alignment:
-            beast.evolution.tree.coalescent:
-            beast.evolution.nuc:
-            beast.evolution.operators:
-            beast.evolution.sitemodel:
-            beast.evolution.substitutionmodel:
-            beast.evolution.likelihood'>
+<beast version='2.0'
+       namespace='beast.evolution.alignment:beast.core:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood'>
 
-    <data id='alignment' dataType='nucleotideDiploid16'>
-        <sequence taxon='A'>
+
+    <!-- The sequence alignment                                                  -->
+    <!-- ntax=6 nchar=768                                                        -->
+    <!-- npatterns=69                                                            -->
+    <data id="alignment" dataType="nucleotideDiploid16">
+        <sequence taxon="human">
+            aaabbbcccdddeee
         </sequence>
-        <sequence taxon='B'>
+        <sequence taxon="chimp">
+            aaabbbcccdddeee
         </sequence>
-        <sequence taxon='C'>
-        </sequence>
+
     </data>
 
-    <!-- The GT16 substitution model parameters  -->
-    <parameter id='rateAC' lower='0.0' name='stateNode' value='1.0'/>
-    <parameter id='rateAG' lower='0.0' name='stateNode' value='1.0'/>
-    <parameter id='rateAT' lower='0.0' name='stateNode' value='1.0'/>
-    <parameter id='rateCG' lower='0.0' name='stateNode' value='1.0'/>
-    <parameter id='rateGT' lower='0.0' name='stateNode' value='1.0'/>
-    <parameter dimension='16' id='freqs' lower='0.0' name='stateNode' upper='1.0'
-               value='0.0625'/>
+    <!-- The GT16 substitution model             -->
+    <input spec='GT16' id='gt16'>
+        <rateAC idref='rateAC'/>
+        <rateAG idref='rateAG'/>
+        <rateAT idref='rateAT'/>
+        <rateCG idref='rateCG'/>
+        <rateCT idref='rateCT'/>
+        <rateGT idref='rateGT'/>
+        <frequencies id='freqs' spec='Frequencies'>
+            <data idref='alignment'/>
+        </frequencies>
+    </input>
 
-    <!-- The GT16 substitution model  -->
-    <substModel id='gt16' rateAC='@rateAC' rateAG='@rateAG'
-                rateAT='@rateAT' rateCG='@rateCG' rateGT='@rateGT'
-                spec='GT16'>
-        <parameter estimate='false' id='rateCT' lower='0.0' name='rateCT' value='1.0'/>
-        <frequencies frequencies='@freqs' id='estimatedFreqs'
-                     spec='Frequencies'/>
-    </substModel>
-
-    <!-- The site model -->
-    <input spec='SiteModel' id='siteModel'>
+    <!-- site model                                                              -->
+    <input spec='SiteModel' id="siteModel" gammaCategoryCount='1'>
         <substModel idref='gt16'/>
     </input>
 
+    <input spec='TreeLikelihood' id="treeLikelihood">
+        <data idref="alignment"/>
+        <tree idref="tree"/>
+        <siteModel idref="siteModel"/>
+    </input>
+
+    <parameter id="rateAC" value="1.0" lower="0.0"/>
+    <parameter id="rateAG" value="1.0" lower="0.0"/>
+    <parameter id="rateAT" value="1.0" lower="0.0"/>
+    <parameter id="rateCG" value="1.0" lower="0.0"/>
+    <parameter id="rateCT" value="1.0" lower="0.0"/>
+    <parameter id="rateGT" value="1.0" lower="0.0"/>
+
+
     <tree id='tree'/>
 
-    <!-- The initial tree as upgma                          -->
-    <tree spec='beast.util.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
+    <tree spec='beast.util.ClusterTree' id='upgmatree' clusterType='upgma' initial='@tree'>
         <taxa idref='alignment'/>
     </tree>
+    <tree spec='beast.evolution.tree.RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
+        <populationModel spec='ConstantPopulation'>
+            <popSize spec='parameter.RealParameter' value='1'/>
+        </populationModel>
+    </tree>
 
-    <run spec='MCMC' id='mcmc' chainLength='100000' preBurnin='10000'>
 
-        <init idref='upgmaTree'/>
+    <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
+
+        <init idref='coalescentSimulator'/>
         <distribution spec='CompoundDistribution' id='posterior'>
-            <distribution id='prior' spec='util.CompoundDistribution'>
-                <distribution birthDiffRate='@birthRate' id='YuleModel'
-                              spec='beast.evolution.speciation.YuleModel' tree='@ree'/>
-                <prior id='YuleBirthRatePrior' name='distribution' x='@birthRate'>
-                    <Uniform id='Uniform.0' name='distr' upper='Infinity'/>
-                </prior>
-                <prior id='RateACPrior' name='distribution' x='@rateAC'>
-                    <LogNormal id='LogNormalDistributionModel.0' name='distr'>
-                        <parameter estimate='false' id='RealParameter.0' name='M' value='0'/>
-                        <parameter estimate='false' id='RealParameter.01' lower='0.0' name='S' upper='5.0'
-                                   value='1.25'/>
-                    </LogNormal>
-                </prior>
-                <prior id='RateAGPrior.s:primate' name='distribution' x='@rateAG.s:primate'>
-                    <LogNormal id='LogNormalDistributionModel.01' name='distr'>
-                        <parameter estimate='false' id='RealParameter.02' name='M' value='0'/>
-                        <parameter estimate='false' id='RealParameter.03' lower='0.0' name='S' upper='5.0'
-                                   value='1.25'/>
-                    </LogNormal>
-                </prior>
-                <prior id='RateATPrior' name='distribution' x='@rateAT'>
-                    <LogNormal id='LogNormalDistributionModel.02' name='distr'>
-                        <parameter estimate='false' id='RealParameter.04' name='M' value='0'/>
-                        <parameter estimate='false' id='RealParameter.05' lower='0.0' name='S' upper='5.0'
-                                   value='1.25'/>
-                    </LogNormal>
-                </prior>
-                <prior id='RateCGPrior' name='distribution' x='@rateCG'>
-                    <LogNormal id='LogNormalDistributionModel.03' name='distr'>
-                        <parameter estimate='false' id='RealParameter.06' name='M' value='0'/>
-                        <parameter estimate='false' id='RealParameter.07' lower='0.0' name='S' upper='5.0'
-                                   value='1.25'/>
-                    </LogNormal>
-                </prior>
-                <prior id='RateGTPrior' name='distribution' x='@rateGT'>
-                    <LogNormal id='LogNormalDistributionModel.04' name='distr'>
-                        <parameter estimate='false' id='RealParameter.08' name='M' value='0'/>
-                        <parameter estimate='false' id='RealParameter.09' lower='0.0' name='S' upper='5.0'
-                                   value='1.25'/>
-                    </LogNormal>
-                </prior>
-            </distribution>
-            <distribution id='likelihood' idref='treeLikelihood'>
-                <data idref='alignment'/>
-                <tree idref='tree'/>
-                <siteModel idref='siteModel'/>
-                <branchRateModel id='StrictClock' spec='beast.evolution.branchratemodel.StrictClockModel'>
-                    <parameter estimate='false' id='clockRate' name='clock.rate' value='1.0'/>
-                </branchRateModel>
-            </distribution>
+            <!--<distribution spec='beast.math.distributions.Prior' x='@hky.kappa'>-->
+            <!--<distr spec='beast.math.distributions.OneOnX'/>-->
+            <!--</distribution>-->
+            <distribution id='likelihood' idref="treeLikelihood"/>
         </distribution>
 
-        <operator id='RateACScaler' parameter='@rateAC' scaleFactor='0.5' spec='ScaleOperator'
-                  weight='0.1'/>
-        <operator id='RateAGScaler' parameter='@rateAG' scaleFactor='0.5' spec='ScaleOperator'
-                  weight='0.1'/>
-        <operator id='RateATScaler' parameter='@rateAT' scaleFactor='0.5' spec='ScaleOperator'
-                  weight='0.1'/>
-        <operator id='RateCGScaler' parameter='@rateCG' scaleFactor='0.5' spec='ScaleOperator'
-                  weight='0.1'/>
-        <operator id='RateGTScaler.s:primate' parameter='@rateGT' scaleFactor='0.5' spec='ScaleOperator'
-                  weight='0.1'/>
-        <operator delta='0.01' id='FrequenciesExchanger' spec='DeltaExchangeOperator' weight='0.1'>
-            <parameter idref='freqs'/>
-        </operator>
+        <operator id='treeScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" tree="@tree"/>
+        <operator id='subtreeSlide' spec='SubtreeSlide' weight="5" gaussian="true" size="1.0" tree="@tree"/>
+        <operator id='uniform' spec='Uniform' weight="10" tree="@tree"/>
+        <operator id='narrow' spec='Exchange' isNarrow='true' weight="1" tree="@tree"/>
+        <operator id='wide' spec='Exchange' isNarrow='false' weight="1" tree="@tree"/>
+        <operator id='wilsonBalding' spec='WilsonBalding' weight="1" tree="@tree"/>
 
-        <operator id='YuleBirthRateScaler' parameter='@birthRate' scaleFactor='0.75'
-                  spec='ScaleOperator' weight='3.0'/>
-
-        <operator id='treeScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' tree='@tree'/>
-        <operator id='subtreeSlide' spec='SubtreeSlide' weight='5' gaussian='true' size='1.0' tree='@tree'/>
-        <operator id='uniform' spec='Uniform' weight='10' tree='@tree'/>
-        <operator id='narrow' spec='Exchange' isNarrow='true' weight='1' tree='@tree'/>
-        <operator id='wide' spec='Exchange' isNarrow='false' weight='1' tree='@tree'/>
-        <operator id='wilsonBalding' spec='WilsonBalding' weight='1' tree='@tree'/>
-
-        <logger logEvery='1000' fileName='testGT16.$(seed).log'>
+        <logger logEvery="10000" fileName="test.$(seed).log">
             <model idref='likelihood'/>
-            <log idref='likelihood'/>
-            <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
-            <log idref='birthRate'/>
+            <log idref="likelihood"/>
             <log idref='rateAC'/>
-            <log idref='rateAG'/>
-            <log idref='rateAT'/>
-            <log idref='rateCG'/>
-            <log idref='rateGT'/>
-            <log idref='freqs'/>
+            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
-
-        <logger logEvery='1000' fileName='testGT16.$(seed).trees'>
-            <log idref='tree'/>
+        <logger logEvery="10000" fileName="test.$(seed).trees">
+            <log idref="tree"/>
         </logger>
-
-        <logger logEvery='1000'>
+        <logger logEvery="10000">
             <model idref='likelihood'/>
-            <log idref='likelihood'/>
-            <ESS spec='ESS' name='log' arg='@likelihood'/>
-            
+            <log idref="likelihood"/>
+            <ESS spec='ESS' name='log' arg="@likelihood"/>
+            <log idref='rateAC'/>
+            <ESS spec='ESS' name='log' arg="@rateAC"/>
         </logger>
     </run>
 

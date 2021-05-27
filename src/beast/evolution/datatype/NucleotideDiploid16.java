@@ -35,7 +35,7 @@ public class NucleotideDiploid16 extends DataType.Base {
         stateCount = 16;
         mapCodeToStateSet = x;
         codeLength = 1;
-        codeMap = "0123456789abcdefMRWSYK" + GAP_CHAR + MISSING_CHAR;
+        codeMap = "0123456789ABCDEFMRWSYK" + GAP_CHAR + MISSING_CHAR;
     }
 
     @Override
