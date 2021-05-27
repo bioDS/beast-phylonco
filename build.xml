@@ -36,8 +36,6 @@
 
     <path id="classpath">
         <pathelement path="${build}"/>
-        <pathelement path="${beast2_classpath}"/>
-        <pathelement path="${beastlabs_classpath}"/>
         <fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
         <fileset dir="${beast2path}/lib" includes="jam.jar"/>
         <fileset dir="${beast2path}/lib" includes="beagle.jar"/>
@@ -45,6 +43,8 @@
         <fileset dir="${beast2path}/lib" includes="colt.jar"/>
         <fileset dir="${beast2path}/lib" includes="antlr-runtime-4.7.jar"/>
         <fileset dir="${beast2path}/lib" includes="commons-math3-3.1.1.jar"/>
+        <pathelement path="${beast2_classpath}"/>
+        <pathelement path="${beastlabs_classpath}"/>
     </path>
 
     <!-- start: make a build dir and sent a message-->
@@ -94,15 +94,12 @@
                 <attribute name="Main-Class" value="${main_class_BEAST}" />
             </manifest>
             <fileset dir="${build}">
-                <include name="beast/**/*.class" />
-                <include name="test/**/*.class" />
+                <include name="**/*.class" />
             </fileset>
             <fileset dir="${beast2_classpath}">
-                <include name="beast/**/*.class" />
-                <include name="beast/**/*.properties" />
-                <include name="beast/**/*.png" />
-                <include name="beagle/**/*.class" />
-                <include name="org/**/*.class" />
+                <include name="**/*.class" />
+                <include name="**/*.properties" />
+                <include name="**/*.png" />
             </fileset>
             <zipgroupfileset dir="${libBeast2}" includes="jam.jar" />
             <zipgroupfileset dir="${libBeast2}" includes="beagle.jar" />
@@ -113,11 +110,10 @@
         </jar>
         <jar jarfile="${dist}/${package_full}.src.jar">
             <fileset dir="${src}">
-                <include name="beast/**/*.java" />
-                <include name="test/**/*.java" />
-                <include name="beast/**/*.png" />
-                <include name="beast/**/*.xsl" />
-                <include name="org/**/*.class" />
+                <include name="**/*.java" />
+                <include name="**/*.png" />
+                <include name="**/*.xsl" />
+                <include name="**/*.class" />
             </fileset>
         </jar>
         <jar jarfile="${dist}/${package_name}.addon.${package_version}.jar">

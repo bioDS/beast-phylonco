@@ -62,7 +62,7 @@ public class GT16 extends GeneralSubstitutionModel {
         normalize();
     }
 
-    @Override
+    //@Override
     protected void setupRateMatrixUnnormalized() {
         setupRateMatrixUnnormalized(rateAC.getValue(), rateAG.getValue(), rateAT.getValue(),
                 rateCG.getValue(), rateCT.getValue(), rateGT.getValue());
