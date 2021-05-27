@@ -2,15 +2,13 @@
        namespace='beast.evolution.alignment:beast.core:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood'>
 
 
-    <!-- The sequence alignment                                                  -->
-    <!-- ntax=6 nchar=768                                                        -->
-    <!-- npatterns=69                                                            -->
+    <!-- Diploid sequence -->
     <data id="alignment" dataType="nucleotideDiploid16">
         <sequence taxon="human">
-            aaabbbcccdddeee
+            0123456789aaabbbcccdddeee
         </sequence>
         <sequence taxon="chimp">
-            aaabbbcccdddeee
+            0123456789aaabbbcccdddeee
         </sequence>
 
     </data>
