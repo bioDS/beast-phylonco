@@ -37,4 +37,6 @@ public abstract class ErrorModel extends CalculationNode {
     public void initAndValidate() {
 
     }
+
+    public abstract boolean canHandleDataType(DataType dataType);
 }
