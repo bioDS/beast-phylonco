@@ -11,8 +11,20 @@
        beast.evolution.sitemodel:
        beast.evolution.substitutionmodel:
        beast.evolution.likelihood:
+       beast.math.distributions:
        beast.util'>
 
+    <map name="prior" >beast.math.distributions.Prior</map>
+    <map name="Uniform" >beast.math.distributions.Uniform</map>
+    <map name="Exponential" >beast.math.distributions.Exponential</map>
+    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.math.distributions.Normal</map>
+    <map name="Beta" >beast.math.distributions.Beta</map>
+    <map name="Gamma" >beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+    <map name="Dirichlet" >beast.math.distributions.DirichletDistribution</map>
 
     <!-- Diploid sequence -->
     <data id="alignment" dataType="nucleotideDiploid16">
@@ -63,14 +75,26 @@
         <init idref='coalescentSimulator'/>
 
         <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution id="prior" spec="util.CompoundDistribution">
+                <prior id="ratePrior" name="distribution" x="@rates">
+                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                </prior>
+                <prior id="frequenciesPrior" name="distribution" x="@freqParameter">
+                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+                </prior>
+            </distribution>
+
             <distribution id='likelihood' idref="treeLikelihood"/>
         </distribution>
 
 
-        <!-- substitution model rates operator -->
-        <operator id='rateScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter='@rates'/>
+        <!-- GT16 substitution model rates operator -->
+        <operator id='rateExchanger' spec='DeltaExchangeOperator' weight="1" delta="0.01">
+            <parameter idref="rates"/>
+        </operator>
 
-        <operator id="frequenciesExchanger" spec="DeltaExchangeOperator" weight="0.1" delta="0.01">
+        <!-- GT16 substitution model frequencies operator -->
+        <operator id="frequenciesExchanger" spec="DeltaExchangeOperator" weight="1" delta="0.01">
             <parameter idref="freqParameter"/>
         </operator>
 
