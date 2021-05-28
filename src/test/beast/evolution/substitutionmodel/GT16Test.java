@@ -24,6 +24,18 @@ public class GT16Test {
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
 
+        RealParameter nucRates = new RealParameter(rates);
+        nucRates.setInputValue("keys", "AC AG AT CG CT GT");
+        nucRates.initAndValidate();
+//        for (int i = 0; i < 6; i++) {
+//            nucRates.setValue(i, rates[i]);
+//        }
+
+        gt16.initByName(
+                "nucRates", nucRates,
+                "frequencies", freqs
+        );
+        /*
         gt16.initByName(
                 "rateAC", new RealParameter(rates[0].toString()),
                 "rateAG", new RealParameter(rates[1].toString()),
@@ -33,6 +45,7 @@ public class GT16Test {
                 "rateGT", new RealParameter(rates[5].toString()),
                 "frequencies", freqs
         );
+        */
         nrOfStates = gt16.getStateCount();
     }
 
@@ -44,7 +57,7 @@ public class GT16Test {
      * t <- 10
      *
      * rates <- c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
-     * freqs <- rep(1/16, 16)
+     * pi <- rep(1/16, 16)
      *
      * rateAC <- rates[1]
      * rateAG <- rates[2]
@@ -72,9 +85,11 @@ public class GT16Test {
      * 0, 0, 0, rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, rateAT, rateCT, rateGT, 0
      * ), nrow=16, byrow=T)
      *
+     * Q <- sweep(Q, MARGIN=2, pi, `*`)
+     *
      * d <- -1 * rowSums(Q)
      * diag(Q) <- d
-     * beta <- as.vector(-1 / (freqs %*% d))
+     * beta <- as.vector(-1 / (pi %*% d))
      * expm(beta * Q * t)
      *
      */
@@ -123,7 +138,7 @@ public class GT16Test {
      * t <- 0.1
      *
      * rates <- c(1.0, 2.0, 3.0, 4.0, 5.0, 6.0)
-     * freqs <- rep(1/16, 16)
+     * pi <- rep(1/16, 16)
      *
      * rateAC <- rates[1]
      * rateAG <- rates[2]
@@ -151,9 +166,11 @@ public class GT16Test {
      * 0, 0, 0, rateAT, 0, 0, 0, rateCT, 0, 0, 0, rateGT, rateAT, rateCT, rateGT, 0
      * ), nrow=16, byrow=T)
      *
+     * Q <- sweep(Q, MARGIN=2, pi, `*`)
+     *
      * d <- -1 * rowSums(Q)
      * diag(Q) <- d
-     * beta <- as.vector(-1 / (freqs %*% d))
+     * beta <- as.vector(-1 / (pi %*% d))
      * expm(beta * Q * t)
      *
      */

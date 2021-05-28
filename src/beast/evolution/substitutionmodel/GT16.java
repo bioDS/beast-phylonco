@@ -8,6 +8,12 @@ import beast.evolution.datatype.NucleotideDiploid16;
 
 @Description("GT16 diploid substitution model from CellPhy paper")
 public class GT16 extends GeneralSubstitutionModel {
+
+    final public Input<RealParameter> nucRatesInput = new Input<>("nucRates", "rate parameters");
+
+    private RealParameter rates;
+
+    /*
     final public Input<RealParameter> rateACInput = new Input<>("rateAC", "the rate of A to C",  Input.Validate.REQUIRED);
     final public Input<RealParameter> rateAGInput = new Input<>("rateAG", "the rate of A to G",  Input.Validate.REQUIRED);
     final public Input<RealParameter> rateATInput = new Input<>("rateAT", "the rate of A to T",  Input.Validate.REQUIRED);
@@ -22,25 +28,31 @@ public class GT16 extends GeneralSubstitutionModel {
     private RealParameter rateCG; // rate CG
     private RealParameter rateCT; // rate CT
     private RealParameter rateGT; // rate GT
+    */
 
     public GT16() {
-        ratesInput.setRule(Input.Validate.OPTIONAL);
+        super.ratesInput.setRule(Input.Validate.OPTIONAL);
     }
 
     @Override
     public void initAndValidate() {
-        if (ratesInput.get() != null) {
-            throw new IllegalArgumentException("the rates attribute should not be used. Use the individual rates rateAC, rateCG, etc, instead.");
+        rates = nucRatesInput.get();
+        rates.setInputValue("keys", "AC AG AT CG CT GT");
+
+        if (super.ratesInput.get() != null) {
+            throw new IllegalArgumentException("the rates attribute should not be used. Use nucRates instead.");
         }
 
         frequencies = frequenciesInput.get();
 
+        /*
         rateAC = rateACInput.get();
         rateAG = rateAGInput.get();
         rateAT = rateATInput.get();
         rateCG = rateCGInput.get();
         rateCT = rateCTInput.get();
         rateGT = rateGTInput.get();
+        */
 
         updateMatrix = true;
         nrOfStates = 16;
@@ -64,8 +76,18 @@ public class GT16 extends GeneralSubstitutionModel {
 
     //@Override
     protected void setupRateMatrixUnnormalized() {
+        double rateAC = rates.getValue("AC");
+        double rateAG = rates.getValue("AG");
+        double rateAT = rates.getValue("AT");
+        double rateCG = rates.getValue("CG");
+        double rateCT = rates.getValue("CT");
+        double rateGT = rates.getValue("GT");
+
+        setupRateMatrixUnnormalized(rateAC, rateAG, rateAT, rateCG, rateCT, rateGT);
+        /*
         setupRateMatrixUnnormalized(rateAC.getValue(), rateAG.getValue(), rateAT.getValue(),
                 rateCG.getValue(), rateCT.getValue(), rateGT.getValue());
+        */
     }
 
     // instantaneous matrix Q
@@ -117,7 +139,7 @@ public class GT16 extends GeneralSubstitutionModel {
                 } else {
                     result = 0.0; // not reachable in single mutation or diagonal
                 }
-                rateMatrix[i][j] = result;
+                rateMatrix[i][j] = result * pi[j];
             }
         }
         // calculate diagonal entries

@@ -2,13 +2,16 @@
        namespace='
        beast.evolution.alignment:
        beast.core:
+       beast.core.parameter:
+       beast.evolution.tree:
        beast.evolution.tree.coalescent:
        beast.core.util:
        beast.evolution.nuc:
        beast.evolution.operators:
        beast.evolution.sitemodel:
        beast.evolution.substitutionmodel:
-       beast.evolution.likelihood'>
+       beast.evolution.likelihood:
+       beast.util'>
 
 
     <!-- Diploid sequence -->
@@ -22,20 +25,21 @@
 
     </data>
 
+    <parameter id="rates" spec="RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
+        1.0 1.0 1.0 1.0 1.0 1.0
+    </parameter>
+
+    <parameter id="freqParameter" lower="0.0" upper="1.0" dimension="16">
+        0.0625
+    </parameter>
+
     <!-- The GT16 substitution model             -->
     <input spec='GT16' id='gt16'>
-        <rateAC idref='rateAC'/>
-        <rateAG idref='rateAG'/>
-        <rateAT idref='rateAT'/>
-        <rateCG idref='rateCG'/>
-        <rateCT idref='rateCT'/>
-        <rateGT idref='rateGT'/>
-        <frequencies id='freqs' spec='Frequencies'>
-            <data idref='alignment'/>
-        </frequencies>
+        <nucRates idref='rates'/>
+        <frequencies frequencies="@freqParameter" id="estimatedFreqs" spec="Frequencies"/>
     </input>
 
-    <!-- site model                                                              -->
+    <!-- site model -->
     <input spec='SiteModel' id="siteModel" gammaCategoryCount='1'>
         <substModel idref='gt16'/>
     </input>
@@ -46,33 +50,29 @@
         <siteModel idref="siteModel"/>
     </input>
 
-    <parameter id="rateAC" value="1.0" lower="0.0"/>
-    <parameter id="rateAG" value="1.0" lower="0.0"/>
-    <parameter id="rateAT" value="1.0" lower="0.0"/>
-    <parameter id="rateCG" value="1.0" lower="0.0"/>
-    <parameter id="rateCT" value="1.0" lower="0.0"/>
-    <parameter id="rateGT" value="1.0" lower="0.0"/>
-
-
     <tree id='tree'/>
 
-    <tree spec='beast.util.ClusterTree' id='upgmatree' clusterType='upgma' initial='@tree'>
-        <taxa idref='alignment'/>
-    </tree>
-
-    <tree spec='beast.evolution.tree.RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
+    <tree spec='RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
         <populationModel spec='ConstantPopulation'>
             <popSize spec='parameter.RealParameter' value='1'/>
         </populationModel>
     </tree>
 
-
     <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
 
         <init idref='coalescentSimulator'/>
+
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution id='likelihood' idref="treeLikelihood"/>
         </distribution>
+
+
+        <!-- substitution model rates operator -->
+        <operator id='rateScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter='@rates'/>
+
+        <operator id="frequenciesExchanger" spec="DeltaExchangeOperator" weight="0.1" delta="0.01">
+            <parameter idref="freqParameter"/>
+        </operator>
 
         <operator id='treeScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" tree="@tree"/>
         <operator id='subtreeSlide' spec='SubtreeSlide' weight="5" gaussian="true" size="1.0" tree="@tree"/>
@@ -84,7 +84,7 @@
         <logger logEvery="10000" fileName="test.$(seed).log">
             <model idref='likelihood'/>
             <log idref="likelihood"/>
-            <log idref='rateAC'/>
+            <log idref='rates'/>
             <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
         <logger logEvery="10000" fileName="test.$(seed).trees">
@@ -94,8 +94,8 @@
             <model idref='likelihood'/>
             <log idref="likelihood"/>
             <ESS spec='ESS' name='log' arg="@likelihood"/>
-            <log idref='rateAC'/>
-            <ESS spec='ESS' name='log' arg="@rateAC"/>
+            <log idref='rates'/>
+            <ESS spec='ESS' name='log' arg="@rates"/>
         </logger>
     </run>
 
