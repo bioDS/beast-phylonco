@@ -3,16 +3,21 @@ package beast.evolution.errormodel;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
+import beast.evolution.datatype.NucleotideDiploid16;
 
-public class ErrorModelBase extends ErrorModel {
+public class GT16ErrorModel extends ErrorModel {
 
-    final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);
+    final public Input<RealParameter> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);
+    final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "the sequencing error probability",  Input.Validate.REQUIRED);
 
+    private RealParameter delta;
     private RealParameter epsilon;
 
     @Override
     public void initAndValidate() {
         super.initAndValidate();
+
+        delta = deltaInput.get();
         epsilon = epsilonInput.get();
     }
 
@@ -21,10 +26,11 @@ public class ErrorModelBase extends ErrorModel {
         int states = datatype.getStateCount();
         if (datatype.isAmbiguousCode(observedState)) {
             return 1.0 / states;
-        } else if (observedState == trueState) {
-            return 1 - epsilon.getValue();
         } else {
-            return epsilon.getValue() / (states - 1);
+            // true state homozygous
+
+            // true state heterozygous
+            return 0.0;
         }
     }
 
@@ -40,17 +46,12 @@ public class ErrorModelBase extends ErrorModel {
 
     @Override
     public void setupErrorMatrix() {
-        int states = datatype.getStateCount();
-        errorMatrix = new double[states][states];
-        for (int i = 0; i < states; i++) {
-            for (int j = 0; j < states; j++) {
-                errorMatrix[i][j] = getProbability(i, j);
-            }
-        }
+        // depricated use getProbabilities(observedState)
     }
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return true;
+        return dataType instanceof NucleotideDiploid16;
     }
+
 }

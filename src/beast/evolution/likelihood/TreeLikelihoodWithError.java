@@ -4,15 +4,16 @@ import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
 import beast.evolution.datatype.DataTypeWithError;
+import beast.evolution.errormodel.ErrorModel;
 import beast.evolution.tree.Node;
 
 @Description("Tree likelihood calculation with error models")
 public class TreeLikelihoodWithError extends TreeLikelihood {
 
-    final public Input<DataTypeWithError> errorModelInput = new Input<>("errorModel", "error model to use for partials");
+    final public Input<ErrorModel> errorModelInput = new Input<>("errorModel", "error model to use for partials");
     final public Input<Boolean> useTipsEmpiricalInput = new Input<>("useTipsEmpirical", "use tip ambiguities from data", false);
 
-    protected DataTypeWithError errorModel;
+    protected ErrorModel errorModel;
     protected boolean useTipsEmpirical; // set to true to use tips from data, otherwise use tips from model
 
     private boolean debug = false; // flag for debugging
@@ -62,8 +63,9 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
                 if (useTipsEmpirical) {
                     tipLikelihoods = data.getTipLikelihoods(t, p);
                 } else {
-                    errorModelInput.get().setupErrorMatrix(); // update error matrix
-                    tipLikelihoods = errorModelInput.get().getProbabilities(state);
+//                    errorModelInput.get().setupErrorMatrix(); // update error matrix
+//                    tipLikelihoods = errorModelInput.get().getProbabilities(state);
+                    tipLikelihoods = errorModel.getProbabilities(state);
                 }
                 for (int s = 0; s < nrOfStates; s++) {
                     if (tipLikelihoods == null) {

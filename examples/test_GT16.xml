@@ -105,13 +105,13 @@
         <operator id='wide' spec='Exchange' isNarrow='false' weight="1" tree="@tree"/>
         <operator id='wilsonBalding' spec='WilsonBalding' weight="1" tree="@tree"/>
 
-        <logger logEvery="10000" fileName="test.$(seed).log">
+        <logger logEvery="10000" fileName="test_GT16.$(seed).log">
             <model idref='likelihood'/>
             <log idref="likelihood"/>
             <log idref='rates'/>
             <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
-        <logger logEvery="10000" fileName="test.$(seed).trees">
+        <logger logEvery="10000" fileName="test_GT16.$(seed).trees">
             <log idref="tree"/>
         </logger>
         <logger logEvery="10000">

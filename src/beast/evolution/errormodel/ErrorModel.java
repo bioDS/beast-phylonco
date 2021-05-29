@@ -35,7 +35,11 @@ public abstract class ErrorModel extends CalculationNode {
 
     @Override
     public void initAndValidate() {
-
+        datatype = datatypeInput.get();
+        if (datatype != null && !canHandleDataType(datatype)) {
+            String message = "Error model cannot handle data type " + datatype.getTypeDescription();
+            throw new IllegalArgumentException(message);
+        }
     }
 
     public abstract boolean canHandleDataType(DataType dataType);

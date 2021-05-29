@@ -13,23 +13,6 @@ public class GT16 extends GeneralSubstitutionModel {
 
     private RealParameter rates;
 
-    /*
-    final public Input<RealParameter> rateACInput = new Input<>("rateAC", "the rate of A to C",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> rateAGInput = new Input<>("rateAG", "the rate of A to G",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> rateATInput = new Input<>("rateAT", "the rate of A to T",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> rateCGInput = new Input<>("rateCG", "the rate of C to G",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> rateCTInput = new Input<>("rateCT", "the rate of C to T",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> rateGTInput = new Input<>("rateGT", "the rate of G to T",  Input.Validate.REQUIRED);
-
-
-    private RealParameter rateAC; // rate AC
-    private RealParameter rateAG; // rate AG
-    private RealParameter rateAT; // rate AT
-    private RealParameter rateCG; // rate CG
-    private RealParameter rateCT; // rate CT
-    private RealParameter rateGT; // rate GT
-    */
-
     public GT16() {
         super.ratesInput.setRule(Input.Validate.OPTIONAL);
     }
@@ -44,16 +27,6 @@ public class GT16 extends GeneralSubstitutionModel {
         }
 
         frequencies = frequenciesInput.get();
-
-        /*
-        rateAC = rateACInput.get();
-        rateAG = rateAGInput.get();
-        rateAT = rateATInput.get();
-        rateCG = rateCGInput.get();
-        rateCT = rateCTInput.get();
-        rateGT = rateGTInput.get();
-        */
-
         updateMatrix = true;
         nrOfStates = 16;
         rateMatrix = new double[nrOfStates][nrOfStates];
@@ -74,7 +47,7 @@ public class GT16 extends GeneralSubstitutionModel {
         normalize();
     }
 
-    //@Override
+    @Override
     protected void setupRateMatrixUnnormalized() {
         double rateAC = rates.getValue("AC");
         double rateAG = rates.getValue("AG");
@@ -84,10 +57,6 @@ public class GT16 extends GeneralSubstitutionModel {
         double rateGT = rates.getValue("GT");
 
         setupRateMatrixUnnormalized(rateAC, rateAG, rateAT, rateCG, rateCT, rateGT);
-        /*
-        setupRateMatrixUnnormalized(rateAC.getValue(), rateAG.getValue(), rateAT.getValue(),
-                rateCG.getValue(), rateCT.getValue(), rateGT.getValue());
-        */
     }
 
     // instantaneous matrix Q
