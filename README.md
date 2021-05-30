@@ -1,16 +1,20 @@
 # Phylonco
 This is a BEAST 2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
-Software versions: Requires at least [BEAST 2](https://github.com/CompEvol/beast2) v2.6.2 and [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
+Software versions: Requires at least [BEAST 2](https://github.com/CompEvol/beast2) v2.6.4 and [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
 
 The current release has the following features:
-* binary error model
 
-* ternary error model
+*Error Models*
+* Nucleotide error model (4 states - A, G, C, T)
+* General error model (n states)
+* Binary error model
+* Ternary error model
 
-* nucleotide error model
-
-* SiFit substitution models
+*Substitution Models*
+* Phased diploid nucleotide GT16 model (16 states)
+* Binary substitution model
+* SiFit substitution models (2 or 3 states)
 
 ## How to run
 
@@ -27,7 +31,9 @@ Then build BEAST Labs and Phylonco using `ant addon`.
 ## References
 1. Bouckaert at al. (2019). [BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis.](https://doi.org/10.1371/journal.pcbi.1006650)
 
-2. Zafar et al. (2017). [SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.](https://doi.org/10.1186/s13059-017-1311-2)
+2. Kozlov et al. (2021). [CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data.](https://doi.org/10.1101/2020.07.31.230292)
+ 
+3. Zafar et al. (2017). [SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.](https://doi.org/10.1186/s13059-017-1311-2)
 
-3. Hou et al. (2012). [Single-cell exome sequencing and monoclonal evolution of a JAK2-negative myeloproliferative neoplasm.]( https://doi.org/10.1016/j.cell.2012.02.028)
+4. Hou et al. (2012). [Single-cell exome sequencing and monoclonal evolution of a JAK2-negative myeloproliferative neoplasm.]( https://doi.org/10.1016/j.cell.2012.02.028)
 
