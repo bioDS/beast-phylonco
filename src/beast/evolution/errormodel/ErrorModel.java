@@ -37,5 +37,5 @@ public abstract class ErrorModel extends CalculationNode {
         }
     }
 
-    public abstract boolean canHandleDataType(DataType dataType);
+    public abstract boolean canHandleDataType(DataType datatype);
 }

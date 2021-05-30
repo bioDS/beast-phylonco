@@ -27,25 +27,12 @@ public class GT16Test {
         RealParameter nucRates = new RealParameter(rates);
         nucRates.setInputValue("keys", "AC AG AT CG CT GT");
         nucRates.initAndValidate();
-//        for (int i = 0; i < 6; i++) {
-//            nucRates.setValue(i, rates[i]);
-//        }
 
         gt16.initByName(
                 "nucRates", nucRates,
                 "frequencies", freqs
         );
-        /*
-        gt16.initByName(
-                "rateAC", new RealParameter(rates[0].toString()),
-                "rateAG", new RealParameter(rates[1].toString()),
-                "rateAT", new RealParameter(rates[2].toString()),
-                "rateCG", new RealParameter(rates[3].toString()),
-                "rateCT", new RealParameter(rates[4].toString()),
-                "rateGT", new RealParameter(rates[5].toString()),
-                "frequencies", freqs
-        );
-        */
+
         nrOfStates = gt16.getStateCount();
     }
 

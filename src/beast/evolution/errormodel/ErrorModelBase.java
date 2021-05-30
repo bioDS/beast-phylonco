@@ -39,7 +39,7 @@ public class ErrorModelBase extends ErrorModel {
     }
 
     @Override
-    public boolean canHandleDataType(DataType dataType) {
+    public boolean canHandleDataType(DataType datatype) {
         return true;
     }
 }

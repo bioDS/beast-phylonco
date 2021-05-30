@@ -2,8 +2,10 @@ package test.beast.evolution.likelihood;
 
 import beast.evolution.alignment.Alignment;
 import beast.evolution.alignment.Sequence;
-import beast.evolution.datatype.BinaryWithError;
-import beast.evolution.datatype.NucleotideWithError;
+import beast.evolution.datatype.Binary;
+import beast.evolution.datatype.Nucleotide;
+import beast.evolution.errormodel.BinaryErrorModel;
+import beast.evolution.errormodel.ErrorModelBase;
 import beast.evolution.likelihood.TreeLikelihoodWithError;
 import beast.evolution.sitemodel.SiteModel;
 import beast.evolution.substitutionmodel.JukesCantor;
@@ -35,10 +37,10 @@ public class TreeLikelihoodWithErrorTest {
      *
      * ep <- 0.1
      * err <- matrix(
-     *   c(1.0 - 3.0 * ep, ep, ep, ep,
-     *   ep, 1.0 - 3.0 * ep, ep, ep,
-     *   ep, ep, 1.0 - 3.0 * ep, ep,
-     *   ep, ep, ep, 1.0 - 3.0 * ep), nrow=4, byrow=T)
+     *   c(1.0 - ep, ep/3, ep/3, ep/3,
+     *   ep/3, 1.0 - ep, ep/3, ep/3,
+     *   ep/3, ep/3, 1.0 - ep, ep/3,
+     *   ep/3, ep/3, ep/3, 1.0 - ep), nrow=4, byrow=T)
      * p1 <- P %*% err[1,]
      * prob <- 0.25 * (p1[1] ** 2 + p1[2] ** 2 + p1[3] ** 2 + p1[4] ** 2)
      * log(prob)
@@ -68,8 +70,10 @@ public class TreeLikelihoodWithErrorTest {
         siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
         siteModel.initAndValidate();
 
-        NucleotideWithError errorModel = new NucleotideWithError();
-        errorModel.initByName("epsilon", "0.1");
+        Nucleotide datatype = new Nucleotide();
+
+        ErrorModelBase errorModel = new ErrorModelBase();
+        errorModel.initByName("epsilon", "0.1", "datatype", datatype);
         errorModel.initAndValidate();
 
         TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();
@@ -82,7 +86,7 @@ public class TreeLikelihoodWithErrorTest {
                 "errorModel", errorModel);
 
         double logP = likelihood.calculateLogP();
-        double expectedLogP = -2.5220752408362181;
+        double expectedLogP = -2.3063595712034233;
         assertEquals(expectedLogP, logP, DELTA);
 
         System.out.println("seq A: " + data.getSequenceAsString("a"));
@@ -115,8 +119,10 @@ public class TreeLikelihoodWithErrorTest {
         siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
         siteModel.initAndValidate();
 
-        BinaryWithError errorModel = new BinaryWithError();
-        errorModel.initByName("alpha", alpha, "beta", beta);
+        Binary datatype = new Binary();
+
+        BinaryErrorModel errorModel = new BinaryErrorModel();
+        errorModel.initByName("alpha", alpha, "beta", beta, "datatype", datatype);
         errorModel.initAndValidate();
 
         TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();

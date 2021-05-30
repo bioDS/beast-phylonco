@@ -102,8 +102,8 @@ public class GT16ErrorModel extends ErrorModel {
     }
 
     @Override
-    public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof NucleotideDiploid16;
+    public boolean canHandleDataType(DataType datatype) {
+        return datatype instanceof NucleotideDiploid16;
     }
 
 }
