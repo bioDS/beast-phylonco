@@ -28,11 +28,6 @@ public abstract class ErrorModel extends CalculationNode {
      */
     public abstract double[] getProbabilities(int observedState);
 
-    /**
-     * set up the error matrix according to the error model parameters
-     */
-    public abstract void setupErrorMatrix();
-
     @Override
     public void initAndValidate() {
         datatype = datatypeInput.get();

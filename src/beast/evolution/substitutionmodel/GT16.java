@@ -6,6 +6,13 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 
+/**
+ * Implements the GT16 model for diploid genotypes from Kozlov et al. (2021)
+ *
+ * CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data
+ * https://doi.org/10.1101/2020.07.31.230292
+ *
+ */
 @Description("GT16 diploid substitution model from CellPhy paper")
 public class GT16 extends GeneralSubstitutionModel {
 

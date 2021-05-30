@@ -39,17 +39,6 @@ public class ErrorModelBase extends ErrorModel {
     }
 
     @Override
-    public void setupErrorMatrix() {
-        int states = datatype.getStateCount();
-        errorMatrix = new double[states][states];
-        for (int i = 0; i < states; i++) {
-            for (int j = 0; j < states; j++) {
-                errorMatrix[i][j] = getProbability(i, j);
-            }
-        }
-    }
-
-    @Override
     public boolean canHandleDataType(DataType dataType) {
         return true;
     }
