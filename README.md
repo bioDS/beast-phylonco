@@ -6,13 +6,13 @@ Software versions: Requires at least [BEAST 2](https://github.com/CompEvol/beast
 The current release has the following features:
 
 *Error Models*
+* GT16 phased diploid nucleotide error model (16 states)
 * Nucleotide error model (4 states - A, G, C, T)
 * General error model (n states)
 * Binary error model
-* Ternary error model
 
 *Substitution Models*
-* Phased diploid nucleotide GT16 model (16 states)
+* GT16 phased diploid nucleotide model (16 states)
 * Binary substitution model
 * SiFit substitution models (2 or 3 states)
 
