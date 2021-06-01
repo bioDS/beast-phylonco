@@ -5,6 +5,9 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 
+import static beast.evolution.datatype.DataType.GAP_CHAR;
+import static beast.evolution.datatype.DataType.MISSING_CHAR;
+
 /**
  * Implements the GT16 error model for diploid genotypes from Kozlov et al. (2021)
  *
@@ -43,9 +46,42 @@ public class GT16ErrorModel extends ErrorModel {
 
         double prob = 0.0;
 
-        if (datatype.isAmbiguousCode(observedState)) {
+        if (observedState == GAP_CHAR || observedState == MISSING_CHAR) {
+            // gap or missing code
             prob = 1.0 / states;
-        } else if (trueFirst == trueSecond) {
+        } else if (datatype.isAmbiguousCode(observedState)) {
+            // ambiguous code for more than one state (not gap or missing)
+            int[] codes = datatype.getStatesForCode(observedState);
+            int numCodes = codes.length;
+            double weight = 1.0 / numCodes;
+            prob = 0.0;
+            for (int i = 0; i < numCodes; i++) {
+                prob += weight * getProbabilityUnambiguous(codes[i], trueState);
+            }
+//            System.out.println("full code: " + observedState + ", p = " + prob);
+        } else {
+            // unambiguous code
+            prob = getProbabilityUnambiguous(observedState, trueState);
+        }
+
+        return prob;
+    }
+
+    private double getProbabilityUnambiguous(int observedState, int trueState) {
+        double d = delta.getValue();
+        double e = epsilon.getValue();
+
+        int states = datatype.getStateCount();
+        int bases = 4;
+
+        int trueFirst = trueState / bases; // first allele in true state
+        int trueSecond = trueState % bases; // second allele in true state
+        int observedFirst = observedState / bases; // first allele in observed state
+        int observedSecond = observedState % bases; // second allele in observed state
+
+        double prob = 0.0;
+
+        if (trueFirst == trueSecond) {
             // true state homozygous
             if (observedState == trueState) {
                 // P(aa | aa) = (1 - epsilon) + (1/2) * delta * epsilon
@@ -88,6 +124,7 @@ public class GT16ErrorModel extends ErrorModel {
                 }
             }
         }
+
         return prob;
     }
 
