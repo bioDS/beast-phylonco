@@ -35,15 +35,7 @@ public class GT16ErrorModel extends ErrorModel {
     public double getProbability(int observedState, int trueState) {
         double d = delta.getValue();
         double e = epsilon.getValue();
-
         int states = datatype.getStateCount();
-        int bases = 4;
-
-        int trueFirst = trueState / bases; // first allele in true state
-        int trueSecond = trueState % bases; // second allele in true state
-        int observedFirst = observedState / bases; // first allele in observed state
-        int observedSecond = observedState % bases; // second allele in observed state
-
         double prob = 0.0;
 
         if (observedState == GAP_CHAR || observedState == MISSING_CHAR) {
@@ -71,7 +63,6 @@ public class GT16ErrorModel extends ErrorModel {
         double d = delta.getValue();
         double e = epsilon.getValue();
 
-        int states = datatype.getStateCount();
         int bases = 4;
 
         int trueFirst = trueState / bases; // first allele in true state

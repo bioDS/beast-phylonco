@@ -24,8 +24,8 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         errorModel = errorModelInput.get();
         useTipsEmpirical = useTipsEmpiricalInput.get();
         // set fields from TreeLikelihood class
-        super.m_useAmbiguities.set(true);
-        super.m_useTipLikelihoods.set(true);
+        super.m_useAmbiguities.setValue(true, this);
+        super.m_useTipLikelihoods.setValue(true, this);
         super.initAndValidate();
     }
 
