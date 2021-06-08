@@ -53,7 +53,7 @@ public class TreeLikelihoodWithErrorTest {
         data.initByName(
                 "sequence", seqA,
                 "sequence", seqB,
-                "dataType", "nucleotideWithError"
+                "dataType", "nucleotide"
         );
 
         TreeParser tree = new TreeParser();
@@ -101,7 +101,7 @@ public class TreeLikelihoodWithErrorTest {
         data.initByName(
                 "sequence", seqA,
                 "sequence", seqB,
-                "dataType", "binaryWithError"
+                "dataType", "binary"
         );
 
         TreeParser tree = new TreeParser();
