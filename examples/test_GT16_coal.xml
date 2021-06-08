@@ -218,7 +218,7 @@ dataType="nucleotideDiploid16">
                 
         </logger>
             
-        <logger id="Logger1" spec="Logger" fileName="gt16CoalErrModel.log" logEvery="500">
+        <logger id="Logger1" spec="Logger" fileName="test_GT16_coal.$(seed).log" logEvery="500">
                     
             <log idref="posterior"/>
                     
@@ -238,7 +238,7 @@ dataType="nucleotideDiploid16">
                 
         </logger>
             
-        <logger id="psi.treeLogger" spec="Logger" fileName="gt16CoalErrModel.trees" logEvery="500" mode="tree">
+        <logger id="psi.treeLogger" spec="Logger" fileName="test_GT16_coal.$(seed).trees" logEvery="500" mode="tree">
                     
             <log idref="psi"/>
                 
