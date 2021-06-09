@@ -29,7 +29,7 @@
     <property name="beast2_classpath" location="${beast2path}/build" />
     <property name="beastlabs_classpath" location="../BEASTLabs/build" />
         
-    <include file="${beast2path}/build.xml" as="beast" />
+    <import file="${beast2path}/build.xml" as="beast" />
 
     <property name="main_class_BEAST" value="beast.app.BeastMCMC" />
     <property name="report" value="${build}/junitreport"/>
@@ -37,12 +37,12 @@
     <path id="classpath">
         <pathelement path="${build}"/>
         <fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
-        <fileset dir="${beast2path}/lib" includes="jam.jar"/>
-        <fileset dir="${beast2path}/lib" includes="beagle.jar"/>
-        <fileset dir="${beast2path}/lib" includes="fest.jar"/>
-        <fileset dir="${beast2path}/lib" includes="colt.jar"/>
-        <fileset dir="${beast2path}/lib" includes="antlr-runtime-4.7.jar"/>
-        <fileset dir="${beast2path}/lib" includes="commons-math3-3.1.1.jar"/>
+        <fileset dir="${libBeast2}" includes="jam.jar"/>
+        <fileset dir="${libBeast2}" includes="beagle.jar"/>
+        <fileset dir="${libBeast2}" includes="fest.jar"/>
+        <fileset dir="${libBeast2}" includes="colt.jar"/>
+        <fileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar"/>
+        <fileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar"/>
         <pathelement path="${beast2_classpath}"/>
         <pathelement path="${beastlabs_classpath}"/>
     </path>
@@ -75,7 +75,11 @@
         <echo message="Classpath = ${myclasspath}"/>
         <mkdir dir="${build}" />
         <!-- Compile the java code from ${src} into ${build} /bin -->
-        <javac srcdir="${src}" destdir="${build}" classpathref="classpath" fork="true" memoryinitialsize="256m" memorymaximumsize="256m" includeantruntime="false">
+        <javac srcdir="${src}" destdir="${build}" classpathref="classpath"
+               fork="true"
+               memoryinitialsize="256m"
+               memorymaximumsize="256m"
+               includeantruntime="false">
             <include name="beast/**/**" />
             <include name="test/**/**" />
         </javac>
@@ -138,7 +142,7 @@
     <!-- JUnit test -->
     <target name="junit">
         <mkdir dir="${report}" />
-        <junit printsummary="yes"> <!--showoutput='yes'-->
+        <junit printsummary="yes">
             <classpath>
                 <path refid="classpath" />
                 <path location="${build}" />
