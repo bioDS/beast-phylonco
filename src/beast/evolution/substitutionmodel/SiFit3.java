@@ -4,8 +4,7 @@ import beast.core.Description;
 import beast.core.parameter.RealParameter;
 import beast.core.Input;
 import beast.evolution.datatype.DataType;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.datatype.SiFitTernaryWithError;
+import beast.evolution.datatype.Ternary;
 
 /**
  * Implements the three state SiFit model of genotype substitution from Zafar et al. (2017)
@@ -167,6 +166,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof SiFitTernaryWithError;
+        return dataType instanceof Ternary;
     }
 }

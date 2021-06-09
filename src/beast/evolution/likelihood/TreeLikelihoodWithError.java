@@ -3,7 +3,6 @@ package beast.evolution.likelihood;
 import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
-import beast.evolution.datatype.DataTypeWithError;
 import beast.evolution.errormodel.ErrorModel;
 import beast.evolution.tree.Node;
 
