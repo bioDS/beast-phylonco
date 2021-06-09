@@ -6,7 +6,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.Binary;
 import beast.evolution.datatype.DataType;
 
-@Description("Binary error model with sampled error parameters as false positive and false negative probabilities")
+@Description("Binary error model with parameters as false positive and false negative probabilities")
 public class BinaryErrorModel extends ErrorModel {
 	
     final public Input<RealParameter> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);

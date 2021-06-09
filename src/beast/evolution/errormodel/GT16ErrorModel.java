@@ -1,5 +1,6 @@
 package beast.evolution.errormodel;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
@@ -15,6 +16,7 @@ import static beast.evolution.datatype.DataType.MISSING_CHAR;
  * https://doi.org/10.1101/2020.07.31.230292
  *
  */
+@Description("GT16 diploid error model from CellPhy paper")
 public class GT16ErrorModel extends ErrorModel {
 
     final public Input<RealParameter> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);

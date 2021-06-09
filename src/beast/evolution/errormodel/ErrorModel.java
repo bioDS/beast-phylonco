@@ -1,9 +1,11 @@
 package beast.evolution.errormodel;
 
 import beast.core.CalculationNode;
+import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.datatype.DataType;
 
+@Description("Error model abstract class")
 public abstract class ErrorModel extends CalculationNode {
 
     final public Input<DataType> datatypeInput = new Input<>("datatype", "the datatype of the alignment, for example nucleotide etc", Input.Validate.REQUIRED);

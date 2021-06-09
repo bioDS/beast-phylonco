@@ -10,7 +10,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
 /**
  * Implements a general binary substitution model
  */
-@Description("A binary substitution model with a single parameter")
+@Description("A binary substitution model with a single rate parameter")
 public class BinarySubstitutionModel extends GeneralSubstitutionModel {
     final public Input<RealParameter> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
 

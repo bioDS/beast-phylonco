@@ -1,9 +1,11 @@
 package beast.evolution.errormodel;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 
+@Description("Error model base implementation")
 public class ErrorModelBase extends ErrorModel {
 
     final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);

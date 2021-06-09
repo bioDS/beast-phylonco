@@ -16,7 +16,7 @@ import beast.evolution.datatype.NucleotideDiploid16;
 @Description("GT16 diploid substitution model from CellPhy paper")
 public class GT16 extends GeneralSubstitutionModel {
 
-    final public Input<RealParameter> nucRatesInput = new Input<>("nucRates", "rate parameters");
+    final public Input<RealParameter> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
 
     private RealParameter rates;
 
