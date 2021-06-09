@@ -15,12 +15,12 @@
     <property name="package_version" value="v${addon.version}"/>
     <property name="package_full" value="${package_name}.${package_version}"/>    
 
-    <property name="src" location="src" />
-    <property name="build" location="build" />
-    <property name="lib" location="lib" />
+    <property name="src_phylonco" location="src" />
+    <property name="build_phylonco" location="build" />
+    <property name="lib_phylonco" location="lib" />
     <property name="release_dir" value="release" />    
     <property name="add_on_dir" value="${release_dir}/package" />
-    <property name="dist" location="${build}/dist" />
+    <property name="dist_phylonco" location="${build_phylonco}/dist" />
 
     <!-- Dependency paths: -->
     <property name="beast2path" location="../beast2" />
@@ -32,10 +32,10 @@
     <import file="${beast2path}/build.xml" as="beast" />
 
     <property name="main_class_BEAST" value="beast.app.BeastMCMC" />
-    <property name="report" value="${build}/junitreport"/>
+    <property name="report" value="${build_phylonco}/junitreport"/>
 
     <path id="classpath">
-        <pathelement path="${build}"/>
+        <pathelement path="${build_phylonco}"/>
         <fileset dir="${libBeast2}" includes="junit-4.8.2.jar"/>
         <fileset dir="${libBeast2}" includes="jam.jar"/>
         <fileset dir="${libBeast2}" includes="beagle.jar"/>
@@ -48,34 +48,35 @@
     </path>
 
     <!-- start: make a build dir and sent a message-->
-    <target name="init">
+    <target name="init_phylonco">
         <echo message="${ant.project.name}: ${ant.file}" />
     </target>
-    <target name="clean">
-        <delete dir="${build}" />
+    <target name="clean_phylonco">
+        <delete dir="${build_phylonco}" />
     </target>
 
     <!-- clean and compile with junit tests -->
-    <target name="build_all" depends="clean,compile_all,junit" description="Clean and Build all run-time stuff">
+    <target name="build_all_phylonco" depends="clean_phylonco,compile_all_phylonco,junit_phylonco" description="Clean and Build all run-time stuff">
     </target>
 
     <!-- clean, compile and build jars with junit tests -->
-    <target name="build_jar_all" depends="clean,compile_all,junit,dist_all" description="Clean and Build all run-time stuff">
+    <target name="build_jar_all_phylonco" 
+        depends="clean_phylonco,compile_all_phylonco,junit_phylonco,dist_all_phylonco" description="Clean and Build all run-time stuff">
     </target>
 
     <!-- clean compile and build, without junit tests -->
-    <target name="build_jar_all_nojunit" depends="clean,compile_all,dist_all" description="Clean and Build all run-time stuff">
+    <target name="build_jar_all_phylonco_nojunit" depends="clean_phylonco,compile_all_phylonco,dist_all_phylonco" description="Clean and Build all run-time stuff">
     </target>
 
     <!-- compile Java source code -->
-    <target name="compile_all" depends="init">
+    <target name="compile_all_phylonco" depends="init_phylonco">
         <!-- Capture the path as a delimited property using the refid attribute -->
         <property name="myclasspath" refid="classpath"/>
         <!-- Emit the property to the ant console -->
         <echo message="Classpath = ${myclasspath}"/>
-        <mkdir dir="${build}" />
+        <mkdir dir="${build_phylonco}" />
         <!-- Compile the java code from ${src} into ${build} /bin -->
-        <javac srcdir="${src}" destdir="${build}" classpathref="classpath"
+        <javac srcdir="${src_phylonco}" destdir="${build_phylonco}" classpathref="classpath"
                fork="true"
                memoryinitialsize="256m"
                memorymaximumsize="256m"
@@ -87,17 +88,17 @@
     </target>
 
   <!-- make the phylonco.jar -->
-    <target name="dist_all" depends="compile_all" description="create ${package_full} jar">
+    <target name="dist_all_phylonco" depends="compile_all_phylonco" description="create ${package_full} jar">
         <!-- Create the distribution directory -->
         <echo message="Building ${package_full}.jar"/>
-        <mkdir dir="${dist}" />
+        <mkdir dir="${dist_phylonco}" />
         <!-- Put everything in ${build} into the beast.jar file -->
-        <jar jarfile="${dist}/${package_full}.jar">
+        <jar jarfile="${dist_phylonco}/${package_full}.jar">
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
                 <attribute name="Main-Class" value="${main_class_BEAST}" />
             </manifest>
-            <fileset dir="${build}">
+            <fileset dir="${build_phylonco}">
                 <include name="**/*.class" />
             </fileset>
             <fileset dir="${beast2_classpath}">
@@ -112,19 +113,19 @@
             <zipgroupfileset dir="${libBeast2}" includes="commons-math3-3.1.1.jar" />
             <zipgroupfileset dir="${libBeast2}" includes="antlr-runtime-4.7.jar"/>
         </jar>
-        <jar jarfile="${dist}/${package_full}.src.jar">
-            <fileset dir="${src}">
+        <jar jarfile="${dist_phylonco}/${package_full}.src.jar">
+            <fileset dir="${src_phylonco}">
                 <include name="**/*.java" />
                 <include name="**/*.png" />
                 <include name="**/*.xsl" />
                 <include name="**/*.class" />
             </fileset>
         </jar>
-        <jar jarfile="${dist}/${package_name}.addon.${package_version}.jar">
+        <jar jarfile="${dist_phylonco}/${package_name}.addon.${package_version}.jar">
             <manifest>
                 <attribute name="Built-By" value="${user.name}" />
             </manifest>
-                <fileset dir="${build}">
+                <fileset dir="${build_phylonco}">
                 <include name="beast/**/*.class" />
                 <include name="test/**/*.class" />
                 <include name="util/**/*.class" />
@@ -135,21 +136,21 @@
     </target>
 
     <!-- run beast.jar -->
-    <target name="run">
-        <java jar="${dist}/${package_full}.jar" fork="true" />
+    <target name="run_phylonco">
+        <java jar="${dist_phylonco}/${package_full}.jar" fork="true" />
     </target>
 
     <!-- JUnit test -->
-    <target name="junit">
+    <target name="junit_phylonco">
         <mkdir dir="${report}" />
         <junit printsummary="yes">
             <classpath>
                 <path refid="classpath" />
-                <path location="${build}" />
+                <path location="${build_phylonco}" />
             </classpath>
             <formatter type="xml" />
             <batchtest fork="yes" todir="${report}">
-                <fileset dir="${src}">
+                <fileset dir="${src_phylonco}">
                     <include name="test/**/*Test.java"/>
                 </fileset>
                 <fileset dir="${srcBeast2}">
@@ -170,7 +171,7 @@
     </target>
 
     <target name="addon"
-        depends="build_jar_all_nojunit"
+        depends="build_jar_all_phylonco_nojunit"
         description="release BEAST 2 package version of ${package_full}">
         <delete dir="${add_on_dir}" />
         <!-- Create the release directory -->
@@ -179,10 +180,10 @@
         <mkdir dir="${add_on_dir}/templates" />
         <mkdir dir="${add_on_dir}/examples" />
         <copy todir="${add_on_dir}/lib">
-            <fileset dir="${dist}" includes="${package_name}.addon.${package_version}.jar" />
+            <fileset dir="${dist_phylonco}" includes="${package_name}.addon.${package_version}.jar" />
         </copy>
         <copy todir="${add_on_dir}">
-            <fileset dir="${dist}" includes="${package_full}.src.jar" />
+            <fileset dir="${dist_phylonco}" includes="${package_full}.src.jar" />
         </copy>
         <copy todir="${add_on_dir}">
             <fileset file="version.xml"/>
@@ -193,7 +194,7 @@
         <copy todir="${add_on_dir}/templates">
             <fileset file="templates/*.xml" />
         </copy>
-        <jar jarfile="${dist}/${package_name}.addon.${package_version}.zip">
+        <jar jarfile="${dist_phylonco}/${package_name}.addon.${package_version}.zip">
             <fileset dir="${add_on_dir}">
             <include name="**/*" />
             </fileset>
