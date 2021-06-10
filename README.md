@@ -1,29 +1,59 @@
 # Phylonco
-This is a BEAST 2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
+This is a BEAST2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
 Software versions: Requires at least [BEAST 2](https://github.com/CompEvol/beast2) v2.6.5 and [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
 
 The current release has the following features:
 
-*Error Models*
+Error Models:
 * GT16 phased diploid nucleotide error model (16 states)
 * Nucleotide error model (4 states - A, G, C, T)
 * General error model (n states)
 * Binary error model
 
-*Substitution Models*
+Substitution Models:
 * GT16 phased diploid nucleotide model (16 states)
 * Binary substitution model
 * SiFit2 substitution model (2 states)
 * SiFit3 substitution model (3 states)
 
-## How to run
+## How to install
+You may install the Phylonco package either using the Package Manager, or manually.
 
-Download the executable jar file `phylonco.vx.x.x.jar`.
+### Package manager install
+Start **BEAUti**, open the **Package Manager** by selecting `File -> Manage packages` from the Menu.
 
-Execute the jar, and set the input file to `filepath/examples/*.xml`.
+Click `Package repositories` to open a new popup window
+<img src="https://raw.githubusercontent.com/rbouckaert/obama/master/doc/package_repos.png">
 
-## How to build
+Click `Add URL` and add "https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml" to the entry.
+
+Click `Done`. The Phylonco package should now appear in the **Package Manager**
+<img src="">
+
+From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
+
+### Manual install
+Download the latest [phylonco.addon.v0.0.4.zip](https://github.com/kche309/beast-phylonco/blob/main/dist/phylonco.addon.v0.0.4.zip) from the releases page.
+
+Create a new subdirectory `Phylonco` at the location: 
+```
+For Windows in Users\<username>\BEAST\2.x\Phylonco
+For Mac in /Users/<username>\/Library/Application Support/BEAST/2.x/Phylonco
+For Linux in /home/<username>/.beast/2.x/Phylonco
+```
+Here <username> is your username, “2.x” refers to the major version of BEAST, for example 2.x = 2.1 for BEAST version 2.1.3.
+ 
+Extract the contents of the addon zip to the `Phylonco` subdirectory.
+
+For BEAST v2.5.x and later, you need to reset the class path stored in the beauti.properties file. Easiest to do this is by starting BEAUti and click the menu File/Clear class path
+
+See here for general package install instructions http://www.beast2.org/managing-packages/
+
+## How to run 
+Start **BEAST2**, and set the input file to one of the examples in `examples/*.xml`.
+
+## How to build (developers)
 
 Build BEAST 2 using `ant build_all_BEAST` for Linux/Mac or `ant windows` for Windows.
 
