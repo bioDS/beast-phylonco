@@ -32,6 +32,8 @@ Click `Done`. The Phylonco package should now appear in the **Package Manager**
 
 From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
 
+---
+
 ### Manual install
 Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases page](https://github.com/kche309/beast-phylonco/releases/latest)
 
@@ -50,6 +52,7 @@ For BEAST v2.5.x and later, you need to reset the class path stored in the beaut
 See [here](http://www.beast2.org/managing-packages/) for general package install instructions.
 
 ## How to run 
+
 Start **BEAST2**, and set the input file to one of the examples in `examples/*.xml`.
 
 ## How to build (developers)
