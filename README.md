@@ -1,4 +1,4 @@
-# Phylonco
+# BEAST Phylonco
 This is a BEAST2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
 Software versions: Requires at least [BEAST 2](https://github.com/CompEvol/beast2) v2.6.5 and [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
