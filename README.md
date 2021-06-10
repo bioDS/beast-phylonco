@@ -29,12 +29,11 @@ Click `Package repositories` to open a new popup window
 Click `Add URL` and add "https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml" to the entry.
 
 Click `Done`. The Phylonco package should now appear in the **Package Manager**
-<img src="">
 
 From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
 
 ### Manual install
-Download the latest [phylonco.addon.v0.0.4.zip](https://github.com/kche309/beast-phylonco/blob/main/dist/phylonco.addon.v0.0.4.zip) from the releases page.
+Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases page](https://github.com/kche309/beast-phylonco/releases/latest)
 
 Create a new subdirectory `Phylonco` at the location: 
 ```
@@ -42,13 +41,13 @@ For Windows in Users\<username>\BEAST\2.x\Phylonco
 For Mac in /Users/<username>\/Library/Application Support/BEAST/2.x/Phylonco
 For Linux in /home/<username>/.beast/2.x/Phylonco
 ```
-Here <username> is your username, “2.x” refers to the major version of BEAST, for example 2.x = 2.1 for BEAST version 2.1.3.
+Here `<username>` is your username, “2.x” refers to the major version of BEAST, for example 2.x = 2.1 for BEAST version 2.1.3.
  
-Extract the contents of the addon zip to the `Phylonco` subdirectory.
+Then extract the contents of the addon zip to the `Phylonco` subdirectory.
 
-For BEAST v2.5.x and later, you need to reset the class path stored in the beauti.properties file. Easiest to do this is by starting BEAUti and click the menu File/Clear class path
+For BEAST v2.5.x and later, you need to reset the class path stored in the beauti.properties file. The easiest way to do this is by starting BEAUti and selecting `File -> Clear class path` from the Menu.
 
-See here for general package install instructions http://www.beast2.org/managing-packages/
+See [here](http://www.beast2.org/managing-packages/) for general package install instructions.
 
 ## How to run 
 Start **BEAST2**, and set the input file to one of the examples in `examples/*.xml`.
