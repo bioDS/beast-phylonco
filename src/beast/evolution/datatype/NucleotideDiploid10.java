@@ -23,7 +23,7 @@ public class NucleotideDiploid10 extends DataType.Base {
         stateCount = 10;
         mapCodeToStateSet = x;
         codeLength = 1;
-        codeMap = "AMRWCSYGKT" + GAP_CHAR + + MISSING_CHAR;
+        codeMap = "AMRWCSYGKT" + GAP_CHAR + MISSING_CHAR;
     }
 
     @Override

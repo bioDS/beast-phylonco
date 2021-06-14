@@ -9,14 +9,15 @@ public class Ternary extends DataType.Base  {
             {0},
             {1},
             {2},
-            {0, 1, 2},
+            {0, 1, 2}, // gap -
+            {0, 1, 2} // missing ?
     };
 
     public Ternary() {
         stateCount = 3;
         mapCodeToStateSet = x;
         codeLength = 1;
-        codeMap = "012" + MISSING_CHAR;
+        codeMap = "012" + GAP_CHAR + MISSING_CHAR;
     }
 
     @Override
