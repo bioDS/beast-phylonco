@@ -38,7 +38,7 @@ public class BinaryErrorModel extends ErrorModel {
         double b = beta.getValue();
         double prob = 0.0;
         if (datatype.isAmbiguousCode(observedState)) {
-            return 1.0 / states;
+            return 1.0;
         } else {
             int errorStates = observedState * 10 + trueState;
             switch (errorStates) {

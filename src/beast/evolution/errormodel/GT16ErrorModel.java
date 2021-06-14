@@ -40,19 +40,18 @@ public class GT16ErrorModel extends ErrorModel {
         int states = datatype.getStateCount();
         double prob = 0.0;
 
-        if (observedState == GAP_CHAR || observedState == MISSING_CHAR) {
+        String observedStr = datatype.getCharacter(observedState);
+        if (observedStr.equals(GAP_CHAR) || observedStr.equals(MISSING_CHAR)) {
             // gap or missing code
-            prob = 1.0 / states;
+            prob = 1.0;
         } else if (datatype.isAmbiguousCode(observedState)) {
             // ambiguous code for more than one state (not gap or missing)
             int[] codes = datatype.getStatesForCode(observedState);
             int numCodes = codes.length;
-            double weight = 1.0 / numCodes;
             prob = 0.0;
             for (int i = 0; i < numCodes; i++) {
-                prob += weight * getProbabilityUnambiguous(codes[i], trueState);
+                prob += getProbabilityUnambiguous(codes[i], trueState);
             }
-//            System.out.println("full code: " + observedState + ", p = " + prob);
         } else {
             // unambiguous code
             prob = getProbabilityUnambiguous(observedState, trueState);

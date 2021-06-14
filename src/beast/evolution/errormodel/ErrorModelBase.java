@@ -22,7 +22,7 @@ public class ErrorModelBase extends ErrorModel {
     public double getProbability(int observedState, int trueState) {
         int states = datatype.getStateCount();
         if (datatype.isAmbiguousCode(observedState)) {
-            return 1.0 / states;
+            return 1.0;
         } else if (observedState == trueState) {
             return 1 - epsilon.getValue();
         } else {

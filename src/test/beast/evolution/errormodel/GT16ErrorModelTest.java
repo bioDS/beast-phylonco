@@ -22,11 +22,10 @@ public class GT16ErrorModelTest {
         );
         errorModel.initAndValidate();
 
-        for (int i = 0; i < datatype.getStateCount(); i++) {
+        for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             double sum = 0.0;
-            for (int j = 0; j < datatype.getStateCount(); j++) {
-                // getProbability(observed state, true state)
-                sum += errorModel.getProbability(j, i);
+            for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
+                sum += errorModel.getProbability(observedState, trueState);
             }
             assertEquals(1.0, sum, DELTA);
         }
