@@ -16,19 +16,19 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class PhyloncoRegistry implements ClassesRegistry {
 
-    private final Class[] generatorToBEASTs = {
+    private final Class<?>[] generatorToBEASTs = {
             GT16ErrorModelToBEAST.class,
             GT16ToBEAST.class,
             GTUnphaseToBEAST.class
     };
 
     @Override
-    public Class[] getValuesToBEASTs() {
+    public Class<?>[] getValuesToBEASTs() {
         return new Class[0];
     }
 
     @Override
-    public Class[] getGeneratorToBEASTs() {
+    public Class<?>[] getGeneratorToBEASTs() {
         return generatorToBEASTs;
     }
 
