@@ -1,4 +1,4 @@
-package lphybeast.phylonco.generators;
+package phylonco.tobeast.generators;
 
 import beast.core.BEASTInterface;
 import beast.evolution.likelihood.TreeLikelihoodWithError;
