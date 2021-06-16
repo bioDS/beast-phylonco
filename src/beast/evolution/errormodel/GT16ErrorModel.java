@@ -41,20 +41,25 @@ public class GT16ErrorModel extends ErrorModel {
         double prob = 0.0;
 
         String observedStr = datatype.getCharacter(observedState);
-        if (observedStr.equals(GAP_CHAR) || observedStr.equals(MISSING_CHAR)) {
+        String gap = Character.toString(GAP_CHAR);
+        String missing = Character.toString(MISSING_CHAR);
+        if (observedStr.equals(gap) || observedStr.equals(missing)) {
             // gap or missing code
             prob = 1.0;
         } else if (datatype.isAmbiguousCode(observedState)) {
             // ambiguous code for more than one state (not gap or missing)
             int[] codes = datatype.getStatesForCode(observedState);
-            int numCodes = codes.length;
             prob = 0.0;
-            for (int i = 0; i < numCodes; i++) {
+            for (int i = 0; i < codes.length; i++) {
                 prob += getProbabilityUnambiguous(codes[i], trueState);
             }
         } else {
             // unambiguous code
             prob = getProbabilityUnambiguous(observedState, trueState);
+        }
+
+        if (prob > 1.0) {
+            throw new RuntimeException("Error in GT16ErrorModel: Tip partial likelihood cannot exceed 1.0!");
         }
 
         return prob;
@@ -105,7 +110,7 @@ public class GT16ErrorModel extends ErrorModel {
                     prob = (1.0 / 6.0) * d * e;
                 }
             } else {
-                // observed in heterozyous
+                // observed is heterozyous
                 if (observedFirst == trueFirst || observedSecond == trueSecond) {
                     // P(ac | ab) =
                     // P(cb | ab) = (1 - delta) * (1/6) * epsilon
