@@ -13,8 +13,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Registry class name needs to be ended with the keyword "Registry" (case insensitive),
- * in order to be registered by {@link lphybeast.BEASTContext#BEASTContext(LPhyParser)}.
+ * Registry class will be loaded by {@link lphybeast.BEASTContext#BEASTContext(LPhyParser)},
+ * which is used to register classes.
  *
  * @author Walter Xie
  */
