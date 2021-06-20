@@ -27,9 +27,11 @@ public class GT16 extends GeneralSubstitutionModel {
     @Override
     public void initAndValidate() {
         rates = nucRatesInput.get();
-        rates.setInputValue("keys", "AC AG AT CG CT GT");
+//        rates.setInputValue("keys", "AC AG AT CG CT GT");
+//        TODO: validation check that rates and frequency have the required keys
 
         if (super.ratesInput.get() != null) {
+//            TODO: update parameter to use rates rather than nucRates
             throw new IllegalArgumentException("the rates attribute should not be used. Use nucRates instead.");
         }
 
