@@ -3,6 +3,10 @@ This is a BEAST2 package for Bayesian inference of molecular data for cancer evo
 
 **Software requirements**
 
+This package requires **Java 16**, you can use any OpenJDK 16 versions, such as
+* [AdoptOpenJDK](https://adoptopenjdk.net/?variant=openjdk16)
+* [OpenJDK](https://openjdk.java.net/install/index.html)
+
 This package requires at least
 * [BEAST 2](https://github.com/CompEvol/beast2) v2.6.5 
 * [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
@@ -47,7 +51,7 @@ Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases pag
 Create a new subdirectory `Phylonco` at the location: 
 ```
 For Windows in Users\<username>\BEAST\2.x\Phylonco
-For Mac in /Users/<username>\/Library/Application Support/BEAST/2.x/Phylonco
+For Mac in /Users/<username>/Library/Application Support/BEAST/2.x/Phylonco
 For Linux in /home/<username>/.beast/2.x/Phylonco
 ```
 Here `<username>` is your username, “2.x” refers to the major version of BEAST, for example 2.x = 2.1 for BEAST version 2.1.3.

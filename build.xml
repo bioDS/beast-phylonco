@@ -2,7 +2,7 @@
 <!-- Modified by: kche309 and J-Moravec -->
 
 <!-- Build Phylonco package -->
-<project basedir="." default="build_jar_all" name="BUILD">
+<project basedir="." default="build_jar_all_phylonco" name="BUILD">
     <description>
         Phylonco package.
         JUnit test is available for this build.
@@ -65,7 +65,7 @@
     </target>
 
     <!-- clean compile and build, without junit tests -->
-    <target name="build_jar_all_phylonco_nojunit" depends="clean_phylonco,compile_all_phylonco,dist_all_phylonco" description="Clean and Build all run-time stuff">
+    <target name="build_jar_all_phylonco_no_junit" depends="clean_phylonco,compile_all_phylonco,dist_all_phylonco" description="Clean and Build all run-time stuff">
     </target>
 
     <!-- compile Java source code -->
@@ -81,6 +81,7 @@
                memoryinitialsize="256m"
                memorymaximumsize="256m"
                includeantruntime="false">
+            <include name="phylonco/**/**" />
             <include name="beast/**/**" />
             <include name="test/**/**" />
         </javac>
@@ -126,6 +127,7 @@
                 <attribute name="Built-By" value="${user.name}" />
             </manifest>
                 <fileset dir="${build_phylonco}">
+                <include name="phylonco/**/**" />
                 <include name="beast/**/*.class" />
                 <include name="test/**/*.class" />
                 <include name="util/**/*.class" />
@@ -171,7 +173,7 @@
     </target>
 
     <target name="addon"
-        depends="build_jar_all_phylonco_nojunit"
+        depends="build_jar_all_phylonco_no_junit"
         description="release BEAST 2 package version of ${package_full}">
         <delete dir="${add_on_dir}" />
         <!-- Create the release directory -->
