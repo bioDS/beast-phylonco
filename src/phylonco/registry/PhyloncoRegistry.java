@@ -3,7 +3,7 @@ package phylonco.registry;
 import beast.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.core.LPhyParser;
-import lphy.evolution.datatype.PhasedGenotype;
+import phylonco.evolution.datatype.PhasedGenotype;
 import lphybeast.registry.ClassesRegistry;
 import phylonco.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.tobeast.generators.GT16ToBEAST;

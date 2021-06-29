@@ -3,7 +3,7 @@ package phylonco.tobeast.generators;
 import beast.core.BEASTInterface;
 import beast.evolution.likelihood.TreeLikelihoodWithError;
 import lphy.evolution.alignment.Alignment;
-import lphy.evolution.functions.UnphaseGenotypeAlignment;
+import phylonco.evolution.alignment.UnphaseGenotypeAlignment;
 import lphy.graphicalModel.Generator;
 import lphy.graphicalModel.GraphicalModelNode;
 import lphy.graphicalModel.Value;

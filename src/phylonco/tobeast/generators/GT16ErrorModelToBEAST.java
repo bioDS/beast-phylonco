@@ -8,7 +8,7 @@ import beast.evolution.likelihood.TreeLikelihoodWithError;
 import beast.evolution.likelihood.TreeLikelihoodWithErrorSlow;
 import beast.evolution.sitemodel.SiteModel;
 import lphy.evolution.alignment.Alignment;
-import lphy.evolution.alignment.GT16ErrorModel;
+import phylonco.evolution.alignment.GT16ErrorModel;
 import lphy.evolution.likelihood.PhyloCTMC;
 import lphy.graphicalModel.GraphicalModelNode;
 import lphy.graphicalModel.Value;

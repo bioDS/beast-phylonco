@@ -3,7 +3,7 @@ package phylonco.tobeast.generators;
 import beast.core.BEASTInterface;
 import beast.core.parameter.RealParameter;
 import beast.evolution.substitutionmodel.Frequencies;
-import lphy.evolution.substitutionmodel.GT16;
+import phylonco.evolution.substitutionmodel.GT16;
 import lphy.graphicalModel.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
