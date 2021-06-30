@@ -1,19 +1,19 @@
 <beast version='2.6'
-       namespace='
-       beast.evolution.alignment:
-       beast.core:
-       beast.core.parameter:
-       beast.evolution.tree:
-       beast.evolution.tree.coalescent:
-       beast.core.util:
-       beast.evolution.nuc:
-       beast.evolution.operators:
-       beast.evolution.sitemodel:
-       beast.evolution.substitutionmodel:
-       beast.evolution.likelihood:
-       beast.math.distributions:
-       beast.evolution.errormodel:
-       beast.util'>
+    namespace='
+        beast.core:
+        beast.core.util:
+        beast.core.parameter:
+        beast.evolution.datatype:
+        beast.evolution.alignment:
+        beast.evolution.tree:
+        beast.evolution.tree.coalescent:
+        beast.evolution.nuc:
+        beast.evolution.operators:
+        beast.evolution.sitemodel:
+        beast.evolution.substitutionmodel:
+        beast.evolution.likelihood:
+        beast.math.distributions:
+        beast.evolution.errormodel'>
 
     <map name="prior" >beast.math.distributions.Prior</map>
     <map name="Uniform" >beast.math.distributions.Uniform</map>

@@ -1,17 +1,16 @@
 <beast version='2.6'
        namespace='
-            beast.evolution.errormodel:
-            beast.evolution.alignment:
-            beast.evolution.tree.coalescent:
             beast.core:
             beast.core.util:
             beast.evolution.datatype:
+            beast.evolution.alignment:
             beast.evolution.nuc:
             beast.evolution.operators:
             beast.evolution.sitemodel:
             beast.evolution.substitutionmodel:
+            beast.evolution.errormodel:
             beast.evolution.likelihood:
-            beast.evolution.tree.coalescent:'>
+            beast.evolution.tree.coalescent'>
 
     <!-- Single cell data from Hou et al. (2012)            -->
     <!-- number of taxa = 58                                -->
@@ -203,7 +202,7 @@
         <substModel idref='subsModel'/>
     </input>
 
-    <input id="datatype" spec="beast.evolution.datatype.Binary" />
+    <input id="datatype" spec="beast.evolution.datatype.Binary"/>
 
     <!-- The error model -->
     <input spec='BinaryErrorModel' id='errorModel'>
@@ -222,16 +221,16 @@
         </populationModel>
     </tree>
 
-    <map name="Uniform" >beast.math.distributions.Uniform</map>
-    <map name="Exponential" >beast.math.distributions.Exponential</map>
-    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
-    <map name="Normal" >beast.math.distributions.Normal</map>
-    <map name="Beta" >beast.math.distributions.Beta</map>
-    <map name="Gamma" >beast.math.distributions.Gamma</map>
-    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
-    <map name="prior" >beast.math.distributions.Prior</map>
-    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
-    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+    <map name="Uniform">beast.math.distributions.Uniform</map>
+    <map name="Exponential">beast.math.distributions.Exponential</map>
+    <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal">beast.math.distributions.Normal</map>
+    <map name="Beta">beast.math.distributions.Beta</map>
+    <map name="Gamma">beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
+    <map name="prior">beast.math.distributions.Prior</map>
+    <map name="InverseGamma">beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX">beast.math.distributions.OneOnX</map>
 
     <run spec='MCMC' id='mcmc' chainLength='100000' preBurnin='10000'>
 
@@ -251,7 +250,8 @@
 
         <distribution id='posterior' spec='util.CompoundDistribution'>
             <distribution id="prior" spec="util.CompoundDistribution">
-                <distribution id="YuleModel" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate" tree="@tree"/>
+                <distribution id="YuleModel" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate"
+                              tree="@tree"/>
 
                 <prior id="yuleBirthRatePrior" name="distribution" x="@birthRate">
                     <Uniform id="Uniform.1" name="distr" upper="Infinity"/>
@@ -287,7 +287,8 @@
         <operator id="yuleBirthRateScaler" spec="ScaleOperator" parameter="@birthRate" scaleFactor="0.75" weight="3.0"/>
 
         <operator id="yuleModelTreeScaler" spec="ScaleOperator" scaleFactor="0.5" tree="@tree" weight="3.0"/>
-        <operator id="yuleModelTreeRootScaler" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@tree" weight="3.0"/>
+        <operator id="yuleModelTreeRootScaler" spec="ScaleOperator" rootOnly="true" scaleFactor="0.5" tree="@tree"
+                  weight="3.0"/>
         <operator id="yuleModelUniformOperator" spec="Uniform" tree="@tree" weight="30.0"/>
         <operator id="yuleModelSubtreeSlide" spec="SubtreeSlide" tree="@tree" weight="15.0"/>
         <operator id="yuleModelNarrow" spec="Exchange" tree="@tree" weight="15.0"/>

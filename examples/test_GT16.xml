@@ -1,30 +1,31 @@
 <beast version='2.6'
-       namespace='
-       beast.evolution.alignment:
-       beast.core:
-       beast.core.parameter:
-       beast.evolution.tree:
-       beast.evolution.tree.coalescent:
-       beast.core.util:
-       beast.evolution.nuc:
-       beast.evolution.operators:
-       beast.evolution.sitemodel:
-       beast.evolution.substitutionmodel:
-       beast.evolution.likelihood:
-       beast.math.distributions:
-       beast.util'>
+    namespace='
+        beast.core:
+        beast.core.parameter:
+        beast.core.util:
+        beast.evolution.datatype:
+        beast.evolution.alignment:
+        beast.evolution.nuc:
+        beast.evolution.operators:
+        beast.evolution.sitemodel:
+        beast.evolution.substitutionmodel:
+        beast.evolution.likelihood:
+        beast.evolution.tree:
+        beast.evolution.tree.coalescent:
+        beast.math.distributions:
+        beast.evolution.errormodel'>
 
-    <map name="prior" >beast.math.distributions.Prior</map>
-    <map name="Uniform" >beast.math.distributions.Uniform</map>
-    <map name="Exponential" >beast.math.distributions.Exponential</map>
-    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
-    <map name="Normal" >beast.math.distributions.Normal</map>
-    <map name="Beta" >beast.math.distributions.Beta</map>
-    <map name="Gamma" >beast.math.distributions.Gamma</map>
-    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
-    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
-    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
-    <map name="Dirichlet" >beast.math.distributions.DirichletDistribution</map>
+    <map name="prior">beast.math.distributions.Prior</map>
+    <map name="Uniform">beast.math.distributions.Uniform</map>
+    <map name="Exponential">beast.math.distributions.Exponential</map>
+    <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal">beast.math.distributions.Normal</map>
+    <map name="Beta">beast.math.distributions.Beta</map>
+    <map name="Gamma">beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
+    <map name="InverseGamma">beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX">beast.math.distributions.OneOnX</map>
+    <map name="Dirichlet">beast.math.distributions.DirichletDistribution</map>
 
     <!-- Diploid sequence -->
     <data id="alignment" dataType="nucleotideDiploid16">
@@ -77,10 +78,10 @@
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution id="prior" spec="util.CompoundDistribution">
                 <prior id="ratePrior" name="distribution" x="@rates">
-                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
                 <prior id="frequenciesPrior" name="distribution" x="@freqParameter">
-                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
             </distribution>
 

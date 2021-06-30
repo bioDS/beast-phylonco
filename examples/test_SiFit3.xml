@@ -8,7 +8,8 @@
             beast.evolution.operators:
             beast.evolution.sitemodel:
             beast.evolution.substitutionmodel:
-            beast.evolution.likelihood'>
+            beast.evolution.likelihood:
+            beast.evolution.errormodel'>
 
     <!-- Single cell data from Hou et al. (2012)            -->
     <!-- number of taxa = 58                                -->
