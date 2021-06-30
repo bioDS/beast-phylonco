@@ -6,6 +6,9 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * Implements the GT16 model for diploid genotypes from Kozlov et al. (2021)
  *
@@ -27,12 +30,22 @@ public class GT16 extends GeneralSubstitutionModel {
     @Override
     public void initAndValidate() {
         rates = nucRatesInput.get();
-//        rates.setInputValue("keys", "AC AG AT CG CT GT");
-//        TODO: validation check that rates and frequency have the required keys
 
+        // validation checks
         if (super.ratesInput.get() != null) {
-//            TODO: update parameter to use rates rather than nucRates
-            throw new IllegalArgumentException("the rates attribute should not be used. Use nucRates instead.");
+            throw new IllegalArgumentException("The rates attribute should not be used, use nucRates instead.");
+        }
+
+        if (rates == null) {
+            throw new IllegalArgumentException("nucRates attribute needs to be specified.");
+        } else if (rates.getDimension() != 6) {
+            throw new IllegalArgumentException("nucRates dimension not equal to 6.");
+        } else {
+            List<String> keys = Arrays.asList("AC", "AG", "AT", "CG", "CT", "GT");
+            for (String k: keys) {
+                if (rates.getValue(k) == null)
+                    throw new IllegalArgumentException("nucRates key needs to be specified for " + k);
+            }
         }
 
         frequencies = frequenciesInput.get();

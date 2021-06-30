@@ -33,12 +33,11 @@ public class BinaryErrorModel extends ErrorModel {
     }
 
     public double getProbability(int observedState, int trueState) {
-        int states = datatype.getStateCount();
         double a = alpha.getValue();
         double b = beta.getValue();
-        double prob = 0.0;
+        double prob;
         if (datatype.isAmbiguousCode(observedState)) {
-            return 1.0;
+            prob = getStatePartial(observedState, trueState);
         } else {
             int errorStates = observedState * 10 + trueState;
             switch (errorStates) {
@@ -58,9 +57,9 @@ public class BinaryErrorModel extends ErrorModel {
                     prob = 0.0;
                     break;
             }
-
-            return prob;
         }
+
+        return prob;
     }
 
     public double[] getProbabilities(int observedState) {

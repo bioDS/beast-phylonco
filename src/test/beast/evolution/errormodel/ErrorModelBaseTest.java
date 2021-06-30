@@ -39,11 +39,12 @@ public class ErrorModelBaseTest {
         for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
             // observed state is ambiguous
             if (datatype.isAmbiguousCode(observedState)) {
-                // all true states have probability 1.0
-                for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+                // all ambiguous states have probability 1.0
+                int[] stateSet = datatype.getStatesForCode(observedState);
+                for (int s: stateSet) {
                     double expected = 1.0;
                     double delta = 0.0;
-                    double modelProb = errorModel.getProbability(observedState, trueState);
+                    double modelProb = errorModel.getProbability(observedState, s);
                     assertEquals(expected, modelProb, delta);
                 }
             }

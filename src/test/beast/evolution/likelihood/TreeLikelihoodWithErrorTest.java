@@ -1,21 +1,16 @@
 package test.beast.evolution.likelihood;
 
+import beast.evolution.alignment.*;
+import beast.evolution.datatype.*;
 import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.datatype.Binary;
-import beast.evolution.datatype.Nucleotide;
-import beast.evolution.datatype.NucleotideDiploid16;
 import beast.evolution.errormodel.BinaryErrorModel;
 import beast.evolution.errormodel.ErrorModelBase;
 import beast.evolution.errormodel.GT16ErrorModel;
 import beast.evolution.likelihood.TreeLikelihoodWithError;
 import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.GT16;
-import beast.evolution.substitutionmodel.JukesCantor;
-import beast.evolution.substitutionmodel.BinarySubstitutionModel;
+import beast.evolution.substitutionmodel.*;
 import beast.util.TreeParser;
+
 import org.junit.Test;
 
 import java.util.Arrays;

@@ -20,14 +20,16 @@ public class ErrorModelBase extends ErrorModel {
 
     @Override
     public double getProbability(int observedState, int trueState) {
+        double prob;
         int states = datatype.getStateCount();
         if (datatype.isAmbiguousCode(observedState)) {
-            return 1.0;
+            prob = getStatePartial(observedState, trueState);
         } else if (observedState == trueState) {
-            return 1 - epsilon.getValue();
+            prob =  1 - epsilon.getValue();
         } else {
-            return epsilon.getValue() / (states - 1);
+            prob = epsilon.getValue() / (states - 1);
         }
+        return prob;
     }
 
     @Override

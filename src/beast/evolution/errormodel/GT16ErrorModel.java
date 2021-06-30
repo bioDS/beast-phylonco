@@ -35,11 +35,7 @@ public class GT16ErrorModel extends ErrorModel {
 
     @Override
     public double getProbability(int observedState, int trueState) {
-        double d = delta.getValue();
-        double e = epsilon.getValue();
-        int states = datatype.getStateCount();
-        double prob = 0.0;
-
+        double prob;
         String observedStr = datatype.getCharacter(observedState);
         String gap = Character.toString(GAP_CHAR);
         String missing = Character.toString(MISSING_CHAR);
@@ -110,7 +106,7 @@ public class GT16ErrorModel extends ErrorModel {
                     prob = (1.0 / 6.0) * d * e;
                 }
             } else {
-                // observed is heterozyous
+                // observed is heterozygous
                 if (observedFirst == trueFirst || observedSecond == trueSecond) {
                     // P(ac | ab) =
                     // P(cb | ab) = (1 - delta) * (1/6) * epsilon
