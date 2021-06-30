@@ -1,5 +1,8 @@
 package beast.evolution.likelihood;
 
+import beast.core.Description;
+
+@Description("Implementation of tree likelihood calculation with error models")
 // slow implementation of sampled error rates
 public class TreeLikelihoodWithErrorSlow  extends TreeLikelihoodWithError {
 

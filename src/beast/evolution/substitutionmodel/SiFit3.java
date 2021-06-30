@@ -1,10 +1,10 @@
 package beast.evolution.substitutionmodel;
 
+import beast.core.Description;
 import beast.core.parameter.RealParameter;
 import beast.core.Input;
 import beast.evolution.datatype.DataType;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.datatype.SiFitTernaryWithError;
+import beast.evolution.datatype.Ternary;
 
 /**
  * Implements the three state SiFit model of genotype substitution from Zafar et al. (2017)
@@ -46,6 +46,7 @@ import beast.evolution.datatype.SiFitTernaryWithError;
  *  pi2 = y / (x + 1 + (y / D)) * D
  *
  */
+@Description("SiFit ternary substitution model")
 public class SiFit3 extends GeneralSubstitutionModel {
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
@@ -165,6 +166,6 @@ public class SiFit3 extends GeneralSubstitutionModel {
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        return dataType instanceof SiFitTernaryWithError;
+        return dataType instanceof Ternary;
     }
 }

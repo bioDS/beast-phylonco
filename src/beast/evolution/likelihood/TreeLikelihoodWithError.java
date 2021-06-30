@@ -1,19 +1,22 @@
 package beast.evolution.likelihood;
 
+import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
-import beast.evolution.datatype.DataTypeWithError;
+import beast.evolution.errormodel.ErrorModel;
 import beast.evolution.tree.Node;
 
+@Description("Tree likelihood calculation with error models")
 public class TreeLikelihoodWithError extends TreeLikelihood {
 
-    final public Input<DataTypeWithError> errorModelInput = new Input<>("errorModel", "error model to use for partials");
+    final public Input<ErrorModel> errorModelInput = new Input<>("errorModel", "error model to use for partials");
     final public Input<Boolean> useTipsEmpiricalInput = new Input<>("useTipsEmpirical", "use tip ambiguities from data", false);
 
-    protected DataTypeWithError errorModel;
-    protected boolean useTipsEmpirical; // set to true to use tips from data, otherwise use tips from model
+    protected ErrorModel errorModel;
+    protected boolean useTipsEmpirical;
 
-    private boolean debug = false; // flag for debugging
+    protected boolean useTipLikelihoods = true;
+    protected boolean useAmbiguities = true;
 
     @Override
     public void initAndValidate() {
@@ -21,8 +24,8 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         errorModel = errorModelInput.get();
         useTipsEmpirical = useTipsEmpiricalInput.get();
         // set fields from TreeLikelihood class
-        super.m_useAmbiguities.set(true);
-        super.m_useTipLikelihoods.set(true);
+        super.m_useAmbiguities.setValue(useAmbiguities, this);
+        super.m_useTipLikelihoods.setValue(useTipLikelihoods, this);
         super.initAndValidate();
     }
 
@@ -60,39 +63,17 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
                 if (useTipsEmpirical) {
                     tipLikelihoods = data.getTipLikelihoods(t, p);
                 } else {
-                    errorModelInput.get().setupErrorMatrix(); // update error matrix
-                    tipLikelihoods = errorModelInput.get().getProbabilities(state);
+                    tipLikelihoods = errorModel.getProbabilities(state);
                 }
                 for (int s = 0; s < nrOfStates; s++) {
-                    if (tipLikelihoods == null) {
-                        boolean[] stateSet = data.getStateSet(state);
-                        if (stateSet[s]) {
-                            partials[i] = 1.0;
-                        } else {
-                            partials[i] = 0.0;
-                        }
-                    } else {
-                        partials[i] = tipLikelihoods[s];
-                    }
+                    partials[i] = tipLikelihoods[s];
                     i++;
                 }
             }
             likelihoodCore.setNodePartials(node.getNr(), partials);
-            if (debug) {
-                System.out.println("partials " + data.getTaxaNames().get(t));
-                int count = 1;
-                for (double p : partials) {
-                    System.out.print(p + " ");
-                    if (count % nrOfStates == 0) {
-                        System.out.println("; ");
-                    }
-                    count++;
-                }
-                System.out.println();
-            }
         } else {
-            setPartials(node.getLeft(), nrOfPatterns);
-            setPartials(node.getRight(), nrOfPatterns);
+            setPartials(node.getChild(0), nrOfPatterns);
+            setPartials(node.getChild(1), nrOfPatterns);
         }
     }
 
