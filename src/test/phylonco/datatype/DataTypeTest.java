@@ -1,6 +1,9 @@
-package test.phylonco.datatype;
+package phylonco.datatype;
 
-import beast.evolution.datatype.*;
+import beast.evolution.datatype.DataType;
+import beast.evolution.datatype.NucleotideDiploid10;
+import beast.evolution.datatype.NucleotideDiploid16;
+import beast.evolution.datatype.Ternary;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

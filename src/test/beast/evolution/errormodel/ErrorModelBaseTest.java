@@ -1,8 +1,8 @@
-package test.beast.evolution.errormodel;
+package beast.evolution.errormodel;
 
 import beast.evolution.datatype.Nucleotide;
-import beast.evolution.errormodel.ErrorModelBase;
 import org.junit.Test;
+import phylonco.beast.evolution.errormodel.ErrorModelBase;
 
 import static junit.framework.Assert.assertEquals;
 

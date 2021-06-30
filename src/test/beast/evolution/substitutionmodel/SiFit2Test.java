@@ -1,11 +1,11 @@
-package test.beast.evolution.substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
+import org.junit.Test;
+import phylonco.beast.evolution.substitutionmodel.SiFit2;
 
-import beast.evolution.substitutionmodel.SiFit2;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 @Description("Test SiFit2 matrix exponentiation")
 public class SiFit2Test {

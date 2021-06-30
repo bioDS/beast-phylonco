@@ -1,8 +1,8 @@
-package test.beast.evolution.substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.K80Diploid;
 import org.junit.Test;
+import phylonco.beast.evolution.substitutionmodel.K80Diploid;
 
 import static org.junit.Assert.assertArrayEquals;
 

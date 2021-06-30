@@ -1,17 +1,21 @@
-package test.beast.evolution.likelihood;
+package beast.evolution.likelihood;
 
-import beast.evolution.alignment.*;
-import beast.evolution.datatype.*;
 import beast.core.parameter.RealParameter;
-import beast.evolution.errormodel.BinaryErrorModel;
-import beast.evolution.errormodel.ErrorModelBase;
-import beast.evolution.errormodel.GT16ErrorModel;
-import beast.evolution.likelihood.TreeLikelihoodWithError;
+import beast.evolution.alignment.Alignment;
+import beast.evolution.alignment.Sequence;
+import beast.evolution.datatype.Binary;
+import beast.evolution.datatype.Nucleotide;
+import beast.evolution.datatype.NucleotideDiploid16;
 import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.*;
+import beast.evolution.substitutionmodel.Frequencies;
+import beast.evolution.substitutionmodel.JukesCantor;
 import beast.util.TreeParser;
-
 import org.junit.Test;
+import phylonco.beast.evolution.errormodel.BinaryErrorModel;
+import phylonco.beast.evolution.errormodel.ErrorModelBase;
+import phylonco.beast.evolution.errormodel.GT16ErrorModel;
+import phylonco.beast.evolution.likelihood.TreeLikelihoodWithError;
+import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
 import java.util.Arrays;
 
@@ -113,7 +117,7 @@ public class TreeLikelihoodWithErrorTest {
                 "IsLabelledNewick", true
         );
 
-        BinarySubstitutionModel subsModel = new BinarySubstitutionModel();
+        phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel subsModel = new BinarySubstitutionModel();
         subsModel.initByName("lambda", "2.0");
         subsModel.initAndValidate();
 
@@ -318,7 +322,7 @@ public class TreeLikelihoodWithErrorTest {
         nucRates.setInputValue("keys", "AC AG AT CG CT GT");
         nucRates.initAndValidate();
 
-        GT16 subsModel = new GT16();
+        phylonco.beast.evolution.substitutionmodel.GT16 subsModel = new phylonco.beast.evolution.substitutionmodel.GT16();
         subsModel.initByName(
                 "nucRates", nucRates,
                 "frequencies", freqs

@@ -1,7 +1,7 @@
-package test.phylonco.evolution.alignment;
+package phylonco.evolution.alignment;
 
 import org.junit.Test;
-import phylonco.evolution.alignment.GT16ErrorModel;
+import phylonco.lphy.evolution.alignment.GT16ErrorModel;
 
 import java.util.Arrays;
 

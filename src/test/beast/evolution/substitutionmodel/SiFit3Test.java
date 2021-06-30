@@ -1,10 +1,10 @@
-package test.beast.evolution.substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.SiFit3;
 import junit.framework.TestCase;
 import org.junit.Test;
+import phylonco.beast.evolution.substitutionmodel.SiFit3;
 
 import static org.junit.Assert.assertArrayEquals;
 

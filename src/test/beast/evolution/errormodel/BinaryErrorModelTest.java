@@ -1,8 +1,8 @@
-package test.beast.evolution.errormodel;
+package beast.evolution.errormodel;
 
 import beast.evolution.datatype.Binary;
-import beast.evolution.errormodel.BinaryErrorModel;
 import org.junit.Test;
+import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 
 import static junit.framework.Assert.assertEquals;
 

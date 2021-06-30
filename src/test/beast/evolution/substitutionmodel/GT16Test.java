@@ -1,9 +1,8 @@
-package test.beast.evolution.substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.GT16;
 import org.junit.Test;
+import phylonco.beast.evolution.substitutionmodel.GT16;
 
 import java.util.Arrays;
 

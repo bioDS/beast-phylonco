@@ -3,7 +3,7 @@
 
     <mergewith point='substModelTemplates'>
 		
-		<subtemplate id='MethylationHKY' class='beast.evolution.substitutionmodel.MethylationHKY' mainid='MethylationHKY.s:$(n)'>
+		<subtemplate id='MethylationHKY' class='phylonco.beast.evolution.substitutionmodel.MethylationHKY' mainid='MethylationHKY.s:$(n)'>
 		<![CDATA[
 			<plugin spec='MethylationHKY' id='MethylationHKY.s:$(n)'>
 				<parameter id="kappa.s:$(n)" name='kappa' value="1.0" lower="0.0" estimate='true'/>

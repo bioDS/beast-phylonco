@@ -1,11 +1,11 @@
-package test.beast.evolution.substitutionmodel;
+package beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;
+import org.junit.Test;
+import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
-import beast.evolution.substitutionmodel.BinarySubstitutionModel;
-import org.junit.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
 
 @Description("Test Binary substitution model matrix exponentiation")
 public class BinarySubstitutionModelTest {

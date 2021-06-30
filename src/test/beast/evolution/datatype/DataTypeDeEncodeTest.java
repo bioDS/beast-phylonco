@@ -1,16 +1,15 @@
-package test.beast.evolution.datatype;
+package beast.evolution.datatype;
 
-import beast.evolution.datatype.*;
 import beast.evolution.datatype.DataType.Base;
-
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
 public class DataTypeDeEncodeTest {

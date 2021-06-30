@@ -1,6 +1,6 @@
 package jebl.evolution.sequences;
 
-import phylonco.evolution.datatype.PhasedGenotype;
+import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 public class PhasedGenotypeState extends State {
 
