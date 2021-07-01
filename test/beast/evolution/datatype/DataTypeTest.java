@@ -12,12 +12,12 @@ import java.util.List;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(Parameterized.class)
-public class DataTypeDeEncodeTest {
+public class DataTypeTest {
     private Base dataType;
     private String sequence;
     private List<Integer> codes;
 
-    public DataTypeDeEncodeTest(Base dataType, String sequence, List<Integer> codes) {
+    public DataTypeTest(Base dataType, String sequence, List<Integer> codes) {
         this.dataType = dataType;
         this.sequence = sequence;
         this.codes = codes;
@@ -26,16 +26,16 @@ public class DataTypeDeEncodeTest {
 
     @Parameterized.Parameters
     public static Collection<Object[]> typestrings() {
-        Base NucMeth = new NucleotideMethylation();
-        Base NucDip = new NucleotideDiploid();
-        Base QuinaryType = new Quinary();
-        Base TernaryType = new Ternary();
+        NucleotideMethylation NucMeth = new NucleotideMethylation();
+        NucleotideDiploid10 dataNucleotide10 = new NucleotideDiploid10();
+        NucleotideDiploid16 dataNucleotide16 = new NucleotideDiploid16();
+        Ternary TernaryType = new Ternary();
 
         return Arrays.asList(new Object[][] {
-                { NucMeth, "ACGTPJO1WNX-?", Arrays.asList( new Integer[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12}) },
-                { NucDip, "AMRWCSYGKT?", Arrays.asList( new Integer[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10})},
-                { QuinaryType, "012345?", Arrays.asList( new Integer[] {0, 1, 2, 3, 4, 5, 6})},
-                { TernaryType, "012?", Arrays.asList( new Integer[] {0, 1, 2, 3})}
+                { NucMeth, "ACGTPJO1WNX-?", Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12) },
+                { dataNucleotide10, "AMRWCSYGKT-?", Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11) },
+                { dataNucleotide16, "0123456789ABCDEFMRWSYK-?", Arrays.asList(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23) },
+                { TernaryType, "012-?", Arrays.asList(0, 1, 2, 3, 4) }
         });
     }
 

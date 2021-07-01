@@ -1,4 +1,4 @@
-package beast.evolution.errormodel;
+package phylonco.beast.evolution.errormodel;
 
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;

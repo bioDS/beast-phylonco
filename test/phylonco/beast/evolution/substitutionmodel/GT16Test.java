@@ -1,6 +1,7 @@
-package beast.evolution.substitutionmodel;
+package phylonco.beast.evolution.substitutionmodel;
 
 import beast.core.parameter.RealParameter;
+import beast.evolution.substitutionmodel.Frequencies;
 import org.junit.Test;
 import phylonco.beast.evolution.substitutionmodel.GT16;
 

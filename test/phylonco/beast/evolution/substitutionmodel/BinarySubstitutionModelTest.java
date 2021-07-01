@@ -1,4 +1,4 @@
-package beast.evolution.substitutionmodel;
+package phylonco.beast.evolution.substitutionmodel;
 
 import beast.core.Description;
 import beast.core.parameter.RealParameter;

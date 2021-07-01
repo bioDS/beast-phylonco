@@ -1,4 +1,4 @@
-package beast.evolution.likelihood;
+package phylonco.beast.evolution.likelihood;
 
 import beast.core.parameter.RealParameter;
 import beast.evolution.alignment.Alignment;
