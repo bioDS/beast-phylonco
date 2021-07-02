@@ -24,7 +24,7 @@ public class GT16 extends RateMatrix {
 
     public GT16(@ParameterInfo(name = ratesParamName, narrativeName = "relative rates", description = "the relative rates of the G16 process. Size 6.") Value<Double[]> rates,
                 @ParameterInfo(name = freqParamName, narrativeName = "base frequencies", description = "the base frequencies of the G16 process. Size 16.") Value<Double[]> freq,
-                @ParameterInfo(name = meanRateParamName, narrativeName = "substitution rate", description = "the rate of substitution.", optional = true) Value<Number> meanRate) {
+                @ParameterInfo(name = RateMatrix.meanRateParamName, narrativeName = "substitution rate", description = "the rate of substitution.", optional = true) Value<Number> meanRate) {
 
         super(meanRate);
 

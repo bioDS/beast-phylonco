@@ -1,9 +1,9 @@
-package jebl.evolution.sequences;
+package phylonco.lphy.evolution.datatype;
 
-import phylonco.lphy.evolution.datatype.PhasedGenotype;
+import jebl.evolution.sequences.SequenceType;
+import jebl.evolution.sequences.State;
 
 public class PhasedGenotypeState extends State {
-
 
     public PhasedGenotypeState(String name, String stateCode, int index) {
         super(name, stateCode, index);

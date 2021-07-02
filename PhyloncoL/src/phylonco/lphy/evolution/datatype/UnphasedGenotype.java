@@ -1,7 +1,6 @@
 package phylonco.lphy.evolution.datatype;
 
 import jebl.evolution.sequences.State;
-import jebl.evolution.sequences.UnphasedGenotypeState;
 import lphy.evolution.datatype.DataType;
 
 import java.util.Arrays;
@@ -32,7 +31,7 @@ public class UnphasedGenotype extends DataType {
         char code;
         for(int i = 0; i < 4; i++) {
             for(int j = i+1; j < 4; j++) {
-                String name = "" + NUCL_CHAR[i] + NUCL_CHAR[j];
+                String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
                 code = (char) (x + '0');
                 CANONICAL_STATES[x] = new UnphasedGenotypeState(name, Character.toString(code), x);
                 x++;
