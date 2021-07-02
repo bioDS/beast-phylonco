@@ -5,7 +5,6 @@
         beast.core.util:
         beast.evolution.datatype:
         beast.evolution.alignment:
-        beast.evolution.nuc:
         beast.evolution.operators:
         beast.evolution.sitemodel:
         beast.evolution.substitutionmodel:
@@ -13,7 +12,8 @@
         beast.evolution.tree:
         beast.evolution.tree.coalescent:
         beast.math.distributions:
-        beast.evolution.errormodel'>
+        phylonco.beast.evolution.substitutionmodel:
+        phylonco.beast.evolution.errormodel'>
 
     <map name="prior">beast.math.distributions.Prior</map>
     <map name="Uniform">beast.math.distributions.Uniform</map>

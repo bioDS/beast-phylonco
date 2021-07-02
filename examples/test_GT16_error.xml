@@ -7,13 +7,12 @@
         beast.evolution.alignment:
         beast.evolution.tree:
         beast.evolution.tree.coalescent:
-        beast.evolution.nuc:
         beast.evolution.operators:
         beast.evolution.sitemodel:
         beast.evolution.substitutionmodel:
-        beast.evolution.likelihood:
-        beast.math.distributions:
-        beast.evolution.errormodel'>
+        phylonco.beast.evolution.substitutionmodel:
+        phylonco.beast.evolution.errormodel:
+        phylonco.beast.evolution.likelihood'>
 
     <map name="prior" >beast.math.distributions.Prior</map>
     <map name="Uniform" >beast.math.distributions.Uniform</map>
@@ -65,7 +64,7 @@
         <substModel idref='gt16'/>
     </input>
 
-    <input id="datatype" spec="beast.evolution.datatype.NucleotideDiploid16" />
+    <input id="datatype" spec="NucleotideDiploid16" />
 
     <!-- The error model -->
     <input spec='GT16ErrorModel' id='errorModel'>

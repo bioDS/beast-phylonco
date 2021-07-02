@@ -4,13 +4,12 @@
             beast.core.util:
             beast.evolution.datatype:
             beast.evolution.alignment:
-            beast.evolution.nuc:
             beast.evolution.operators:
             beast.evolution.sitemodel:
             beast.evolution.substitutionmodel:
-            beast.evolution.errormodel:
-            beast.evolution.likelihood:
-            beast.evolution.tree.coalescent'>
+            phylonco.beast.evolution.substitutionmodel:
+            phylonco.beast.evolution.errormodel:
+            phylonco.beast.evolution.likelihood'>
 
     <!-- Single cell data from Hou et al. (2012)            -->
     <!-- number of taxa = 58                                -->
