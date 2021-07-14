@@ -1,13 +1,12 @@
-package phylonco.lphybeast.registry;
+package phylonco.lphybeast.spi;
 
 import beast.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
-import lphy.core.LPhyParser;
 import lphy.graphicalModel.Generator;
 import lphy.graphicalModel.Value;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
-import lphybeast.registry.ClassesRegistry;
+import lphybeast.spi.LPhyBEASTExt;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
@@ -21,12 +20,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Registry class will be loaded by {@link lphybeast.BEASTContext#BEASTContext(LPhyParser)},
- * which is used to register classes.
+ * The "Container" provider class of SPI
+ * which include a list of {@link lphybeast.ValueToBEAST},
+ * {@link lphybeast.GeneratorToBEAST}, and {@link DataType}
+ * to extend.
+ * It requires a public no-args constructor.
  *
  * @author Walter Xie
  */
-public class PhyloncoRegistry implements ClassesRegistry {
+public class LBPhylonco implements LPhyBEASTExt {
 
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
