@@ -1,19 +1,13 @@
 # BEAST Phylonco
 This is a BEAST2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
-**Software requirements**
+## Software requirements
 
-This package requires **Java 16**, you can use any OpenJDK 16 versions, such as
-* [AdoptOpenJDK](https://adoptopenjdk.net/?variant=openjdk16)
-* [OpenJDK](https://openjdk.java.net/install/index.html)
-
-This package requires at least
+This package requires Java 8, and at least
 * [BEAST 2](https://github.com/CompEvol/beast2) v2.6.5 
 * [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
-* [LPhy](https://github.com/LinguaPhylo/linguaPhylo) v1.0.0
-* [LPhyBeast](https://github.com/LinguaPhylo/LPhyBeast) v0.0.5
 
-**Features**
+## Features
 
 The current release has the following features.
 
@@ -28,6 +22,8 @@ Substitution Models
 * Binary substitution model
 * SiFit2 substitution model (2 states)
 * SiFit3 substitution model (3 states)
+
+*For scripting support, see [bioDS/lphy-phylonco](https://github.com/bioDS/lphy-phylonco)
 
 ## How to install
 You may install the Phylonco package either using the Package Manager, or manually.
