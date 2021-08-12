@@ -16,7 +16,7 @@ import java.util.List;
  */
 public final class PhasedGenotype extends DataType {
 
-    public static final String NAME = "phasedGenotype";
+    public static final String NAME = "nucleotideDiploid16";
     public static final int CANONICAL_STATE_COUNT = 16;
     public static final int STATE_COUNT = 24;
 

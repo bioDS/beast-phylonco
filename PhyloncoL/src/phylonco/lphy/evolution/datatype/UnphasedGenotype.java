@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class UnphasedGenotype extends DataType {
 
-    public static final String NAME = "unphasedGenotype";
+    public static final String NAME = "nucleotideDiploidUnphased";
     public static final int CANONICAL_STATE_COUNT = 10;
     public static final int STATE_COUNT = 12;
 
