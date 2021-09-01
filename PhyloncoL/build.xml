@@ -1,0 +1,150 @@
+<project default="compile" basedir="." name="phylonco-lphy" >
+
+    <!--******** LPhy ********-->
+
+    <!-- linguaPhylo and LPhyBEAST is the sibling folder of beast-phylonco -->
+    <!-- overwrite lphyRepo in other extensions build -->
+    <property name="lphyRepo" value="../../linguaPhylo/"/>
+    <property name="lphy" location="${lphyRepo}/LPhy"/>
+    <include file="${lphy}/build.xml"/>
+
+    <!--*******************************************************************-->
+
+    <!-- build fails if the relative path isn't ../../beast-phylonco/PhyloncoL -->
+    <property name="phyloncoLFolder" value="PhyloncoL"/>
+    <property name="phyloncoRepo" value=".."/>
+
+    <!-- source code dir separated from test   -->
+    <property name="phyloncoSrc" location="${phyloncoRepo}/${phyloncoLFolder}/src" />
+    <!-- source code dir of test   -->
+    <property name="phyloncoTest" location="${phyloncoRepo}/${phyloncoLFolder}/test" />
+    <!-- Names of temporary build/test directories, which are deleted before build -->
+    <property name="phyloncoBuild" location="${phyloncoRepo}/${phyloncoLFolder}/build" />
+    <property name="phyloncoDist" location="${phyloncoRepo}/${phyloncoLFolder}/dist" />
+    <property name="phylonco-build-test" location="${phyloncoRepo}/${phyloncoLFolder}/build-test"/>
+    <property name="phylonco-test-reports" location="${phyloncoRepo}/${phyloncoLFolder}/test-reports"/>
+    <property name="phyloncoDir" value="lib"/>
+
+    <!-- version is loaded from version.xml -->
+    <xmlproperty file="${phyloncoRepo}/version.xml" collapseAttributes="true" id="phylonco"/>
+    <property name="phyloncoName" value="${addon.name}"/>
+    <property name="phyloncoVersion" value="${addon.version}"/>
+
+    <!-- need 3rd party jar to use script engine, to convert the string to lower cases -->
+    <!-- Jar file naming conventions: all small cases  name-major.minor.build.jar  -->
+    <property name="phyloncoJar" value="${phyloncoName}-${phyloncoVersion}"/>
+
+    <!-- Revert to pristine state. -->
+    <target name="clean">
+        <delete dir="${phyloncoBuild}"/>
+        <delete dir="${phyloncoDist}"/>
+        <delete dir="${phylonco-build-test}"/>
+        <delete dir="${phylonco-test-reports}"/>
+    </target>
+
+    <!-- Prepare for compilation -->
+    <target name="init" depends="clean">
+        <echo message="Java version: ${java.version}"/>
+        <echo message="${ant.project.name}: ${ant.file}" />
+        <echo message="Working dir is ${user.dir}." />
+        <echo message="Current dir is ${basedir}." />
+
+        <mkdir dir="${phyloncoBuild}"/>
+    </target>
+
+    <path id="phylonco-module-path">
+        <pathelement path="${phyloncoBuild}"/>
+        <pathelement path="${lphyBuild}"/>
+        <fileset dir="${lphyLib}" includes="*.jar"/>
+    </path>
+
+    <!-- Compile -->
+    <target name="compile" depends="init" description="clean, create dirs, and compile.">
+        <echo>PhyloncoL module-path is ${toString:phylonco-module-path}</echo>
+        <!-- imported from ${lphy}/build.xml -->
+        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${phyloncoSrc}"
+               destdir="${phyloncoBuild}" includeantruntime="false">
+            <modulepath refid="phylonco-module-path"/>
+        </javac>
+        <echo message="Successfully compiled ${phyloncoLFolder}." />
+    </target>
+
+    <!-- jar -->
+    <property name="builtBy" value="${user.name}"/>
+    <property name="createBy" value="${project.groupId} team"/>
+
+    <target name="dist" depends="compile">
+         <!-- manifest -->
+        <tstamp/>
+        <echo message="Version ${phyloncoVersion}" />
+        <echo message="Class-Path ${phyloncoJar}.jar" />
+        <echo message="Created-By ${createBy}" />
+        <echo message="Built-By ${builtBy}" />
+        <echo message="Built-Date ${TODAY}" />
+
+        <mkdir dir="${phyloncoDist}"/>
+
+        <jar jarfile="${phyloncoDist}/${phyloncoJar}.jar">
+            <fileset dir="${phyloncoBuild}"/>
+            <manifest>
+                <attribute name="Version" value="${phyloncoVersion}"/>
+                <!-- <attribute name="Class-Path" value="${phyloncoJar}.jar"/>-->
+                <attribute name="Created-By" value="${createBy}"/>
+                <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+            <!-- <zipgroupfileset dir="${phyloncoLib}" includes="*.jar"/>-->
+        </jar>
+
+        <echo message="Successfully create ${phyloncoJar}." />
+        
+    </target>
+
+    <!-- 1. update version number in pom.xml -->
+    <!-- 2. run GenerateDocs [ version number ] -->
+    <!-- 3. commit all changes -->
+    <!-- 4. ant release : create phylonco-?.?.?.zip -->
+    <!-- 5. upload it to github release page -->
+    <target name="release" depends="lphy.compile,compile,dist" unless="file.exists"
+            description="for the release process">
+        <!-- release, depend on lphy.compile -->
+        <property name="pack" value="${phyloncoDist}/package"/>
+        <mkdir dir="${pack}"/>
+        <mkdir dir="${pack}/${phyloncoDir}"/>
+
+        <available property="file.exists" file="${phyloncoDist}/${phyloncoJar}.jar"/>
+        <copy file="${phyloncoDist}/${phyloncoJar}.jar"
+              tofile="${pack}/${phyloncoDir}/${phyloncoJar}.jar"/>
+        <delete file="${phyloncoDist}/${phyloncoJar}.jar"/>
+
+        <copy file="../README.md" todir="${pack}"/>
+        <!--
+            <copy file="COPYING" todir="${pack}" />
+            <copy todir="${pack}">
+              <fileset dir="${lib}" includes="LICENSE*" />
+            </copy>
+        -->
+        <property name="exmpDir" value="examples"/>
+        <mkdir dir="${pack}/${exmpDir}"/>
+        <copy todir="${pack}/${exmpDir}">
+            <!--  examples files are under the root -->
+            <fileset dir="../${exmpDir}" includes="*.lphy">
+                <!--  <exclude name="**/*"/>-->
+            </fileset>
+            <fileset dir="../${exmpDir}">
+                <include name="**/*.nex"/>
+            </fileset>
+        </copy>
+
+        <zip destfile="${phyloncoDist}/${phyloncoName}-${phyloncoVersion}.zip" basedir="${pack}"/>
+
+<!--        <delete dir="${pack}"/>-->
+
+        <echo/>
+        <echo/>
+        <echo>** Release ${phyloncoDist}/${phyloncoName}-${phyloncoVersion}.zip created successfully! **</echo>
+    </target>
+
+<!--TODO tests-->
+
+</project>
