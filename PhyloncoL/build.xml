@@ -145,6 +145,20 @@
         <echo>** Release ${phyloncoDist}/${phyloncoName}-${phyloncoVersion}.zip created successfully! **</echo>
     </target>
 
-<!--TODO tests-->
+    <property name="phyloncoDoc" location="${phyloncoRepo}/${phyloncoLFolder}/doc" />
+    <!-- run after release -->
+    <target name="phylonco-docs" description="generate Phylonco lphy docs.">
+        <echo> Generate Phylonco docs to ${phyloncoDoc} ... </echo>
+        <java module="lphy" classname="lphy.doc.GenerateDocs" dir="${phyloncoDoc}" fork="true">
+            <modulepath refid="phylonco-module-path"/>
+            <arg value="${phyloncoVersion}"/>
+            <arg value="LPhy Extension Phylonco"/>
+            <arg value="phylonco.lphy.spi.Phylonco"/>
+        </java>
+    </target>
+
+
+
+    <!--TODO tests-->
 
 </project>
