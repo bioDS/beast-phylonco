@@ -3,9 +3,13 @@
     <!--******** LPhy ********-->
 
     <!-- linguaPhylo and LPhyBEAST is the sibling folder of beast-phylonco -->
-    <!-- overwrite lphyRepo in other extensions build -->
+    <!-- overwrite below vars, putting them before "include" lphy build -->
     <property name="lphyRepo" value="../../linguaPhylo/"/>
     <property name="lphy" location="${lphyRepo}/LPhy"/>
+    <!-- jar -->
+    <property name="builtBy" value="${user.name}"/>
+    <property name="createBy" value="LPhy team"/>
+
     <include file="${lphy}/build.xml"/>
 
     <!--*******************************************************************-->
@@ -68,10 +72,6 @@
         </javac>
         <echo message="Successfully compiled ${phyloncoLFolder}." />
     </target>
-
-    <!-- jar -->
-    <property name="builtBy" value="${user.name}"/>
-    <property name="createBy" value="${project.groupId} team"/>
 
     <target name="dist" depends="compile">
          <!-- manifest -->
@@ -139,7 +139,6 @@
         <zip destfile="${phyloncoDist}/${phyloncoName}-${phyloncoVersion}.zip" basedir="${pack}"/>
 
 <!--        <delete dir="${pack}"/>-->
-
         <echo/>
         <echo/>
         <echo>** Release ${phyloncoDist}/${phyloncoName}-${phyloncoVersion}.zip created successfully! **</echo>
@@ -157,6 +156,67 @@
         </java>
     </target>
 
+
+    <!--****** Non-module Jar ******-->
+
+    <!-- Java 8 using classpath  -->
+    <path id="phylonco-j8-classpath">
+        <pathelement path="${classpath}"/>
+        <pathelement path="${lphyBuild}"/>
+        <fileset dir="${lphyLib}" includes="*.jar" excludes="**/module-info.java"/>
+        <pathelement path="${phyloncoBuild}"/>
+    </path>
+
+    <!--  only for non-module  -->
+    <property name="phyloncoResources" location="${phyloncoRepo}/${phyloncoLFolder}/resources" />
+
+    <!-- Compile -->
+    <target name="compile-j8" depends="init,lphy.compile-j8" >
+        <echo>phylonco Java 8 classpath is ${toString:phylonco-j8-classpath}</echo>
+
+        <javac target="${targetVersion}" source="${sourceVersion}" destdir="${phyloncoBuild}"
+               includeantruntime="false" debug="on" failonerror="yes">
+            <!-- assume every classes are inside lphy package to exclude module-info.java -->
+            <!-- every options else are not working, e.g. <exclude name= -->
+            <src path="${phyloncoSrc}/phylonco/lphy"/>
+            <classpath refid="phylonco-j8-classpath"/>
+        </javac>
+        <mkdir dir="${phyloncoBuild}/META-INF"/>
+        <mkdir dir="${phyloncoBuild}/META-INF/services"/>
+        <copy file="${phyloncoResources}/META-INF/services/lphy.spi.LPhyExtension" todir="${phyloncoBuild}/META-INF/services"/>
+        <echo message="Successfully compiled ${phyloncoRepo} using classpath." />
+    </target>
+
+    <!-- jar -->
+    <property name="phyloncoJ8Jar" value="${phyloncoName}-j8-${phyloncoVersion}"/>
+
+    <target name="dist-j8" depends="compile-j8"
+            description="Non-module Jar using META-INF services to invoke SPI.">
+        <!-- manifest -->
+        <tstamp/>
+        <echo message="Version ${phyloncoVersion}" />
+        <echo message="Class-Path ${phyloncoJ8Jar}.jar" />
+        <echo message="Created-By ${createBy}" />
+        <echo message="Built-By ${builtBy}" />
+        <echo message="Built-Date ${TODAY}" />
+
+        <mkdir dir="${phyloncoDist}"/>
+
+        <jar jarfile="${phyloncoDist}/${phyloncoJ8Jar}.jar">
+            <fileset dir="${phyloncoBuild}" excludes="**/module-info.class"/>
+            <manifest>
+                <attribute name="Version" value="${phyloncoVersion}"/>
+                <attribute name="Class-Path" value="${phyloncoJ8Jar}.jar"/>
+                <attribute name="Created-By" value="${createBy}"/>
+                <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+
+            <zipgroupfileset dir="${phyloncoDist}" includes="*.jar"/>
+        </jar>
+
+        <echo message="Successfully create ${phyloncoJ8Jar}." />
+    </target>
 
 
     <!--TODO tests-->
