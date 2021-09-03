@@ -206,4 +206,180 @@
         <echo message="Package version release is finished." />
     </target>
 
+
+    <!--******** LPhy BEAST ********-->
+
+    <!-- version is loaded from version.xml -->
+    <xmlproperty file="version.xml" collapseAttributes="true" id="phylonco"/>
+    <property name="phyloncoName" value="${addon.name}"/>
+    <property name="phyloncoVersion" value="${addon.version}"/>
+    <!-- jar name conversion -->
+    <property name="phyloncoJar" value="${phyloncoName}-${phyloncoVersion}"/>
+
+    <!--******** 1. include LPhy and extension ********-->
+
+    <!-- linguaPhylo and LPhyBEAST are the sibling folder of beast-phylonco -->
+    <!-- overwrite below vars, putting them before "include" lphy build -->
+    <property name="phyloncoRepo" value="../beast-phylonco/"/>
+    <!-- LPhy path is changed in this build   -->
+    <property name="lphyRepo" value="../linguaPhylo/"/>
+    <include file="${phyloncoRepo}/PhyloncoL/build.xml"/>
+
+    <!--******** 2. include LPhyBEAST and BEAST ********-->
+
+    <!-- overwrite below vars, putting them before "include" lphy build -->
+    <property name="lbRepo" value=".."/>
+    <include file="${lbRepo}/LPhyBeast/build.xml"/>
+
+    <!--******** 3. build every projects ********-->
+
+    <!-- easy to inherit  -->
+    <property name="phlncRepo" value="../beast-phylonco/"/>
+    <!-- source code dir separated from test   -->
+    <property name="phlncSrc" location="${phlncRepo}/src" />
+    <property name="phlncLib" location="${phlncRepo}/lib" />
+    <!-- Names of temporary build/test directories, which are deleted before build -->
+    <property name="phlncBuild" location="${phlncRepo}/build" />
+    <property name="phlncDist" location="${phlncRepo}/dist" />
+    <property name="phlncPkg" location="${phlncDist}/package"/>
+    <property name="phlncPkgLib" location="${phlncPkg}/lib"/>
+    <property name="phlncRelease" value="${phlncRepo}/release" />
+
+    <!-- source code dir of test   -->
+    <property name="phlncTest" location="${phlncRepo}/test" />
+    <property name="phlnc-build-test" location="${phlncRepo}/build-test"/>
+    <property name="phlnc-test-reports" location="${phlncRepo}/test-reports"/>
+
+    <property name="phlncLBSrc" location="${phlncRepo}/PhyloncoLB/src" />
+
+    <!-- Revert to pristine state. -->
+    <target name="clean">
+        <delete dir="${phlncBuild}"/>
+        <delete dir="${phlncDist}"/>
+        <delete dir="${phlnc-build-test}"/>
+        <delete dir="${phlnc-test-reports}"/>
+    </target>
+
+    <!-- Compile dependencies, prepare to compile lphybeast -->
+    <target name="init" depends="clean">
+        <echo message="Java version: ${java.version}"/>
+        <echo message="${ant.project.name}: ${ant.file}"/>
+        <echo message="Working dir is ${user.dir}." />
+        <echo message="Current dir is ${basedir}." />
+
+        <mkdir dir="${phlncBuild}"/>
+    </target>
+
+    <path id="phlnc-clspath">
+        <!-- beast2, BEASTLabs -->
+        <!-- both phylonco.beast and phylonco.lphybeast in the build -->
+        <path refid="classpath"/>
+
+        <!-- lphy -->
+        <fileset dir="${lphyDist}" includes="${lphyJ8Jar}.jar"/>
+        <fileset dir="${phyloncoLDist}" includes="${phyloncoJ8Jar}.jar"/>
+
+        <!-- lphybeast  -->
+        <pathelement path="${lbBuild}"/>
+        <fileset dir="${lbLib}" includes="*.jar"/>
+    </path>
+
+    <!--******** temp solution to build phylonco lphybeast and beast extension together ********-->
+
+    <!-- Compile -->
+    <target name="compile" depends="init, phylonco-lphy.dist-j8, lphybeast.compile">
+        <echo>phylonco lib path = ${phlncLib}</echo>
+        <echo>phylonco classpath = ${toString:phlnc-clspath}</echo>
+
+        <!-- imported from ${lphy}/build.xml -->
+        <javac target="${targetVersion}" source="${sourceVersion}"
+               destdir="${phlncBuild}" includeantruntime="false">
+            <classpath refid="phlnc-clspath"/>
+            <src location="${phlncSrc}"/>
+            <src location="${phlncLBSrc}"/>
+        </javac>
+
+        <echo message="Successfully compiled ${phlncSrc} and ${phlncLBSrc}." />
+    </target>
+
+    <target name="dist" depends="compile">
+        <echo>name=${addon.name}, version=${addon.version}</echo>
+        <echo>depends=${addon.depends.on}, atleast=${addon.depends.atleast}</echo>
+
+        <mkdir dir="${phlncDist}"/>
+        <mkdir dir="${phlncPkg}"/>
+
+        <!-- manifest -->
+        <tstamp/>
+        <echo message="Version ${phyloncoVersion}" />
+        <echo message="Created-By ${createBy}" />
+        <echo message="Built-By ${builtBy}" />
+        <echo message="Built-Date ${TODAY}" />
+
+        <!--   use as BEAST 2 plugin, but need lphy.jar     -->
+        <jar jarfile="${phlncPkgLib}/${phyloncoJar}.jar">
+            <fileset dir="${phlncBuild}" includes="**/*.class"/>
+
+            <manifest>
+                <attribute name="Version" value="${phyloncoVersion}"/>
+                <attribute name="Created-By" value="${createBy}"/>
+                <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Built-On" value="${TODAY}"/>
+            </manifest>
+        </jar>
+
+        <echo message="Successfully create ${phyloncoJar}.jar in ${phlncPkgLib}" />
+
+        <jar jarfile="${phlncPkgLib}/${phyloncoJar}.src.jar">
+            <fileset dir="${phlncSrc}">
+                <include name="**/*.java" />
+                <include name="**/*.png" />
+                <include name="**/*.xsl" />
+            </fileset>
+            <fileset dir="${phlncLBSrc}">
+                <include name="**/*.java" />
+            </fileset>
+        </jar>
+
+        <echo message="Successfully create ${phyloncoJar}.src.jar in ${phlncPkgLib}" />
+    </target>
+
+
+    <target name="release" depends="dist" unless="file.exists" description="release as BEAST 2 package">
+
+        <available property="file.exists" file="${phlncPkgLib}/${phyloncoJar}.jar"/>
+        <available property="file.exists" file="${phlncPkgLib}/${phyloncoJar}.src.jar"/>
+
+        <!--   copy libs     -->
+<!--        <copy todir="${phlncPkgLib}">-->
+<!--            <fileset dir="${phlncLib}" >-->
+<!--             <include name="*.jar"/>-->
+<!--            </fileset>-->
+<!--        </copy>-->
+
+        <copy file="README.md" tofile="${phlncPkg}/README" />
+        <copy file="LICENSE" tofile="${phlncPkg}" />
+        <copy file="version.xml" todir="${phlncPkg}" />
+
+        <copy todir="${phlncPkg}/examples">
+            <fileset dir="examples" includes="*.xml" />
+        </copy>
+        <copy todir="${phlncPkg}/templates">
+            <fileset dir="templates" includes="*.xml" />
+        </copy>
+
+        <zip destfile="${phlncDist}/${phyloncoJar}.zip" basedir="${phlncPkg}" />
+        <!--  <delete dir="${phlncPkg}"/>-->
+
+        <echo/>
+        <echo>Package ${phlncDist}/${phyloncoJar}.zip created successfully! </echo>
+
+        <copy file="${phlncDist}/${phyloncoJar}.zip" todir="${phlncRelease}" />
+        <echo>Copy ${phlncDist}/${phyloncoJar}.zip to ${phlncRelease} folder</echo>
+
+        <delete file="${phlncDist}/${phyloncoJar}.zip"/>
+        <echo>Delete ${phlncDist}/${phyloncoJar}.zip</echo>
+
+    </target>
+
 </project>
