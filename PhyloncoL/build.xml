@@ -8,7 +8,8 @@
     <property name="lphy" location="${lphyRepo}/LPhy"/>
     <!-- jar -->
     <property name="builtBy" value="${user.name}"/>
-    <property name="createBy" value="LPhy team"/>
+    <!-- TODO   -->
+    <property name="implVendor" value="LPhy team"/>
 
     <include file="${lphy}/build.xml"/>
 
@@ -79,7 +80,7 @@
         <tstamp/>
         <echo message="Version ${phyloncoLVersion}" />
         <echo message="Class-Path ${phyloncoLJar}.jar" />
-        <echo message="Created-By ${createBy}" />
+        <echo message="Implementation-Vendor ${implVendor}" />
         <echo message="Built-By ${builtBy}" />
         <echo message="Built-Date ${TODAY}" />
 
@@ -88,10 +89,16 @@
         <jar jarfile="${phyloncoLDist}/${phyloncoLJar}.jar">
             <fileset dir="${phyloncoLBuild}"/>
             <manifest>
-                <attribute name="Version" value="${phyloncoLVersion}"/>
-                <!-- <attribute name="Class-Path" value="${phyloncoJar}.jar"/>-->
+                <!-- attributes defined for package versioning -->
+                <attribute name="Implementation-Title" value="${phyloncoLName}"/>
+                <attribute name="Implementation-Version" value="${phyloncoLVersion}"/>
+                <attribute name="Implementation-URL" value="https://github.com/bioDS/beast-phylonco"/>
+                <attribute name="Implementation-Vendor" value="${implVendor}"/>
+                <!-- general main attributes -->
                 <attribute name="Created-By" value="${createBy}"/>
+                <!--   ${user.name}    -->
                 <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Build-Jdk" value="${targetVersion}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
             </manifest>
             <!-- <zipgroupfileset dir="${phyloncoLib}" includes="*.jar"/>-->
@@ -197,7 +204,7 @@
         <tstamp/>
         <echo message="Version ${phyloncoLVersion}" />
         <echo message="Class-Path ${phyloncoJ8Jar}.jar" />
-        <echo message="Created-By ${createBy}" />
+        <echo message="Implementation-Vendor ${implVendor}" />
         <echo message="Built-By ${builtBy}" />
         <echo message="Built-Date ${TODAY}" />
 
@@ -206,13 +213,18 @@
         <jar jarfile="${phyloncoLDist}/${phyloncoJ8Jar}.jar">
             <fileset dir="${phyloncoLBuild}" excludes="**/module-info.class"/>
             <manifest>
-                <attribute name="Version" value="${phyloncoLVersion}"/>
                 <attribute name="Class-Path" value="${phyloncoJ8Jar}.jar"/>
+                <!-- attributes defined for package versioning -->
+                <attribute name="Implementation-Title" value="${phyloncoLName}"/>
+                <attribute name="Implementation-Version" value="${phyloncoLVersion}"/>
+                <attribute name="Implementation-URL" value="https://github.com/bioDS/beast-phylonco"/>
+                <attribute name="Implementation-Vendor" value="${implVendor}"/>
+                <!-- general main attributes -->
                 <attribute name="Created-By" value="${createBy}"/>
                 <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Build-Jdk" value="${targetVersion}"/>
                 <attribute name="Built-Date" value="${TODAY}"/>
             </manifest>
-
             <zipgroupfileset dir="${phyloncoLDist}" includes="*.jar"/>
         </jar>
 

@@ -223,6 +223,7 @@
     <property name="phyloncoRepo" value="../beast-phylonco/"/>
     <!-- LPhy path is changed in this build   -->
     <property name="lphyRepo" value="../linguaPhylo/"/>
+    <property name="createBy" value="LPhy BEAST build script"/>
     <include file="${phyloncoRepo}/PhyloncoL/build.xml"/>
 
     <!--******** 2. include LPhyBEAST and BEAST ********-->
@@ -312,7 +313,7 @@
         <!-- manifest -->
         <tstamp/>
         <echo message="Version ${phyloncoVersion}" />
-        <echo message="Created-By ${createBy}" />
+        <echo message="Implementation-Vendor ${implVendor}" />
         <echo message="Built-By ${builtBy}" />
         <echo message="Built-Date ${TODAY}" />
 
@@ -321,10 +322,17 @@
             <fileset dir="${phlncBuild}" includes="**/*.class"/>
 
             <manifest>
-                <attribute name="Version" value="${phyloncoVersion}"/>
+                <!-- attributes defined for package versioning -->
+                <attribute name="Implementation-Title" value="${phyloncoName}"/>
+                <attribute name="Implementation-Version" value="${phyloncoVersion}"/>
+                <attribute name="Implementation-URL" value="https://github.com/bioDS/beast-phylonco"/>
+                <attribute name="Implementation-Vendor" value="${implVendor}"/>
+                <!-- general main attributes -->
                 <attribute name="Created-By" value="${createBy}"/>
+                <!--   ${user.name}    -->
                 <attribute name="Built-By" value="${builtBy}"/>
-                <attribute name="Built-On" value="${TODAY}"/>
+                <attribute name="Build-Jdk" value="${targetVersion}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
             </manifest>
         </jar>
 
