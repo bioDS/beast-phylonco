@@ -287,7 +287,7 @@
 
     <!--******** temp solution to build phylonco lphybeast and beast extension together ********-->
 
-    <!-- Compile -->
+    <!-- Compile, need lphy.dist -->
     <target name="compile" depends="init, phylonco-lphy.dist-j8, lphybeast.compile">
         <echo>phylonco lib path = ${phlncLib}</echo>
         <echo>phylonco classpath = ${toString:phlnc-clspath}</echo>

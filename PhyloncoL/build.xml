@@ -64,7 +64,7 @@
     </path>
 
     <!-- Compile -->
-    <target name="compile" depends="init" description="clean, create dirs, and compile.">
+    <target name="compile" depends="init,lphy.compile" description="clean, create dirs, and compile.">
         <echo>PhyloncoL module-path is ${toString:phylonco-module-path}</echo>
         <!-- imported from ${lphy}/build.xml -->
         <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${phyloncoLSrc}"
@@ -75,7 +75,7 @@
     </target>
 
     <!-- dist depends on lphy.compile -->
-    <target name="dist" depends="lphy.compile,compile">
+    <target name="dist" depends="lphy.dist,compile">
         <!-- manifest -->
         <tstamp/>
         <echo message="Version ${phyloncoLVersion}" />
@@ -113,7 +113,7 @@
     <!-- 3. commit all changes -->
     <!-- 4. ant release : create phylonco-?.?.?.zip -->
     <!-- 5. upload it to github release page -->
-    <target name="release" depends="compile,dist" unless="file.exists"
+    <target name="release" depends="dist" unless="file.exists"
             description="for the release process">
         <property name="pack" value="${phyloncoLDist}/package"/>
         <mkdir dir="${pack}"/>
@@ -198,7 +198,7 @@
     <!-- jar -->
     <property name="phyloncoJ8Jar" value="${phyloncoLName}-lphy-j8-${phyloncoLVersion}"/>
 
-    <target name="dist-j8" depends="compile-j8"
+    <target name="dist-j8" depends="lphy.dist-j8,compile-j8"
             description="Non-module Jar using META-INF services to invoke SPI.">
         <!-- manifest -->
         <tstamp/>
