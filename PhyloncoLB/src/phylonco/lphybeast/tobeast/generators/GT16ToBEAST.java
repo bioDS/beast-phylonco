@@ -36,11 +36,29 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
         beastGT16.setInputValue("frequencies", freqsParameter);
         beastGT16.initAndValidate();
 
+        // set operators on frequency and rates
+        addDeltaExchangeOperator(freqsParameter.frequenciesInput.get(), context);
+        addDeltaExchangeOperator(ratesParameter, context);
+
         // add extra operators
         addExtraDeltaExchangeOperators(freqsParameter, context);
         addExtraSwapOperators(freqsParameter, context);
 
         return beastGT16;
+    }
+
+    private void addDeltaExchangeOperator(RealParameter parameter, BEASTContext context) {
+        DeltaExchangeOperator operator = new DeltaExchangeOperator();
+        operator.setInputValue("parameter", parameter);
+        operator.setInputValue("weight", context.getOperatorWeight(parameter.getDimension() - 1));
+        operator.setInputValue("delta", 1.0 / parameter.getDimension());
+        operator.setInputValue("autoOptimize", false);
+        operator.initAndValidate();
+        operator.setID(parameter.getID() + ".deltaExchange");
+        // add operator
+        context.addExtraOperator(operator);
+        // skip default operator schedule
+        context.addSkipOperator(parameter);
     }
 
     private void addExtraDeltaExchangeOperators(Frequencies freqsParameter, BEASTContext context) {
@@ -69,6 +87,7 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
             operator.setInputValue("weight", "1.0"); // set operator weight to 1
             operator.setID("deltaExchangePair" + (i + 1));
             operator.initAndValidate();
+            // add operator
             context.addExtraOperator(operator);
         }
     }
@@ -97,6 +116,7 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
             operator.setInputValue("weight", "0.5"); // set operator weight to 0.5
             operator.setID("swapPair" + (i + 1));
             operator.initAndValidate();
+            // add operator
             context.addExtraOperator(operator);
         }
     }
