@@ -1,0 +1,237 @@
+<project default="compile" basedir="." name="phylonco-lphy" >
+
+    <!--******** LPhy ********-->
+
+    <!-- linguaPhylo and LPhyBEAST are the sibling folder of beast-phylonco -->
+    <!-- overwrite below vars, putting them before "include" lphy build -->
+    <property name="lphyRepo" value="../../linguaPhylo/"/>
+    <property name="lphy" location="${lphyRepo}/LPhy"/>
+    <!-- jar -->
+    <property name="builtBy" value="${user.name}"/>
+    <!-- TODO   -->
+    <property name="implVendor" value="LPhy team"/>
+
+    <include file="${lphy}/build.xml"/>
+
+    <!--*******************************************************************-->
+
+    <!-- build fails if the relative path isn't ../../beast-phylonco/PhyloncoL -->
+    <property name="phyloncoLFolder" value="PhyloncoL"/>
+    <property name="phyloncoRepo" value=".."/>
+
+    <!-- source code dir separated from test   -->
+    <property name="phyloncoLSrc" location="${phyloncoRepo}/${phyloncoLFolder}/src" />
+    <!-- source code dir of test   -->
+    <property name="phyloncoLTest" location="${phyloncoRepo}/${phyloncoLFolder}/test" />
+    <!-- Names of temporary build/test directories, which are deleted before build -->
+    <property name="phyloncoLBuild" location="${phyloncoRepo}/${phyloncoLFolder}/build" />
+    <property name="phyloncoLDist" location="${phyloncoRepo}/${phyloncoLFolder}/dist" />
+    <property name="phyloncoL-build-test" location="${phyloncoRepo}/${phyloncoLFolder}/build-test"/>
+    <property name="phyloncoL-test-reports" location="${phyloncoRepo}/${phyloncoLFolder}/test-reports"/>
+    <property name="phyloncoLLib" value="lib"/>
+
+    <!-- assume version is same as version.xml -->
+    <xmlproperty file="${phyloncoRepo}/version.xml" collapseAttributes="true" id="phylonco"/>
+    <property name="phyloncoLName" value="${addon.name}"/>
+    <property name="phyloncoLVersion" value="${addon.version}"/>
+
+    <!-- need 3rd party jar to use script engine, to convert the string to lower cases -->
+    <!-- Jar file naming conventions: all small cases  name-major.minor.build.jar  -->
+    <property name="phyloncoLJar" value="${phyloncoLName}-lphy-${phyloncoLVersion}"/>
+
+    <!-- Revert to pristine state. -->
+    <target name="clean">
+        <delete dir="${phyloncoLBuild}"/>
+        <delete dir="${phyloncoLDist}"/>
+        <delete dir="${phyloncoL-build-test}"/>
+        <delete dir="${phyloncoL-test-reports}"/>
+    </target>
+
+    <!-- Prepare for compilation -->
+    <target name="init" depends="clean">
+        <echo message="Java version: ${java.version}"/>
+        <echo message="${ant.project.name}: ${ant.file}" />
+        <echo message="Working dir is ${user.dir}." />
+        <echo message="Current dir is ${basedir}." />
+
+        <mkdir dir="${phyloncoLBuild}"/>
+    </target>
+
+    <path id="phylonco-module-path">
+        <pathelement path="${phyloncoLBuild}"/>
+        <pathelement path="${lphyBuild}"/>
+        <fileset dir="${lphyLib}" includes="*.jar"/>
+    </path>
+
+    <!-- Compile -->
+    <target name="compile" depends="init,lphy.compile" description="clean, create dirs, and compile.">
+        <echo>PhyloncoL module-path is ${toString:phylonco-module-path}</echo>
+        <!-- imported from ${lphy}/build.xml -->
+        <javac target="${targetVersion}" source="${sourceVersion}" srcdir="${phyloncoLSrc}"
+               destdir="${phyloncoLBuild}" includeantruntime="false">
+            <modulepath refid="phylonco-module-path"/>
+        </javac>
+        <echo message="Successfully compiled ${phyloncoLFolder}." />
+    </target>
+
+    <!-- dist depends on lphy.compile -->
+    <target name="dist" depends="lphy.dist,compile">
+        <!-- manifest -->
+        <tstamp/>
+        <echo message="Version ${phyloncoLVersion}" />
+        <echo message="Class-Path ${phyloncoLJar}.jar" />
+        <echo message="Implementation-Vendor ${implVendor}" />
+        <echo message="Built-By ${builtBy}" />
+        <echo message="Built-Date ${TODAY}" />
+
+        <mkdir dir="${phyloncoLDist}"/>
+
+        <jar jarfile="${phyloncoLDist}/${phyloncoLJar}.jar">
+            <fileset dir="${phyloncoLBuild}"/>
+            <manifest>
+                <!-- attributes defined for package versioning -->
+                <attribute name="Implementation-Title" value="${phyloncoLName}"/>
+                <attribute name="Implementation-Version" value="${phyloncoLVersion}"/>
+                <attribute name="Implementation-URL" value="https://github.com/bioDS/beast-phylonco"/>
+                <attribute name="Implementation-Vendor" value="${implVendor}"/>
+                <!-- general main attributes -->
+                <attribute name="Created-By" value="${createBy}"/>
+                <!--   ${user.name}    -->
+                <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Build-Jdk" value="${targetVersion}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+            <!-- <zipgroupfileset dir="${phyloncoLib}" includes="*.jar"/>-->
+        </jar>
+
+        <echo message="Successfully create ${phyloncoLJar}.jar." />
+        
+    </target>
+
+    <!-- 1. update version number in pom.xml -->
+    <!-- 2. run GenerateDocs [ version number ] -->
+    <!-- 3. commit all changes -->
+    <!-- 4. ant release : create phylonco-?.?.?.zip -->
+    <!-- 5. upload it to github release page -->
+    <target name="release" depends="dist" unless="file.exists"
+            description="for the release process">
+        <property name="pack" value="${phyloncoLDist}/package"/>
+        <mkdir dir="${pack}"/>
+        <mkdir dir="${pack}/${phyloncoLLib}"/>
+
+        <available property="file.exists" file="${phyloncoLDist}/${phyloncoLJar}.jar"/>
+        <!-- mv jar to lib folder -->
+        <copy file="${phyloncoLDist}/${phyloncoLJar}.jar"
+              tofile="${pack}/${phyloncoLLib}/${phyloncoLJar}.jar"/>
+        <delete file="${phyloncoLDist}/${phyloncoLJar}.jar"/>
+
+        <copy file="../README.md" todir="${pack}"/>
+        <!--
+            <copy file="COPYING" todir="${pack}" />
+            <copy todir="${pack}">
+              <fileset dir="${lib}" includes="LICENSE*" />
+            </copy>
+        -->
+        <property name="exmpDir" value="examples"/>
+        <mkdir dir="${pack}/${exmpDir}"/>
+        <copy todir="${pack}/${exmpDir}">
+            <!--  examples files are under the root -->
+            <fileset dir="../${exmpDir}" includes="*.lphy">
+                <!--  <exclude name="**/*"/>-->
+            </fileset>
+            <fileset dir="../${exmpDir}">
+                <include name="**/*.nex"/>
+            </fileset>
+        </copy>
+
+        <zip destfile="${phyloncoLDist}/${phyloncoLJar}.zip" basedir="${pack}"/>
+
+<!--        <delete dir="${pack}"/>-->
+        <echo/>
+        <echo/>
+        <echo>** Release ${phyloncoDist}/${phyloncoJar}.zip created successfully! **</echo>
+    </target>
+
+    <property name="phyloncoDoc" location="${phyloncoRepo}/${phyloncoLFolder}/doc" />
+    <!-- run after release -->
+    <target name="phylonco-docs" description="generate Phylonco lphy docs.">
+        <echo> Generate Phylonco docs to ${phyloncoDoc} ... </echo>
+        <java module="lphy" classname="lphy.doc.GenerateDocs" dir="${phyloncoDoc}" fork="true">
+            <modulepath refid="phylonco-module-path"/>
+            <arg value="${phyloncoLVersion}"/>
+            <arg value="LPhy Extension Phylonco"/>
+            <arg value="phylonco.lphy.spi.Phylonco"/>
+        </java>
+    </target>
+
+
+    <!--****** Non-module Jar ******-->
+
+    <!-- Java 8 using classpath  -->
+    <path id="phylonco-j8-classpath">
+        <pathelement path="${classpath}"/>
+        <pathelement path="${lphyBuild}"/>
+        <fileset dir="${lphyLib}" includes="*.jar" excludes="**/module-info.java"/>
+        <pathelement path="${phyloncoLBuild}"/>
+    </path>
+
+    <!--  only for non-module  -->
+    <property name="phyloncoResources" location="${phyloncoRepo}/${phyloncoLFolder}/resources" />
+
+    <!-- Compile -->
+    <target name="compile-j8" depends="init,lphy.compile-j8" >
+        <echo>phylonco Java 8 classpath is ${toString:phylonco-j8-classpath}</echo>
+
+        <javac target="${targetVersion}" source="${sourceVersion}" destdir="${phyloncoLBuild}"
+               includeantruntime="false" debug="on" failonerror="yes">
+            <!-- assume every classes are inside lphy package to exclude module-info.java -->
+            <!-- every options else are not working, e.g. <exclude name= -->
+            <src path="${phyloncoLSrc}/phylonco/lphy"/>
+            <classpath refid="phylonco-j8-classpath"/>
+        </javac>
+        <mkdir dir="${phyloncoLBuild}/META-INF"/>
+        <mkdir dir="${phyloncoLBuild}/META-INF/services"/>
+        <copy file="${phyloncoResources}/META-INF/services/lphy.spi.LPhyExtension" todir="${phyloncoLBuild}/META-INF/services"/>
+        <echo message="Successfully compiled ${phyloncoRepo} using classpath." />
+    </target>
+
+    <!-- jar -->
+    <property name="phyloncoJ8Jar" value="${phyloncoLName}-lphy-j8-${phyloncoLVersion}"/>
+
+    <target name="dist-j8" depends="lphy.dist-j8,compile-j8"
+            description="Non-module Jar using META-INF services to invoke SPI.">
+        <!-- manifest -->
+        <tstamp/>
+        <echo message="Version ${phyloncoLVersion}" />
+        <echo message="Class-Path ${phyloncoJ8Jar}.jar" />
+        <echo message="Implementation-Vendor ${implVendor}" />
+        <echo message="Built-By ${builtBy}" />
+        <echo message="Built-Date ${TODAY}" />
+
+        <mkdir dir="${phyloncoLDist}"/>
+
+        <jar jarfile="${phyloncoLDist}/${phyloncoJ8Jar}.jar">
+            <fileset dir="${phyloncoLBuild}" excludes="**/module-info.class"/>
+            <manifest>
+                <attribute name="Class-Path" value="${phyloncoJ8Jar}.jar"/>
+                <!-- attributes defined for package versioning -->
+                <attribute name="Implementation-Title" value="${phyloncoLName}"/>
+                <attribute name="Implementation-Version" value="${phyloncoLVersion}"/>
+                <attribute name="Implementation-URL" value="https://github.com/bioDS/beast-phylonco"/>
+                <attribute name="Implementation-Vendor" value="${implVendor}"/>
+                <!-- general main attributes -->
+                <attribute name="Created-By" value="${createBy}"/>
+                <attribute name="Built-By" value="${builtBy}"/>
+                <attribute name="Build-Jdk" value="${targetVersion}"/>
+                <attribute name="Built-Date" value="${TODAY}"/>
+            </manifest>
+            <zipgroupfileset dir="${phyloncoLDist}" includes="*.jar"/>
+        </jar>
+
+        <echo message="Successfully create ${phyloncoJ8Jar}.jar." />
+    </target>
+
+
+    <!--TODO tests-->
+
+</project>
