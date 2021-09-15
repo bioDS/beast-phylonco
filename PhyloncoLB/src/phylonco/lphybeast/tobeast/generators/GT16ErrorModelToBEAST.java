@@ -76,18 +76,17 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
 
         BEASTInterface treeLikelihood = context.getBEASTObject(phyloCTMC);
         context.removeBEASTObject(treeLikelihood);
-
     }
 
 
     private TreeLikelihoodWithError getTreeLikelihoodWithError(beast.evolution.alignment.Alignment errAlignment,
                                                                ErrorModel errorModel, PhyloCTMC phyloCTMC, BEASTContext context) {
-        //TODO why TreeLikelihoodWithErrorSlow?
         TreeLikelihoodWithErrorSlow treeLikelihoodWithError = new TreeLikelihoodWithErrorSlow();
 
         treeLikelihoodWithError.setInputValue("data", errAlignment);
 
-        PhyloCTMCToBEAST.constructTreeAndBranchRate(phyloCTMC, treeLikelihoodWithError, context);
+        // branch rate operators already created by generic TreeLikeihood
+        PhyloCTMCToBEAST.constructTreeAndBranchRate(phyloCTMC, treeLikelihoodWithError, context, true);
 
         SiteModel siteModel = PhyloCTMCToBEAST.constructSiteModel(phyloCTMC, context);
         treeLikelihoodWithError.setInputValue("siteModel", siteModel);
