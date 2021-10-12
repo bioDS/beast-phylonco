@@ -14,14 +14,13 @@ import org.junit.Test;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
 import phylonco.beast.evolution.errormodel.GT16ErrorModel;
-import phylonco.beast.evolution.likelihood.TreeLikelihoodWithError;
 import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
 
-public class TreeLikelihoodWithErrorTest {
+public class TreeLikelihoodWithErrorSlowTest {
 
     private static double DELTA = 1e-10;
 
@@ -82,7 +81,7 @@ public class TreeLikelihoodWithErrorTest {
         errorModel.initByName("epsilon", "0.1", "datatype", datatype);
         errorModel.initAndValidate();
 
-        TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();
+        TreeLikelihoodWithErrorSlow likelihood = new TreeLikelihoodWithErrorSlow();
         likelihood.initByName(
                 "data", data,
                 "tree", tree,
@@ -131,7 +130,7 @@ public class TreeLikelihoodWithErrorTest {
         errorModel.initByName("alpha", alpha, "beta", beta, "datatype", datatype);
         errorModel.initAndValidate();
 
-        TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();
+        TreeLikelihoodWithErrorSlow likelihood = new TreeLikelihoodWithErrorSlow();
         likelihood.initByName(
                 "data", data,
                 "tree", tree,
@@ -339,7 +338,7 @@ public class TreeLikelihoodWithErrorTest {
         errorModel.initByName("epsilon", epsilon, "delta", delta, "datatype", datatype);
         errorModel.initAndValidate();
 
-        TreeLikelihoodWithError likelihood = new TreeLikelihoodWithError();
+        TreeLikelihoodWithErrorSlow likelihood = new TreeLikelihoodWithErrorSlow();
         likelihood.initByName(
                 "data", data,
                 "tree", tree,

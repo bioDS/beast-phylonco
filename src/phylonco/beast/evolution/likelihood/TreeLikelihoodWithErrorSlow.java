@@ -2,15 +2,15 @@ package phylonco.beast.evolution.likelihood;
 
 import beast.core.Description;
 
-@Description("Implementation of tree likelihood calculation with error models")
-// slow implementation of sampled error rates
+@Description("Implementation of slow tree likelihood calculation with error models")
 public class TreeLikelihoodWithErrorSlow  extends TreeLikelihoodWithError {
 
     /**
-     * check state for changed variables and update temp results if necessary *
+     * always recalculates and updates error matrix
      */
     @Override
-    protected boolean requiresRecalculation() {
+    public boolean requiresRecalculation() {
+        errorModel.setUpdateFlag(true);
         if (m_useAmbiguities.get() || m_useTipLikelihoods.get()) {
             setPartials(treeInput.get().getRoot(), dataInput.get().getPatternCount());
         } else {

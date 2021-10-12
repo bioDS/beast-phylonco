@@ -16,6 +16,24 @@ public class ErrorModelBase extends ErrorModel {
     public void initAndValidate() {
         super.initAndValidate();
         epsilon = epsilonInput.get();
+
+        if (updateMatrix) {
+            setupErrorMatrix();
+            updateMatrix = false;
+        }
+    }
+
+    @Override
+    public void setupErrorMatrix() {
+        if (errorMatrix == null) {
+            errorMatrix = new double[datatype.mapCodeToStateSet.length][datatype.getStateCount()];
+        }
+        for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+            for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
+                // rows are observed states X, columns are true states Y
+                errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+            }
+        }
     }
 
     @Override

@@ -27,6 +27,9 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         // set fields from TreeLikelihood class
         super.m_useAmbiguities.setValue(useAmbiguities, this);
         super.m_useTipLikelihoods.setValue(useTipLikelihoods, this);
+        // current implementation only supports BeerTreeLikelihoodCore implementation
+        // beagle support to be added in the future
+        super.implementationInput.setValue("beast.evolution.likelihood.TreeLikelihood", this);
         super.initAndValidate();
     }
 
@@ -50,27 +53,33 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         return taxonIndex;
     }
 
+    protected double[] getLeafPartials(Node node) {
+        Alignment data = dataInput.get();
+        int nrOfStates = data.getDataType().getStateCount();
+        int nrOfPatterns = data.getPatternCount();
+        double[] partials = new double[nrOfPatterns * nrOfStates];
+        int t = getTaxonIndex(node.getID(), data); // taxon index
+        int i = 0;
+        for (int p = 0; p < nrOfPatterns; p++) {
+            int state = data.getPattern(t, p);
+            double[] tipLikelihoods;
+            if (useTipsEmpirical) {
+                tipLikelihoods = data.getTipLikelihoods(t, p);
+            } else {
+                tipLikelihoods = errorModel.getProbabilities(state);
+            }
+            for (int s = 0; s < nrOfStates; s++) {
+                partials[i] = tipLikelihoods[s];
+                i++;
+            }
+        }
+        return partials;
+    }
+
     @Override
     protected void setPartials(Node node, int nrOfPatterns) {
         if (node.isLeaf()) {
-            Alignment data = dataInput.get();
-            int nrOfStates = data.getDataType().getStateCount();
-            double[] partials = new double[nrOfPatterns * nrOfStates];
-            int t = getTaxonIndex(node.getID(), data); // taxon index
-            int i = 0;
-            for (int p = 0; p < nrOfPatterns; p++) {
-                int state = data.getPattern(t, p);
-                double[] tipLikelihoods;
-                if (useTipsEmpirical) {
-                    tipLikelihoods = data.getTipLikelihoods(t, p);
-                } else {
-                    tipLikelihoods = errorModel.getProbabilities(state);
-                }
-                for (int s = 0; s < nrOfStates; s++) {
-                    partials[i] = tipLikelihoods[s];
-                    i++;
-                }
-            }
+            double[] partials = getLeafPartials(node);
             likelihoodCore.setNodePartials(node.getNr(), partials);
         } else {
             setPartials(node.getChild(0), nrOfPatterns);

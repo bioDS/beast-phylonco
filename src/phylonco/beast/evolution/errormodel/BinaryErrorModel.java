@@ -22,16 +22,27 @@ public class BinaryErrorModel extends ErrorModel {
         // init error parameters
         alpha = alphaInput.get();
         beta = betaInput.get();
+
+        if (updateMatrix) {
+            setupErrorMatrix();
+            updateMatrix = false;
+        }
     }
 
-     private void setupErrorMatrix(double alpha, double beta) {
-        double[][] matrix = {
-                {1 - alpha, beta},
-                {alpha, 1 - beta}
-        };
-        errorMatrix = matrix;
+     @Override
+    public void setupErrorMatrix() {
+         if (errorMatrix == null) {
+             errorMatrix = new double[datatype.mapCodeToStateSet.length][datatype.getStateCount()];
+         }
+         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+             for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
+                 // rows are observed states X, columns are true states Y
+                 errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+             }
+         }
     }
 
+    @Override
     public double getProbability(int observedState, int trueState) {
         double a = alpha.getValue();
         double b = beta.getValue();
@@ -62,6 +73,7 @@ public class BinaryErrorModel extends ErrorModel {
         return prob;
     }
 
+    @Override
     public double[] getProbabilities(int observedState) {
         int states = datatype.getStateCount();
         double[] prob = new double[states];

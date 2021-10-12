@@ -5,9 +5,11 @@ import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
+import beast.evolution.substitutionmodel.EigenDecomposition;
 
 import static beast.evolution.datatype.DataType.GAP_CHAR;
 import static beast.evolution.datatype.DataType.MISSING_CHAR;
+import static junit.framework.Assert.assertEquals;
 
 /**
  * Implements the GT16 error model for diploid genotypes from Kozlov et al. (2021)
@@ -31,6 +33,11 @@ public class GT16ErrorModel extends ErrorModel {
 
         delta = deltaInput.get();
         epsilon = epsilonInput.get();
+
+        if (updateMatrix) {
+            setupErrorMatrix();
+            updateMatrix = false;
+        }
     }
 
     @Override
@@ -123,12 +130,24 @@ public class GT16ErrorModel extends ErrorModel {
 
     @Override
     public double[] getProbabilities(int observedState) {
-        int states = datatype.getStateCount();
-        double[] prob = new double[states];
-        for (int i = 0; i < states; i++) {
-            prob[i] = getProbability(observedState, i);
+        if (updateMatrix) {
+            setupErrorMatrix();
+            updateMatrix = false;
         }
-        return prob;
+        return errorMatrix[observedState];
+    }
+
+    @Override
+    public void setupErrorMatrix() {
+        if (errorMatrix == null) {
+            errorMatrix = new double[datatype.mapCodeToStateSet.length][datatype.getStateCount()];
+        }
+        for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+            for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
+                // rows are observed states X, columns are true states Y
+                errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+            }
+        }
     }
 
     @Override

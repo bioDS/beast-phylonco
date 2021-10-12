@@ -10,9 +10,26 @@ public abstract class ErrorModel extends CalculationNode {
 
     final public Input<DataType> datatypeInput = new Input<>("datatype", "the datatype of the alignment, for example nucleotide etc", Input.Validate.REQUIRED);
 
-    protected DataType datatype;
+    protected DataType.Base datatype;
 
     protected double[][] errorMatrix;
+    protected double[][] storedErrorMatrix;
+
+    protected boolean updateMatrix = true;
+
+    /**
+     * initialises error model and performs input checking
+     * subclasses need to set up the error matrix
+     */
+    @Override
+    public void initAndValidate() {
+        datatype = (DataType.Base) (datatypeInput.get());
+        if (datatype != null && !canHandleDataType(datatype)) {
+            String message = "Error model cannot handle data type " + datatype.getTypeDescription();
+            throw new IllegalArgumentException(message);
+        }
+        // subclasses to set up error matrix
+    }
 
     /**
      * returns the probability of observed state given the true state based on the error model
@@ -53,13 +70,59 @@ public abstract class ErrorModel extends CalculationNode {
         return prob;
     }
 
-    @Override
-    public void initAndValidate() {
-        datatype = datatypeInput.get();
-        if (datatype != null && !canHandleDataType(datatype)) {
-            String message = "Error model cannot handle data type " + datatype.getTypeDescription();
-            throw new IllegalArgumentException(message);
+    /**
+     * set up the error matrix using the error parameter inputs
+     */
+    public void setupErrorMatrix() {
+        if (errorMatrix == null) {
+            errorMatrix = new double[datatype.mapCodeToStateSet.length][datatype.getStateCount()];
         }
+        for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+            for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
+                // rows are observed states X, columns are true states Y
+                errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+            }
+        }
+    }
+
+    /**
+     * returns a boolean indicating whether the error matrix needs to be udpated
+     * @return true if the error matrix needs to updated
+     */
+    public boolean getUpdateFlag() {
+        return updateMatrix;
+    }
+
+    /**
+     * sets the boolean indicating whether the error matrix needs to be udpated
+     * @param status matrix update status
+     */
+    public void setUpdateFlag(boolean status) {
+        updateMatrix = status;
+    }
+
+    /**
+     * CalculationNode implementation follows *
+     */
+    @Override
+    public void store() {
+        storedErrorMatrix = errorMatrix;
+        super.store();
+    }
+
+    /**
+     * Restore the additional stored state
+     */
+    @Override
+    public void restore() {
+        errorMatrix = storedErrorMatrix;
+        super.restore();
+    }
+    @Override
+    public boolean requiresRecalculation() {
+        // we only get here if something is dirty
+        updateMatrix = true;
+        return true;
     }
 
 }
