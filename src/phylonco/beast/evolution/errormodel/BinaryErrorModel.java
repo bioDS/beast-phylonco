@@ -75,12 +75,11 @@ public class BinaryErrorModel extends ErrorModel {
 
     @Override
     public double[] getProbabilities(int observedState) {
-        int states = datatype.getStateCount();
-        double[] prob = new double[states];
-        for (int i = 0; i < states; i++) {
-            prob[i] = getProbability(observedState, i);
+        if (updateMatrix) {
+            setupErrorMatrix();
+            updateMatrix = false;
         }
-        return prob;
+        return errorMatrix[observedState];
     }
 
     @Override
