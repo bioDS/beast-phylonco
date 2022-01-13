@@ -1,10 +1,12 @@
 # artifacts
+*.DS_Store
 *.iml
 src/META-INF/
 out/
 
 # build directory
 build
+
 # idea directory
 .idea
 
