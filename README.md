@@ -63,6 +63,11 @@ See [here](http://www.beast2.org/managing-packages/) for general package install
 
 Start **BEAST2**, and set the input file to one of the examples in `examples/*.xml`.
 
+## User interface 
+Beauti UI is currently not supported. We are currently working on this :) 
+
+Tutorials and new models will be added once Beauti support is completed.
+
 ## How to build (developers)
 
 Build BEAST 2 using `ant build_all_BEAST` for Linux/Mac or `ant windows` for Windows.
