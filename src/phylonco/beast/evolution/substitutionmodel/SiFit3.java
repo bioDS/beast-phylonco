@@ -6,6 +6,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.Ternary;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 
 /**
  * Implements the three state SiFit model of genotype substitution from Zafar et al. (2017)
@@ -48,7 +49,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
  *
  */
 @Description("SiFit ternary substitution model")
-public class SiFit3 extends GeneralSubstitutionModel {
+public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionModel {
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<Boolean> mutationPathInput = new Input<>("mutationPath", "allow mutation paths from state 1 to 0 and state 1 to 2", false);

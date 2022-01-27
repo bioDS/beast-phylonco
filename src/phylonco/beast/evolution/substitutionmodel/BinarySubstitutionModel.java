@@ -6,12 +6,13 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.Binary;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 
 /**
  * Implements a general binary substitution model
  */
 @Description("A binary substitution model with a single rate parameter")
-public class BinarySubstitutionModel extends GeneralSubstitutionModel {
+public class BinarySubstitutionModel extends GeneralSubstitutionModel implements SubstitutionModel {
     final public Input<RealParameter> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
 
     private RealParameter lambda;

@@ -7,12 +7,13 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideMethylation;
 import beast.evolution.substitutionmodel.ComplexColtEigenSystem;
 import beast.evolution.substitutionmodel.ComplexSubstitutionModel;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
-public class MethylationHKY extends ComplexSubstitutionModel {
+public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {
     public Input<RealParameter> kappaInput = new Input<RealParameter>(
             "kappa", "kappa parameter of the HKY model", Input.Validate.REQUIRED);
     public Input<RealParameter> alphaInput = new Input<RealParameter>(
