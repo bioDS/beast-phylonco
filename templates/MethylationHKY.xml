@@ -1,15 +1,15 @@
 <beast version='2.0' 
-	namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions'>
+	namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions:phylonco.beast.evolution.substitutionmodel'>
 
     <mergewith point='substModelTemplates'>
 		
 		<subtemplate id='MethylationHKY' class='phylonco.beast.evolution.substitutionmodel.MethylationHKY' mainid='MethylationHKY.s:$(n)'>
 		<![CDATA[
-			<plugin spec='MethylationHKY' id='MethylationHKY.s:$(n)'>
+			<plugin spec='phylonco.beast.evolution.substitutionmodel.MethylationHKY' id='MethylationHKY.s:$(n)'>
 				<parameter id="kappa.s:$(n)" name='kappa' value="1.0" lower="0.0" estimate='true'/>
-				<parameter id="alpha.s:$(n)" name='alpha' value="0.0" lower="0.0" estimate='true'/>
+				<parameter id="alpha.s:$(n)" name='alpha' value="1.0" lower="0.0" estimate='true'/>
 				<parameter id="beta.s:$(n)" name='beta' value="1.0" lower="0.0" estimate='true'/>
-				<parameter id="gamma.s:$(n)" name='gamma' value="0.0" lower="0.0" estimate='true'/>
+				<parameter id="gamma.s:$(n)" name='gamma' value="1.0" lower="0.0" estimate='true'/>
 			</plugin>
 			
 			<operator id='kappaScaler.s:$(n)' spec='ScaleOperator' scaleFactor="0.5" weight="1" parameter="@kappa.s:$(n)"/>
