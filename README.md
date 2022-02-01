@@ -43,7 +43,7 @@ From the **Package Manager**, select Phylonco and click Install/Upgrade to insta
 ---
 
 ### Manual install
-Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases page](https://github.com/kche309/beast-phylonco/releases/latest)
+Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases page](https://github.com/bioDS/beast-phylonco/releases/)
 
 Create a new subdirectory `Phylonco` at the location: 
 ```
