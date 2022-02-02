@@ -21,7 +21,7 @@ public class BinarySubstitutionModel extends GeneralSubstitutionModel implements
 
     public BinarySubstitutionModel() {
         ratesInput.setRule(Input.Validate.OPTIONAL);
-        frequenciesInput.setRule(Input.Validate.OPTIONAL);
+        frequenciesInput.setRule(Input.Validate.FORBIDDEN);
     }
 
     @Override

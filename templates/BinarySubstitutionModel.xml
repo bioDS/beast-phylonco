@@ -19,7 +19,7 @@
             </prior>
             ]]>
 
-            <connect srcID='SubsModel.lambda:$(n))' targetID='state' inputName='stateNode'
+            <connect srcID='SubsModel.lambda:$(n)' targetID='state' inputName='stateNode'
                      if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'/>
 
             <connect srcID='LambdaScaler:$(n)' targetID='mcmc' inputName='operator'
