@@ -7,7 +7,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "0.0.5-SNAPSHOT"
+version = "0.0.1-SNAPSHOT"
 base.archivesName.set("phylonco-lb")
 
 java {
@@ -107,7 +107,7 @@ distributions {
                 from(tasks.jar)
             }
             into("."){
-                from("${project(":beast2").projectDir}"){ include("version.xml") }
+                from("${projectDir}"){ include("version.xml") }
                 from("$rootDir") {
                     include("README.md")
                     include("LICENSE")
