@@ -5,11 +5,10 @@ import beast.core.Input;
 import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
-import beast.evolution.substitutionmodel.EigenDecomposition;
 
 import static beast.evolution.datatype.DataType.GAP_CHAR;
 import static beast.evolution.datatype.DataType.MISSING_CHAR;
-import static junit.framework.Assert.assertEquals;
+//import static junit.framework.Assert.assertEquals;
 
 /**
  * Implements the GT16 error model for diploid genotypes from Kozlov et al. (2021)
