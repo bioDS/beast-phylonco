@@ -41,7 +41,7 @@ From the **Package Manager**, select Phylonco and click Install/Upgrade to insta
 ### Running BEAST 
 Start the BEAST software
 
-Make sure the "use BEAGLE" box is unchecked
+Make sure the "Use BEAGLE library" box is unchecked
 
 Set the input file to one of the examples e.g., `examples/test_GT16_error.xml`
 
