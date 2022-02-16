@@ -101,8 +101,8 @@ distributions {
             into("lib") {
                 // include beast2 part
                 from(project(":beast2").tasks.jar)
-                //TODO include lphy part, or not?
-//                from(project(":lphy").tasks.jar)
+                //TODO have to include lphy part, e.g. for Unit test
+                from(project(":lphy").tasks.jar)
                 // include lphybeast part
                 from(tasks.jar)
             }
