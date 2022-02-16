@@ -4,8 +4,10 @@ This is a BEAST2 package for Bayesian inference of molecular data for cancer evo
 ## Software requirements
 
 This package requires Java 8, and at least
-* [BEAST 2](https://github.com/CompEvol/beast2) v2.6.5 
-* [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.0
+* [BEAST 2](https://github.com/CompEvol/beast2) v2.6.6 
+* [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.7
+
+See also dependencies of Phylonco's LPhyBEAST part to BEAST 2 packages [version.xml](lphybeast/version.xml)
 
 ## Features
 
