@@ -23,12 +23,10 @@ Substitution Models
 * SiFit2 substitution model (2 states)
 * SiFit3 substitution model (3 states)
 
-*For scripting support, see [bioDS/lphy-phylonco](https://github.com/bioDS/lphy-phylonco)
+## User guide
+### How to install
+You may install the Phylonco package using the Package Manager.
 
-## How to install
-You may install the Phylonco package either using the Package Manager, or manually.
-
-### Package manager install
 Start **BEAUti**, open the **Package Manager** by selecting `File -> Manage packages` from the Menu.
 
 Click `Package repositories` to open a new popup window
@@ -40,39 +38,42 @@ Click `Done`. The Phylonco package should now appear in the **Package Manager**
 
 From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
 
----
+### Running BEAST 
+Start the BEAST software
 
-### Manual install
-Download the latest addon zip `phylonco.addon.vx.x.x.zip` from the [releases page](https://github.com/bioDS/beast-phylonco/releases/)
+Make sure the "use BEAGLE" box is unchecked
 
-Create a new subdirectory `Phylonco` at the location: 
+Set the input file to one of the examples e.g., `examples/test_GT16_error.xml`
+
+
+### Running BEAST on command line
+Launch beast in java only mode by adding the `-java` option, e.g. 
+
 ```
-For Windows in Users\<username>\BEAST\2.x\Phylonco
-For Mac in /Users/<username>/Library/Application Support/BEAST/2.x/Phylonco
-For Linux in /home/<username>/.beast/2.x/Phylonco
+Windows
+java -jar c:\Users\BEASTUser\Desktop\BEAST\lib\launcher.jar -java beast.xml
+
+Mac
+/Applications/BEAST\ 2.6.6/bin/beast -java beast.xml
+
+Linux
+~/beast/bin/beast -java beast.xml
 ```
-Here `<username>` is your username, “2.x” refers to the major version of BEAST, for example 2.x = 2.1 for BEAST version 2.1.3.
- 
-Then extract the contents of the addon zip to the `Phylonco` subdirectory.
 
-For BEAST v2.5.x and later, you need to reset the class path stored in the beauti.properties file. The easiest way to do this is by starting BEAUti and selecting `File -> Clear class path` from the Menu.
-
-See [here](http://www.beast2.org/managing-packages/) for general package install instructions.
-
-## How to run 
-
-Start **BEAST2**, and set the input file to one of the examples in `examples/*.xml`.
-
-## User interface 
+### How to run Beauti
 Beauti UI is currently not supported. We are currently working on this :) 
 
 Tutorials and new models will be added once Beauti support is completed.
 
-## How to build (developers)
+## For developers 
+### How to build 
 
 Build BEAST 2 using `ant build_all_BEAST` for Linux/Mac or `ant windows` for Windows.
 
 Then build BEAST Labs and Phylonco using `ant addon`.
+
+### Manual install 
+See [here](http://www.beast2.org/managing-packages/) for manual package install instructions.
 
 ## References
 1. Bouckaert at al. (2019). [BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis.](https://doi.org/10.1371/journal.pcbi.1006650)
