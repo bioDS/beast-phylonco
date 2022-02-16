@@ -7,8 +7,8 @@ plugins {
 base.archivesName.set("phylonco-b2")
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
     withSourcesJar()
 }
 
@@ -22,7 +22,6 @@ dependencies {
 
     // tests
     testImplementation("junit:junit:4.13.2")
-
 //    testRuntimeOnly(beast2)
 }
 
