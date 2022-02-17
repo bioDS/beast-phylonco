@@ -118,14 +118,11 @@ public class GT16ErrorModelTest {
         errorModel.initAndValidate();
 
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
-            String line = "";
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
                 double calcProb = errorModel.getProbability(observedState, trueState);
                 double expectedProb = expectedMatrix[trueState][observedState];
                 assertEquals(expectedProb, calcProb, DELTA);
-                line += expectedProb + " ";
             }
-            System.out.println(line);
         }
     }
 

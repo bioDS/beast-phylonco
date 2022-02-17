@@ -93,10 +93,6 @@ public class TreeLikelihoodWithErrorFastTest {
         double logP = likelihood.calculateLogP();
         double expectedLogP = -2.3063595712034233;
         assertEquals(expectedLogP, logP, DELTA);
-
-        System.out.println("seq A: " + data.getSequenceAsString("a"));
-        System.out.println("seq B: " + data.getSequenceAsString("b"));
-        System.out.println("likelihood: " + logP);
     }
 
     private double calculateLikelihoodBinary(String seq, String alpha, String beta) {
