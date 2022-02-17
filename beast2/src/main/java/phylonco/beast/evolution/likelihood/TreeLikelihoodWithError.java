@@ -30,6 +30,7 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         // current implementation only supports BeerTreeLikelihoodCore implementation
         // beagle support to be added in the future
         super.implementationInput.setValue("beast.evolution.likelihood.TreeLikelihood", this);
+        System.setProperty("java.only", "true"); // use java implementation for likelihood core
         super.initAndValidate();
     }
 
