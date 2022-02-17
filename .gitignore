@@ -12,6 +12,9 @@ tmp/
 # idea directory
 .idea
 
+# gradle directory
+.gradle
+
 # output files
 *.log
 *.trees
