@@ -2,8 +2,8 @@ plugins {
     `java-library`
     `maven-publish`
     signing
-    id("io.github.linguaphylo.platforms.lphy-java") version "0.1.1"
-    id("io.github.linguaphylo.platforms.lphy-publish") version "0.1.1"
+    id("io.github.linguaphylo.platforms.lphy-java") version "0.1.2"
+    id("io.github.linguaphylo.platforms.lphy-publish") version "0.1.2"
 }
 
 // overwrite version
@@ -12,10 +12,10 @@ base.archivesName.set("phylonco-lphy")
 
 dependencies {
     // io.github.linguaphylo
-    implementation("io.github.linguaphylo:lphy:1.1.0")
+    implementation("io.github.linguaphylo:lphy:1.2.0")
 
     // launch studio from its jar, but not depend on it
-    runtimeOnly("io.github.linguaphylo:lphy-studio:1.1.0")
+    runtimeOnly("io.github.linguaphylo:lphy-studio:1.2.0")
 
     testImplementation("junit:junit:4.13.2")
 //    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:4.13")

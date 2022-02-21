@@ -3,7 +3,7 @@ plugins {
     distribution
     `maven-publish`
     signing
-    id("io.github.linguaphylo.platforms.lphy-publish") version "0.1.1"
+    id("io.github.linguaphylo.platforms.lphy-publish") version "0.1.2"
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
@@ -11,8 +11,8 @@ plugins {
 base.archivesName.set("phylonco-lb")
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_16
-    targetCompatibility = JavaVersion.VERSION_16
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
 }
 
@@ -24,7 +24,7 @@ val zippedConfig by configurations.creating
 // but do not use api unless you have to.
 dependencies {
     //*** phylonco lphy + lphy ***//
-    implementation("io.github.linguaphylo:lphy:1.1.0")
+    implementation("io.github.linguaphylo:lphy:1.2.0")
 //    implementation("io.github.bioDS:?:?")
     implementation(project(":lphy"))
 
@@ -32,7 +32,7 @@ dependencies {
     implementation(project(":beast2"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:0.2.1")
+    zippedConfig("io.github.linguaphylo:lphybeast:0.3.0")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 
