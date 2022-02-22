@@ -121,6 +121,9 @@ distributions {
             into("examples") {
                 from("${project(":beast2").projectDir}/examples")
             }
+            into("templates") {
+                from("$rootDir/templates")
+            }
         }
     }
 }
