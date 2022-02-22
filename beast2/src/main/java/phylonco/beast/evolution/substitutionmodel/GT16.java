@@ -6,6 +6,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -18,7 +19,7 @@ import java.util.List;
  *
  */
 @Description("GT16 diploid substitution model from CellPhy paper")
-public class GT16 extends GeneralSubstitutionModel {
+public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel {
 
     final public Input<RealParameter> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
 

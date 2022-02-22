@@ -1,0 +1,40 @@
+<beast version='2.0'
+       namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions:phylonco.beast.evolution.substitutionmodel'>
+
+    <mergewith point='substModelTemplates'>
+        <!-- Binary substitution models -->
+        <subtemplate id='BinarySubstitutionModel' class='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' mainid='BinarySubsModel:$(n)'>
+            <![CDATA[
+            <plugin spec='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' id='BinarySubsModel:$(n)'>
+                <parameter id='SubsModel.lambda:$(n)' name='lambda' value='1.0' lower='0.0' estimate='true'/>
+            </plugin>
+
+            <plugin id='LambdaScaler:$(n)' spec='ScaleOperator' scaleFactor='0.5' weight='0.1' parameter='@SubsModel.lambda:$(n)'/>
+
+            <prior id='LambdaPrior:$(n)' x='@SubsModel.lambda:$(n)'>
+                <distr spec='LogNormalDistributionModel' meanInRealSpace='false'>
+                    <parameter name='M' value="1.0" estimate='false'/>
+                    <parameter name='S' value="1.25" estimate='false'/>
+                </distr>
+            </prior>
+            ]]>
+
+            <connect srcID='SubsModel.lambda:$(n)' targetID='state' inputName='stateNode'
+                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'/>
+
+            <connect srcID='LambdaScaler:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'>
+                Scale lambda parameter of binary substitution model for partition :$(n)
+            </connect>
+
+            <connect srcID='SubsModel.lambda:$(n)' targetID='tracelog' inputName='log'
+                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'/>
+
+            <connect srcID='LambdaPrior:$(n)' targetID='prior' inputName='distribution'
+                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'>
+                Lambda parameter of binary substitution model for partition :$(n)
+            </connect>
+        </subtemplate>
+
+    </mergewith>
+</beast>

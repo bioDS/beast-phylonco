@@ -6,6 +6,7 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.Binary;
 import beast.evolution.datatype.DataType;
 import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.evolution.substitutionmodel.SubstitutionModel;
 
 /**
  * Implements the two state SiFit model of genotype substitution from Zafar et al. (2017)
@@ -26,7 +27,7 @@ import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
  *  pi1 = 1 / (x)
  */
 @Description("SiFit binary substitution model")
-public class SiFit2 extends GeneralSubstitutionModel {
+public class SiFit2 extends GeneralSubstitutionModel implements SubstitutionModel {
     final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
     final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
 
