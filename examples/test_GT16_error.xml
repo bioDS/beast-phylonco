@@ -1,5 +1,5 @@
 <beast version='2.6'
-    namespace='
+       namespace='
         beast.core:
         beast.core.util:
         beast.core.parameter:
@@ -45,11 +45,11 @@
         0.0625
     </parameter>
 
-    <parameter id='error.delta' spec="parameter.RealParameter" name="stateNode">
+    <parameter id='error.delta' lower="0.0" upper="1.0" spec="parameter.RealParameter" name="stateNode">
         0.1
     </parameter>
 
-    <parameter id='error.epsilon' spec="parameter.RealParameter" name="stateNode">
+    <parameter id='error.epsilon' lower="0.0" upper="1.0" spec="parameter.RealParameter" name="stateNode">
         0.1
     </parameter>
 

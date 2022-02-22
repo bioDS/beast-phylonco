@@ -239,9 +239,9 @@
                     <alignment idref="alignment"/>
                 </taxonset>
             </tree>
-            <parameter id='subsModel.lambda' spec="parameter.RealParameter" name="stateNode">1.0</parameter>
-            <parameter id='error.alpha' spec="parameter.RealParameter" name="stateNode">0.1</parameter>
-            <parameter id='error.beta' spec="parameter.RealParameter" name="stateNode">0.1</parameter>
+            <parameter id='subsModel.lambda' spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+            <parameter id='error.alpha' spec="parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
+            <parameter id='error.beta' spec="parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
             <parameter id="birthRate" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
         </state>
 
