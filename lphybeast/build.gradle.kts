@@ -119,7 +119,7 @@ distributions {
                 from(project(":beast2").tasks.getByName<Jar>("sourcesJar"))
             }
             into("examples") {
-                from("${project(":beast2").projectDir}/examples")
+                from("$rootDir/examples")
             }
             into("templates") {
                 from("$rootDir/templates")
