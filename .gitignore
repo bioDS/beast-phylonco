@@ -1,14 +1,19 @@
 # artifacts
 *.DS_Store
-*.iml
-src/META-INF/
+**/*.iws
+**/*.ipr
+**/*.iml
 out/
 
 # build directory
 build
+tmp/
 
 # idea directory
 .idea
+
+# gradle directory
+.gradle
 
 # output files
 *.log

@@ -1,0 +1,14 @@
+#nexus 
+
+begin data;
+dimensions ntax=4 nchar=13;
+format datatype=NucleotideMethylation;
+matrix
+cell_1 ACGTPJO1WNX-?
+cell_2 ACCTPJO1WNX-?
+cell_3 ACGTPJOWWNN-?
+cell_4 ACGTPJOWWWW-?
+;
+end;
+
+

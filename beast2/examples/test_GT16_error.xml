@@ -1,0 +1,167 @@
+<beast version='2.6'
+    namespace='
+        beast.core:
+        beast.core.util:
+        beast.core.parameter:
+        beast.evolution.datatype:
+        beast.evolution.alignment:
+        beast.evolution.tree:
+        beast.evolution.tree.coalescent:
+        beast.evolution.operators:
+        beast.evolution.sitemodel:
+        beast.evolution.substitutionmodel:
+        phylonco.beast.evolution.substitutionmodel:
+        phylonco.beast.evolution.errormodel:
+        phylonco.beast.evolution.likelihood'>
+
+    <map name="prior" >beast.math.distributions.Prior</map>
+    <map name="Uniform" >beast.math.distributions.Uniform</map>
+    <map name="Exponential" >beast.math.distributions.Exponential</map>
+    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
+    <map name="Normal" >beast.math.distributions.Normal</map>
+    <map name="Beta" >beast.math.distributions.Beta</map>
+    <map name="Gamma" >beast.math.distributions.Gamma</map>
+    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
+    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
+    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
+    <map name="Dirichlet" >beast.math.distributions.DirichletDistribution</map>
+
+    <!-- Diploid sequence -->
+    <data id="alignment" dataType="nucleotideDiploid16">
+        <sequence taxon="human">
+            0123456789aaabbbcccdddeee
+        </sequence>
+        <sequence taxon="chimp">
+            0123456789aaabbbcccdddeee
+        </sequence>
+
+    </data>
+
+    <parameter id="rates" spec="RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
+        1.0 1.0 1.0 1.0 1.0 1.0
+    </parameter>
+
+    <parameter id="freqParameter" lower="0.0" upper="1.0" dimension="16">
+        0.0625
+    </parameter>
+
+    <parameter id='error.delta' spec="parameter.RealParameter" name="stateNode">
+        0.1
+    </parameter>
+
+    <parameter id='error.epsilon' spec="parameter.RealParameter" name="stateNode">
+        0.1
+    </parameter>
+
+    <!-- The GT16 substitution model             -->
+    <input spec='GT16' id='gt16'>
+        <nucRates idref='rates'/>
+        <frequencies frequencies="@freqParameter" id="estimatedFreqs" spec="Frequencies"/>
+    </input>
+
+    <!-- site model -->
+    <input spec='SiteModel' id="siteModel" gammaCategoryCount='1'>
+        <substModel idref='gt16'/>
+    </input>
+
+    <input id="datatype" spec="NucleotideDiploid16" />
+
+    <!-- The error model -->
+    <input spec='GT16ErrorModel' id='errorModel'>
+        <delta idref='error.delta'/>
+        <epsilon idref='error.epsilon'/>
+        <datatype idref="datatype"/>
+    </input>
+
+    <input spec='TreeLikelihoodWithErrorSlow' id="treeLikelihood">
+        <data idref='alignment'/>
+        <tree idref='tree'/>
+        <siteModel idref='siteModel'/>
+        <errorModel idref='errorModel'/>
+    </input>
+
+    <tree id='tree'/>
+
+    <tree spec='RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
+        <populationModel spec='ConstantPopulation'>
+            <popSize spec='parameter.RealParameter' value='1'/>
+        </populationModel>
+    </tree>
+
+    <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
+
+        <init idref='coalescentSimulator'/>
+
+        <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution id="prior" spec="util.CompoundDistribution">
+                <prior id="ratePrior" name="distribution" x="@rates">
+                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                </prior>
+                <prior id="frequenciesPrior" name="distribution" x="@freqParameter">
+                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+                </prior>
+                <prior id='deltaPrior' name='distribution' x='@error.delta'>
+                    <LogNormal id="LogNormalDistributionModel.0" name="distr">
+                        <parameter estimate="false" id="RealParameter.0" name="M" value="0.1"/>
+                        <parameter estimate="false" id="RealParameter.1" lower="0.0" name="S" upper="5.0"
+                                   value="1.25"/>
+                    </LogNormal>
+                </prior>
+                <prior id='epsilonPrior' name='distribution' x='@error.epsilon'>
+                    <LogNormal id="LogNormalDistributionModel.1" name="distr">
+                        <parameter estimate="false" id="RealParameter.2" name="M" value="0.1"/>
+                        <parameter estimate="false" id="RealParameter.3" lower="0.0" name="S" upper="5.0"
+                                   value="1.25"/>
+                    </LogNormal>
+                </prior>
+            </distribution>
+
+            <distribution id='likelihood' idref="treeLikelihood"/>
+        </distribution>
+
+        <!-- GT16 error model operators -->
+        <operator id='deltaScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@error.delta'/>
+        <operator id='epsilonScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@error.epsilon'/>
+
+        <!-- GT16 substitution model rates operator -->
+        <operator id='rateExchanger' spec='DeltaExchangeOperator' weight="1" delta="0.01">
+            <parameter idref="rates"/>
+        </operator>
+
+        <!-- GT16 substitution model frequencies operator -->
+        <operator id="frequenciesExchanger" spec="DeltaExchangeOperator" weight="1" delta="0.01">
+            <parameter idref="freqParameter"/>
+        </operator>
+
+        <operator id='treeScaler' spec='ScaleOperator' scaleFactor="0.5" weight="1" tree="@tree"/>
+        <operator id='subtreeSlide' spec='SubtreeSlide' weight="5" gaussian="true" size="1.0" tree="@tree"/>
+        <operator id='uniform' spec='Uniform' weight="10" tree="@tree"/>
+        <operator id='narrow' spec='Exchange' isNarrow='true' weight="1" tree="@tree"/>
+        <operator id='wide' spec='Exchange' isNarrow='false' weight="1" tree="@tree"/>
+        <operator id='wilsonBalding' spec='WilsonBalding' weight="1" tree="@tree"/>
+
+        <logger logEvery="10000" fileName="test_GT16_error.$(seed).log">
+            <model idref='likelihood'/>
+            <log idref="likelihood"/>
+            <log idref='rates'/>
+            <log idref='error.delta'/>
+            <log idref='error.epsilon'/>
+            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
+        </logger>
+        <logger logEvery="10000" fileName="test_GT16_error.$(seed).trees">
+            <log idref="tree"/>
+        </logger>
+        <logger logEvery="10000">
+            <model idref='likelihood'/>
+            <log idref="likelihood"/>
+            <ESS spec='ESS' name='log' arg="@likelihood"/>
+            <log idref='rates'/>
+            <ESS spec='ESS' name='log' arg="@rates"/>
+            <log idref='error.delta'/>
+            <ESS spec='ESS' name='log' arg="@error.delta"/>
+            <log idref='error.epsilon'/>
+            <ESS spec='ESS' name='log' arg="@error.epsilon"/>
+        </logger>
+    </run>
+
+</beast>
