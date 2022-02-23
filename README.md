@@ -7,7 +7,7 @@ This package requires Java 8, and at least
 * [BEAST 2](https://github.com/CompEvol/beast2) v2.6.6 
 * [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.7
 
-See also dependencies of Phylonco's LPhyBEAST part to BEAST 2 packages [version.xml](lphybeast/version.xml)
+See dependencies in [version.xml](lphybeast/version.xml)
 
 ## Features
 
@@ -69,10 +69,11 @@ Tutorials and new models will be added once Beauti support is completed.
 
 ## For developers 
 ### How to build 
-
-Build BEAST 2 using `ant build_all_BEAST` for Linux/Mac or `ant windows` for Windows.
-
-Then build BEAST Labs and Phylonco using `ant addon`.
+Install Gradle, then build using
+```
+./gradlew build
+```
+See [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md) for more details on building and distributing.
 
 ### Manual install 
 See [here](http://www.beast2.org/managing-packages/) for manual package install instructions.
