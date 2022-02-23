@@ -29,7 +29,7 @@ allprojects {
 // Configures the sub-projects of this project.
 subprojects {
     group = "io.github.bioDS"
-    version = "0.0.6-SNAPSHOT"
+    version = "0.0.6"//-SNAPSHOT"
     val webSteam = "github.com/bioDS/beast-phylonco"
     val web = "https://${webSteam}"
     val homepage = web // may be different to github page

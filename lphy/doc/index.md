@@ -1,5 +1,5 @@
-LPhy Extension Phylonco Language Reference (version 0.0.5)
-==========================================================
+Phylonco Language Reference (version 0.0.1)
+===========================================
 This an automatically generated language reference of the LinguaPhylo (LPhy) statistical phylogenetic modeling language.
 
 Generative distributions
