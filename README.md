@@ -62,28 +62,24 @@ Linux
 ~/beast/bin/beast -java beast.xml
 ```
 
-### How to run Beauti
-Beauti UI is currently not supported. We are currently working on this :) 
+### How to run BEAUti
+BEAUti UI is currently only supported for the Binary Substitution model. We are currently working on this :) 
 
 Tutorials and new models will be added once Beauti support is completed.
 
 ## For developers 
-### How to build 
-Install Gradle, then build using
-```
-./gradlew build
-```
-See [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md) for more details on building and distributing.
+To build use `./gradlew clean build` in the root directory, for details see [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
 
-### Manual install 
-See [here](http://www.beast2.org/managing-packages/) for manual package install instructions.
+For manual package installation instructions, see [here](http://www.beast2.org/managing-packages/)
 
 ## References
 1. Bouckaert at al. (2019). [BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis.](https://doi.org/10.1371/journal.pcbi.1006650)
 
-2. Kozlov et al. (2021). [CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data.](https://doi.org/10.1101/2020.07.31.230292)
- 
-3. Zafar et al. (2017). [SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.](https://doi.org/10.1186/s13059-017-1311-2)
+2. Chen et al. (2022). [Accounting for errors in data improves timing in single-cell cancer evolution.](https://doi.org/10.1101/2021.03.17.435906)
 
-4. Hou et al. (2012). [Single-cell exome sequencing and monoclonal evolution of a JAK2-negative myeloproliferative neoplasm.]( https://doi.org/10.1016/j.cell.2012.02.028)
+3. Kozlov et al. (2022). [CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data.](https://doi.org/10.1186/s13059-021-02583-w) 
+ 
+4. Zafar et al. (2017). [SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.](https://doi.org/10.1186/s13059-017-1311-2)
+
+5. Hou et al. (2012). [Single-cell exome sequencing and monoclonal evolution of a JAK2-negative myeloproliferative neoplasm.]( https://doi.org/10.1016/j.cell.2012.02.028)
 
