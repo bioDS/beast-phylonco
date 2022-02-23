@@ -35,7 +35,7 @@ tasks.jar {
         // shared attr in the root build
         attributes(
             "Implementation-Title" to "Phylonco",
-            "Implementation-Vendor" to "?",
+            "Implementation-Vendor" to "Phylonco development team",
         )
     }
 }
@@ -48,10 +48,10 @@ publishing {
             from(components["java"])
             pom {
                 packaging = "jar"
-                description.set("?")
+                description.set("LPhy extension for Phylonco BEAST2 package")
                 developers {
                     developer {
-                        name.set("Kylie Chen")
+                        name.set("Phylonco development team")
                     }
                 }
             }

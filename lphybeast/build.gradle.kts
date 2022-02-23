@@ -79,7 +79,7 @@ tasks.jar {
         // shared attr in the root build
         attributes(
             "Implementation-Title" to "Phylonco LPhyBEAST",
-            "Implementation-Vendor" to "?",
+            "Implementation-Vendor" to "Phylonco development team",
         )
     }
 }
@@ -121,6 +121,7 @@ distributions {
             }
             into("examples") {
                 from("$rootDir/examples")
+                from("${project(":lphy").projectDir}/examples")
             }
             into("templates") {
                 from("$rootDir/templates")
@@ -152,11 +153,11 @@ publishing {
             artifactId = project.base.archivesName.get()
             artifact(tasks.distZip.get())
             pom {
-                description.set("?")
+                description.set("Lphy to xml extension for Phylonco BEAST2 package")
                 packaging = "zip"
                 developers {
                     developer {
-                        name.set("Kylie Chen")
+                        name.set("Phylonco development team")
                     }
                 }
             }

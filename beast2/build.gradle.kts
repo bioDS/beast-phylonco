@@ -31,7 +31,7 @@ tasks.jar {
         // shared attr in the root build
         attributes(
             "Implementation-Title" to "Phylonco BEAST2",
-            "Implementation-Vendor" to "?",
+            "Implementation-Vendor" to "Phylonco development team",
         )
     }
 }
