@@ -107,7 +107,8 @@ distributions {
                 from(tasks.jar)
             }
             into("."){
-                from("${projectDir}"){ include("version.xml") }
+                from("$projectDir"){
+                    include("version.xml") }
                 from("$rootDir") {
                     include("README.md")
                     include("LICENSE")
