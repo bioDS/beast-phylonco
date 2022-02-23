@@ -35,6 +35,11 @@
                      if='inlikelihood(SubsModel.lambda.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'>
                 Lambda parameter of binary substitution model for partition :$(n)
             </connect>
+
+            <connect srcID='SubsModel.lambda.s:$(n)' targetID='tracelog' inputName='log'
+                     if='inposterior(BinarySubsModel.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'>
+            </connect>
+
         </subtemplate>
 
     </mergewith>
