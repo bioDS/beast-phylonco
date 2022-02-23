@@ -2,16 +2,17 @@
        namespace='beast.app.beauti:beast.core:beast.evolution.branchratemodel:beast.evolution.speciation:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.likelihood:beast.evolution:beast.math.distributions:phylonco.beast.evolution.substitutionmodel'>
 
     <mergewith point='substModelTemplates'>
-        <!-- Binary substitution models -->
-        <subtemplate id='BinarySubstitutionModel' class='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' mainid='BinarySubsModel:$(n)'>
+        <!-- Binary substitution model -->
+        <subtemplate id='BinarySubstitutionModel' class='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' mainid='BinarySubsModel.s:$(n)'
+                     suppressInputs='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel.frequencies,phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel.rates,phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel.eigenSystem'>
             <![CDATA[
-            <plugin spec='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' id='BinarySubsModel:$(n)'>
-                <parameter id='SubsModel.lambda:$(n)' name='lambda' value='1.0' lower='0.0' estimate='true'/>
+            <plugin spec='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' id='BinarySubsModel.s:$(n)'>
+                <parameter id='SubsModel.lambda.s:$(n)' name='lambda' value='1.0' lower='0.0' estimate='true'/>
             </plugin>
 
-            <plugin id='LambdaScaler:$(n)' spec='ScaleOperator' scaleFactor='0.5' weight='0.1' parameter='@SubsModel.lambda:$(n)'/>
+            <plugin id='LambdaScaler.s:$(n)' spec='ScaleOperator' scaleFactor='0.5' weight='0.1' parameter='@SubsModel.lambda.s:$(n)'/>
 
-            <prior id='LambdaPrior:$(n)' x='@SubsModel.lambda:$(n)'>
+            <prior id='LambdaPrior.s:$(n)' x='@SubsModel.lambda.s:$(n)'>
                 <distr spec='LogNormalDistributionModel' meanInRealSpace='false'>
                     <parameter name='M' value="1.0" estimate='false'/>
                     <parameter name='S' value="1.25" estimate='false'/>
@@ -19,21 +20,26 @@
             </prior>
             ]]>
 
-            <connect srcID='SubsModel.lambda:$(n)' targetID='state' inputName='stateNode'
-                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'/>
+            <connect srcID='SubsModel.lambda.s:$(n)' targetID='state' inputName='stateNode'
+                     if='inlikelihood(SubsModel.lambda.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'/>
 
-            <connect srcID='LambdaScaler:$(n)' targetID='mcmc' inputName='operator'
-                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'>
+            <connect srcID='LambdaScaler.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(SubsModel.lambda.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'>
                 Scale lambda parameter of binary substitution model for partition :$(n)
             </connect>
 
-            <connect srcID='SubsModel.lambda:$(n)' targetID='tracelog' inputName='log'
-                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'/>
+            <connect srcID='SubsModel.lambda.s:$(n)' targetID='tracelog' inputName='log'
+                     if='inlikelihood(SubsModel.lambda.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'/>
 
-            <connect srcID='LambdaPrior:$(n)' targetID='prior' inputName='distribution'
-                     if='inlikelihood(SubsModel.lambda:$(n)) and SubsModel.lambda:$(n)/estimate=true'>
+            <connect srcID='LambdaPrior.s:$(n)' targetID='prior' inputName='distribution'
+                     if='inlikelihood(SubsModel.lambda.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'>
                 Lambda parameter of binary substitution model for partition :$(n)
             </connect>
+
+            <connect srcID='SubsModel.lambda.s:$(n)' targetID='tracelog' inputName='log'
+                     if='inposterior(BinarySubsModel.s:$(n)) and SubsModel.lambda.s:$(n)/estimate=true'>
+            </connect>
+
         </subtemplate>
 
     </mergewith>
