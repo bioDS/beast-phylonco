@@ -4,7 +4,7 @@
 rootProject.name = "beast-phylonco"
 
 include("lphy")
-include("beast2")
+include("phylonco-beast")
 include("lphybeast")
 
 pluginManagement {

@@ -4,7 +4,6 @@ plugins {
 
 // version has to be manually adjusted to keep same between version.xml and here
 //version = "0.0.6-SNAPSHOT"
-base.archivesName.set("phylonco-b2")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_1_8

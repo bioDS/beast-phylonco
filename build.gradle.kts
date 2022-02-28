@@ -74,7 +74,7 @@ subprojects {
     // configure the shared contents in MavenPublication especially POM
     afterEvaluate{
         // exclude subproject beast2, publish both in lphybeast
-        if (!project.name.equals("beast2")) {
+        if (!project.name.equals("phylonco-beast")) {
             extensions.configure<PublishingExtension> {
                 publications {
                     withType<MavenPublication>().all() {
