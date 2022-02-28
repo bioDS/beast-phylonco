@@ -8,7 +8,6 @@ plugins {
 
 // version has to be manually adjusted to keep same between version.xml and here
 //version = "0.0.6-SNAPSHOT"
-base.archivesName.set("phylonco-lb")
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -26,7 +25,7 @@ dependencies {
     //*** phylonco lphy + lphy ***//
     implementation("io.github.linguaphylo:lphy:1.2.0")
 //    implementation("io.github.bioDS:?:?")
-    implementation(project(":lphy"))
+    implementation(project(":phylonco-lphy"))
 
     //*** phylonco beast2 + beast2 + beastlab ***//
     implementation(project(":phylonco-beast"))
@@ -100,9 +99,9 @@ distributions {
             includeEmptyDirs = false
             into("lib") {
                 // include beast2 part
-                from(project(":phylonco-beast").tasks.jar)
+//                from(project(":phylonco-beast").tasks.jar)
                 //TODO have to include lphy part, e.g. for lphybeast Unit tests
-                from(project(":lphy").tasks.jar)
+//                from(project(":phylonco-lphy").tasks.jar)
                 // include lphybeast part
                 from(tasks.jar)
             }
@@ -117,11 +116,12 @@ distributions {
             // include src jar
             into("src") {
                 from(tasks.getByName<Jar>("sourcesJar"))
-                from(project(":phylonco-beast").tasks.getByName<Jar>("sourcesJar"))
+//                from(project(":phylonco-beast").tasks.getByName<Jar>("sourcesJar"))
+//                from(project(":phylonco-lphy").tasks.getByName<Jar>("sourcesJar"))
             }
             into("examples") {
                 from("$rootDir/examples")
-                from("${project(":lphy").projectDir}/examples")
+                from("${project(":phylonco-lphy").projectDir}/examples")
             }
             into("templates") {
                 from("$rootDir/templates")
