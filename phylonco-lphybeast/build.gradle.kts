@@ -99,9 +99,9 @@ distributions {
             includeEmptyDirs = false
             into("lib") {
                 // include beast2 part
-//                from(project(":phylonco-beast").tasks.jar)
+                from(project(":phylonco-beast").tasks.jar)
                 //TODO have to include lphy part, e.g. for lphybeast Unit tests
-//                from(project(":phylonco-lphy").tasks.jar)
+                from(project(":phylonco-lphy").tasks.jar)
                 // include lphybeast part
                 from(tasks.jar)
             }
@@ -116,8 +116,8 @@ distributions {
             // include src jar
             into("src") {
                 from(tasks.getByName<Jar>("sourcesJar"))
-//                from(project(":phylonco-beast").tasks.getByName<Jar>("sourcesJar"))
-//                from(project(":phylonco-lphy").tasks.getByName<Jar>("sourcesJar"))
+                from(project(":phylonco-beast").tasks.getByName<Jar>("sourcesJar"))
+                from(project(":phylonco-lphy").tasks.getByName<Jar>("sourcesJar"))
             }
             into("examples") {
                 from("$rootDir/examples")
