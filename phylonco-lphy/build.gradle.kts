@@ -8,7 +8,6 @@ plugins {
 
 // overwrite version
 version = "0.0.1"//-SNAPSHOT"
-base.archivesName.set("phylonco-lphy")
 
 dependencies {
     // io.github.linguaphylo
