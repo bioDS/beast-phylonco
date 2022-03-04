@@ -24,15 +24,13 @@ import java.util.concurrent.ConcurrentHashMap;
  * which include a list of {@link lphybeast.ValueToBEAST},
  * {@link lphybeast.GeneratorToBEAST}, and {@link DataType}
  * to extend.
- * It requires a public no-args constructor.
- *
  * @author Walter Xie
  */
 public class LBPhylonco implements LPhyBEASTExt {
 
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
-        return Arrays.asList(new Class[0]);
+        return new ArrayList<>();
     }
 
     @Override
