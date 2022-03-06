@@ -69,7 +69,7 @@ tasks.register("runLPhyBEAST", JavaExec::class.java) {
     println("clspath = ${sourceSets.main.get().runtimeClasspath.asPath}")
     mainClass.set("lphybeast.LPhyBEAST")
     setArgs(listOf("-o", "$rootDir/tmp/gt16ErrMod.xml",
-        "${project(":lphy").projectDir}/examples/gt16CoalErrModel.lphy"))
+        "${project(":phylonco-lphy").projectDir}/examples/gt16CoalErrModel.lphy"))
 }
 
 
