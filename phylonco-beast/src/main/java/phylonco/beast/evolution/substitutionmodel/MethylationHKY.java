@@ -7,12 +7,13 @@ import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideMethylation;
 import beast.evolution.substitutionmodel.ComplexColtEigenSystem;
 import beast.evolution.substitutionmodel.ComplexSubstitutionModel;
+import beast.evolution.substitutionmodel.Frequencies;
 import beast.evolution.substitutionmodel.SubstitutionModel;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
 
-@Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
+@Description("Model for DNA and methylation data based on HKY nucleotide substitution model.")
 public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {
     public Input<RealParameter> kappaInput = new Input<RealParameter>(
             "kappa", "kappa parameter of the HKY model", Input.Validate.REQUIRED);
@@ -31,7 +32,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
 
     public MethylationHKY() {
         ratesInput.setRule(Input.Validate.OPTIONAL);
-        frequenciesInput.setRule(Input.Validate.OPTIONAL);
+        frequenciesInput.setRule(Input.Validate.REQUIRED);
     }
 
     @Override
@@ -41,6 +42,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
         alphaPar = alphaInput.get();
         betaPar = betaInput.get();
         gammaPar = gammaInput.get();
+        frequencies = frequenciesInput.get();
 
         rateMatrix = new double[nrOfStates][nrOfStates];
 
@@ -52,11 +54,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
 
     @Override
     public boolean canHandleDataType(DataType dataType) {
-        if (dataType instanceof NucleotideMethylation) {
-            return true;
-        } else {
-            return false;
-        }
+        return dataType instanceof NucleotideMethylation;
     }
 
 
@@ -64,24 +62,6 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
     @Override
     protected void setupRelativeRates() {
     }
-
-
-    /** Get frequencies of stationary distribution
-     *
-     * Frequencies of stationary distribution are derived from observed frequencies of 0, 1 and W in data.
-     * It is also assumed that the frequency of A is the same as frequency of T, same with C and G pair,
-     * and C' and G'.
-     *
-     * @return frequencies of underlying methylated and unmethylated nucleotides
-     */
-    @Override
-    public double[] getFrequencies() {
-        // Used only for root in likelihood function
-        // assume equal distribution of A and T, and C and G; and C' and G'
-        // stationary distribution depends on the values of kappa, alpha, beta and gamma, not on frequencies of 0, 1 and W in data
-        return stationary_distribution();
-    }
-
 
     /** Calculate stationary distribution using SVD method
      *
@@ -94,7 +74,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
      * and then using Singular Value Decomposition to find a pseudo-inverse of the matrix A, so that:
      * A^-1 * b = x
      *
-     * The matrix A with the vector b has following form:
+     * The matrix A with the vector b has the following form:
      *    A   | b
      * ------------
      *   t(Q) | 0
@@ -114,8 +94,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
         }
         // solve
         RealMatrix AA = new Array2DRowRealMatrix(A);
-        double[] pi = new SingularValueDecomposition(AA).getSolver().getInverse().operate(b);
-        return pi;
+        return new SingularValueDecomposition(AA).getSolver().getInverse().operate(b);
     }
 
 
@@ -162,7 +141,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
     /** Setup rate matrix for MethylationHKY model.
      *
      * MethylationHKY model is based on HKY model, but with few changes.
-     * First of all, model is extended for C' and G' (or MetC and MetC on the opposite strand).
+     * First, model is extended for C' and G' (or MetC and MetC on the opposite strand).
      * Secondly, due to the structure, the model is time non-reversible and thus
      * frequencies of stationary distribution are not used. This significantly limits
      * the rates and number of parameters.
