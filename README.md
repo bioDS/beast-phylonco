@@ -14,13 +14,13 @@ See dependencies in [version.xml](lphybeast/version.xml)
 The current release has the following features.
 
 Error Models
-* GT16 phased diploid nucleotide error model (16 states)
+* GT16 diploid nucleotide error model (16 states)
 * Nucleotide error model (4 states - A, G, C, T)
 * General error model (n states)
 * Binary error model
 
 Substitution Models
-* GT16 phased diploid nucleotide model (16 states)
+* GT16 diploid nucleotide model (16 states)
 * Binary substitution model
 * SiFit2 substitution model (2 states)
 * SiFit3 substitution model (3 states)
@@ -39,6 +39,11 @@ Click `Add URL` and add "https://raw.githubusercontent.com/CompEvol/CBAN/master/
 Click `Done`. The Phylonco package should now appear in the **Package Manager**
 
 From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
+
+### Input format
+All models accept input genotypes in FASTA and Nexus formats. See [here](https://github.com/bioDS/beast-phylonco/blob/master/genotype_codes.pdf) for the genotype codes.
+
+For the GT16 model, VCF files can be converted to FASTA format using www.github.com/bioDS/vcf2fasta
 
 ### Running BEAST 
 Start the BEAST software
