@@ -1,13 +1,17 @@
 # BEAST Phylonco
 This is a BEAST2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
+[Paper](https://doi.org/10.1101/2021.03.17.435906): Chen et al. "Accounting for errors in data improves timing in single-cell cancer evolution." (2022)
+
+See [bioDS/beast-phylonco-paper](https://github.com/bioDS/beast-phylonco-paper) for datasets and analyses in the paper. 
+
 ## Software requirements
 
 This package requires Java 8, and at least
 * [BEAST 2](https://github.com/CompEvol/beast2) v2.6.6 
 * [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.7
 
-See dependencies in [version.xml](lphybeast/version.xml)
+See dependencies in [version.xml](phylonco-lphybeast/version.xml)
 
 ## Features
 
@@ -77,14 +81,14 @@ To build use `./gradlew clean build` in the root directory, for details see [dev
 
 For manual package installation instructions, see [here](http://www.beast2.org/managing-packages/)
 
-## References
-1. Bouckaert at al. (2019). [BEAST 2.5: An advanced software platform for Bayesian evolutionary analysis.](https://doi.org/10.1371/journal.pcbi.1006650)
+## Citations
+* BEAST v2.5: [Bouckaert at al. (2019)](https://doi.org/10.1371/journal.pcbi.1006650)
 
-2. Chen et al. (2022). [Accounting for errors in data improves timing in single-cell cancer evolution.](https://doi.org/10.1101/2021.03.17.435906)
+* BEAST2 Error models: [Chen et al. (2022)](https://doi.org/10.1101/2021.03.17.435906)
 
-3. Kozlov et al. (2022). [CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data.](https://doi.org/10.1186/s13059-021-02583-w) 
+* GT16: [Kozlov et al. (2022)](https://doi.org/10.1186/s13059-021-02583-w) 
  
-4. Zafar et al. (2017). [SiFit: inferring tumor trees from single-cell sequencing data under finite-sites models.](https://doi.org/10.1186/s13059-017-1311-2)
+* SiFit2, SiFit3: [Zafar et al. (2017)](https://doi.org/10.1186/s13059-017-1311-2)
 
-5. Hou et al. (2012). [Single-cell exome sequencing and monoclonal evolution of a JAK2-negative myeloproliferative neoplasm.]( https://doi.org/10.1016/j.cell.2012.02.028)
+* Hou 2012 dataset: [Hou et al. (2012)]( https://doi.org/10.1016/j.cell.2012.02.028)
 
