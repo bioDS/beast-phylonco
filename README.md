@@ -86,9 +86,9 @@ For manual package installation instructions, see [here](http://www.beast2.org/m
 
 * BEAST2 Error models: [Chen et al. (2022)](https://doi.org/10.1101/2021.03.17.435906)
 
-* GT16: [Kozlov et al. (2022)](https://doi.org/10.1186/s13059-021-02583-w) 
+* GT16 model: [Kozlov et al. (2022)](https://doi.org/10.1186/s13059-021-02583-w) 
  
-* SiFit2, SiFit3: [Zafar et al. (2017)](https://doi.org/10.1186/s13059-017-1311-2)
+* SiFit2, SiFit3 models: [Zafar et al. (2017)](https://doi.org/10.1186/s13059-017-1311-2)
 
 * Hou 2012 dataset: [Hou et al. (2012)]( https://doi.org/10.1016/j.cell.2012.02.028)
 
