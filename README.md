@@ -1,4 +1,4 @@
-# BEAST Phylonco
+# BEAST phylonco
 This is a BEAST2 package for Bayesian inference of molecular data for cancer evolution. This package implements error models and substitution models for inference of timed trees in a Bayesian MCMC framework. 
 
 [Paper](https://doi.org/10.1101/2021.03.17.435906): Chen et al. "Accounting for errors in data improves timing in single-cell cancer evolution." (2022)
@@ -19,9 +19,9 @@ The current release has the following features.
 
 Error Models
 * GT16 diploid nucleotide error model (16 states)
+* Binary error model
 * Nucleotide error model (4 states - A, G, C, T)
 * General error model (n states)
-* Binary error model
 
 Substitution Models
 * GT16 diploid nucleotide model (16 states)
