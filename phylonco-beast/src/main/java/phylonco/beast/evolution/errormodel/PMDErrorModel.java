@@ -13,7 +13,7 @@ import beast.evolution.datatype.Nucleotide;
  * https://doi.org/10.1093/molbev/msn256
  *
  */
-@Description("Error model base implementation")
+@Description("PMD Error model implementation")
 public class PMDErrorModel extends ErrorModel {
 
     final public Input<RealParameter> decayInput = new Input<>("decayRate", "the rate of exponential decay rate r", Input.Validate.REQUIRED);
