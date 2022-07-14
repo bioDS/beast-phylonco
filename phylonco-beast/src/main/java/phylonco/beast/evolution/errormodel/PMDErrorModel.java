@@ -44,7 +44,7 @@ public class PMDErrorModel extends ErrorModel {
         }
     }
 
-    // add time t to superclass
+    // TODO: add time t to superclass
     public double getProbability(int observedState, int trueState, double t) {
         double prob;
         int states = datatype.getStateCount();
@@ -71,7 +71,7 @@ public class PMDErrorModel extends ErrorModel {
         }
     }
 
-    // add time t to superclass
+    // TODO: add time t to superclass
     public double[] getProbabilities(int observedState, double t) {
         int states = datatype.getStateCount();
         double[] prob = new double[states];
