@@ -6,7 +6,13 @@ import beast.core.parameter.RealParameter;
 import beast.evolution.datatype.DataType;
 import beast.evolution.datatype.Nucleotide;
 
-
+/**
+ * Implements the PMD error model from Rambaut et al. (2009)
+ *
+ * Accommodating the Effect of Ancient DNA Damage on Inferences of Demographic Histories
+ * https://doi.org/10.1093/molbev/msn256
+ *
+ */
 @Description("Error model base implementation")
 public class PMDErrorModel extends ErrorModel {
 
