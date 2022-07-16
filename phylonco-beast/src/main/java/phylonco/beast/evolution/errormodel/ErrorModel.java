@@ -34,7 +34,7 @@ public abstract class ErrorModel extends CalculationNode {
             throw new IllegalArgumentException(message);
         }
 
-        // include taxa for error model
+        // exclude taxa for error model
         if (excludedTaxaInput.get() != null) {
             excludedTaxa = excludedTaxaInput.get();
         }
