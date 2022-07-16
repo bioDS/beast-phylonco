@@ -20,6 +20,8 @@ public class PMDErrorModel extends ErrorModel {
 
     private RealParameter decayRate;
 
+    private Nucleotide datatype = new Nucleotide();
+
     @Override
     public void initAndValidate() {
         super.initAndValidate();
@@ -39,39 +41,41 @@ public class PMDErrorModel extends ErrorModel {
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
                 // rows are observed states X, columns are true states Y
-                errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+                errorMatrix[observedState][trueState] = getProbability(observedState, trueState, 0.0);
             }
         }
     }
 
-    // TODO: add time t to superclass
+    @Override
     public double getProbability(int observedState, int trueState, double t) {
         double prob;
-        int states = datatype.getStateCount();
         if (datatype.isAmbiguousCode(observedState)) {
             prob = getStatePartial(observedState, trueState);
         } else if (observedState == trueState) {
             prob =  Math.exp(-decayRate.getValue() * t);
-        } else if isTransition(observedState, trueState) {
-            prob = 1 - Math.exp(-decayRate.getValue() * t);
+        } else if (isTransition(observedState, trueState)) {
+            prob = 1.0 - Math.exp(-decayRate.getValue() * t);
         } else {
-            prob = 0
+            prob = 0.0;
         }
         return prob;
     }
 
     private boolean isTransition(int i, int j) {
-        String k = Nucleotide.getCharacter(i) + Nucleotide.getCharacter(j);
+        String k = datatype.getCharacter(i) + datatype.getCharacter(j);
         if (k.equals("AG") || k.equals("GA")) {
             return true;
         } else if (k.equals("CT") || k.equals("TC")) {
             return true;
-        } else{
+        } else if (k.equals("CU") || k.equals("UC")) {
+            // base U is equivalent to base T
+            return true;
+        } else {
             return false;
         }
     }
 
-    // TODO: add time t to superclass
+    @Override
     public double[] getProbabilities(int observedState, double t) {
         int states = datatype.getStateCount();
         double[] prob = new double[states];

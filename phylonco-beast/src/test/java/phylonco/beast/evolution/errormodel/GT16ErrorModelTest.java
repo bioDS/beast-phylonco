@@ -32,7 +32,7 @@ public class GT16ErrorModelTest {
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             double sum = 0.0;
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
-                sum += errorModel.getProbability(observedState, trueState);
+                sum += errorModel.getProbability(observedState, trueState, 0.0);
             }
             assertEquals(1.0, sum, DELTA);
         }
@@ -93,7 +93,7 @@ public class GT16ErrorModelTest {
 
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
-                double calcProb = errorModel.getProbability(observedState, trueState);
+                double calcProb = errorModel.getProbability(observedState, trueState, 0.0);
                 double expectedProb = expectedMatrix[trueState][observedState];
                 assertEquals(expectedProb, calcProb, DELTA);
             }
@@ -119,7 +119,7 @@ public class GT16ErrorModelTest {
 
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
-                double calcProb = errorModel.getProbability(observedState, trueState);
+                double calcProb = errorModel.getProbability(observedState, trueState, 0.0);
                 double expectedProb = expectedMatrix[trueState][observedState];
                 assertEquals(expectedProb, calcProb, DELTA);
             }
@@ -149,7 +149,7 @@ public class GT16ErrorModelTest {
             for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
                 double expected = 1.0;
                 double delta = 0.0;
-                double modelProb = errorModel.getProbability(observedState, trueState);
+                double modelProb = errorModel.getProbability(observedState, trueState, 0.0);
                 assertEquals(expected, modelProb, delta);
             }
         }
@@ -186,12 +186,12 @@ public class GT16ErrorModelTest {
                     for (int otherStates = 0; otherStates < datatype.getStateCount(); otherStates++) {
                         // assumes only two ambiguous state codes
                         if (otherStates != observedCodes[0] && otherStates != observedCodes[1]) {
-                            double modelProb = errorModel.getProbability(otherStates, trueState);
+                            double modelProb = errorModel.getProbability(otherStates, trueState, 0.0);
                             sum += modelProb;
                         }
                     }
                     double expected = 1.0;
-                    double modelProb = errorModel.getProbability(observedState, trueState);
+                    double modelProb = errorModel.getProbability(observedState, trueState, 0.0);
                     sum += modelProb;
                     assertEquals(expected, sum, DELTA);
                 }

@@ -40,7 +40,7 @@ public class GT16ErrorModel extends ErrorModel {
     }
 
     @Override
-    public double getProbability(int observedState, int trueState) {
+    public double getProbability(int observedState, int trueState, double t) {
         double prob;
         String observedStr = datatype.getCharacter(observedState);
         String gap = Character.toString(GAP_CHAR);
@@ -128,7 +128,7 @@ public class GT16ErrorModel extends ErrorModel {
     }
 
     @Override
-    public double[] getProbabilities(int observedState) {
+    public double[] getProbabilities(int observedState, double t) {
         if (updateMatrix) {
             setupErrorMatrix();
             updateMatrix = false;
@@ -144,7 +144,7 @@ public class GT16ErrorModel extends ErrorModel {
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {
                 // rows are observed states X, columns are true states Y
-                errorMatrix[observedState][trueState] = getProbability(observedState, trueState);
+                errorMatrix[observedState][trueState] = getProbability(observedState, trueState, 0.0);
             }
         }
     }

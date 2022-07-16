@@ -25,7 +25,7 @@ public class BinaryErrorModelTest {
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
             double sum = 0.0;
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
-                sum += errorModel.getProbability(observedState, trueState);
+                sum += errorModel.getProbability(observedState, trueState, 0.0);
             }
             assertEquals(1.0, sum, DELTA);
         }
@@ -51,7 +51,7 @@ public class BinaryErrorModelTest {
                 for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
                     double expected = 1.0;
                     double delta = 0.0;
-                    double modelProb = errorModel.getProbability(observedState, trueState);
+                    double modelProb = errorModel.getProbability(observedState, trueState, 0.0);
                     assertEquals(expected, modelProb, delta);
                 }
             }

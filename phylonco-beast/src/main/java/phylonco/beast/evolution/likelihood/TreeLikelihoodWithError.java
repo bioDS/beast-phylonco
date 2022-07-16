@@ -3,6 +3,7 @@ package phylonco.beast.evolution.likelihood;
 import beast.core.Description;
 import beast.core.Input;
 import beast.evolution.alignment.Alignment;
+import beast.evolution.alignment.TaxonSet;
 import beast.evolution.likelihood.TreeLikelihood;
 import beast.evolution.tree.Node;
 import phylonco.beast.evolution.errormodel.ErrorModel;
@@ -54,20 +55,36 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         return taxonIndex;
     }
 
+    private boolean includeNode(Node node) {
+        if (errorModel.getExcludedTaxa() != null) {
+            // include node if taxa name is not in the exclusion list
+            int index = errorModel.getExcludedTaxa().getTaxonIndex(node.getID());
+            return index == -1;
+        } else {
+            return true;
+        }
+    }
+
     protected double[] getLeafPartials(Node node) {
         Alignment data = dataInput.get();
         int nrOfStates = data.getDataType().getStateCount();
         int nrOfPatterns = data.getPatternCount();
         double[] partials = new double[nrOfPatterns * nrOfStates];
-        int t = getTaxonIndex(node.getID(), data); // taxon index
+        int taxonIndex = getTaxonIndex(node.getID(), data); // taxon index
         int i = 0;
         for (int p = 0; p < nrOfPatterns; p++) {
-            int state = data.getPattern(t, p);
+            int state = data.getPattern(taxonIndex, p);
             double[] tipLikelihoods;
             if (useTipsEmpirical) {
-                tipLikelihoods = data.getTipLikelihoods(t, p);
+                tipLikelihoods = data.getTipLikelihoods(taxonIndex, p);
+            } else if (includeNode(node)) {
+                // leaf node uses error model
+                final double branchRate = branchRateModel.getRateForBranch(node);
+                final double branchTime = node.getLength() * branchRate;
+                tipLikelihoods = errorModel.getProbabilities(state, branchTime);
             } else {
-                tipLikelihoods = errorModel.getProbabilities(state);
+                // leaf node does not use error model
+                tipLikelihoods = errorModel.getStatePartials(state);
             }
             for (int s = 0; s < nrOfStates; s++) {
                 partials[i] = tipLikelihoods[s];
