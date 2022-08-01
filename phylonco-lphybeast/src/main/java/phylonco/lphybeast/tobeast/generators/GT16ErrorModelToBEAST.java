@@ -63,7 +63,7 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
                 getTreeLikelihoodWithError(errAlignment, gt16ErrorModel, phyloCTMC, context);
 
         // logging
-        context.addExtraLogger(treeLikelihoodWithError);
+        context.addExtraLoggable(treeLikelihoodWithError);
 
         removeOriginalTreeLikelihood(origAlignmentInput, phyloCTMC, context);
 

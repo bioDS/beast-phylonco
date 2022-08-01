@@ -1,10 +1,10 @@
 package phylonco.lphy.evolution.alignment;
 
-import lphy.core.distributions.Utils;
 import lphy.evolution.alignment.Alignment;
 import lphy.evolution.alignment.ErrorAlignment;
 import lphy.evolution.alignment.SimpleAlignment;
 import lphy.graphicalModel.*;
+import lphy.util.RandomUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
@@ -42,7 +42,7 @@ public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
         }
 
         this.alignment = alignment;
-        this.random = Utils.getRandom();
+        this.random = RandomUtils.getRandom();
     }
 
     @Override

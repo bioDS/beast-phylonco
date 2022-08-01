@@ -23,7 +23,7 @@ val zippedConfig by configurations.creating
 // but do not use api unless you have to.
 dependencies {
     //*** phylonco lphy + lphy ***//
-    implementation("io.github.linguaphylo:lphy:1.2.0")
+    implementation("io.github.linguaphylo:lphy:1.3.0")
 //    implementation("io.github.bioDS:?:?")
     implementation(project(":phylonco-lphy"))
 
@@ -31,7 +31,7 @@ dependencies {
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:0.3.0")
+    zippedConfig("io.github.linguaphylo:lphybeast:0.4.1")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 
@@ -40,7 +40,7 @@ dependencies {
     implementation(fileTree("lib") {
 //        include("lphy-*-all.jar")
         // beast2 + beastlab are in subproject beast2
-        include("*addon*.jar", "feast-*.jar", "Mascot.*.jar", "SA.*.jar", "SSM.*.jar")
+        include("*addon*.jar", "feast-*.jar", "SSM.*.jar")
     })
 
     // tests

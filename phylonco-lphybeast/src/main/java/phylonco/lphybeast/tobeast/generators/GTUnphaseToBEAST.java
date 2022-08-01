@@ -54,7 +54,7 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
         context.removeBEASTObject(treeLikelihoodWithError);
 
         // logging
-        context.addExtraLogger(treeLikelihoodWithError);
+        context.addExtraLoggable(treeLikelihoodWithError);
         return treeLikelihoodWithError;
     }
 

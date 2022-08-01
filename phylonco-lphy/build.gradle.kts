@@ -7,17 +7,16 @@ plugins {
 }
 
 // overwrite version
-version = "0.0.1"//-SNAPSHOT"
+version = "0.0.2"//-SNAPSHOT"
 
 dependencies {
     // io.github.linguaphylo
-    implementation("io.github.linguaphylo:lphy:1.2.0")
+    implementation("io.github.linguaphylo:lphy:1.3.0")
 
     // launch studio from its jar, but not depend on it
-    runtimeOnly("io.github.linguaphylo:lphy-studio:1.2.0")
+    runtimeOnly("io.github.linguaphylo:lphy-studio:1.3.0")
 
     testImplementation("junit:junit:4.13.2")
-//    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:4.13")
 }
 
 // launch lphy studio from io.github.linguaphylo:lphy-studio:version
