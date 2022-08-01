@@ -1,5 +1,5 @@
-<addon name='phylonco' version='0.0.6'>
-    <depends on='beast2' atleast='2.6.6'/>
+<addon name='phylonco' version='0.0.7'>
+    <depends on='beast2' atleast='2.6.7'/>
     <depends on='BEASTLabs' atleast='1.9.7'/>
-    <depends on='lphybeast' atleast='0.3.0'/>
+    <depends on='lphybeast' atleast='0.4.1'/>
 </addon>
