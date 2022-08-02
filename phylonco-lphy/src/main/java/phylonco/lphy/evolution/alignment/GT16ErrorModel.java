@@ -13,7 +13,7 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * Created by adru001 on 2/02/20.
+ * @author Alexei Drummond
  */
 public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
 
