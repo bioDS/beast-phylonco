@@ -23,8 +23,6 @@ val zippedConfig by configurations.creating
 // but do not use api unless you have to.
 dependencies {
     //*** phylonco lphy + lphy ***//
-    implementation("io.github.linguaphylo:lphy:1.3.0")
-//    implementation("io.github.bioDS:?:?")
     implementation(project(":phylonco-lphy"))
 
     //*** phylonco beast2 + beast2 + beastlab ***//
