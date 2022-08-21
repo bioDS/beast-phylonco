@@ -1,4 +1,4 @@
-Phylonco Language Reference (version 0.0.1)
+Phylonco Language Reference (version 0.0.2)
 ===========================================
 This an automatically generated language reference of the LinguaPhylo (LPhy) statistical phylogenetic modeling language.
 
@@ -32,6 +32,7 @@ Types
 - [Taxa](types/Taxa.md)
 - [Alignment](types/Alignment.md)
 - [ContinuousCharacterData](types/ContinuousCharacterData.md)
+- [MetaDataAlignment](types/MetaDataAlignment.md)
 - [SiteModel](types/SiteModel.md)
 - [TimeTree](types/TimeTree.md)
 
