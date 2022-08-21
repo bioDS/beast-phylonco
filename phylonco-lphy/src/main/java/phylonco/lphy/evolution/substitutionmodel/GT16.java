@@ -8,7 +8,7 @@ import lphy.graphicalModel.Value;
 import lphy.graphicalModel.types.DoubleArray2DValue;
 
 /**
- * Created by adru001 on 2/02/20.
+ * @author Alexei Drummond
  */
 @Citation(
         value = "Alexey Kozlov, Joao Alves, Alexandros Stamatakis, David Posada (2021). CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data. bioRxiv 2020.07.31.230292.",
@@ -28,7 +28,9 @@ public class GT16 extends RateMatrix {
 
         super(meanRate);
 
-        if (rates.value().length != 6) throw new IllegalArgumentException("Rates must have 6 dimensions.");
+        if (rates.value().length != 6) {
+            throw new IllegalArgumentException("Rates must have 6 dimensions.");
+        }
 
         setParam(ratesParamName, rates);
         setParam(freqParamName, freq);

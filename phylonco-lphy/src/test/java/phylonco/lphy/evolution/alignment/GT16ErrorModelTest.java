@@ -1,12 +1,20 @@
 package phylonco.lphy.evolution.alignment;
 
+import lphy.evolution.Taxa;
+import lphy.evolution.alignment.Alignment;
+import lphy.evolution.alignment.SimpleAlignment;
+import lphy.graphicalModel.Value;
 import org.junit.Test;
+import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
+/**
+ * @author Kylie Chen
+ */
 public class GT16ErrorModelTest {
 
     private static double DELTA = 1e-15;
@@ -46,12 +54,25 @@ public class GT16ErrorModelTest {
         return expectedMatrix;
     }
 
+    private Value<Alignment> getDummySequence() {
+        int numTaxa = 10;
+        int numChar = 200;
+        Taxa taxa = Taxa.createTaxa(numTaxa);
+        PhasedGenotype seqType = PhasedGenotype.INSTANCE;
+        Value<Alignment> alignment = new Value<>("alignment", new SimpleAlignment(taxa, numChar, seqType));
+        return alignment;
+    }
+
     @Test
     public void errorMatrixTestSmallErrors() {
-        double epsilon = 0.01;
-        double delta = 0.02;
+        Double epsilon = 0.01;
+        Double delta = 0.02;
 
-        double[][] observedMatrix = new GT16ErrorModel().errorMatrix(epsilon, delta);
+        Value<Double> ep = new Value<>("epsilon", epsilon);
+        Value<Double> dt = new Value<>("delta", delta);
+        GT16ErrorModel errorModel = new GT16ErrorModel(ep, dt, getDummySequence());
+
+        double[][] observedMatrix = errorModel.errorMatrix(epsilon, delta);
         double[][] expectedMatrix = getExpectedMatrix(epsilon, delta);
 
         double[] observed = Arrays.stream(observedMatrix).flatMapToDouble(Arrays::stream).toArray();
@@ -65,7 +86,11 @@ public class GT16ErrorModelTest {
         double epsilon = 0.1;
         double delta = 0.5;
 
-        double[][] observedMatrix = new GT16ErrorModel().errorMatrix(epsilon, delta);
+        Value<Double> ep = new Value<>("epsilon", epsilon);
+        Value<Double> dt = new Value<>("delta", delta);
+        GT16ErrorModel errorModel = new GT16ErrorModel(ep, dt, getDummySequence());
+
+        double[][] observedMatrix = errorModel.errorMatrix(epsilon, delta);
         double[][] expectedMatrix = getExpectedMatrix(epsilon, delta);
 
         double[] observed = Arrays.stream(observedMatrix).flatMapToDouble(Arrays::stream).toArray();
@@ -78,8 +103,13 @@ public class GT16ErrorModelTest {
     public void errorMatrixRowSumsToOne() {
         double delta = 0.1;
         double epsilon = 0.2;
+
+        Value<Double> ep = new Value<>("epsilon", epsilon);
+        Value<Double> dt = new Value<>("delta", delta);
+        GT16ErrorModel errorModel = new GT16ErrorModel(ep, dt, getDummySequence());
+
         double expected = 1.0;
-        double[][] observedMatrix = new GT16ErrorModel().errorMatrix(epsilon, delta);
+        double[][] observedMatrix = errorModel.errorMatrix(epsilon, delta);
         for (int row = 0; row < observedMatrix.length; row++) {
             double sum = 0.0;
             for (int col = 0; col < observedMatrix[row].length; col++) {

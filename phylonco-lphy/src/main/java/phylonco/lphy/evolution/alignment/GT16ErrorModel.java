@@ -8,13 +8,19 @@ import lphy.util.RandomUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
-import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
+import java.util.*;
 
 /**
  * @author Alexei Drummond
+ * @author Kylie Chen
  */
+@Citation(
+        value = "Alexey Kozlov, Joao Alves, Alexandros Stamatakis, David Posada (2021). CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data. bioRxiv 2020.07.31.230292.",
+        title = "CellPhy: accurate and fast probabilistic inference of single-cell phylogenies from scDNA-seq data",
+        authors = {"Kozlov", "Alves", "Stamatakis", "Posada"},
+        year = 2021,
+        DOI = "https://doi.org/10.1101/2020.07.31.230292"
+)
 public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
 
     Value<Double> epsilon;
@@ -27,27 +33,37 @@ public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
 
     RandomGenerator random;
 
+    // Warning: this line below breaks GUI narrative from displaying correctly!
     // for testing
-    public GT16ErrorModel() {}
+//    public GT16ErrorModel() {}
 
-    public GT16ErrorModel(@ParameterInfo(name = epsilonParamName, description = "the sequencing and amplification error probability.") Value<Double> epsilon,
-                          @ParameterInfo(name = deltaParamName, description = "the allelic drop out probability.") Value<Double> delta,
-                          @ParameterInfo(name = alignmentParamName, description = "the genotype alignment.") Value<Alignment> alignment) {
-
-        this.epsilon = epsilon;
-        this.delta = delta;
+    public GT16ErrorModel(
+            @ParameterInfo(name = epsilonParamName,
+                    narrativeName = "sequencing and amplification error probability",
+                    description = "the sequencing and amplification error probability.")
+            Value<Double> epsilon,
+            @ParameterInfo(name = deltaParamName,
+                    narrativeName = "allelic dropout probability",
+                    description = "the allelic drop out probability.")
+            Value<Double> delta,
+            @ParameterInfo(name = alignmentParamName,
+                    narrativeName = "genotype alignment",
+                    description = "the genotype alignment.")
+            Value<Alignment> alignment) {
 
         if (alignment.value().getSequenceType() != phylonco.lphy.evolution.datatype.PhasedGenotype.INSTANCE) {
             throw new RuntimeException("GT16ErrorModel can only be applied alignments of type " + PhasedGenotype.NAME);
         }
 
+        this.epsilon = epsilon;
+        this.delta = delta;
         this.alignment = alignment;
         this.random = RandomUtils.getRandom();
     }
 
     @Override
-    public SortedMap<String, Value> getParams() {
-        SortedMap<String, Value> map = new TreeMap<>();
+    public Map<String, Value> getParams() {
+        Map<String, Value> map = new TreeMap<>();
         map.put(epsilonParamName, epsilon);
         map.put(deltaParamName, delta);
         map.put(alignmentParamName, alignment);
@@ -58,12 +74,20 @@ public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
     public void setParam(String paramName, Value value) {
         if (paramName.equals(epsilonParamName)) {
             epsilon = value;
-        } else if (paramName.equals(deltaParamName)) delta = value;
-        else if (paramName.equals(alignmentParamName)) alignment = value;
+        } else if (paramName.equals(deltaParamName)) {
+            delta = value;
+        } else if (paramName.equals(alignmentParamName)) {
+            alignment = value;
+        }
         else throw new RuntimeException("Unrecognised parameter name: " + paramName);
     }
 
-    @GeneratorInfo(name = "GT16ErrorModel", description = "An error model distribution on an phased genotype alignment.")
+    @GeneratorInfo(
+            name = "GT16ErrorModel",
+            verbClause = "has",
+            narrativeName = "error model",
+            category = GeneratorCategory.TAXA_ALIGNMENT,
+            description = "An error model distribution on an phased genotype alignment.")
     public RandomVariable<Alignment> sample() {
 
         Alignment original = alignment.value();
@@ -84,11 +108,11 @@ public class GT16ErrorModel implements GenerativeDistribution<Alignment> {
     }
 
     public Value<Double> getEpsilon() {
-        return Objects.requireNonNull(epsilon);
+        return getParams().get(epsilonParamName);
     }
 
     public Value<Double> getDelta() {
-        return Objects.requireNonNull(delta);
+        return getParams().get(deltaParamName);
     }
 
     public Alignment getOriginalAlignment() {
