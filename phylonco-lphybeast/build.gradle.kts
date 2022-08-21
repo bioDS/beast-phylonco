@@ -23,15 +23,13 @@ val zippedConfig by configurations.creating
 // but do not use api unless you have to.
 dependencies {
     //*** phylonco lphy + lphy ***//
-    implementation("io.github.linguaphylo:lphy:1.2.0")
-//    implementation("io.github.bioDS:?:?")
     implementation(project(":phylonco-lphy"))
 
     //*** phylonco beast2 + beast2 + beastlab ***//
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:0.3.0")
+    zippedConfig("io.github.linguaphylo:lphybeast:0.4.2")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 
@@ -40,7 +38,7 @@ dependencies {
     implementation(fileTree("lib") {
 //        include("lphy-*-all.jar")
         // beast2 + beastlab are in subproject beast2
-        include("*addon*.jar", "feast-*.jar", "Mascot.*.jar", "SA.*.jar", "SSM.*.jar")
+        include("*addon*.jar", "feast-*.jar", "SSM.*.jar")
     })
 
     // tests
@@ -67,7 +65,7 @@ tasks.register("runLPhyBEAST", JavaExec::class.java) {
     // use classpath
     jvmArgs = listOf("-cp", sourceSets.main.get().runtimeClasspath.asPath)
     println("clspath = ${sourceSets.main.get().runtimeClasspath.asPath}")
-    mainClass.set("lphybeast.LPhyBEAST")
+    mainClass.set("lphybeast.LPhyBeastCMD")
     setArgs(listOf("-o", "$rootDir/tmp/gt16ErrMod.xml",
         "${project(":phylonco-lphy").projectDir}/examples/gt16CoalErrModel.lphy"))
 }

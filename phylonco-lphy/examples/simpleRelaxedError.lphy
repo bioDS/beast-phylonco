@@ -1,0 +1,22 @@
+data {
+  L = 200;
+  taxa = taxa(names=1:16);
+  numBranches = 30;
+}
+model {
+  pi ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
+  rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+  Q = gt16(freq=pi, rates=rates);
+
+  theta ~ LogNormal(meanlog=3.0, sdlog=1.0);
+  tree ~ Coalescent(theta=theta, taxa=taxa);
+  
+  branchRates ~ LogNormal(meanlog=-0.25, sdlog=0.5, replicates=numBranches);
+
+  D ~ PhyloCTMC(L=L, Q=Q, tree=tree, branchRates=branchRates, dataType=phasedGenotype());
+
+  // GT16 error model
+  epsilon ~ Beta(alpha=2, beta=18);
+  delta ~ Beta(alpha=1.5, beta=4.5);
+  E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=D);
+}
