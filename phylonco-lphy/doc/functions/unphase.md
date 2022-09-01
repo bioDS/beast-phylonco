@@ -1,17 +1,17 @@
 unphase function
 ================
-unphase(Alignment **alignment**)
---------------------------------
+unphase([Alignment](../types/Alignment.md) **alignment**)
+---------------------------------------------------------
 
 Returns the unphased version of the phased genotype alignment.
 
 ### Parameters
 
-- Alignment **alignment** - the genotype alignment.
+- [Alignment](../types/Alignment.md) **alignment** - the genotype alignment.
 
 ### Return type
 
-- Alignment
+[Alignment](../types/Alignment.md)
 
 
 

@@ -1,19 +1,19 @@
 GT16ErrorModel distribution
 ===========================
-GT16ErrorModel(Double **epsilon**, Double **delta**, Alignment **alignment**)
------------------------------------------------------------------------------
+GT16ErrorModel([Double](../types/Double.md) **epsilon**, [Double](../types/Double.md) **delta**, [Alignment](../types/Alignment.md) **alignment**)
+--------------------------------------------------------------------------------------------------------------------------------------------------
 
 An error model distribution on an phased genotype alignment.
 
 ### Parameters
 
-- Double **epsilon** - the sequencing and amplification error probability.
-- Double **delta** - the allelic drop out probability.
-- Alignment **alignment** - the genotype alignment.
+- [Double](../types/Double.md) **epsilon** - the sequencing and amplification error probability.
+- [Double](../types/Double.md) **delta** - the allelic drop out probability.
+- [Alignment](../types/Alignment.md) **alignment** - the genotype alignment.
 
 ### Return type
 
-- Alignment
+[Alignment](../types/Alignment.md)
 
 ### Reference
 
