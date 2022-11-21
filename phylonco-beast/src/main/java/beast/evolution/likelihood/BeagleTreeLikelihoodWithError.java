@@ -464,7 +464,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
         if (flip) {
             partialBufferHelper.flipOffset(nodeIndex);
         }
-        setPartials(nodeIndex, partials);
+        beagle.setPartials(partialBufferHelper.getOffsetIndex(nodeIndex), partials);
     }
 
     public int getPatternCount() {
@@ -604,6 +604,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
      */
     @Override
     public void store() {
+        errorModel.store();
         partialBufferHelper.storeState();
         eigenBufferHelper.storeState();
         matrixBufferHelper.storeState();
@@ -620,8 +621,8 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
     @Override
     public void restore() {
         updateSiteModel = true; // this is required to upload the categoryRates to BEAGLE after the restore
-        updateErrorModel = true;
 
+        errorModel.restore();
         partialBufferHelper.restoreState();
         eigenBufferHelper.restoreState();
         matrixBufferHelper.restoreState();
@@ -730,11 +731,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
         traverse(root, null, true);
 
         if (updateErrorModel) {
-//            Node [] nodes = treeInput.get().getNodesAsArray();
-//            for (int i = 0; i < tipCount; i++) {
-//                int taxon = getTaxonIndex(nodes[i].getID(), dataInput.get());
-//                setPartials(beagle, i, taxon, true);
-//            }
+            updateErrorModel = false;
         }
 
         if (updateSubstitutionModel) {
@@ -912,7 +909,6 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
 //            updateNode[i] = false;
 //        }
 
-        updateErrorModel = false;
         updateSubstitutionModel = false;
         updateSiteModel = false;
         //********************************************************************
@@ -1069,7 +1065,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
                 update |= (update1 | update2);
 
             }
-        } else if (node.isLeaf() && update != Tree.IS_CLEAN ) {
+        } else if (node.isLeaf() && updateErrorModel) {
             if (flip) {
                 // first flip the partialBufferHelper
                 partialBufferHelper.flipOffset(nodeNum);
@@ -1099,7 +1095,9 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
     private int[] operationCount;
 
     protected BufferIndexHelper partialBufferHelper;
-    public BufferIndexHelper getPartialBufferHelper() {return partialBufferHelper;}
+    public BufferIndexHelper getPartialBufferHelper() {
+        return partialBufferHelper;
+    }
 
     private /*final*/ BufferIndexHelper eigenBufferHelper;
     protected BufferIndexHelper matrixBufferHelper;
