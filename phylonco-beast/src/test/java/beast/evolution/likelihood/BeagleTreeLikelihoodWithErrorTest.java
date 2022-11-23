@@ -27,7 +27,7 @@ import java.util.Arrays;
 import static org.junit.Assert.*;
 
 /**
- * This requires Beagle installed, and provides the Beagle lib location,
+ * This requires Beagle installed, and the Beagle lib location,
  * before running the tests.
  * E.g. <code>-Djava.library.path="$LD_LIBRARY_PATH:/usr/local/lib"</code>
  * @author Walter Xie
