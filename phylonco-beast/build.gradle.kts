@@ -44,5 +44,7 @@ tasks.test {
     // show standard out and standard error of the test JVM(s) on the console
     testLogging.showStandardStreams = true
     //testLogging.exceptionFormat = org.gradle.api.tasks.testing.logging.TestExceptionFormat.FULL
+    // BeagleTreeLikelihoodWithErrorTest uses Beagle
+    exclude("**/BeagleTreeLikelihoodWithErrorTest*")
 }
 
