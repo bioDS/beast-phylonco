@@ -9,7 +9,7 @@ The phased genotype data type.
 
 ### Return type
 
-- SequenceType
+[SequenceType](../types/SequenceType.md)
 
 
 
