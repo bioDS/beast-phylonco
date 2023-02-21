@@ -1,5 +1,8 @@
-<addon name='phylonco' version='0.0.8'>
-    <depends on='beast2' atleast='2.6.7'/>
-    <depends on='BEASTLabs' atleast='1.9.7'/>
-    <depends on='lphybeast' atleast='0.4.1'/>
-</addon>
+<package name='phylonco' version='0.0.8'>
+    <!-- just phylonco beast -->
+    <depends on='BEAST.base' atleast='2.7.3'/>
+    <depends on='BEAST.app' atleast='2.7.3'/>
+    <depends on='BEASTLabs' atleast='2.0.0'/>
+
+    <depends on='lphybeast' atleast='1.0.0'/>
+</package>
