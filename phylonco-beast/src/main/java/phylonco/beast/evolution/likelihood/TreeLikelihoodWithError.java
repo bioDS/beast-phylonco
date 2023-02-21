@@ -1,10 +1,10 @@
 package phylonco.beast.evolution.likelihood;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.likelihood.TreeLikelihood;
-import beast.evolution.tree.Node;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.likelihood.TreeLikelihood;
+import beast.base.evolution.tree.Node;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 
 @Description("Tree likelihood calculation with error models")
@@ -29,7 +29,7 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         super.m_useTipLikelihoods.setValue(useTipLikelihoods, this);
         // current implementation only supports BeerTreeLikelihoodCore implementation
         // beagle support to be added in the future
-        super.implementationInput.setValue("beast.evolution.likelihood.TreeLikelihood", this);
+        super.implementationInput.setValue("beast.base.evolution.likelihood.TreeLikelihood", this);
         System.setProperty("java.only", "true"); // use java implementation for likelihood core
         super.initAndValidate();
     }

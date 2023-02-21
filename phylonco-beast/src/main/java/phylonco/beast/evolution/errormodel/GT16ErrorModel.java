@@ -1,13 +1,13 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 
-import static beast.evolution.datatype.DataType.GAP_CHAR;
-import static beast.evolution.datatype.DataType.MISSING_CHAR;
+import static beast.base.evolution.datatype.DataType.GAP_CHAR;
+import static beast.base.evolution.datatype.DataType.MISSING_CHAR;
 //import static junit.framework.Assert.assertEquals;
 
 /**

@@ -1,6 +1,6 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.evolution.datatype.Binary;
+import beast.base.evolution.datatype.Binary;
 import org.junit.Test;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 

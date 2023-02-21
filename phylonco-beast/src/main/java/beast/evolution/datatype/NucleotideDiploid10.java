@@ -1,6 +1,7 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
+import beast.base.core.Description;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Unphased diploid nucleotide data type")
 public class NucleotideDiploid10 extends DataType.Base {

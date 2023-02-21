@@ -1,9 +1,9 @@
 package phylonco.lphybeast.tobeast.generators;
 
-import beast.core.BEASTInterface;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
-import beast.evolution.sitemodel.SiteModel;
+import beast.base.core.BEASTInterface;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.sitemodel.SiteModel;
 import lphy.evolution.alignment.Alignment;
 import lphy.evolution.likelihood.PhyloCTMC;
 import lphy.graphicalModel.GraphicalModelNode;
@@ -27,8 +27,8 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
     @Override
     public TreeLikelihoodWithError generatorToBEAST(GT16ErrorModel generator, BEASTInterface value, BEASTContext context) {
 
-        assert value instanceof beast.evolution.alignment.Alignment;
-        beast.evolution.alignment.Alignment errAlignment = (beast.evolution.alignment.Alignment) value;
+        assert value instanceof beast.base.evolution.alignment.Alignment;
+        beast.base.evolution.alignment.Alignment errAlignment = (beast.base.evolution.alignment.Alignment) value;
 
         phylonco.beast.evolution.errormodel.GT16ErrorModel gt16ErrorModel =
                 new phylonco.beast.evolution.errormodel.GT16ErrorModel();
@@ -79,7 +79,7 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
     }
 
 
-    private TreeLikelihoodWithError getTreeLikelihoodWithError(beast.evolution.alignment.Alignment errAlignment,
+    private TreeLikelihoodWithError getTreeLikelihoodWithError(beast.base.evolution.alignment.Alignment errAlignment,
                                                                ErrorModel errorModel, PhyloCTMC phyloCTMC, BEASTContext context) {
         TreeLikelihoodWithErrorFast treeLikelihoodWithError = new TreeLikelihoodWithErrorFast();
 

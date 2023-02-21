@@ -1,8 +1,8 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.parameter.RealParameter;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.core.Description;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;

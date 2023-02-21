@@ -1,6 +1,7 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
+import beast.base.core.Description;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Phased diploid nucleotide data type")
 public class NucleotideDiploid16 extends DataType.Base {

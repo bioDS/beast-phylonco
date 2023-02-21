@@ -9,16 +9,17 @@ import beagle.BeagleFlag;
 import beagle.BeagleInfo;
 import beagle.InstanceDetails;
 import beagle.ResourceDetails;
-import beast.core.CalculationNode;
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.util.Log;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.branchratemodel.StrictClockModel;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.EigenDecomposition;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.evolution.likelihood.TreeLikelihood;
+import beast.base.inference.CalculationNode;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.core.Log;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.EigenDecomposition;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 
 
@@ -39,7 +40,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
     // allocate each BEAGLE instance to. If less than the number of instances then
     // will wrap around.
     // note: to use a different device, say device 2, start beast with
-    // java -Dbeagle.resource.order=2 beast.app.BeastMCMC
+    // java -Dbeagle.resource.order=2 beastfx.app.beast.BeastMCMC
     private static final String RESOURCE_ORDER_PROPERTY = "beagle.resource.order";
     private static final String PREFERRED_FLAGS_PROPERTY = "beagle.preferred.flags";
     private static final String REQUIRED_FLAGS_PROPERTY = "beagle.required.flags";
@@ -133,14 +134,14 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
                     break;
                 }
             }
-            if (constantPattern != null && constantPattern.size() > dataInput.get().getPatternCount()) {
+            if (getConstantPattern() != null && getConstantPattern().size() > dataInput.get().getPatternCount()) {
                 // if there are many more constant patterns than patterns (each pattern can
                 // have a number of constant patters, one for each state) it is less efficient
                 // to just calculate the TreeLikelihood for constant sites than optimising
                 Log.debug("switch off constant sites optimisiation: calculating through separate TreeLikelihood category (as in the olden days)");
                 invariantCategory = -1;
                 proportionInvariant = 0;
-                constantPattern = null;
+                setConstantPattern(null);
                 categoryRates = m_siteModel.getCategoryRates(null);
             }
         }
@@ -561,7 +562,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
         }
 
         double[] categoryRates = m_siteModel.getCategoryRates(null);
-        if (constantPattern != null) {
+        if (getConstantPattern() != null) {
             double [] tmp = new double [categoryRates.length - 1];
             for (int k = 0; k < invariantCategory; k++) {
                 tmp[k] = categoryRates[k];
@@ -740,7 +741,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
 
         if (updateSiteModel) {
             double[] categoryRates = m_siteModel.getCategoryRates(null);
-            if (constantPattern != null) {
+            if (getConstantPattern() != null) {
                 double [] tmp = new double [categoryRates.length - 1];
                 for (int k = 0; k < invariantCategory; k++) {
                     tmp[k] = categoryRates[k];
@@ -792,7 +793,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
             int rootIndex = partialBufferHelper.getOffsetIndex(root.getNr());
 
             double[] categoryWeights = m_siteModel.getCategoryProportions(null);
-            if (constantPattern != null) {
+            if (getConstantPattern() != null) {
                 double [] tmp = new double [categoryWeights.length - 1];
                 for (int k = 0; k < invariantCategory; k++) {
                     tmp[k] = categoryWeights[k];
@@ -854,7 +855,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
                 proportionInvariant = m_siteModel.getProportionInvariant();
 
 
-                for (int k : constantPattern) {
+                for (int k : getConstantPattern()) {
                     int i = k / m_nStateCount;
                     int j = k % m_nStateCount;
                     patternLogLikelihoods[i] = (Math.log(Math.exp(patternLogLikelihoods[i]) + proportionInvariant * frequencies[j]));
@@ -931,9 +932,9 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
                                                           double[] patternLogLikelihoods,
                                                           int[] patternWeights,
                                                           double [] frequencies) {
-        if (constantPattern != null) {
+        if (getConstantPattern() != null) {
             proportionInvariant = m_siteModel.getProportionInvariant();
-            for (int k : constantPattern) {
+            for (int k : getConstantPattern()) {
                 int i = k / m_nStateCount;
                 int j = k % m_nStateCount;
                 patternLogLikelihoods[i] = (Math.log(Math.exp(patternLogLikelihoods[i]) + proportionInvariant * frequencies[j]));

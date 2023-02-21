@@ -1,9 +1,9 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.core.CalculationNode;
-import beast.core.Description;
-import beast.core.Input;
-import beast.evolution.datatype.DataType;
+import beast.base.inference.CalculationNode;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Error model abstract class")
 public abstract class ErrorModel extends CalculationNode {

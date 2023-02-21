@@ -1,12 +1,12 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.DataType;
 import beast.evolution.datatype.Ternary;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 /**
  * Implements the three state SiFit model of genotype substitution from Zafar et al. (2017)
@@ -82,10 +82,10 @@ public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionMode
     }
 
     @Override
-    protected void setupRelativeRates() {}
+    public void setupRelativeRates() {}
 
     @Override
-    protected void setupRateMatrix() {
+    public void setupRateMatrix() {
         if (mutationPath) {
             setupRateMatrixWithMutation(lambdaD.getValue(), lambdaL.getValue());
         } else {

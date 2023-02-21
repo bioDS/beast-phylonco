@@ -1,10 +1,10 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.Binary;
-import beast.evolution.datatype.DataType;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.Binary;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Binary error model with parameters as false positive and false negative probabilities")
 public class BinaryErrorModel extends ErrorModel {

@@ -7,7 +7,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "0.0.7-SNAPSHOT"
+version = "0.0.8-SNAPSHOT"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -29,17 +29,13 @@ dependencies {
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:0.4.2")
+    zippedConfig("io.github.linguaphylo:lphybeast:1.0.0-SNAPSHOT")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 
     //TODO add rest of lphybeast dependencies of beast2 part
     // non-modular lphy jar incl. all dependencies
-    implementation(fileTree("lib") {
-//        include("lphy-*-all.jar")
-        // beast2 + beastlab are in subproject beast2
-        include("*addon*.jar", "feast-*.jar", "SSM.*.jar")
-    })
+    implementation( fileTree("lib") )
 
     // tests
     testImplementation("junit:junit:4.13.2")

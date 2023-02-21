@@ -1,6 +1,6 @@
 package beast.evolution.datatype;
 
-import beast.evolution.datatype.DataType.Base;
+import beast.base.evolution.datatype.DataType.Base;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;

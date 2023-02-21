@@ -1,6 +1,6 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.evolution.datatype.DataType;
+import beast.base.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
 import org.junit.Test;
 

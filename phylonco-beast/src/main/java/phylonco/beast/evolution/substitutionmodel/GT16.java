@@ -1,12 +1,12 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 import java.util.Arrays;
 import java.util.List;
@@ -62,10 +62,10 @@ public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel 
     }
 
     @Override
-    protected void setupRelativeRates() { }
+    public void setupRelativeRates() { }
 
     @Override
-    protected void setupRateMatrix() {
+    public void setupRateMatrix() {
         setupFrequencies();
         setupRateMatrixUnnormalized();
         normalize();

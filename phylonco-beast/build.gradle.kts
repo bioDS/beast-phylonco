@@ -6,8 +6,8 @@ plugins {
 //version = "0.0.6-SNAPSHOT"
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
     withSourcesJar()
 }
 
@@ -15,8 +15,9 @@ dependencies {
     // api can pass beast jars to lphybeast
     api(fileTree("lib") {
         // beast 2
-        include("beast-*.jar")
-        include("BEASTlabs-*.jar")
+//        include("*.jar")
+        exclude("**/*-src.jar")
+        exclude("**/BEAST-app-*.jar")
     })
 
     // tests

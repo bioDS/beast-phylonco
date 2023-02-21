@@ -1,6 +1,7 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
+import beast.base.core.Description;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Ternary data type for data with three states")
 public class Ternary extends DataType.Base  {

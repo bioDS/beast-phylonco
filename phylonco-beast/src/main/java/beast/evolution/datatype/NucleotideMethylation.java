@@ -1,6 +1,7 @@
 package beast.evolution.datatype;
 
-import beast.core.Description;
+import beast.base.core.Description;
+import beast.base.evolution.datatype.DataType;
 
 @Description("Data type for combined nubleotide and methylation data")
 public class NucleotideMethylation extends DataType.Base {
