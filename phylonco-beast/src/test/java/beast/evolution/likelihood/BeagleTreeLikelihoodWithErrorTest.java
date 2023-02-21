@@ -14,14 +14,17 @@ import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.TreeParser;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import phylonco.beast.TestUtils;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
 import phylonco.beast.evolution.errormodel.GT16ErrorModel;
 import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;
@@ -36,6 +39,11 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
     private static final double DELTA = 1e-10;
     private static final boolean useGPU = true;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     //executed only once, before the first test
     @BeforeClass

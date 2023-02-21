@@ -2,8 +2,12 @@ package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.DataType;
 import beast.evolution.datatype.NucleotideDiploid16;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import phylonco.beast.TestUtils;
 
+import java.net.MalformedURLException;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;
@@ -11,6 +15,11 @@ import static junit.framework.Assert.assertEquals;
 public class GT16ErrorModelTest {
 
     private static double DELTA = 1e-10;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     /***
      * Given the true state is y, the conditional probability over all possible states is 1.

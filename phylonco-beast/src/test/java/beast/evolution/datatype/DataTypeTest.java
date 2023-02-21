@@ -1,15 +1,23 @@
 package beast.evolution.datatype;
 
+import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.DataType.Base;
+import beast.pkgmgmt.BEASTClassLoader;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import phylonco.beast.TestUtils;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(Parameterized.class)
 public class DataTypeTest {
@@ -39,6 +47,18 @@ public class DataTypeTest {
         });
     }
 
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
+
+    @Test
+    public void testDataTypes() {
+        Set<String> dataTypes = BEASTClassLoader.loadService(DataType.class);
+//        System.out.println(dataTypes);
+        assertTrue("NucleotideDiploid10", dataTypes.contains("beast.evolution.datatype.NucleotideDiploid10"));
+        assertTrue("NucleotideDiploid16", dataTypes.contains("beast.evolution.datatype.NucleotideDiploid16"));
+    }
 
     @Test
     public void testStringToEncoding() {

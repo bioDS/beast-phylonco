@@ -1,14 +1,23 @@
 package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.Binary;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.evolution.errormodel.BinaryErrorModel;
+import phylonco.beast.TestUtils;
+
+import java.net.MalformedURLException;
 
 import static junit.framework.Assert.assertEquals;
 
 public class BinaryErrorModelTest {
 
     private static double DELTA = 1e-10;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     @Test
     public void testBinaryErrorModelSumsToOne() {

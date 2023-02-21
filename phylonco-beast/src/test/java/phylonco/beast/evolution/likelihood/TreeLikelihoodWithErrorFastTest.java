@@ -10,12 +10,16 @@ import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.tree.TreeParser;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import phylonco.beast.TestUtils;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
 import phylonco.beast.evolution.errormodel.GT16ErrorModel;
 import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
+import java.net.MalformedURLException;
 import java.util.Arrays;
 
 import static junit.framework.Assert.assertEquals;
@@ -23,6 +27,11 @@ import static junit.framework.Assert.assertEquals;
 public class TreeLikelihoodWithErrorFastTest {
 
     private static double DELTA = 1e-10;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     /**
      * results obtained from running the following code in R:
