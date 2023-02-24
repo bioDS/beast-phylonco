@@ -54,8 +54,8 @@ public class DataTypeTest {
     public void testDataTypes() {
         Set<String> dataTypes = BEASTClassLoader.loadService(DataType.class);
 //        System.out.println(dataTypes);
-        assertTrue("NucleotideDiploid10", dataTypes.contains("beast.evolution.datatype.NucleotideDiploid10"));
-        assertTrue("NucleotideDiploid16", dataTypes.contains("beast.evolution.datatype.NucleotideDiploid16"));
+        assertTrue("NucleotideDiploid10", dataTypes.contains("phylonco.beast.evolution.datatype.NucleotideDiploid10"));
+        assertTrue("NucleotideDiploid16", dataTypes.contains("phylonco.beast.evolution.datatype.NucleotideDiploid16"));
     }
 
     @Test
