@@ -2,9 +2,9 @@ package phylonco.beast.evolution.errormodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideDiploid16;
+import beast.base.inference.parameter.RealParameter;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
 import static beast.base.evolution.datatype.DataType.GAP_CHAR;
 import static beast.base.evolution.datatype.DataType.MISSING_CHAR;

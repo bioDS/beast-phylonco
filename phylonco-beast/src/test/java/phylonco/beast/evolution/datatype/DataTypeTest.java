@@ -1,16 +1,14 @@
-package beast.evolution.datatype;
+package phylonco.beast.evolution.datatype;
 
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.datatype.DataType.Base;
 import beast.pkgmgmt.BEASTClassLoader;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import phylonco.beast.TestUtils;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;

@@ -1,30 +1,28 @@
-package beast.evolution.likelihood;
+package phylonco.beast.evolution.likelihood;
 
 
 import beagle.BeagleFactory;
 import beagle.BeagleFlag;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.Nucleotide;
-import beast.evolution.datatype.NucleotideDiploid16;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.Frequencies;
 import beast.base.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.TreeParser;
-import org.junit.Before;
+import beast.base.inference.parameter.RealParameter;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import phylonco.beast.TestUtils;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
 import phylonco.beast.evolution.errormodel.GT16ErrorModel;
 import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 
 import static org.junit.Assert.*;

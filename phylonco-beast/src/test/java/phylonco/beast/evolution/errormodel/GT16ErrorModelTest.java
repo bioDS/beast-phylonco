@@ -1,13 +1,11 @@
 package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideDiploid16;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import phylonco.beast.TestUtils;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
-import java.net.MalformedURLException;
 import java.util.List;
 
 import static junit.framework.Assert.assertEquals;

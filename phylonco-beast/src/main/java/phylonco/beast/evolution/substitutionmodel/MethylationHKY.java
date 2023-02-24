@@ -2,15 +2,15 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
+import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.ComplexColtEigenSystem;
 import beast.base.evolution.substitutionmodel.ComplexSubstitutionModel;
-import beast.base.inference.parameter.RealParameter;
-import beast.base.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideMethylation;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
+import phylonco.beast.evolution.datatype.NucleotideMethylation;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
 public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {

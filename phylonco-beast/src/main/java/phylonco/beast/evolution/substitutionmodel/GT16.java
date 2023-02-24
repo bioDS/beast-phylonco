@@ -2,11 +2,11 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideDiploid16;
 import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.inference.parameter.RealParameter;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
 import java.util.Arrays;
 import java.util.List;

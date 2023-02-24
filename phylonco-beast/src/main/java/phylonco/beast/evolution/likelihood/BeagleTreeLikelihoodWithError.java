@@ -1,26 +1,21 @@
-package beast.evolution.likelihood;
+package phylonco.beast.evolution.likelihood;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import beagle.Beagle;
-import beagle.BeagleFactory;
-import beagle.BeagleFlag;
-import beagle.BeagleInfo;
-import beagle.InstanceDetails;
-import beagle.ResourceDetails;
-import beast.base.evolution.likelihood.TreeLikelihood;
-import beast.base.inference.CalculationNode;
+import beagle.*;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.branchratemodel.StrictClockModel;
+import beast.base.evolution.likelihood.TreeLikelihood;
 import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.EigenDecomposition;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
+import beast.base.inference.CalculationNode;
 import phylonco.beast.evolution.errormodel.ErrorModel;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 

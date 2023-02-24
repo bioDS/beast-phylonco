@@ -1,4 +1,4 @@
-package beast.evolution.datatype;
+package phylonco.beast.evolution.datatype;
 
 import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType;
