@@ -124,6 +124,6 @@ public class UnphasedGenotype extends DataType {
 
     @Override
     public String toString() {
-        return "Unphased Genotype";
+        return "GT10"; // trimmed in studio if too long
     }
 }
