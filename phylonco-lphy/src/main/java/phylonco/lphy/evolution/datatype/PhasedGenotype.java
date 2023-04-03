@@ -138,4 +138,8 @@ public final class PhasedGenotype extends DataType {
         return NAME;
     }
 
+    @Override
+    public String toString() {
+        return "Phased Genotype";
+    }
 }

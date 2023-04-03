@@ -122,5 +122,8 @@ public class UnphasedGenotype extends DataType {
         return NAME;
     }
 
-
+    @Override
+    public String toString() {
+        return "Unphased Genotype";
+    }
 }
