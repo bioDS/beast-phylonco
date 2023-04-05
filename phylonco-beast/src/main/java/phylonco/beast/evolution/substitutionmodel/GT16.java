@@ -66,7 +66,6 @@ public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel 
 
     @Override
     public void setupRateMatrix() {
-        setupFrequencies();
         setupRateMatrixUnnormalized();
         normalize();
     }
@@ -162,10 +161,6 @@ public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel 
                 rateMatrix[i][j] = f * rateMatrix[i][j];
             }
         }
-    }
-
-    protected void setupFrequencies() {
-        frequencies.initAndValidate();
     }
 
     @Override
