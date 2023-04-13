@@ -7,7 +7,7 @@ plugins {
 }
 
 // overwrite version
-version = "0.0.3-SNAPSHOT"//-SNAPSHOT"
+version = "0.0.3"//-SNAPSHOT"
 
 dependencies {
     // https://github.com/bioDS/beast-phylonco/issues/31

@@ -14,7 +14,9 @@ import java.util.List;
 
 /**
  * This has to create TreeLikelihood.
- * A ~ PhyloCTMC(); E ~ ErrorModel(A); D = unphase(E);
+ * A ~ PhyloCTMC();
+ * E ~ ErrorModel(A);
+ * D = unphase(E);
  * @author Walter Xie
  */
 public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, TreeLikelihoodWithError>  {

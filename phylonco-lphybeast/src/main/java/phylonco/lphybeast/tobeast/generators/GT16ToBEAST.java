@@ -13,6 +13,11 @@ import lphybeast.GeneratorToBEAST;
 import org.apache.commons.lang3.ArrayUtils;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
+/**
+ * This has to create TreeLikelihood.
+ * A ~ PhyloCTMC();
+ * D ~ ErrorModel(A);
+ */
 public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolution.substitutionmodel.GT16> {
 
     @Override
