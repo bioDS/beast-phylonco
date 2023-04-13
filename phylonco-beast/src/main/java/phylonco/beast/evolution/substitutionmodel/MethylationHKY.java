@@ -1,16 +1,16 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.DataType;
-import beast.evolution.datatype.NucleotideMethylation;
-import beast.evolution.substitutionmodel.ComplexColtEigenSystem;
-import beast.evolution.substitutionmodel.ComplexSubstitutionModel;
-import beast.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.substitutionmodel.ComplexColtEigenSystem;
+import beast.base.evolution.substitutionmodel.ComplexSubstitutionModel;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.SingularValueDecomposition;
+import phylonco.beast.evolution.datatype.NucleotideMethylation;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
 public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {
@@ -62,7 +62,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
 
 
     @Override
-    protected void setupRelativeRates() {
+    public void setupRelativeRates() {
     }
 
 
@@ -264,7 +264,7 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
      *   Matrix is then normalized so that expected rate of change is 1.
      */
     @Override
-    protected void setupRateMatrix(){
+    public void setupRateMatrix(){
         double[][] unnormalizedRateMatrix = setupUnnormalizedRateMatrix();
 
         // Normalize rate matrix to one unit per time:

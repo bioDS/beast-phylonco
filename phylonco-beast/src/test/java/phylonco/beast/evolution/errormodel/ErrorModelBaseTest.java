@@ -1,14 +1,23 @@
 package phylonco.beast.evolution.errormodel;
 
-import beast.evolution.datatype.Nucleotide;
+import beast.base.evolution.datatype.Nucleotide;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.evolution.errormodel.ErrorModelBase;
+import phylonco.beast.TestUtils;
+
+import java.net.MalformedURLException;
 
 import static junit.framework.Assert.assertEquals;
 
 public class ErrorModelBaseTest {
 
     private static double DELTA = 1e-10;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     @Test
     public void testNucleotideErrorModelSumsToOne() {

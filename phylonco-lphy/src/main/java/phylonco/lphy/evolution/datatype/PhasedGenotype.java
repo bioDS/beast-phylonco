@@ -138,4 +138,8 @@ public final class PhasedGenotype extends DataType {
         return NAME;
     }
 
+    @Override
+    public String toString() {
+        return "GT16"; // trimmed in studio if too long
+    }
 }

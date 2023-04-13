@@ -1,9 +1,9 @@
 package phylonco.beast.evolution.likelihood;
 
-import beast.core.Description;
-import beast.evolution.likelihood.BeerLikelihoodCore;
-import beast.evolution.tree.Node;
-import beast.evolution.tree.Tree;
+import beast.base.core.Description;
+import beast.base.evolution.likelihood.BeerLikelihoodCore;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.Tree;
 
 import java.util.List;
 

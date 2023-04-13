@@ -1,6 +1,6 @@
 package phylonco.lphybeast.tobeast.generators;
 
-import beast.core.BEASTInterface;
+import beast.base.core.BEASTInterface;
 import lphy.evolution.alignment.Alignment;
 import lphy.graphicalModel.Generator;
 import lphy.graphicalModel.GraphicalModelNode;
@@ -14,7 +14,9 @@ import java.util.List;
 
 /**
  * This has to create TreeLikelihood.
- * A ~ PhyloCTMC(); E ~ ErrorModel(A); D = unphase(E);
+ * A ~ PhyloCTMC();
+ * E ~ ErrorModel(A);
+ * D = unphase(E);
  * @author Walter Xie
  */
 public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, TreeLikelihoodWithError>  {
@@ -22,8 +24,8 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
     @Override
     public TreeLikelihoodWithError generatorToBEAST(UnphaseGenotypeAlignment generator, BEASTInterface value, BEASTContext context) {
 
-        assert value instanceof beast.evolution.alignment.Alignment;
-        beast.evolution.alignment.Alignment unphasedErrAlignment = (beast.evolution.alignment.Alignment)value;
+        assert value instanceof beast.base.evolution.alignment.Alignment;
+        beast.base.evolution.alignment.Alignment unphasedErrAlignment = (beast.base.evolution.alignment.Alignment)value;
 
         Value<Alignment> errAlignmentInput = null;
         Generator<?>  errAligGenerator = null;

@@ -1,6 +1,6 @@
 package phylonco.beast.evolution.likelihood;
 
-import beast.core.Description;
+import beast.base.core.Description;
 
 @Description("Implementation of slow tree likelihood calculation with error models")
 public class TreeLikelihoodWithErrorSlow  extends TreeLikelihoodWithError {

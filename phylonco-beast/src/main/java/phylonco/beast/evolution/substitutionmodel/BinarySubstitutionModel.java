@@ -1,12 +1,12 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.Input;
-import beast.core.parameter.RealParameter;
-import beast.evolution.datatype.Binary;
-import beast.evolution.datatype.DataType;
-import beast.evolution.substitutionmodel.GeneralSubstitutionModel;
-import beast.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.core.Description;
+import beast.base.core.Input;
+import beast.base.inference.parameter.RealParameter;
+import beast.base.evolution.datatype.Binary;
+import beast.base.evolution.datatype.DataType;
+import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 /**
  * Implements a general binary substitution model
@@ -39,10 +39,10 @@ public class BinarySubstitutionModel extends GeneralSubstitutionModel implements
     }
 
     @Override
-    protected void setupRelativeRates() {}
+    public void setupRelativeRates() {}
 
     @Override
-    protected void setupRateMatrix() {
+    public void setupRateMatrix() {
         setupRateMatrix(lambda.getValue());
     }
 

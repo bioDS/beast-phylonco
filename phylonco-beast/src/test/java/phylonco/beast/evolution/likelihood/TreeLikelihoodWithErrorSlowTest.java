@@ -1,16 +1,18 @@
 package phylonco.beast.evolution.likelihood;
 
-import beast.core.parameter.RealParameter;
-import beast.evolution.alignment.Alignment;
-import beast.evolution.alignment.Sequence;
-import beast.evolution.datatype.Binary;
-import beast.evolution.datatype.Nucleotide;
-import beast.evolution.datatype.NucleotideDiploid16;
-import beast.evolution.sitemodel.SiteModel;
-import beast.evolution.substitutionmodel.Frequencies;
-import beast.evolution.substitutionmodel.JukesCantor;
-import beast.util.TreeParser;
+import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.datatype.Binary;
+import beast.base.evolution.datatype.Nucleotide;
+import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.evolution.substitutionmodel.JukesCantor;
+import beast.base.evolution.tree.TreeParser;
+import beast.base.inference.parameter.RealParameter;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import phylonco.beast.TestUtils;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
 import phylonco.beast.evolution.errormodel.GT16ErrorModel;
@@ -23,6 +25,11 @@ import static junit.framework.Assert.assertEquals;
 public class TreeLikelihoodWithErrorSlowTest {
 
     private static double DELTA = 1e-10;
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
+    }
 
     /**
      * results obtained from running the following code in R:

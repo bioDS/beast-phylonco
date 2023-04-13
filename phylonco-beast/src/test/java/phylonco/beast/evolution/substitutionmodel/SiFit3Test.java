@@ -1,10 +1,14 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.core.Description;
-import beast.core.parameter.RealParameter;
+import beast.base.core.Description;
+import beast.base.inference.parameter.RealParameter;
 import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.evolution.substitutionmodel.SiFit3;
+import phylonco.beast.TestUtils;
+
+import java.net.MalformedURLException;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -23,6 +27,11 @@ public class SiFit3Test extends TestCase {
                 "lambdaL", new RealParameter(lambdaL.toString())
         );
         nrOfStates = model.getStateCount();
+    }
+
+    @BeforeClass
+    public static void setUpClass() {
+        TestUtils.loadServices();
     }
 
     /**

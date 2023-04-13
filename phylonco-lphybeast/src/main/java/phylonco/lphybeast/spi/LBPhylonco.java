@@ -1,12 +1,13 @@
 package phylonco.lphybeast.spi;
 
-import beast.evolution.datatype.DataType;
+import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.graphicalModel.Generator;
 import lphy.graphicalModel.Value;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
+import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
@@ -42,7 +43,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public Map<SequenceType, DataType> getDataTypeMap() {
         Map<SequenceType, DataType> dataTypeMap = new ConcurrentHashMap<>();
-        dataTypeMap.put(PhasedGenotype.INSTANCE, new beast.evolution.datatype.NucleotideDiploid16());
+        dataTypeMap.put(PhasedGenotype.INSTANCE, new NucleotideDiploid16());
         return dataTypeMap;
     }
 
