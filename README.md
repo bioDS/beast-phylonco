@@ -7,11 +7,9 @@ See [bioDS/beast-phylonco-paper](https://github.com/bioDS/beast-phylonco-paper) 
 
 ## Software requirements
 
-This package requires Java 8, and at least
-* [BEAST 2](https://github.com/CompEvol/beast2) v2.6.6 
-* [BEAST Labs](https://github.com/BEAST2-Dev/BEASTLabs) v1.9.7
+This package requires Java 17 and at least [BEAST v2.7.3](https://github.com/CompEvol/beast2)
 
-See dependencies in [version.xml](phylonco-lphybeast/version.xml)
+See the full list of BEAST dependencies in [version.xml](phylonco-lphybeast/version.xml)
 
 ## Features
 
@@ -35,14 +33,9 @@ You may install the Phylonco package using the Package Manager.
 
 Start **BEAUti**, open the **Package Manager** by selecting `File -> Manage packages` from the Menu.
 
-Click `Package repositories` to open a new popup window
-<img src="https://raw.githubusercontent.com/rbouckaert/obama/master/doc/package_repos.png">
+From the **Package Manager**, select `phylonco` and click Install/Upgrade to install.
 
-Click `Add URL` and add "https://raw.githubusercontent.com/CompEvol/CBAN/master/packages-extra.xml" to the entry.
-
-Click `Done`. The Phylonco package should now appear in the **Package Manager**
-
-From the **Package Manager**, select Phylonco and click Install/Upgrade to install.
+This may take a few minutes to install the package and dependencies. A confirmation popup will be displayed when installation is complete.
 
 ### Input format
 All models accept input genotypes in FASTA and Nexus formats. See [here](https://github.com/bioDS/beast-phylonco/blob/master/genotype_codes.pdf) for the genotype codes.
@@ -52,14 +45,16 @@ For the GT16 model, VCF files can be converted to FASTA format using www.github.
 ### Running BEAST 
 Start the BEAST software
 
-Make sure the "Use BEAGLE library" box is unchecked
-
 Set the input file to one of the examples e.g., `examples/test_GT16_error.xml`
 
-
 ### Running BEAST on command line
-Launch beast in java only mode by adding the `-java` option, e.g. 
 
+We recommend using [Beagle](https://github.com/beagle-dev/beagle-lib) with the GPU option if you have a large dataset, and replacing the treelikelihood spec with `BeagleTreeLikelihoodWithError`.
+```
+~/beast/bin/beast -beagle_GPU beast.xml
+```
+
+Using Java implementation (slower)
 ```
 Windows
 java -jar c:\Users\BEASTUser\Desktop\BEAST\lib\launcher.jar -java beast.xml
