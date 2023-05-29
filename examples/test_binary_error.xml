@@ -270,7 +270,7 @@
 
             </distribution>
 
-            <distribution id='likelihood' spec='TreeLikelihoodWithErrorSlow'>
+            <distribution id='likelihood' spec='TreeLikelihoodWithErrorFast'>
                 <data idref='alignment'/>
                 <tree idref='tree'/>
                 <siteModel idref='siteModel'/>

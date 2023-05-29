@@ -73,7 +73,7 @@
         <datatype idref="datatype"/>
     </input>
 
-    <input spec='TreeLikelihoodWithErrorSlow' id="treeLikelihood">
+    <input spec='TreeLikelihoodWithErrorFast' id="treeLikelihood">
         <data idref='alignment'/>
         <tree idref='tree'/>
         <siteModel idref='siteModel'/>
