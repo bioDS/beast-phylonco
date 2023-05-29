@@ -547,7 +547,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
      * check state for changed variables and update temp results if necessary *
      */
     @Override
-    protected boolean requiresRecalculation() {
+    public boolean requiresRecalculation() {
         hasDirt = Tree.IS_CLEAN;
 
         if (errorModel != null && errorModel.isDirtyCalculation()) {
