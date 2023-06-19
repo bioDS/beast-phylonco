@@ -1,31 +1,37 @@
-<beast version='2.6'
-    namespace='
-        beast.core:
-        beast.core.parameter:
-        beast.core.util:
-        beast.evolution.datatype:
-        beast.evolution.alignment:
-        beast.evolution.operators:
-        beast.evolution.sitemodel:
-        beast.evolution.substitutionmodel:
-        beast.evolution.likelihood:
-        beast.evolution.tree:
-        beast.evolution.tree.coalescent:
-        beast.math.distributions:
-        phylonco.beast.evolution.substitutionmodel:
-        phylonco.beast.evolution.errormodel'>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood" 
+    required="BEAST.base v2.7.4:phylonco v1.0.0" version="2.7">
 
-    <map name="prior">beast.math.distributions.Prior</map>
-    <map name="Uniform">beast.math.distributions.Uniform</map>
-    <map name="Exponential">beast.math.distributions.Exponential</map>
-    <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
-    <map name="Normal">beast.math.distributions.Normal</map>
-    <map name="Beta">beast.math.distributions.Beta</map>
-    <map name="Gamma">beast.math.distributions.Gamma</map>
-    <map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
-    <map name="InverseGamma">beast.math.distributions.InverseGamma</map>
-    <map name="OneOnX">beast.math.distributions.OneOnX</map>
-    <map name="Dirichlet">beast.math.distributions.DirichletDistribution</map>
+    <map name="Beta">beast.base.inference.distribution.Beta</map>
+    <map name="Exponential">beast.base.inference.distribution.Exponential</map>
+    <map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+    <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
+    <map name="Gamma">beast.base.inference.distribution.Gamma</map>
+    <map name="Uniform">beast.base.inference.distribution.Uniform</map>
+    <map name="prior">beast.base.inference.distribution.Prior</map>
+    <map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
+    <map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
+    <map name="Normal">beast.base.inference.distribution.Normal</map>
 
     <!-- Diploid sequence -->
     <data id="alignment" dataType="nucleotideDiploid16">
@@ -38,7 +44,7 @@
 
     </data>
 
-    <parameter id="rates" spec="RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
+    <parameter id="rates" spec="beast.base.inference.parameter.RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
         1.0 1.0 1.0 1.0 1.0 1.0
     </parameter>
 
@@ -47,7 +53,7 @@
     </parameter>
 
     <!-- The GT16 substitution model             -->
-    <input spec='GT16' id='gt16'>
+    <input spec='phylonco.beast.evolution.substitutionmodel.GT16' id='gt16'>
         <nucRates idref='rates'/>
         <frequencies frequencies="@freqParameter" id="estimatedFreqs" spec="Frequencies"/>
     </input>
@@ -67,7 +73,7 @@
 
     <tree spec='RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
         <populationModel spec='ConstantPopulation'>
-            <popSize spec='parameter.RealParameter' value='1'/>
+            <popSize spec='beast.base.inference.parameter.RealParameter' value='1'/>
         </populationModel>
     </tree>
 
@@ -75,13 +81,13 @@
 
         <init idref='coalescentSimulator'/>
 
-        <distribution spec='CompoundDistribution' id='posterior'>
-            <distribution id="prior" spec="util.CompoundDistribution">
+        <distribution spec='beast.base.inference.CompoundDistribution' id='posterior'>
+            <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
                 <prior id="ratePrior" name="distribution" x="@rates">
-                    <distr spec="Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
                 <prior id="frequenciesPrior" name="distribution" x="@freqParameter">
-                    <distr spec="Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
             </distribution>
 
@@ -110,7 +116,7 @@
             <model idref='likelihood'/>
             <log idref="likelihood"/>
             <log idref='rates'/>
-            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
+            <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
         <logger logEvery="10000" fileName="test_GT16.$(seed).trees">
             <log idref="tree"/>

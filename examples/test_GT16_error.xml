@@ -89,7 +89,7 @@
         <datatype idref="datatype"/>
     </input>
 
-    <input spec='phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast'  id='treeLikelihood' useAmbiguities='true' useTipLikelihoods='true'>
+    <input spec='phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast' id='treeLikelihood' useAmbiguities='true' useTipLikelihoods='true'>
         <data idref='alignment'/>
         <tree idref='tree'/>
         <siteModel idref='siteModel'/>
