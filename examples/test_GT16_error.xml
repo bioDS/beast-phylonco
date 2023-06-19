@@ -1,43 +1,59 @@
-<beast version='2.6'
-       namespace='
-        beast.core:
-        beast.core.util:
-        beast.core.parameter:
-        beast.evolution.datatype:
-        beast.evolution.alignment:
-        beast.evolution.tree:
-        beast.evolution.tree.coalescent:
-        beast.evolution.operators:
-        beast.evolution.sitemodel:
-        beast.evolution.substitutionmodel:
-        phylonco.beast.evolution.substitutionmodel:
-        phylonco.beast.evolution.errormodel:
-        phylonco.beast.evolution.likelihood'>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood" 
+    required="BEAST.base v2.7.4:phylonco v1.0.0" version="2.7">
 
-    <map name="prior" >beast.math.distributions.Prior</map>
-    <map name="Uniform" >beast.math.distributions.Uniform</map>
-    <map name="Exponential" >beast.math.distributions.Exponential</map>
-    <map name="LogNormal" >beast.math.distributions.LogNormalDistributionModel</map>
-    <map name="Normal" >beast.math.distributions.Normal</map>
-    <map name="Beta" >beast.math.distributions.Beta</map>
-    <map name="Gamma" >beast.math.distributions.Gamma</map>
-    <map name="LaplaceDistribution" >beast.math.distributions.LaplaceDistribution</map>
-    <map name="InverseGamma" >beast.math.distributions.InverseGamma</map>
-    <map name="OneOnX" >beast.math.distributions.OneOnX</map>
-    <map name="Dirichlet" >beast.math.distributions.DirichletDistribution</map>
+    <map name="Beta">beast.base.inference.distribution.Beta</map>
+    <map name="Exponential">beast.base.inference.distribution.Exponential</map>
+    <map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+    <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
+    <map name="Gamma">beast.base.inference.distribution.Gamma</map>
+    <map name="Uniform">beast.base.inference.distribution.Uniform</map>
+    <map name="prior">beast.base.inference.distribution.Prior</map>
+    <map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
+    <map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
+    <map name="Normal">beast.base.inference.distribution.Normal</map>
 
     <!-- Diploid sequence -->
-    <data id="alignment" dataType="nucleotideDiploid16">
-        <sequence taxon="human">
-            0123456789aaabbbcccdddeee
-        </sequence>
-        <sequence taxon="chimp">
-            0123456789aaabbbcccdddeee
-        </sequence>
-
+    <data id="alignment" spec="Alignment" dataType="nucleotideDiploid16">
+        <sequence id="Sequence" spec="Sequence" taxon="10" totalcount="16" value="5f9975075a28e90a080a17ff020cacf0a3aff1aaa40f5f306fffa1dfb08bd570070655f5fd5d00dac254e050dd5a2f057a4cb5d6b00b7fa78052f00729ab80c7f165fffb45fd7afa2507050720745f19deaf60110faaf080b7c8dfa9512fc3515809509d"/>
+        <sequence id="Sequence1" spec="Sequence" taxon="14" totalcount="16" value="acaafdab508095a2acf025ff2fb190c0af30f1f58af6df8860f1e5f7004a0db805003af9955e3fe5f643f070da535f0a587ff59a8784b7aa030af00bf8e1ffc5759f7afc82ffd5e8e5fd0f87287aa81fe4af981d8f00eff06e8d0f50a58cf281f6cda25e"/>
+        <sequence id="Sequence2" spec="Sequence" taxon="9" totalcount="16" value="ac59f5af5008f120acfa25ff2fb590c0aff1f0a108c6dc8aa0f5fdd430460df80d002ff91d5faf545a43f0f0f9dfacc9587ff5d68784a7a603c9f00f38ed8fc97d9cfdffa6ff91f8e5cd0f8508786f13a4af980d8fc0fff06e55cf10618fc2a1f68d925c"/>
+        <sequence id="Sequence3" spec="Sequence" taxon="13" totalcount="16" value="ac69fd8b5188f102a07425f52fa190c8aff0f1a108c6df8853f5add7a0450db80d000af99d5eaf507e40ff70f5d30c09585ff5d98744b5aa0fcad0083aed8bca7d9f7d3c85cf95f4058d0f8fa0786c9fe42f9a1d8fc0eff06ec5cf18608fc281e6fd905a"/>
+        <sequence id="Sequence4" spec="Sequence" taxon="7" totalcount="16" value="aca9f98f5008d022a4b825f52fb1a0caaf30f1a100d61f805ff2edd7f2860dba05002afa9f5eaf555505f87a5af20cf9587ff7fa8784afae03f8d0cb38ed0fc97d9f7dfc86ffa1f8f0fd0faf08786413a4af101fafd0efe06ea5cf1ca18cc2a5e6cd925f"/>
+        <sequence id="Sequence5" spec="Sequence" taxon="6" totalcount="16" value="ae6a7d0b5208f12aa0e815fd10a050d0ac30c3a32806df8a0ffae5fbf0ca05080d0428f9dc502ff480fbfb70f9531cfa587f75da0a8fb7a583c7e0cb28ff83855f5fb5f006ff99f0f5c0cb9720786a11d45ff01d0f00eff05ec5fd9b50a7c041eafd926d"/>
+        <sequence id="Sequence6" spec="Sequence" taxon="11" totalcount="16" value="aa6975ab5280f10aa0e815f527bc9a60af30c1a1a805ff886ff3d9d53045c5a8f5002af9dd5e0f55fa7bfff0d5d35f09587f75d8c7afa7a683ca500f285d9c457daf7dff02ff510094c90fa718586e30545f9005b7caefc05e85c05ba10cc2c5aafd8a55"/>
+        <sequence id="Sequence7" spec="Sequence" taxon="1" totalcount="16" value="ae6a5d8b5202e50aa0e815fd2fac00e0aa38f1a138faff48aff359f7344ac5b00d002afddf5eaff4755bffd059d357c9587f55da5f8ff5a68fcaa0cb2afd8c45759ffdff05bd55c0d5cc0faf5a706a1dd46f991dbfccafc05e85ffaba50fc241eacf5255"/>
+        <sequence id="Sequence8" spec="Sequence" taxon="3" totalcount="16" value="8e5a7d8ab08bf10aa0e815fa0fbc9ce06f00f16128c6ff886f0fe5d7f045f5b805002af9df5a2fd4747bfff0a9d31fca587f7df8f78fbfa50fd6dccb20dd8f85ff5ffddf063d50f095450fa51a78ae11e06f9baf0f8aeff55e0acf8b6087f281e6cd965d"/>
+        <sequence id="Sequence9" spec="Sequence" taxon="15" totalcount="16" value="0e695fab628ff122a0e005fe0fac90a0aff0f56100c6df886ff0d5df0346c5a81d802ef9dd5f1fd4707bfff01ad31ff8587f45d8c7afb5a680cad0cf28f50f4af5a3fffcc6f151c095c50fa718506e01d4afaadfbfc8efc06e8acf9a6d5cc241a6ff925e"/>
+        <sequence id="Sequence10" spec="Sequence" taxon="8" totalcount="16" value="6cfed9cf502a758e006a1a7f2f00df500f78f3500f0acff1c75b05f0a0fff6b0c0f4a7fdff5f58a0ffffbc9a56d0aac990fcf5ae0c806b5fffa7c2c40ffac144f6d0f97c75fda0dabcdf06d728f8a4f0cfff5f243fe4aa500f22a06f65d0f7f2df025254"/>
+        <sequence id="Sequence11" spec="Sequence" taxon="0" totalcount="16" value="5d7afacc51655d0f03661aff2fc0df780f5873610c06cdf1c75b06d4a0cffeb0c0f5a7fdff6f50f5f0f5bc0995c0aa8990fff5ae0cf4a81fff07f20703f9cd45f6d5f9b0507da05abedff6c5aaf864f2ccbd9f242fef7bd0cf25726f61d0fbd2df021214"/>
+        <sequence id="Sequence12" spec="Sequence" taxon="12" totalcount="16" value="7d5ef94051e575af03aa12ff5fccdff80f787fa00f05cf32c77b05f090cff6f0f3f497fffd572871ffbfbe51d6e0d28950f83aae2094f71fff07f20703f9cd46f6d0f5fcf9f5a0d6f0fcc6c718ca65f1ccbd9d242ce0fbdccf27656f61e2dff05f2210a4"/>
+        <sequence id="Sequence13" spec="Sequence" taxon="2" totalcount="16" value="d57ff9cc51a659ae035012b70fc0df5c0f7053a10c0aff01d67806f0a0c7f630c1f7a7ffc96fa050ffffffda56d0518a5adcf55e2c846f0ffea4f2c700f9fea6f65479fe51fca0d67c5c0affa0f064dd0cbd99242fe4a7f8cf25af6750f0faf0ff2212f4"/>
+        <sequence id="Sequence14" spec="Sequence" taxon="4" totalcount="16" value="af6ef9fe53267dae0fea12ff0ff0dff80f7070610006cf3107fa2650a095ff0009f4a775fdef0851ffbfacd59ad850aa93f0fd5e2c0c571fffa7dacf03f1cd4afad4f93c71fda00e3fddc6f02cf8a5f2e5b05f2c0fe0dad3ff06a9af51d2f7f2c51210a5"/>
+        <sequence id="Sequence15" spec="Sequence" taxon="5" totalcount="16" value="a57e7952102a7dfeffa502ff1fca5f581f785f610c06cd30cffb06e0a087faf009f4aff5fd2d3875ffbff0599ad852a993f8a59a2ca5435fff07f2cf00f18d06f6d4faf075fd6415ffdcc6f7acfaa7f1af519f302fa0dbd0ae2462af61d0f7fadd220255"/>
     </data>
 
-    <parameter id="rates" spec="RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
+    <parameter id="rates" spec="beast.base.inference.parameter.RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
         1.0 1.0 1.0 1.0 1.0 1.0
     </parameter>
 
@@ -45,16 +61,16 @@
         0.0625
     </parameter>
 
-    <parameter id='error.delta' lower="0.0" upper="1.0" spec="parameter.RealParameter" name="stateNode">
+    <parameter id='error.delta' lower="0.0" upper="1.0" spec="beast.base.inference.parameter.RealParameter" name="stateNode">
         0.1
     </parameter>
 
-    <parameter id='error.epsilon' lower="0.0" upper="1.0" spec="parameter.RealParameter" name="stateNode">
+    <parameter id='error.epsilon' lower="0.0" upper="1.0" spec="beast.base.inference.parameter.RealParameter" name="stateNode">
         0.1
     </parameter>
 
     <!-- The GT16 substitution model             -->
-    <input spec='GT16' id='gt16'>
+    <input spec='phylonco.beast.evolution.substitutionmodel.GT16' id='gt16'>
         <nucRates idref='rates'/>
         <frequencies frequencies="@freqParameter" id="estimatedFreqs" spec="Frequencies"/>
     </input>
@@ -64,16 +80,16 @@
         <substModel idref='gt16'/>
     </input>
 
-    <input id="datatype" spec="NucleotideDiploid16" />
+    <input id="datatype" spec="phylonco.beast.evolution.datatype.NucleotideDiploid16" />
 
     <!-- The error model -->
-    <input spec='GT16ErrorModel' id='errorModel'>
+    <input spec='phylonco.beast.evolution.errormodel.GT16ErrorModel' id='errorModel'>
         <delta idref='error.delta'/>
         <epsilon idref='error.epsilon'/>
         <datatype idref="datatype"/>
     </input>
 
-    <input spec='TreeLikelihoodWithErrorFast' id="treeLikelihood">
+    <input spec='phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast'  id='treeLikelihood' useAmbiguities='true' useTipLikelihoods='true'>
         <data idref='alignment'/>
         <tree idref='tree'/>
         <siteModel idref='siteModel'/>
@@ -84,21 +100,21 @@
 
     <tree spec='RandomTree' id='coalescentSimulator' initial='@tree' taxa='@alignment'>
         <populationModel spec='ConstantPopulation'>
-            <popSize spec='parameter.RealParameter' value='1'/>
+            <popSize spec='beast.base.inference.parameter.RealParameter' value='1'/>
         </populationModel>
     </tree>
 
-    <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
+    <run spec="MCMC" id="mcmc" chainLength="1000000" preBurnin="50000">
 
         <init idref='coalescentSimulator'/>
 
         <distribution spec='CompoundDistribution' id='posterior'>
-            <distribution id="prior" spec="util.CompoundDistribution">
+            <distribution id="prior" spec="CompoundDistribution">
                 <prior id="ratePrior" name="distribution" x="@rates">
-                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
                 <prior id="frequenciesPrior" name="distribution" x="@freqParameter">
-                    <distr spec="beast.math.distributions.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+                    <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
                 </prior>
                 <prior id='deltaPrior' name='distribution' x='@error.delta'>
                     <LogNormal id="LogNormalDistributionModel.0" name="distr">
@@ -146,7 +162,7 @@
             <log idref='rates'/>
             <log idref='error.delta'/>
             <log idref='error.epsilon'/>
-            <log spec='beast.evolution.tree.TreeHeightLogger' tree='@tree'/>
+            <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
         <logger logEvery="10000" fileName="test_GT16_error.$(seed).trees">
             <log idref="tree"/>
