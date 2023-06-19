@@ -1,13 +1,26 @@
-<beast version='2.6'
-       namespace='
-            beast.core:
-            beast.core.util:
-            beast.evolution.alignment:
-            beast.evolution.tree:
-            beast.evolution.operators:
-            beast.evolution.sitemodel:
-            beast.evolution.likelihood:
-            phylonco.beast.evolution.substitutionmodel'>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood" 
+    required="BEAST.base v2.7.4:phylonco v1.0.0" version="2.7">
 
     <!-- Single cell data from Hou et al. (2012)            -->
     <!-- number of taxa = 58                                -->
@@ -190,7 +203,7 @@
     </data>
 
     <!-- The SiFit3 substitution model (Zafar et al. 2017)  -->
-    <input spec='SiFit3' id='siFit'>
+    <input spec='phylonco.beast.evolution.substitutionmodel.SiFit3' id='siFit'>
         <lambdaD idref='siFit.lambdaD'/>
         <lambdaL idref='siFit.lambdaL'/>
     </input>
@@ -212,19 +225,19 @@
     <tree id='tree'/>
 
     <!-- The initial tree as upgma                          -->
-    <tree spec='beast.util.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
+    <tree spec='beast.base.evolution.tree.ClusterTree' id='upgmaTree' clusterType='upgma' initial='@tree'>
         <taxa idref='alignment'/>
     </tree>
 
     <run spec='MCMC' id='mcmc' chainLength='100000' preBurnin='10000'>
 
         <init idref='upgmaTree'/>
-        <distribution spec='CompoundDistribution' id='posterior'>
-            <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaD'>
-                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+        <distribution spec='beast.base.inference.CompoundDistribution' id='posterior'>
+            <distribution spec='beast.base.inference.distribution.Prior' x='@siFit.lambdaD'>
+                <distr spec='beast.base.inference.distribution.LogNormalDistributionModel'/>
             </distribution>
-            <distribution spec='beast.math.distributions.Prior' x='@siFit.lambdaL'>
-                <distr spec='beast.math.distributions.LogNormalDistributionModel'/>
+            <distribution spec='beast.base.inference.distribution.Prior' x='@siFit.lambdaL'>
+                <distr spec='beast.base.inference.distribution.LogNormalDistributionModel'/>
             </distribution>
             <distribution id='likelihood' idref='treeLikelihood'/>
         </distribution>
@@ -244,7 +257,7 @@
             <log idref='likelihood'/>
             <log idref='siFit.lambdaD'/>
             <log idref='siFit.lambdaL'/>
-            <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
+            <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
 
         <logger logEvery='1000' fileName='test_SiFit3.$(seed).trees'>
