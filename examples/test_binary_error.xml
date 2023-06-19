@@ -1,15 +1,26 @@
-<beast version='2.6'
-       namespace='
-            beast.core:
-            beast.core.util:
-            beast.evolution.datatype:
-            beast.evolution.alignment:
-            beast.evolution.operators:
-            beast.evolution.sitemodel:
-            beast.evolution.substitutionmodel:
-            phylonco.beast.evolution.substitutionmodel:
-            phylonco.beast.evolution.errormodel:
-            phylonco.beast.evolution.likelihood'>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood" 
+    required="BEAST.base v2.7.4:phylonco v1.0.0" version="2.7">
 
     <!-- Single cell data from Hou et al. (2012)            -->
     <!-- number of taxa = 58                                -->
@@ -192,7 +203,7 @@
     </data>
 
     <!-- Binary substitution model -->
-    <input spec='BinarySubstitutionModel' id='subsModel'>
+    <input spec='phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel' id='subsModel'>
         <lambda idref='subsModel.lambda'/>
     </input>
 
@@ -201,55 +212,55 @@
         <substModel idref='subsModel'/>
     </input>
 
-    <input id="datatype" spec="beast.evolution.datatype.Binary"/>
+    <input id="datatype" spec="beast.base.evolution.datatype.Binary"/>
 
     <!-- The error model -->
-    <input spec='BinaryErrorModel' id='errorModel'>
+    <input spec='phylonco.beast.evolution.errormodel.BinaryErrorModel' id='errorModel'>
         <alpha idref='error.alpha'/>
         <beta idref='error.beta'/>
         <datatype idref="datatype"/>
     </input>
 
-    <tree id='upgmaTree' spec='beast.util.ClusterTree' clusterType='upgma' initial='@tree'>
+    <tree id='upgmaTree' spec='beast.base.evolution.tree.ClusterTree' clusterType='upgma' initial='@tree'>
         <taxa idref='alignment'/>
     </tree>
 
     <tree id="randomTree" spec="beast.evolution.tree.RandomTree" estimate="false" initial="@tree" taxa="@alignment">
         <populationModel id="ConstantPopulation0" spec="ConstantPopulation">
-            <parameter id="randomPopSize" spec="parameter.RealParameter" name="popSize">1.0</parameter>
+            <parameter id="randomPopSize" spec="beast.base.inference.parameter.RealParameter" name="popSize">1.0</parameter>
         </populationModel>
     </tree>
 
-    <map name="Uniform">beast.math.distributions.Uniform</map>
-    <map name="Exponential">beast.math.distributions.Exponential</map>
-    <map name="LogNormal">beast.math.distributions.LogNormalDistributionModel</map>
-    <map name="Normal">beast.math.distributions.Normal</map>
-    <map name="Beta">beast.math.distributions.Beta</map>
-    <map name="Gamma">beast.math.distributions.Gamma</map>
-    <map name="LaplaceDistribution">beast.math.distributions.LaplaceDistribution</map>
-    <map name="prior">beast.math.distributions.Prior</map>
-    <map name="InverseGamma">beast.math.distributions.InverseGamma</map>
-    <map name="OneOnX">beast.math.distributions.OneOnX</map>
+    <map name="Beta">beast.base.inference.distribution.Beta</map>
+    <map name="Exponential">beast.base.inference.distribution.Exponential</map>
+    <map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+    <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
+    <map name="Gamma">beast.base.inference.distribution.Gamma</map>
+    <map name="Uniform">beast.base.inference.distribution.Uniform</map>
+    <map name="prior">beast.base.inference.distribution.Prior</map>
+    <map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
+    <map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
+    <map name="Normal">beast.base.inference.distribution.Normal</map>
 
     <run spec='MCMC' id='mcmc' chainLength='100000' preBurnin='10000'>
 
         <state id="state" spec="State" storeEvery="5000">
-            <tree id="tree" spec="beast.evolution.tree.Tree" name="stateNode">
+            <tree id="tree" spec="beast.base.evolution.tree.Tree" name="stateNode">
                 <taxonset id="taxonset" spec="TaxonSet">
                     <alignment idref="alignment"/>
                 </taxonset>
             </tree>
-            <parameter id='subsModel.lambda' spec="parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
-            <parameter id='error.alpha' spec="parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
-            <parameter id='error.beta' spec="parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
-            <parameter id="birthRate" spec="parameter.RealParameter" name="stateNode">1.0</parameter>
+            <parameter id='subsModel.lambda' spec="beast.base.inference.parameter.RealParameter" lower="0.0" name="stateNode">1.0</parameter>
+            <parameter id='error.alpha' spec="beast.base.inference.parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
+            <parameter id='error.beta' spec="beast.base.inference.parameter.RealParameter" lower="0.0" upper="1.0" name="stateNode">0.1</parameter>
+            <parameter id="birthRate" spec="beast.base.inference.parameter.RealParameter" name="stateNode">1.0</parameter>
         </state>
 
         <init idref='upgmaTree'/>
 
-        <distribution id='posterior' spec='util.CompoundDistribution'>
-            <distribution id="prior" spec="util.CompoundDistribution">
-                <distribution id="YuleModel" spec="beast.evolution.speciation.YuleModel" birthDiffRate="@birthRate"
+        <distribution id='posterior' spec='beast.base.inference.CompoundDistribution'>
+            <distribution id="prior" spec='beast.base.inference.CompoundDistribution'>
+                <distribution id="YuleModel" spec="beast.base.evolution.speciation.YuleModel" birthDiffRate="@birthRate"
                               tree="@tree"/>
 
                 <prior id="yuleBirthRatePrior" name="distribution" x="@birthRate">
@@ -270,7 +281,7 @@
 
             </distribution>
 
-            <distribution id='likelihood' spec='TreeLikelihoodWithErrorFast'>
+            <distribution id='likelihood' spec='phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast' useAmbiguities='true' useTipLikelihoods='true'>
                 <data idref='alignment'/>
                 <tree idref='tree'/>
                 <siteModel idref='siteModel'/>
@@ -301,7 +312,7 @@
             <log idref='error.alpha'/>
             <log idref='error.beta'/>
             <log idref="birthRate"/>
-            <log spec='beast.evolution.tree.TreeStatLogger' tree='@tree'/>
+            <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
         </logger>
 
         <logger logEvery='1000' fileName='test_binary_error.$(seed).trees'>
