@@ -1,0 +1,73 @@
+<beast version='2.7'
+       required='BEAST.base v2.7.4:phylonco v1.0.0'
+       namespace='beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood'>
+
+    <mergewith point='substModelTemplates'>
+        <!-- GT16 substitution model -->
+        <subtemplate id='GT16SubstitutionModel' class='phylonco.beast.evolution.substitutionmodel.GT16' mainid='GT16.s:$(n)'
+                     suppressInputs='phylonco.beast.evolution.substitutionmodel.GT16.eigenSystem, phylonco.beast.evolution.substitutionmodel.GT16.rates'>
+            <![CDATA[
+            <plugin spec='phylonco.beast.evolution.substitutionmodel.GT16' id='GT16.s:$(n)'>
+                <frequencies id='estimatedFreqs.s:$(n)' spec='Frequencies'>
+                    <frequencies id='freqParameter.s:$(n)' spec='parameter.RealParameter' dimension='16' value='0.0625' lower='0' upper='1'/>
+                </frequencies>
+
+                <nucRates id='gt16Rates.s:$(n)' spec='parameter.RealParameter' dimension='6' keys='AC AG AT CG CT GT' value='0.16666666666666666' lower='0.0' upper='1.0' estimate='true'/>
+
+
+            </plugin>
+
+            <prior id="gt16RatePrior.s:$(n)" name="distribution" x="@gt16Rates.s:$(n)">
+                    <distr spec="beast.base.inference.distribution.Dirichlet" alpha="1.0 2.0 1.0 1.0 2.0 1.0"/>
+                </prior>
+
+            <prior id="gt16FrequenciesPrior.s:$(n)" name="distribution" x="@freqParameter.s:$(n)">
+                <distr spec="beast.base.inference.distribution.Dirichlet" alpha="3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0"/>
+            </prior>
+
+            <operator id='gt16RatesExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta='0.16' autoOptimize='true' weight='1'>
+                <parameter idref='gt16Rates.s:$(n)'/>
+            </operator>
+
+            <operator id='gt16FreqsExchanger.s:$(n)' spec='kernel.BactrianDeltaExchangeOperator' delta='0.01' weight='1'>
+                <parameter idref='freqParameter.s:$(n)'/>
+            </operator>
+
+            ]]>
+
+            <connect srcID='gt16Rates.s:$(n)' targetID='state' inputName='stateNode'
+                     if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'/> 
+
+            <connect srcID='gt16RatesExchanger.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'>Exchange operator for the GT16 substitution rate parameter of partition s:$(n)
+            </connect>  
+
+            <connect srcID='freqParameter.s:$(n)' targetID='state' inputName='stateNode'
+                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/> 
+            <connect srcID='gt16FreqsExchanger.s:$(n)' targetID='mcmc' inputName='operator'
+                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>Exchange operator for the GT16 substitution frequencies parameter of partition s:$(n)
+            </connect>  
+
+            <connect srcID='gt16RatePrior.s:$(n)' targetID='prior' inputName='distribution'
+                     if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'>
+                Rate prior of GT16 substitution model for partition :$(n)
+            </connect>
+
+            <connect srcID='gt16Rates.s:$(n)' targetID='tracelog' inputName='log'
+                     if='inposterior(GT16.s:$(n)) and gt16Rates.s:$(n)/estimate=true'>
+            </connect>
+
+            <connect srcID='gt16FrequenciesPrior.s:$(n)' targetID='prior' inputName='distribution'
+                     if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
+                Frequencies prior of GT16 substitution model for partition :$(n)
+            </connect>
+
+            <connect srcID='freqParameter.s:$(n)' targetID='tracelog' inputName='log'
+                     if='inposterior(GT16.s:$(n)) and freqParameter.s:$(n)/estimate=true'>
+            </connect>
+
+
+        </subtemplate>
+
+    </mergewith>
+</beast>

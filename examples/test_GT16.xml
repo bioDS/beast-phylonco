@@ -45,7 +45,7 @@
     </data>
 
     <parameter id="rates" spec="beast.base.inference.parameter.RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0">
-        1.0 1.0 1.0 1.0 1.0 1.0
+        0.0097 0.0638 0.1485 0.2435 0.0725 0.462
     </parameter>
 
     <parameter id="freqParameter" lower="0.0" upper="1.0" dimension="16">
