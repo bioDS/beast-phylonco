@@ -5,7 +5,7 @@ This is a BEAST2 package for Bayesian inference of molecular data for cancer evo
 
 See [bioDS/beast-phylonco-paper](https://github.com/bioDS/beast-phylonco-paper) for datasets and analyses in the paper. 
 
-We are happy to help with any questions, please use the `beast-users` google group https://groups.google.com/u/0/g/beast-users
+If you have any questions, please use the `beast-users` google group https://groups.google.com/u/0/g/beast-users
 
 ## Software requirements
 
@@ -31,13 +31,20 @@ Substitution Models
 
 ## User guide
 ### How to install
-You may install the Phylonco package using the Package Manager.
+You can install the Phylonco package using the Package Manager, or by command line.
 
-Start `BEAUti`, open the `Package Manager` by selecting `File -> Manage packages` from the Menu.
+**Package manager:**
 
-From the `Package Manager`, select `phylonco` and click Install/Upgrade to install.
+1. Start `BEAUti`, open the `Package Manager` by selecting `File -> Manage packages` from the Menu.
+2. From the `Package Manager`, select `phylonco` and click Install/Upgrade to install.
+3. This may take a few minutes to install the package and dependencies. 
+4. Restart `BEAUti` after installation is complete, and the `phylonco` package should now appear as Installed.
 
-This may take a few minutes to install the package and dependencies. A confirmation popup will be displayed when installation is complete.
+**Command line:**
+
+```
+~/beast/bin/packagemanager -add phylonco
+```
 
 ### Input format
 All models accept input genotypes in Nexus format. See [here](https://github.com/bioDS/beast-phylonco/blob/master/genotype_codes.pdf) for the genotype codes.
@@ -50,13 +57,12 @@ Start the BEAST software
 Set the input file to one of the examples e.g., `examples/test_GT16_error.xml`
 
 ### Running BEAST on command line
+These models can be run using the Java implementation (slower), or the Beagle implementation (faster). 
+We recommend using [Beagle](https://github.com/beagle-dev/beagle-lib) with the GPU option for large datasets.
 
-We recommend using [Beagle](https://github.com/beagle-dev/beagle-lib) with the GPU option if you have a large dataset, and replacing the treelikelihood spec with `BeagleTreeLikelihoodWithError`.
-```
-~/beast/bin/beast -beagle_GPU beast.xml
-```
+**Java option**
 
-Using Java implementation (slower)
+To run the Java implementation, use the commands:
 ```
 Windows
 java -jar c:\Users\BEASTUser\Desktop\BEAST\lib\launcher.jar -java beast.xml
@@ -66,6 +72,30 @@ Mac
 
 Linux
 ~/beast/bin/beast -java beast.xml
+```
+
+**Beagle option**
+
+To run datasets using Beagle, we need to install [Beagle](https://github.com/beagle-dev/beagle-lib), and modify a single line in our XML. 
+Open your XML in a text editor, find the element with `id='treeLikelihood'` and replace the spec field with `spec='phylonco.beast.evolution.likelihood.BeagleTreeLikelihoodWithError'`.
+
+For example, replace this
+```
+<input id='treeLikelihood' spec='phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast' useAmbiguities='true' useTipLikelihoods='true'>
+    ...
+</input>
+```
+
+with the following
+```
+<input id='treeLikelihood' spec='phylonco.beast.evolution.likelihood.BeagleTreeLikelihoodWithError' useAmbiguities='true' useTipLikelihoods='true'>
+    ...
+</input>
+```
+
+To run Beagle with GPU use:
+```
+~/beast/bin/beast -beagle_GPU beast.xml
 ```
 
 ### How to setup model via BEAUti
