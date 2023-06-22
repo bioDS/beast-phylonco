@@ -5,9 +5,11 @@ This is a BEAST2 package for Bayesian inference of molecular data for cancer evo
 
 See [bioDS/beast-phylonco-paper](https://github.com/bioDS/beast-phylonco-paper) for datasets and analyses in the paper. 
 
+We are happy to help with any questions, please use the `beast-users` google group https://groups.google.com/u/0/g/beast-users
+
 ## Software requirements
 
-This package requires Java 17 and at least [BEAST v2.7.3](https://github.com/CompEvol/beast2)
+This package requires Java 17 and at least [BEAST v2.7](https://github.com/CompEvol/beast2)
 
 See the full list of BEAST dependencies in [version.xml](phylonco-lphybeast/version.xml)
 
@@ -31,16 +33,16 @@ Substitution Models
 ### How to install
 You may install the Phylonco package using the Package Manager.
 
-Start **BEAUti**, open the **Package Manager** by selecting `File -> Manage packages` from the Menu.
+Start `BEAUti`, open the `Package Manager` by selecting `File -> Manage packages` from the Menu.
 
-From the **Package Manager**, select `phylonco` and click Install/Upgrade to install.
+From the `Package Manager`, select `phylonco` and click Install/Upgrade to install.
 
 This may take a few minutes to install the package and dependencies. A confirmation popup will be displayed when installation is complete.
 
 ### Input format
-All models accept input genotypes in FASTA and Nexus formats. See [here](https://github.com/bioDS/beast-phylonco/blob/master/genotype_codes.pdf) for the genotype codes.
+All models accept input genotypes in Nexus format. See [here](https://github.com/bioDS/beast-phylonco/blob/master/genotype_codes.pdf) for the genotype codes.
 
-For the GT16 model, VCF files can be converted to FASTA format using www.github.com/bioDS/vcf2fasta
+For the GT16 model, VCF files can be converted to Nexus or FASTA format using www.github.com/bioDS/vcf2fasta
 
 ### Running BEAST 
 Start the BEAST software
@@ -66,10 +68,21 @@ Linux
 ~/beast/bin/beast -java beast.xml
 ```
 
-### How to run BEAUti
-BEAUti UI is currently only supported for the Binary Substitution model. We are currently working on this :) 
+### How to setup model via BEAUti
+BEAUti currently supports the GT16 Substitution model and Binary Substitution model. Support for error models in Beauti will be added soon. 
 
-Tutorials and new models will be added once Beauti support is completed.
+**Setting up a basic analysis**: 
+
+1. Convert your data from VCF to Nexus format using the full diploid genotype option https://github.com/bioDS/vcf2fasta#converting-vcf-to-nexus
+2. Open Beauti, from the menu go to `File -> Import Alignment` and select your Nexus file. Select the `Ambiguities` checkbox next to your alignment. 
+3. Go to the `Site Model` panel, and select `GT16SubstitutionModel`.
+4. To adjust tree model and priors, use the `Priors` panel.
+5. Go to the `MCMC` panel and input your required chain length.
+6. From the menu go to `File -> Save` to save your XML. This XML can now be run using BEAST 2.
+
+**Adding error models to the analysis:**
+
+This requires editing the XML generated from Beauti, see examples in the `examples` directory. 
 
 ## For developers 
 To build use `./gradlew clean build` in the root directory, for details see [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
