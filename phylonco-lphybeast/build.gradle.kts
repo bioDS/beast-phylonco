@@ -7,7 +7,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "1.0.0"
+version = "1.0.1"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -117,8 +117,8 @@ distributions {
                 from("$rootDir/examples")
                 from("${project(":phylonco-lphy").projectDir}/examples")
             }
-            into("templates") {
-                from("$rootDir/templates")
+            into("fxtemplates") {
+                from("$rootDir/fxtemplates")
             }
         }
     }
