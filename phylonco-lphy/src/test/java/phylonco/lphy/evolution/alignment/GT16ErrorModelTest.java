@@ -1,9 +1,9 @@
 package phylonco.lphy.evolution.alignment;
 
-import lphy.evolution.Taxa;
-import lphy.evolution.alignment.Alignment;
-import lphy.evolution.alignment.SimpleAlignment;
-import lphy.graphicalModel.Value;
+import lphy.base.evolution.Taxa;
+import lphy.base.evolution.alignment.Alignment;
+import lphy.base.evolution.alignment.SimpleAlignment;
+import lphy.core.model.Value;
 import org.junit.Test;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 

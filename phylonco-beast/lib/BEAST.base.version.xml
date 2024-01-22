@@ -1,4 +1,4 @@
-<package name="BEAST.base" version="2.7.3">
+<package name="BEAST.base" version="2.7.6">
 <!-- note version="2.7.x" must be double quotes for Mac release script release/Mac/createdmg.sh -->
 
             <!-- data types -->
@@ -106,6 +106,7 @@
                 <provider classname="beast.base.evolution.substitutionmodel.Frequencies"/>
                 <provider classname="beast.base.evolution.substitutionmodel.GTR"/>
                 <provider classname="beast.base.evolution.substitutionmodel.GeneralSubstitutionModel"/>
+                <provider classname="beast.base.evolution.substitutionmodel.ComplexSubstitutionModel"/>
                 <provider classname="beast.base.evolution.substitutionmodel.HKY"/>
                 <provider classname="beast.base.evolution.substitutionmodel.JTT"/>
                 <provider classname="beast.base.evolution.substitutionmodel.JukesCantor"/>

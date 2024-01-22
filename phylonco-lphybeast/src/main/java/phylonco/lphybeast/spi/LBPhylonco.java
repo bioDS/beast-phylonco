@@ -2,8 +2,8 @@ package phylonco.lphybeast.spi;
 
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
-import lphy.graphicalModel.Generator;
-import lphy.graphicalModel.Value;
+import lphy.core.model.Generator;
+import lphy.core.model.Value;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;

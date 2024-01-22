@@ -1,13 +1,13 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.sitemodel.SiteModel;
-import lphy.evolution.alignment.Alignment;
-import lphy.evolution.likelihood.PhyloCTMC;
-import lphy.graphicalModel.GraphicalModelNode;
-import lphy.graphicalModel.Value;
+import beast.base.inference.parameter.RealParameter;
+import lphy.base.evolution.alignment.Alignment;
+import lphy.base.evolution.likelihood.PhyloCTMC;
+import lphy.core.model.GraphicalModelNode;
+import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;

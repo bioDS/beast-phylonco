@@ -7,7 +7,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "1.0.1"
+version = "1.1.0"
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:1.0.0-SNAPSHOT")
+    zippedConfig("io.github.linguaphylo:lphybeast:1.1.0-SNAPSHOT")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 

@@ -7,7 +7,7 @@ plugins {
 }
 
 // overwrite version
-version = "0.0.3"//-SNAPSHOT"
+version = "0.1.0"//-SNAPSHOT"
 
 dependencies {
     // https://github.com/bioDS/beast-phylonco/issues/31
@@ -17,10 +17,11 @@ dependencies {
      * such as "io.github.linguaphylo:lphy:1.2.0!!".
      * https://docs.gradle.org/current/userguide/rich_versions.html#sec:strict-version
      */
-    api("io.github.linguaphylo:lphy:1.4.1-SNAPSHOT")
+    api("io.github.linguaphylo:lphy:1.5.0-SNAPSHOT") //-SNAPSHOT
+    api("io.github.linguaphylo:lphy-base:1.5.0-SNAPSHOT")
 
     // launch studio from its jar, but not depend on it
-    runtimeOnly("io.github.linguaphylo:lphy-studio:1.4.1-SNAPSHOT")
+    runtimeOnly("io.github.linguaphylo:lphy-studio:1.5.0-SNAPSHOT")
 
     testImplementation("junit:junit:4.13.2")
 }

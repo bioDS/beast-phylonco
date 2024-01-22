@@ -1,16 +1,15 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
+import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.inference.operator.DeltaExchangeOperator;
+import beast.base.inference.operator.SwapOperator;
 import beast.base.inference.parameter.BooleanParameter;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
-import beast.base.inference.operator.DeltaExchangeOperator;
-import beast.base.inference.operator.SwapOperator;
-import beast.base.evolution.substitutionmodel.Frequencies;
-import lphy.graphicalModel.Value;
+import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
-import org.apache.commons.lang3.ArrayUtils;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
 /**

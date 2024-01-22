@@ -1,7 +1,7 @@
 package phylonco.lphy.evolution.datatype;
 
 import jebl.evolution.sequences.State;
-import lphy.evolution.datatype.DataType;
+import lphy.base.evolution.datatype.DataType;
 
 import java.util.Arrays;
 import java.util.Collections;

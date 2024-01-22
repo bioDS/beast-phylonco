@@ -1,10 +1,10 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
-import lphy.evolution.alignment.Alignment;
-import lphy.graphicalModel.Generator;
-import lphy.graphicalModel.GraphicalModelNode;
-import lphy.graphicalModel.Value;
+import lphy.base.evolution.alignment.Alignment;
+import lphy.core.model.Generator;
+import lphy.core.model.GraphicalModelNode;
+import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import phylonco.beast.evolution.likelihood.TreeLikelihoodWithError;

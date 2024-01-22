@@ -10,8 +10,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Map;
@@ -44,10 +42,10 @@ public class TestUtils {
 
         // require jar files
         File versionF = new File(dir.getPath() + File.separator + "BEAST.base.version.xml");
-        File jarF = new File(dir.getPath() + File.separator + "BEAST-base-2.7.3.jar");
+        File jarF = new File(dir.getPath() + File.separator + "BEAST.base-2.7.6.jar");
         loadPackage(versionF, jarF);
         versionF = new File(dir.getPath() + File.separator + "BEASTlabs.version.xml");
-        jarF = new File(dir.getPath() + File.separator + "BEASTlabs-2.0.0.jar");
+        jarF = new File(dir.getPath() + File.separator + "BEASTlabs.v2.0.2.jar");
         loadPackage(versionF, jarF);
     }
 
