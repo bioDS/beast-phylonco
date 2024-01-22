@@ -19,7 +19,11 @@ Please note 1 and 2 will release as one BEAST package, 3 will release as a LPhy 
 
 ### Gradle build
 
-1. How to refresh the LPhyBEAST dependency:
+1. How to update dependencies in Intellij, especially SNAPSHOT version.
+
+https://github.com/LinguaPhylo/LPhyBeast/blob/master/DEV_NOTE.md#update-dependencies-in-intellij
+
+2. How to refresh the LPhyBEAST dependency:
 
 <a href="./InstallLPhyBEAST.png"><img src="InstallLPhyBEAST.png" align="right" height="300" ></a>
 
