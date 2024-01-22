@@ -8,7 +8,8 @@ import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  *
@@ -35,31 +36,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
         return Arrays.asList( GT16.class, PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class);
     }
 
-    @Override
-    public Map<String, Set<Class<?>>> getDistributions() {
-        return null;
+    public String getExtensionName() {
+        return "Phylonco library";
     }
-
-    @Override
-    public Map<String, Set<Class<?>>> getFunctions() {
-        return null;
-    }
-
-    @Override
-    public TreeSet<Class<?>> getTypes() {
-        return null;
-    }
-
-    @Override
-    public void register() {
-
-    }
-
-//    @Override
-//    public Map<String, ? extends SequenceType> getSequenceTypes() {
-//        Map<String, SequenceType> dataTypeMap = new ConcurrentHashMap<>();
-//        dataTypeMap.put(SequenceTypeFactory.sanitise(PhasedGenotype.NAME), PhasedGenotype.INSTANCE);
-//        dataTypeMap.put(SequenceTypeFactory.sanitise(UnphasedGenotype.NAME), PhasedGenotype.INSTANCE);
-//        return dataTypeMap;
-//    }
 }
