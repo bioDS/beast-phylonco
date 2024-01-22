@@ -1,11 +1,11 @@
 package phylonco.lphy.evolution.substitutionmodel;
 
-import lphy.evolution.substitutionmodel.RateMatrix;
-import lphy.graphicalModel.Citation;
-import lphy.graphicalModel.GeneratorInfo;
-import lphy.graphicalModel.ParameterInfo;
-import lphy.graphicalModel.Value;
-import lphy.graphicalModel.types.DoubleArray2DValue;
+import lphy.base.evolution.substitutionmodel.RateMatrix;
+import lphy.core.model.Value;
+import lphy.core.model.annotation.Citation;
+import lphy.core.model.annotation.GeneratorInfo;
+import lphy.core.model.annotation.ParameterInfo;
+import lphy.core.model.datatype.DoubleArray2DValue;
 
 /**
  * @author Alexei Drummond

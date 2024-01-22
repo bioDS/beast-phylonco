@@ -1,9 +1,9 @@
 package phylonco.lphy.evolution.datatype;
 
 import jebl.evolution.sequences.SequenceType;
-import lphy.graphicalModel.DeterministicFunction;
-import lphy.graphicalModel.GeneratorInfo;
-import lphy.graphicalModel.Value;
+import lphy.core.model.DeterministicFunction;
+import lphy.core.model.Value;
+import lphy.core.model.annotation.GeneratorInfo;
 
 public class PhasedGenotypeFunction extends DeterministicFunction<SequenceType> {
 

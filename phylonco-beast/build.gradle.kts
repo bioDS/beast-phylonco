@@ -3,7 +3,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "1.0.1"//-SNAPSHOT
+version = "1.0.2"//-SNAPSHOT
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17

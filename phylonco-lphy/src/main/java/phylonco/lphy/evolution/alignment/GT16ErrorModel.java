@@ -1,14 +1,22 @@
 package phylonco.lphy.evolution.alignment;
 
-import lphy.evolution.alignment.Alignment;
-import lphy.evolution.alignment.ErrorAlignment;
-import lphy.evolution.alignment.SimpleAlignment;
-import lphy.graphicalModel.*;
-import lphy.util.RandomUtils;
+import lphy.base.evolution.alignment.Alignment;
+import lphy.base.evolution.alignment.ErrorAlignment;
+import lphy.base.evolution.alignment.SimpleAlignment;
+import lphy.core.model.GenerativeDistribution;
+import lphy.core.model.RandomVariable;
+import lphy.core.model.Value;
+import lphy.core.model.annotation.Citation;
+import lphy.core.model.annotation.GeneratorCategory;
+import lphy.core.model.annotation.GeneratorInfo;
+import lphy.core.model.annotation.ParameterInfo;
+import lphy.core.simulator.RandomUtils;
 import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
-import java.util.*;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
 
 /**
  * @author Alexei Drummond
