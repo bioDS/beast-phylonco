@@ -74,7 +74,7 @@ public final class PhasedGenotype extends DataType {
     //*** Singleton ***//
 
     public static PhasedGenotype INSTANCE = new PhasedGenotype();
-    private PhasedGenotype(){}
+    public PhasedGenotype(){}
 
     //*** implementations ***//
 
@@ -128,8 +128,7 @@ public final class PhasedGenotype extends DataType {
         return state == GAP_STATE;
     }
 
-    @Override
-    public String getName() {
+    public static String getName(int i, int j) {
         return NAME;
     }
 
