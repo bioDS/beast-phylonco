@@ -38,10 +38,10 @@ public final class PhasedGenotype extends DataType {
         char code;
         for(int i = 0; i < 4; ++i) {
             for(int j = 0; j < 4; ++j) {
-                    String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
-                    code = x < 10 ? (char) (x + '0') : (char) (x - 10 + 'a');
-                    CANONICAL_STATES[x] = new PhasedGenotypeState(name, Character.toString(code), x);
-                    ++x;
+                String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
+                code = x < 10 ? (char) (x + '0') : (char) (x - 10 + 'a');
+                CANONICAL_STATES[x] = new PhasedGenotypeState(name, Character.toString(code), x);
+                ++x;
             }
         }
         assert x == CANONICAL_STATE_COUNT;
@@ -74,7 +74,7 @@ public final class PhasedGenotype extends DataType {
     //*** Singleton ***//
 
     public static PhasedGenotype INSTANCE = new PhasedGenotype();
-    public PhasedGenotype(){}
+    private PhasedGenotype(){}
 
     //*** implementations ***//
 
@@ -94,7 +94,7 @@ public final class PhasedGenotype extends DataType {
     }
 
     @Override
-    public static List<? extends State> getCanonicalStates() {
+    public List<? extends State> getCanonicalStates() {
         return Collections.unmodifiableList(Arrays.asList((State[])CANONICAL_STATES));
     }
 
@@ -128,7 +128,8 @@ public final class PhasedGenotype extends DataType {
         return state == GAP_STATE;
     }
 
-    public static String getName(int i, int j) {
+    @Override
+    public String getName() {
         return NAME;
     }
 
