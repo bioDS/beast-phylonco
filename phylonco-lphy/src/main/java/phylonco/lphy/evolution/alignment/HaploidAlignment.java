@@ -9,7 +9,6 @@ import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
-import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,8 +35,9 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         // obtain the number of taxon in the alignment
         int numTaxa = originalAlignment.ntaxa();
 
-        // get a new object for haploid taxon number
-        int haploidTaxaNum = 2*numTaxa;
+//        // get a new object for haploid taxon number
+//        int haploidTaxaNum = 2*numTaxa;
+
         // get the names array for new alignment
         List<String> TaxaNames = new ArrayList();
         for (int k = 0; k<numTaxa ; k++){
@@ -50,21 +50,23 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         Alignment newAlignment = new SimpleAlignment((Map<String, Integer>) TaxaNames,
                 originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
 
-
         // map the new alignment
         for (int i = 0; i<numTaxa; i++){
-            for (int j = 0; j<originalAlignment.nchar();j++){
-                // obtain the name of each site
-                String stateName = PhasedGenotype.getName(i,j);
+            // obtain the name of each site
+           List<Object> sequence = new ArrayList<>();
+
+            for (int k = 0; k < originalAlignment.nchar(); k++){
+                sequence.add(originalAlignment.getState(i,k));
+            }
+
+            for (int j = 0; j<sequence.size();j++){
                 // split the diploid into haploids
-                for (int d = 0; d<stateName.length();d++){
-                    if (d%2==0){
-                        // get the index 0 to the first haploid
-                        newAlignment.setState(i,j,newAlignment.getCanonicalStates());
-                    } else {
-                        // get the index 1 to the second haploid
-                        newAlignment.setState(i+1,j,newAlignment.getCanonicalStates());
-                    }
+                if (j%2 == 0){
+                    // get the index 0 to the first haploid
+                    newAlignment.setState(i*2,j, sequence.toArray.getCanonicSates(j));
+                } else {
+                    // get the index 1 to the second haploid
+                    newAlignment.setState(i*2 + 1,j,sequence.toArray.getCanonicSates(j));
                 }
             }
         }

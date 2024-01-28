@@ -94,7 +94,7 @@ public final class PhasedGenotype extends DataType {
     }
 
     @Override
-    public List<? extends State> getCanonicalStates() {
+    public static List<? extends State> getCanonicalStates() {
         return Collections.unmodifiableList(Arrays.asList((State[])CANONICAL_STATES));
     }
 

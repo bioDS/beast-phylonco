@@ -12,8 +12,8 @@ import lphy.core.model.annotation.ParameterInfo;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 
-public class HomozygouseAlignment extends DeterministicFunction<Alignment> {
-    public HomozygouseAlignment(@ParameterInfo(name = ReaderConst.ALIGNMENT,
+public class HomozygousAlignment extends DeterministicFunction<Alignment> {
+    public HomozygousAlignment(@ParameterInfo(name = ReaderConst.ALIGNMENT,
             description = "the genotype alignment (homozygous) converted from diploid alignment" )
                             Value<AbstractAlignment> alignmentValue){
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
@@ -40,16 +40,17 @@ public class HomozygouseAlignment extends DeterministicFunction<Alignment> {
 
         return new Value <>(null, genotypeAlignment, this);
     }
+
     private int homozygote (int state) {
         switch (state) {
             case 0:
                 return 0; // A --> AA
             case 1:
-                return ; // C --> CC
+                return 4; // C --> CC
             case 2:
-                return ; // T --> TT
+                return 7; // G --> GG
             case 3:
-                return ; // G --> GG
+                return 9; // T --> TT
         }
         throw new RuntimeException("Unexpected state: " + state);
     }
