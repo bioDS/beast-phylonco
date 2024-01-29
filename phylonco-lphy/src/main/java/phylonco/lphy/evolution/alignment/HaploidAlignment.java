@@ -1,5 +1,6 @@
 package phylonco.lphy.evolution.alignment;
 
+import jebl.evolution.sequences.Nucleotides;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
@@ -9,6 +10,7 @@ import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
+import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +26,6 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         setParam(ReaderConst.ALIGNMENT, alignmentValue);
     }
 
-
     // for the function
     @GeneratorInfo(name = "haploid", description = "Split the diploid alignment into haploid alignments.")
     @Override
@@ -34,9 +35,6 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
 
         // obtain the number of taxon in the alignment
         int numTaxa = originalAlignment.ntaxa();
-
-//        // get a new object for haploid taxon number
-//        int haploidTaxaNum = 2*numTaxa;
 
         // get the names array for new alignment
         List<String> TaxaNames = new ArrayList();
@@ -48,26 +46,37 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
 
         // initialise the new alignment
         Alignment newAlignment = new SimpleAlignment((Map<String, Integer>) TaxaNames,
-                originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
+                originalAlignment.nchar(), SequenceType.NUCLEOTIDE);
+
 
         // map the new alignment
         for (int i = 0; i<numTaxa; i++){
-            // obtain the name of each site
-           List<Object> sequence = new ArrayList<>();
+            // get the sequence to store the states of each seq
+           List<Integer> sequence = new ArrayList<>();
+            // add each states to the seq
+            for (int j = 0; j < originalAlignment.nchar(); j++){
 
-            for (int k = 0; k < originalAlignment.nchar(); k++){
-                sequence.add(originalAlignment.getState(i,k));
-            }
+                // get the state index of each site
+                int stateIndex = originalAlignment.getState(i,j);
 
-            for (int j = 0; j<sequence.size();j++){
-                // split the diploid into haploids
-                if (j%2 == 0){
-                    // get the index 0 to the first haploid
-                    newAlignment.setState(i*2,j, sequence.toArray.getCanonicSates(j));
-                } else {
-                    // get the index 1 to the second haploid
-                    newAlignment.setState(i*2 + 1,j,sequence.toArray.getCanonicSates(j));
+                // convert the phased genotype states into nucleotide states
+                int parent1_index = stateIndex / 4;
+                int parent2_index = stateIndex % 4;
+
+                // deal with exceptions
+                if (stateIndex > 15 && stateIndex <= 21) {
+                    // ambiguous (unphased) state
+                    parent1_index = Nucleotides.getState(PhasedGenotype.INSTANCE.getState(stateIndex).getCode()).getIndex();
+                    parent2_index = parent1_index;
+                } else if (stateIndex > 21) {
+                    // unkown genotype and gap
+                    parent1_index = Nucleotides.getGapState().getIndex();
+                    parent2_index = parent1_index;
                 }
+
+                // map the nucleotide states into the new alignment
+                newAlignment.setState(i*2, j, parent1_index);
+                newAlignment.setState(i*2+1, j, parent2_index);
             }
         }
 
