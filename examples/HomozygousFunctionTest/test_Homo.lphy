@@ -1,6 +1,6 @@
 data {
 	RD = readFasta(file="data/example.fa");
-	D = homozygous(RD)
+	D = homozygous(RD);
 	w = taxa.length()-1;
 	taxa = D.taxa();
 

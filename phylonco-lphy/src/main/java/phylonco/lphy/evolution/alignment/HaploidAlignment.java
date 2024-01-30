@@ -38,17 +38,20 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         int numTaxa = originalAlignment.ntaxa();
 
         // get the names array for new alignment
-        List<String> TaxaNames = new ArrayList();
+        List<String> TaxaNames = new ArrayList<>();
         for (int k = 0; k<numTaxa ; k++){
             String names = originalAlignment.getTaxonName(k);
             TaxaNames.add(names + "-1");
             TaxaNames.add(names + "-2");
         }
+        String[] taxaNames = TaxaNames.toArray(new String[0]);
 
         // initialise the new alignment
-        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(2*numTaxa),
-                originalAlignment.nchar(), SequenceType.NUCLEOTIDE);
+//        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(2*numTaxa),
+//                originalAlignment.nchar(), SequenceType.NUCLEOTIDE);
+        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
 
+        newAlignment.taxa();
 
         // map the new alignment
         for (int i = 0; i<numTaxa; i++){
