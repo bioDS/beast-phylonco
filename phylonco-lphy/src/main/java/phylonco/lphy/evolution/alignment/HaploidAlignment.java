@@ -2,6 +2,7 @@ package phylonco.lphy.evolution.alignment;
 
 import jebl.evolution.sequences.Nucleotides;
 import jebl.evolution.sequences.SequenceType;
+import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
@@ -45,7 +46,7 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         }
 
         // initialise the new alignment
-        Alignment newAlignment = new SimpleAlignment((Map<String, Integer>) TaxaNames,
+        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(2*numTaxa),
                 originalAlignment.nchar(), SequenceType.NUCLEOTIDE);
 
 
@@ -66,7 +67,10 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
                 // deal with exceptions
                 if (stateIndex > 15 && stateIndex <= 21) {
                     // ambiguous (unphased) state
-                    parent1_index = Nucleotides.getState(PhasedGenotype.INSTANCE.getState(stateIndex).getCode()).getIndex();
+                    // get the code for phased state
+                    String originalCode = PhasedGenotype.INSTANCE.getState(stateIndex).getCode();
+                    // get the nucleotide state
+                    parent1_index = Nucleotides.getState(originalCode).getIndex();
                     parent2_index = parent1_index;
                 } else if (stateIndex > 21) {
                     // unkown genotype and gap

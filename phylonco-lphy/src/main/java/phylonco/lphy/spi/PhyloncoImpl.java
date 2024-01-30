@@ -4,6 +4,8 @@ import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
 import phylonco.lphy.evolution.alignment.GT16ErrorModel;
+import phylonco.lphy.evolution.alignment.HaploidAlignment;
+import phylonco.lphy.evolution.alignment.HomozygousAlignment;
 import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
@@ -33,7 +35,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
 
     @Override
     public List<Class<? extends BasicFunction>> declareFunctions() {
-        return Arrays.asList( GT16.class, PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class);
+        return Arrays.asList( GT16.class, PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
+                HaploidAlignment.class, HomozygousAlignment.class);
     }
 
     public String getExtensionName() {

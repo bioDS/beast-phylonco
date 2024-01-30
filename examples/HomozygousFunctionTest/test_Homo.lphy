@@ -1,7 +1,9 @@
 data {
-	D = readFasta(file="data/examplpe.fa");
+	RD = readFasta(file="data/example.fa");
+	D = homozygous(RD)
 	w = taxa.length()-1;
 	taxa = D.taxa();
+
 }
 model{
 	Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
@@ -13,5 +15,5 @@ model{
 	epsilon ~ Beta(alpha=2, beta=18);
 	delta ~ Beta(alpha=1.5, beta=4.5);
 	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A,root=D);
-	fastaE=fasta(alignment=E);
+	fastaE=fasta(E);
 }
