@@ -47,9 +47,8 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         String[] taxaNames = TaxaNames.toArray(new String[0]);
 
         // initialise the new alignment
-//        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(2*numTaxa),
-//                originalAlignment.nchar(), SequenceType.NUCLEOTIDE);
-        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
+        Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
+                originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
 
         newAlignment.taxa();
 

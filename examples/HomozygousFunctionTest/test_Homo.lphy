@@ -1,9 +1,8 @@
 data {
-	RD = readFasta(file="data/example.fa");
-	D = homozygous(RD);
-	w = taxa.length()-1;
+	D = readFasta(file="data/example.fasta");
+	D = homozygous(D);
 	taxa = D.taxa();
-
+	w = taxa.length()-1;
 }
 model{
 	Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
@@ -11,9 +10,9 @@ model{
 	π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
 	rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 	Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
-	A ~ PhyloCTMC(L=200, Q=Q, tree=ψ, dataType=phasedGenotype());
+	A ~ PhyloCTMC(L=D.nchar(), Q=Q, tree=ψ, dataType=phasedGenotype(), root=D);
 	epsilon ~ Beta(alpha=2, beta=18);
 	delta ~ Beta(alpha=1.5, beta=4.5);
-	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A,root=D);
+	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
 	fastaE=fasta(E);
 }
