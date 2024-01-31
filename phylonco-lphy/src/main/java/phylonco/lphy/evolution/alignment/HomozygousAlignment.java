@@ -1,5 +1,6 @@
 package phylonco.lphy.evolution.alignment;
 
+import jebl.evolution.sequences.Nucleotides;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
@@ -10,6 +11,9 @@ import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class HomozygousAlignment extends DeterministicFunction<Alignment> {
@@ -27,31 +31,41 @@ public class HomozygousAlignment extends DeterministicFunction<Alignment> {
         // get the original seq
         Alignment originalAlignment = ((Value<Alignment>) getParams().get(ReaderConst.ALIGNMENT)).value();
 
+        // obtain the taxa names
+        List<String> taxa = new ArrayList<>();
+        for (int s =0; s < originalAlignment.ntaxa();s++){
+            taxa.add(originalAlignment.getTaxonName(s));
+        }
+        String[] taxaNames = taxa.toArray(new String[0]);
+
         // initialise the new alignment
-        Alignment genotypeAlignment = new SimpleAlignment(Taxa.createTaxa(originalAlignment.ntaxa()),
+        Alignment genotypeAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
                 originalAlignment.nchar(), PhasedGenotype.INSTANCE);
 
         // set the alignment
         for (int i = 0; i < genotypeAlignment.ntaxa(); i++) {
             for (int j = 0; j < genotypeAlignment.nchar(); j++) {
-                genotypeAlignment.setState(i, j, homozygote(originalAlignment.getState(i, j)));
+                // get the state index of each site
+                int stateIndex = originalAlignment.getState(i,j);
+
+                // convert the nucleotide states into phased genotypes
+                int index = stateIndex^2 + 3;
+
+                // deal with exceptions
+                if (stateIndex >=4 && stateIndex <= 9 && stateIndex == 15 && stateIndex == 16 ){
+                    // ambiguous states
+                    String originalCode = Nucleotides.getState(stateIndex).getCode();
+                    index = PhasedGenotype.INSTANCE.getState(originalCode).getIndex();
+                } else if (stateIndex >9 && stateIndex <15 ){
+                    // not exist in phased genotype call them unkown state
+                    index = PhasedGenotype.INSTANCE.getUnknownState().getIndex();
+                }
+
+                // map the new alignment states
+                genotypeAlignment.setState(i,j,index);
             }
         }
 
         return new Value <>(null, genotypeAlignment, this);
-    }
-
-    private int homozygote (int state) {
-        switch (state) {
-            case 0:
-                return 0; // A --> AA
-            case 1:
-                return 4; // C --> CC
-            case 2:
-                return 7; // G --> GG
-            case 3:
-                return 9; // T --> TT
-        }
-        throw new RuntimeException("Unexpected state: " + state);
     }
 }
