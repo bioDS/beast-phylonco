@@ -1,6 +1,6 @@
 data {
-	D = readFasta(file="data/example.fasta");
-	D = homozygous(D);
+	RD = readFasta(file="data/example.fasta");
+	D = homozygous(RD);
 	taxa = D.taxa();
 	w = taxa.length()-1;
 }
@@ -14,5 +14,5 @@ model{
 	epsilon ~ Beta(alpha=2, beta=18);
 	delta ~ Beta(alpha=1.5, beta=4.5);
 	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
-	fastaE=fasta(E);
+	fastaE = fasta(haploid(E));
 }

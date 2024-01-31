@@ -15,7 +15,6 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class HaploidAlignment extends DeterministicFunction<Alignment> {
 
@@ -49,8 +48,6 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
         // initialise the new alignment
         Alignment newAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
                 originalAlignment.nchar(),SequenceType.NUCLEOTIDE);
-
-        newAlignment.taxa();
 
         // map the new alignment
         for (int i = 0; i<numTaxa; i++){
