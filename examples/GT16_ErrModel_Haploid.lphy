@@ -1,10 +1,10 @@
 data {
-	RD = readFasta(file="data/example.fasta");
+	RD = readFasta(file="data/filtered_seq.fna");
 	D = homozygous(RD);
 }
 model{
 	Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
-	ψ ~ Coalescent(n=3, theta=Θ);
+	ψ ~ Coalescent(n=10, theta=Θ);
 	π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
 	rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 	Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix

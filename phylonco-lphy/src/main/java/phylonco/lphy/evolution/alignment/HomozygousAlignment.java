@@ -1,6 +1,5 @@
 package phylonco.lphy.evolution.alignment;
 
-import jebl.evolution.sequences.Nucleotides;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
@@ -47,19 +46,19 @@ public class HomozygousAlignment extends DeterministicFunction<Alignment> {
             for (int j = 0; j < genotypeAlignment.nchar(); j++) {
                 // get the state index of each site
                 int stateIndex = originalAlignment.getState(i,j);
-
                 // convert the nucleotide states into phased genotypes
-                int index = stateIndex^2 + 3;
+                 int index = 4*stateIndex + stateIndex;
 
-                // deal with exceptions
-                if (stateIndex >=4 && stateIndex <= 9 && stateIndex == 15 && stateIndex == 16 ){
-                    // ambiguous states
-                    String originalCode = Nucleotides.getState(stateIndex).getCode();
-                    index = PhasedGenotype.INSTANCE.getState(originalCode).getIndex();
-                } else if (stateIndex >9 && stateIndex <15 ){
-                    // not exist in phased genotype call them unkown state
-                    index = PhasedGenotype.INSTANCE.getUnknownState().getIndex();
-                }
+                 // deal with exception
+//                 if (stateIndex >=4 && stateIndex <= 9 || stateIndex == 15 || stateIndex == 16 ){
+//                    // ambiguous states
+//                    String originalCode = Nucleotides.getState(stateIndex).getCode();
+//                    index = PhasedGenotype.INSTANCE.getState(originalCode).getIndex();
+//                } else if (stateIndex >9 && stateIndex <15 ){
+//                    // not exist in phased genotype call them unkown state
+//                    // TODO
+//                    index = PhasedGenotype.INSTANCE.getUnknownState().getIndex();
+//                }
 
                 // map the new alignment states
                 genotypeAlignment.setState(i,j,index);
