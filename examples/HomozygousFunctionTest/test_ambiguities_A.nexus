@@ -1,0 +1,30 @@
+#NEXUS
+
+begin taxa;
+	dimensions ntax=16;
+	taxlabels 7 8 9 6 15 11 2 3 4 13 14 10 12 5 0 1;
+end;
+
+begin characters;
+	dimensions nchar=17;
+	format datatype=nucleotideDiploid16;
+	matrix 
+		7 7a0faffa00aaf05fa
+		8 fa0faffa00aaf05fa
+		9 fa0faffa00aaf057a
+		6 fa0faffa00aaf057a
+		15 fa0faffa00aaf05fa
+		11 fa0faffa00aaf05fa
+		2 fa07af7a00aaf05fa
+		3 fa07af7a00aaf05fa
+		4 fa07af7a00baf05fa
+		13 fa07affa00aaf05fa
+		14 fa07affa00aaf05fa
+		10 fa07affa00aaf05fa
+		12 fa07affa00aaf05fa
+		5 fa07af7a00aaf05fa
+		0 fa0faffa00aafc5fa
+		1 fa0faffa00aafc5fa;
+
+end;
+

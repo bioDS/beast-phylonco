@@ -1,7 +1,8 @@
 data {
-	RD = readFasta(file="data/example.fasta");
+	RD = readFasta(file="data/filtered_seq.fna");
 }
 model{
+    // this transformation is deterministic when there are no ambiguities in RD
     D = Homozygous(RD);
 	Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
 	ψ ~ Coalescent(n=16, theta=Θ);
@@ -9,8 +10,5 @@ model{
 	rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 	Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
 	A ~ PhyloCTMC(L=D.nchar(), Q=Q, tree=ψ, dataType=phasedGenotype(), root=D);
-	epsilon ~ Beta(alpha=2, beta=18);
-	delta ~ Beta(alpha=1.5, beta=4.5);
-	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
-	fastaE = fasta(haploid(E));
+	D = fasta(haploid(A));
 }
