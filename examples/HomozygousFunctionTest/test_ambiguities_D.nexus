@@ -1,0 +1,15 @@
+#NEXUS
+
+begin taxa;
+	dimensions ntax=1;
+	taxlabels TaxonName;
+end;
+
+begin characters;
+	dimensions nchar=17;
+	format datatype=nucleotideDiploid16;
+	matrix 
+		TaxonName fa0faaa0f5f0005fa;
+
+end;
+
