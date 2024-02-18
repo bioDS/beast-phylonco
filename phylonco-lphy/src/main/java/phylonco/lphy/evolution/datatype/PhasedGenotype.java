@@ -38,10 +38,10 @@ public final class PhasedGenotype extends DataType {
         char code;
         for(int i = 0; i < 4; ++i) {
             for(int j = 0; j < 4; ++j) {
-                    String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
-                    code = x < 10 ? (char) (x + '0') : (char) (x - 10 + 'a');
-                    CANONICAL_STATES[x] = new PhasedGenotypeState(name, Character.toString(code), x);
-                    ++x;
+                String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
+                code = x < 10 ? (char) (x + '0') : (char) (x - 10 + 'a');
+                CANONICAL_STATES[x] = new PhasedGenotypeState(name, Character.toString(code), x);
+                ++x;
             }
         }
         assert x == CANONICAL_STATE_COUNT;
