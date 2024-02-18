@@ -72,7 +72,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
                 // convert the nucleotide states into phased genotypes
                 int index = 4 * stateIndex + stateIndex;
 
-                // map the new alignment states
+                // map the new alignment s tates
                 genotypeAlignment.setState(i,j,index);
             }
         }

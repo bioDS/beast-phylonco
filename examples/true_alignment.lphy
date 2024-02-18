@@ -3,7 +3,7 @@ data {
 }
 model{
     // this transformation is deterministic when there are no ambiguities in RD
-    D = Homozygous(RD);
+    D ~ Homozygous(alignment=RD);
 	Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
 	ψ ~ Coalescent(n=16, theta=Θ);
 	π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
