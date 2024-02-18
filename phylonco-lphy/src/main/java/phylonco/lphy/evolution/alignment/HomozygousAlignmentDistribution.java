@@ -1,42 +1,44 @@
 package phylonco.lphy.evolution.alignment;
 
-import jebl.evolution.sequences.Nucleotides;
+import lphy.base.distribution.ParametricDistribution;
+import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.Taxa;
-import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.base.function.io.ReaderConst;
-import lphy.core.model.DeterministicFunction;
+import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
+import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
 
+import java.util.*;
 
-public class HomozygousAlignment extends DeterministicFunction<Alignment> {
-    public HomozygousAlignment(@ParameterInfo(name = ReaderConst.ALIGNMENT,
+public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
+    private Value<Alignment> alignmentValue;
+    public HomozygousAlignmentDistribution(@ParameterInfo(name = ReaderConst.ALIGNMENT,
             description = "the genotype alignment (homozygous) converted from diploid alignment" )
-                            Value<AbstractAlignment> alignmentValue){
+                                           Value<Alignment> alignmentValue){
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
-        setParam(ReaderConst.ALIGNMENT, alignmentValue);
+        this.alignmentValue = alignmentValue;
     }
 
-    // write the function
+    @Override
+    protected void constructDistribution(RandomGenerator random) {}
+
     @GeneratorInfo(name = "Homozygous", description = "Convert the haploid sequence to genotype sequence. Give the accurate " +
             "homozygous alignment when there are only canonical states in the sequence. If there are ambiguous states in the sequence," +
             "state will be chosen randomly among the possible states and convert to the homozygous alignment.")
     @Override
-    public Value<Alignment> apply() {
+    public RandomVariable<Alignment> sample() {
         // get the original seq
         Alignment originalAlignment = ((Value<Alignment>) getParams().get(ReaderConst.ALIGNMENT)).value();
 
         // obtain the taxa names
         List<String> taxa = new ArrayList<>();
-        for (int s =0; s < originalAlignment.ntaxa();s++){
+        for (int s = 0; s < originalAlignment.ntaxa(); s++){
             taxa.add(originalAlignment.getTaxonName(s));
         }
         String[] taxaNames = taxa.toArray(new String[0]);
@@ -53,82 +55,77 @@ public class HomozygousAlignment extends DeterministicFunction<Alignment> {
 
                 // get the certain nucleotide index for each site
                 if (stateIndex >= 4){
-                    stateIndex = ambiguousState(stateIndex);
+                    // get the array for the states
+                    int[] ambiguousState = ambiguousState(stateIndex);
+                    // get the Value<Integer> for the lower and upper boundary
+                    Value<Integer> lower = new Value<>("id", 0);
+                    Value<Integer> upper = new Value<>("id",ambiguousState.length-1);
+
+                    // get the random index for the integer in the array
+                    UniformDiscrete uniformDiscrete = new UniformDiscrete(lower, upper);
+                    RandomVariable<Integer> randomNumber = uniformDiscrete.sample();
+
+                    // give the stateIndex its certain state
+                    stateIndex = ambiguousState[randomNumber.value()];
                 }
+
                 // convert the nucleotide states into phased genotypes
-                int index = 4*stateIndex + stateIndex;
+                int index = 4 * stateIndex + stateIndex;
 
                 // map the new alignment states
                 genotypeAlignment.setState(i,j,index);
             }
         }
-
-        return new Value <>(null, genotypeAlignment, this);
+        return new RandomVariable<>(null, genotypeAlignment, this);
     }
 
-    // deal with the ambiguities
-    private int ambiguousState(int stateIndex) {
-        // create a random object
-        Random r = new Random();
+    private int[] ambiguousState(int stateIndex) {
         // switch the ambiguous states into canonical states (0=A, 1=C, 2=G, 3=T)
         switch (stateIndex){
             case 4:
                 // 4 = A/G
-                int[] R = {0,2};
-                // get the random index for choosing the state
-                int randomIndex_R = r.nextInt(R.length);
-                // get the selected state canonical state
-                int randomState_R = R[randomIndex_R];
-                return randomState_R;
+                return new int[]{0, 2};
             case 5:
-                // 5 =C/T
-                int[] Y = {1,3};
-                // short for choosing the random index and get the canonical state
-                return Y[r.nextInt(Y.length)];
+                // 5 = C/T
+                return new int[]{1, 3};
             case 6:
                 // 6 = A/C
-                int[] M = {0,1};
-                return M[r.nextInt(M.length)];
+                return new int[]{ 0, 1};
             case 7:
                 // 7 = A/T
-                int[] W = {0,3};
-                return W[r.nextInt(W.length)];
+                return new int[]{0, 3};
             case 8:
                 // 8 = C/G
-                int[] S = {1,2};
-                return S[r.nextInt(S.length)];
+                return new int[]{1, 2};
             case 9:
                 // 9 = G/T
-                int[] K = {2,3};
-                return K[r.nextInt(K.length)];
+                return new int[]{2, 3};
             case 10:
                 // 10 = C/G/T
-                int[] B = {1,2,3};
-                return B[r.nextInt(B.length)];
+                return new int[]{1, 2, 3};
             case 11:
                 // 11 = A/G/T
-                int[] D = {0,2,3};
-                return D[r.nextInt(D.length)];
+                return new int[]{0, 2, 3};
             case 12:
                 // 12 = A/C/T
-                int[] H = {0,1,3};
-                return H[r.nextInt(H.length)];
+                return new int[]{0, 1, 3};
             case 13:
                 // 13 = A/C/G
-                int[] V = {0,1,2};
-                return V[r.nextInt(V.length)];
-            case 14:
-                // 14 = unkown base = A/C/G/T
-                int[] N = {0,1,2,3};
-                return N[r.nextInt(N.length)];
-            case 15:
-                // 15 = unkown base = A/C/G/T
-                int[] unkown = {0,1,2,3};
-                return unkown[r.nextInt(unkown.length)];
-            case 16:
+                return new int[]{ 0, 1, 2};
+            case 14, 16, 15:
+                // 14 = unkown base (N) = A/C/G/T
+                // 15 = unkown base (?) = A/C/G/T
                 // 16 = gap = A/C/G/T
-                int[] gap = {0,1,2,3};
-                return gap[r.nextInt(gap.length)];
-        } throw new RuntimeException("Unexpected state: " + stateIndex);
+                return new int[]{0, 1, 2, 3};
+            default:
+                throw new RuntimeException("Unexpected state: " + stateIndex);
+        }
+    }
+
+    @Override
+    public Map<String, Value> getParams() {
+        return new TreeMap<>(){{
+            put(ReaderConst.ALIGNMENT,alignmentValue);
+        }};
     }
 }
