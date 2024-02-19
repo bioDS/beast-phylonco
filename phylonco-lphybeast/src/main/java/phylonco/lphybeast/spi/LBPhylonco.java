@@ -8,6 +8,8 @@ import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
+import phylonco.lphy.evolution.alignment.HaploidAlignment;
+import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
@@ -49,7 +51,8 @@ public class LBPhylonco implements LPhyBEASTExt {
 
     @Override
     public List<Class<? extends Generator>> getExcludedGenerator() {
-        return Arrays.asList(PhasedGenotypeFunction.class);
+        return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
+                HaploidAlignment.class);
     }
 
     @Override

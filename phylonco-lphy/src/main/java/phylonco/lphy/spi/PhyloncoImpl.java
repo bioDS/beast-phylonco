@@ -3,10 +3,12 @@ package phylonco.lphy.spi;
 import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
-import phylonco.lphy.evolution.alignment.*;
+import phylonco.lphy.evolution.alignment.GT16ErrorModel;
+import phylonco.lphy.evolution.alignment.HaploidAlignment;
+import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
+import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
-import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 
 import java.util.Arrays;
 import java.util.List;
@@ -40,6 +42,6 @@ public class PhyloncoImpl extends LPhyBaseImpl {
     }
 
     public String getExtensionName() {
-        return "Phylonco library";
+        return "Phylonco lphy library";
     }
 }
