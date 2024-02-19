@@ -29,7 +29,7 @@ dependencies {
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:1.1.0-SNAPSHOT")
+    zippedConfig("io.github.linguaphylo:lphybeast:1.1.0")
 //    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
     implementation(files( { lb.get().extra["lblibs"] } ))
 

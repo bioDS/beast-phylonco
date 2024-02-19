@@ -17,11 +17,11 @@ dependencies {
      * such as "io.github.linguaphylo:lphy:1.2.0!!".
      * https://docs.gradle.org/current/userguide/rich_versions.html#sec:strict-version
      */
-    api("io.github.linguaphylo:lphy:1.5.0-SNAPSHOT") //-SNAPSHOT
-    api("io.github.linguaphylo:lphy-base:1.5.0-SNAPSHOT")
+    api("io.github.linguaphylo:lphy:1.5.0") //-SNAPSHOT
+    api("io.github.linguaphylo:lphy-base:1.5.0")
 
     // launch studio from its jar, but not depend on it
-    runtimeOnly("io.github.linguaphylo:lphy-studio:1.5.0-SNAPSHOT")
+    runtimeOnly("io.github.linguaphylo:lphy-studio:1.5.0")
 
     testImplementation("junit:junit:4.13.2")
 }
