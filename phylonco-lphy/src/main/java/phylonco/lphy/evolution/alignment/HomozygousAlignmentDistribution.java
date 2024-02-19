@@ -19,7 +19,7 @@ import java.util.*;
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignmentValue;
     public HomozygousAlignmentDistribution(@ParameterInfo(name = ReaderConst.ALIGNMENT,
-            description = "the genotype alignment (homozygous) converted from diploid alignment" )
+            description = "Convert the input haploid alignment into genotype alignment (homozygous)." )
                                            Value<Alignment> alignmentValue){
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
         this.alignmentValue = alignmentValue;
@@ -29,7 +29,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
     protected void constructDistribution(RandomGenerator random) {}
 
     @GeneratorInfo(name = "Homozygous", description = "Convert the haploid sequence to genotype sequence. Give the accurate " +
-            "homozygous alignment when there are only canonical states in the sequence. If there are ambiguous states in the sequence," +
+            "homozygous alignment when there are only canonical states in the sequence. If there are ambiguous states or gap in the sequence," +
             "state will be chosen randomly among the possible states and convert to the homozygous alignment.")
     @Override
     public RandomVariable<Alignment> sample() {
@@ -90,7 +90,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
                 return new int[]{1, 3};
             case 6:
                 // 6 = A/C
-                return new int[]{ 0, 1};
+                return new int[]{0, 1};
             case 7:
                 // 7 = A/T
                 return new int[]{0, 3};
@@ -111,11 +111,11 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
                 return new int[]{0, 1, 3};
             case 13:
                 // 13 = A/C/G
-                return new int[]{ 0, 1, 2};
+                return new int[]{0, 1, 2};
             case 14, 16, 15:
                 // 14 = unkown base (N) = A/C/G/T
                 // 15 = unkown base (?) = A/C/G/T
-                // 16 = gap = A/C/G/T
+                // 16 = gap (-) = A/C/G/T
                 return new int[]{0, 1, 2, 3};
             default:
                 throw new RuntimeException("Unexpected state: " + stateIndex);
