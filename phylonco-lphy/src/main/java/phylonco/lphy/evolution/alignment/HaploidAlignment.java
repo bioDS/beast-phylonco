@@ -51,11 +51,8 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
 
         // map the new alignment
         for (int i = 0; i<numTaxa; i++){
-            // get the sequence to store the states of each seq
-           List<Integer> sequence = new ArrayList<>();
             // add each states to the seq
             for (int j = 0; j < originalAlignment.nchar(); j++){
-
                 // get the state index of each site
                 int stateIndex = originalAlignment.getState(i,j);
 
