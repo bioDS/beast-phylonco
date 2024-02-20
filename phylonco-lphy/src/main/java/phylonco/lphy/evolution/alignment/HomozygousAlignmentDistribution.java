@@ -16,6 +16,8 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.*;
 
+import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getPhasedGenotypeIndex;
+
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignmentValue;
     public HomozygousAlignmentDistribution(@ParameterInfo(name = ReaderConst.ALIGNMENT,
@@ -28,9 +30,9 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
     @Override
     protected void constructDistribution(RandomGenerator random) {}
 
-    @GeneratorInfo(name = "Homozygous", description = "Convert the haploid sequence to genotype sequence. Give the accurate " +
-            "homozygous alignment when there are only canonical states in the sequence. If there are ambiguous states or gap in the sequence," +
-            "state will be chosen randomly among the possible states and convert to the homozygous alignment.")
+    @GeneratorInfo(name = "Homozygous", description = "Convert the haploid to homozygous alignment. The transformation is deterministic" +
+            " when there are no ambiguities in the input alignment. If there are ambiguous states or gaps in the sequence," +
+            "states will be chosen randomly among the possible states and give a homozygous alignment.")
     @Override
     public RandomVariable<Alignment> sample() {
         // get the original seq
@@ -70,9 +72,9 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
                 }
 
                 // convert the nucleotide states into phased genotypes
-                int index = 4 * stateIndex + stateIndex;
+                int index = getPhasedGenotypeIndex(stateIndex,stateIndex);
 
-                // map the new alignment s tates
+                // map the new alignment states
                 genotypeAlignment.setState(i,j,index);
             }
         }

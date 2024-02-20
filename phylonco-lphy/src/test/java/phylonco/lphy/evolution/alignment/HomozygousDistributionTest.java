@@ -7,7 +7,7 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
-public class HomozygousFunctionTest {
+public class HomozygousDistributionTest {
     @Test
     public void getExpectedCanonicalStates() {
         // canonical states --> homozygous states

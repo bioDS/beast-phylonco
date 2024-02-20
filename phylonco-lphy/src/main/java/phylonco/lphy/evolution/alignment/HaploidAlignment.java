@@ -16,18 +16,23 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import java.util.ArrayList;
 import java.util.List;
 
+import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getNucleotideIndex;
+
+
 public class HaploidAlignment extends DeterministicFunction<Alignment> {
 
     // ensure the alignment is not null
     public HaploidAlignment(@ParameterInfo(name = ReaderConst.ALIGNMENT,
-    description = "the haploid alignments written from diploid alignment" )
+    description = "the haploid alignments written from phased genotype alignment" )
                                 Value<AbstractAlignment> alignmentValue){
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
+        if (! PhasedGenotype.NAME.equals(alignmentValue.value().getSequenceType().getName()))
+            throw new IllegalArgumentException("Must be phased genotype alignment!");
         setParam(ReaderConst.ALIGNMENT, alignmentValue);
     }
 
     // for the function
-    @GeneratorInfo(name = "haploid", description = "Split the diploid alignment into haploid alignments.")
+    @GeneratorInfo(name = "haploid", description = "Split the phased genotype alignment into two haploid alignments.")
     @Override
     public Value<Alignment> apply() {
         // get the values for originAlignment
@@ -56,23 +61,10 @@ public class HaploidAlignment extends DeterministicFunction<Alignment> {
                 // get the state index of each site
                 int stateIndex = originalAlignment.getState(i,j);
 
-                // convert the phased genotype states into nucleotide states
-                int parent1_index = stateIndex / 4;
-                int parent2_index = stateIndex % 4;
-
-                // deal with exceptions
-                if (stateIndex > 15 && stateIndex <= 21) {
-                    // ambiguous (unphased) state
-                    // get the code for phased state
-                    String originalCode = PhasedGenotype.INSTANCE.getState(stateIndex).getCode();
-                    // get the nucleotide state
-                    parent1_index = Nucleotides.getState(originalCode).getIndex();
-                    parent2_index = parent1_index;
-                } else if (stateIndex > 21) {
-                    // unkown genotype and gap
-                    parent1_index = Nucleotides.getGapState().getIndex();
-                    parent2_index = parent1_index;
-                }
+                // convert the phased genotype into two parents nucleotides
+                int[] parentsIndex = getNucleotideIndex(stateIndex);
+                int parent1_index = parentsIndex[0];
+                int parent2_index = parentsIndex[1];
 
                 // map the nucleotide states into the new alignment
                 newAlignment.setState(i*2, j, parent1_index);
