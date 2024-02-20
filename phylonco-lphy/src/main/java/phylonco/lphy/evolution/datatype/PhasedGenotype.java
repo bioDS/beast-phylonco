@@ -36,6 +36,7 @@ public final class PhasedGenotype extends DataType {
 
         int x = 0;
         char code;
+        // change from ++i to i++ for easier reading
         for(int i = 0; i < 4; i++) {
             for(int j = 0; j < 4; j++) {
                 String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];

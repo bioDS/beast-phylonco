@@ -8,6 +8,11 @@ import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getNucle
 import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getPhasedGenotypeIndex;
 
 public class NucleotideGenotypeHelperTest {
+    /**
+     * Test getNucleotideIndex function in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}.
+     * @Paremeters phased genotype state index
+     * @Returns the array of two parent indices
+     */
     @Test
     public void getNucleotideIndexTest() {
         int stateIndex = 0;
@@ -90,6 +95,11 @@ public class NucleotideGenotypeHelperTest {
         }
     }
 
+    /**
+     * Test getPhasedGenotypeIndex function in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}
+     * @Parameters first and second parent indices
+     * @Returns phased genotype state index
+     */
     @Test
     public void getPhasedGenotypeIndexTest() {
         int parent1_index;
