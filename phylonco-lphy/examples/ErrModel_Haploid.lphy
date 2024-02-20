@@ -11,9 +11,12 @@ model{
 	π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
 	rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 	Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
+	// generate the true alignment A
 	A ~ PhyloCTMC(L=L, Q=Q, tree=ψ, dataType=phasedGenotype(), root=D);
 	epsilon ~ Beta(alpha=2, beta=18);
 	delta ~ Beta(alpha=1.5, beta=4.5);
+	// generate the alignment E with error model
 	E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
+	// split the true alignment A into haploids and generate fasta file
 	F = fasta(haploid(A));
 }

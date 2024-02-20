@@ -36,12 +36,13 @@ public final class PhasedGenotype extends DataType {
 
         int x = 0;
         char code;
-        for(int i = 0; i < 4; ++i) {
-            for(int j = 0; j < 4; ++j) {
+        // change from ++i to i++ for easier reading
+        for(int i = 0; i < 4; i++) {
+            for(int j = 0; j < 4; j++) {
                 String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
                 code = x < 10 ? (char) (x + '0') : (char) (x - 10 + 'a');
                 CANONICAL_STATES[x] = new PhasedGenotypeState(name, Character.toString(code), x);
-                ++x;
+                x = x + 1;
             }
         }
         assert x == CANONICAL_STATE_COUNT;
@@ -118,6 +119,9 @@ public final class PhasedGenotype extends DataType {
         return GAP_STATE;
     }
 
+    /**
+     * @return true if the given state represents unknown genotype state.
+     */
     @Override
     public boolean isUnknown(State state) {
         return state == UNKNOWN_STATE;
