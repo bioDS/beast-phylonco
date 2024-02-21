@@ -7,7 +7,7 @@ plugins {
 }
 
 // version has to be manually adjusted to keep same between version.xml and here
-version = "1.1.0"
+version = "1.1.1-SNAPSHOT" // -SNAPSHOT
 
 java {
     sourceCompatibility = JavaVersion.VERSION_17
@@ -15,6 +15,7 @@ java {
     withSourcesJar()
 }
 
+val outDir = "${buildDir}/lphybeast"
 val zippedConfig by configurations.creating
 
 // if the project dependencies ues impl, then impl(proj(..)) will only have source code,
@@ -29,11 +30,13 @@ dependencies {
     implementation(project(":phylonco-beast"))
 
     //*** lphybeast + ... ***//
-    zippedConfig("io.github.linguaphylo:lphybeast:1.1.0")
-//    implementation(fileTree("dir" to "${lb.get().outputs.dir("lib")}", "include" to "**/*.jar"))
-    implementation(files( { lb.get().extra["lblibs"] } ))
+    zippedConfig("io.github.linguaphylo:lphybeast:1.1.1-SNAPSHOT") // -SNAPSHOT
+    // it must run installLPhyBEAST to unzip lphybeast.zip and create ${outDir}/lib,
+    // the build is cleaned, or lphybeast version is renewed.
+    implementation(fileTree("dir" to "${outDir}/lib", "include" to "**/*.jar"))
+//    implementation(fileTree("dir" to "${outDir}/src", "include" to "**/*-sources.jar"))
 
-    //TODO add rest of lphybeast dependencies of beast2 part
+    // add rest of lphybeast dependencies of beast2 part
     // non-modular lphy jar incl. all dependencies
     implementation( fileTree("lib") )
 
@@ -45,15 +48,17 @@ tasks.compileJava.get().dependsOn("installLPhyBEAST")
 
 // unzip lphybeast-*.zip to ${buildDir}/lphybeast/
 val lb = tasks.register<Sync>("installLPhyBEAST") {
-    val outDir = "${buildDir}/lphybeast"
     zippedConfig.resolvedConfiguration.resolvedArtifacts.forEach({
-        println(name + " --- " + it.file.name)
+        println(name + " --- unzip : " + it.file.name)
         if (it.file.name.endsWith("zip")) {
             from(zipTree(it.file))
+            // why zipTree cannot provide files in root
+            from(zipTree(it.file).matching({ include("**/version.xml") }).singleFile)
             into(outDir)
         }
     })
-    extra["lblibs"] = fileTree("dir" to "${outDir}/lib", "include" to "**/*.jar")
+//    extra["lblibs"] = fileTree("dir" to "${outDir}/lib", "include" to "**/*.jar")
+//    extra["lbsrc"] = fileTree("dir" to "${outDir}/src", "include" to "**/*-sources.jar")
 }
 
 // launch lphybeast
