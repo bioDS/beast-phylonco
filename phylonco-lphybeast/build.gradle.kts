@@ -62,14 +62,14 @@ val lb = tasks.register<Sync>("installLPhyBEAST") {
 }
 
 // launch lphybeast
-tasks.register("runLPhyBEAST", JavaExec::class.java) {
-    // use classpath
-    jvmArgs = listOf("-cp", sourceSets.main.get().runtimeClasspath.asPath)
-    println("clspath = ${sourceSets.main.get().runtimeClasspath.asPath}")
-    mainClass.set("lphybeast.LPhyBeastCMD")
-    setArgs(listOf("-o", "$rootDir/tmp/gt16ErrMod.xml",
-        "${project(":phylonco-lphy").projectDir}/examples/gt16CoalErrModel.lphy"))
-}
+//tasks.register("runLPhyBEAST", JavaExec::class.java) {
+//    // use classpath
+//    jvmArgs = listOf("-cp", sourceSets.main.get().runtimeClasspath.asPath)
+//    println("clspath = ${sourceSets.main.get().runtimeClasspath.asPath}")
+//    mainClass.set("lphybeast.LPhyBeastCMD")
+//    setArgs(listOf("-o", "$rootDir/tmp/gt16ErrMod.xml",
+//        "${project(":phylonco-lphy").projectDir}/examples/gt16CoalErrModel.lphy"))
+//}
 
 
 tasks.jar {
