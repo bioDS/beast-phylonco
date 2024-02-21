@@ -64,3 +64,11 @@ ErrModel_Haploid.lphy
 
 The 1st version.xml is for the LPhyBEAST extension (phylonco-lphybeast), the 2nd is from the LPhyBEAST core.
 Both are required by BEAST2 framework.
+
+4. How to check if you have the correct version of dependencies installed in IntelliJ:
+
+Go to the "External Libraries", and expand the list, 
+you must have the correct version of lphy and lphybeast jars inside the red rectangles:
+
+<a href="./external-libs.png"><img src="external-libs.png" height="300" ></a>
+
