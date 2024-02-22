@@ -4,8 +4,6 @@ package phylonco.lphy.evolution.datatype;
 import jebl.evolution.sequences.Nucleotides;
 
 public class NucleotideGenotypeHelper {
-    static int parent1_index;
-    static int parent2_index;
 
     /**
      *
@@ -14,10 +12,14 @@ public class NucleotideGenotypeHelper {
      * second index is the second parent index.
      */
     public static int[] getNucleotideIndex(int stateIndex){
+        // initialise the parents indices
+        int parent1_index = -1;
+        int parent2_index = -1;
+        // deal with
         if (stateIndex < 16){
              parent1_index = stateIndex / 4;
              parent2_index = stateIndex % 4;
-        } else if (stateIndex > 15 && stateIndex <= 21) {
+        } else if (stateIndex >= 16 && stateIndex <= 21) {
             // get the code for phased state (e.g. "R" for AG or GA)
             String originalCode = PhasedGenotype.INSTANCE.getState(stateIndex).getCode();
             // get the nucleotide state for the ambiguous code
