@@ -15,8 +15,8 @@ public class NucleotideGenotypeHelper {
         // initialise the parents indices
         int parent1_index = -1;
         int parent2_index = -1;
-        // deal with
-        if (stateIndex < 16){
+        // deal with the state indices
+        if (stateIndex>=0 && stateIndex < 16){
              parent1_index = stateIndex / 4;
              parent2_index = stateIndex % 4;
         } else if (stateIndex >= 16 && stateIndex <= 21) {
@@ -33,6 +33,8 @@ public class NucleotideGenotypeHelper {
             // unkown genotype and gap
             parent1_index = Nucleotides.getGapState().getIndex();
             parent2_index = parent1_index;
+        } else {
+            throw new IllegalArgumentException("The phased genotype state index should be in the range of 0 to 23!");
         }
         return new int[]{parent1_index,parent2_index};
     }
