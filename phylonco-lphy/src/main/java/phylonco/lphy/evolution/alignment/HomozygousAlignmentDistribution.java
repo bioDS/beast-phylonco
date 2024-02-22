@@ -140,7 +140,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
                 // 16 = gap (-) = A/C/G/T
                 return new int[]{0, 1, 2, 3};
             default:
-                throw new RuntimeException("Unexpected state: " + stateIndex);
+                throw new IllegalArgumentException("Unexpected state: " + stateIndex);
         }
     }
 

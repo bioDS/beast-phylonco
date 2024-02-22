@@ -2,8 +2,9 @@ package phylonco.lphy.evolution.alignment;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import java.util.Arrays;
+
+import static org.junit.Assert.*;
 import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getNucleotideIndex;
 import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getPhasedGenotypeIndex;
 
@@ -92,6 +93,18 @@ public class NucleotideGenotypeHelperTest {
                 assertArrayEquals("StateIndex is 23",expected,observed);
             }
             stateIndex++;
+            if (stateIndex == -1){
+                String expectedErrorMessage = "The phased genotype state index should be in the range of 0 to 23!";
+                try {
+                    // use the function and expect to get the exception
+                    getNucleotideIndex(stateIndex);
+
+                    // the test would fail if there is no exception been thrown
+                    fail("Expected an exception to be thrown");
+                } catch (Exception e) {
+                    assertEquals("Exception message", expectedErrorMessage, e.getMessage());
+                }
+            }
         }
     }
 
@@ -165,6 +178,19 @@ public class NucleotideGenotypeHelperTest {
                         assertEquals("3-3",expected,observed);
                     }
                 }
+            }
+        }
+
+        if (parent1_index == -1){
+            String expectedErrorMessage = "The parents should be canonical states.";
+            try {
+                // use the function and expect to get the exception
+                getPhasedGenotypeIndex(parent1_index,3);
+
+                // the test would fail if there is no exception been thrown
+                fail("Expected an exception to be thrown");
+            } catch (Exception e) {
+                assertEquals("Exception message", expectedErrorMessage, e.getMessage());
             }
         }
     }
