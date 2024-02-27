@@ -9,12 +9,11 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
 import static org.junit.Assert.*;
-import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.*;
-import static phylonco.lphy.evolution.datatype.PhasedGenotype.CANONICAL_STATES;
+import static phylonco.lphy.evolution.datatype.PhasedGenotype.*;
 
 public class NucleotideGenotypeHelperTest {
     /**
-     * Test getNucleotideIndex function in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}.
+     * Test getNucleotideIndex function in {@link phylonco.lphy.evolution.datatype.PhasedGenotype}.
      *
      * @Paremeters phased genotype state index
      * @Returns the array of two parent indices
@@ -114,7 +113,7 @@ public class NucleotideGenotypeHelperTest {
     }
 
     /**
-     * Test getPhasedGenotypeIndex function in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}
+     * Test getPhasedGenotypeIndex function in {@link phylonco.lphy.evolution.datatype.PhasedGenotype}
      *
      * @Parameters first and second parent indices
      * @Returns phased genotype state index
@@ -202,7 +201,7 @@ public class NucleotideGenotypeHelperTest {
     }
 
     /**
-     * Test the function getNucleotideState in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}
+     * Test the function getNucleotideState in {@link phylonco.lphy.evolution.datatype.PhasedGenotype}
      *
      * @Parameters the state code of phased genotype
      * @Return the state code array of two parents
@@ -364,7 +363,7 @@ public class NucleotideGenotypeHelperTest {
     }
 
     /**
-     * Test the function getPhasedGenotypeState in {@link phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper}
+     * Test the function getPhasedGenotypeState in {@link phylonco.lphy.evolution.datatype.PhasedGenotype}
      *
      * @Parameters the state codes of two nucleotide parents
      * @Return the state code of phased genotype
@@ -400,7 +399,7 @@ public class NucleotideGenotypeHelperTest {
                 PhasedGenotypeState expected = new PhasedGenotypeState("AT", "AT", 3, CANONICAL_STATES);
                 assertEquals(expected, observed);
             }
-        } else if (parent2_state.getIndex() == 1) {
+        } else if (parent1_state.getIndex() == 1) {
             if (parent2_state.getIndex() == 0) {
                 PhasedGenotypeState observed = getPhasedGenotypeState(parent1_state, parent2_state);
                 PhasedGenotypeState expected = new PhasedGenotypeState("CA", "CA", 4, CANONICAL_STATES);
@@ -418,10 +417,10 @@ public class NucleotideGenotypeHelperTest {
                 PhasedGenotypeState expected = new PhasedGenotypeState("CT", "CT", 7, CANONICAL_STATES);
                 assertEquals(expected, observed);
             }
-        } else if (parent2_state.getIndex() == 2) {
+        } else if (parent1_state.getIndex() == 2) {
             if (parent2_state.getIndex() == 0) {
-                PhasedGenotypeState observed = getPhasedGenotypeState(parent1_state, parent2_state);
-                PhasedGenotypeState expected = new PhasedGenotypeState("GA", "GA", 8, CANONICAL_STATES);
+                PhasedGenotypeState observed = getPhasedGenotypeState(parent1_state, parent2_state); // wrong
+                PhasedGenotypeState expected = new PhasedGenotypeState("GC", "GC", 8, CANONICAL_STATES);
                 assertEquals(expected, observed);
             } else if (parent2_state.getIndex() == 1) {
                 PhasedGenotypeState observed = getPhasedGenotypeState(parent1_state, parent2_state);
@@ -436,7 +435,7 @@ public class NucleotideGenotypeHelperTest {
                 PhasedGenotypeState expected = new PhasedGenotypeState("GT", "GT", 11, CANONICAL_STATES);
                 assertEquals(expected, observed);
             }
-        } else if (parent2_state.getIndex() == 3) {
+        } else if (parent1_state.getIndex() == 3) {
             if (parent2_state.getIndex() == 0) {
                 PhasedGenotypeState observed = getPhasedGenotypeState(parent1_state, parent2_state);
                 PhasedGenotypeState expected = new PhasedGenotypeState("TA", "TA", 12, CANONICAL_STATES);

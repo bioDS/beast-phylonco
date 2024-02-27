@@ -17,7 +17,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.*;
 
-import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getPhasedGenotypeIndex;
+import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignmentValue;
