@@ -16,7 +16,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import java.util.ArrayList;
 import java.util.List;
 
-import static phylonco.lphy.evolution.datatype.NucleotideGenotypeHelper.getNucleotideIndex;
+import static phylonco.lphy.evolution.datatype.PhasedGenotype.getNucleotideIndex;
 
 
 public class HaploidAlignment extends DeterministicFunction<Alignment> {
