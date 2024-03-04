@@ -10,8 +10,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import static jebl.evolution.sequences.Nucleotides.getState;
-
 /**
  * For phased genotype data.
  * @author Alexei Drummond
@@ -193,8 +191,7 @@ public final class PhasedGenotype extends DataType {
      */
     public static int getPhasedGenotypeIndex(int parent1_index,int parent2_index){
         if (parent1_index <4 && parent1_index>=0 && parent2_index>=0 && parent2_index<4){
-            int index = 4 * parent1_index + parent2_index;
-            return index;
+            return 4 * parent1_index + parent2_index;
         }  throw new RuntimeException( "The parents should be canonical states." );
     }
 
@@ -213,9 +210,7 @@ public final class PhasedGenotype extends DataType {
         int parent2_index = parentsIndex[1];
 
         // convert the index into state and generate the array we want
-        NucleotideState[] parents_state = {Nucleotides.getState(parent1_index),Nucleotides.getState(parent2_index)};
-
-        return parents_state;
+        return new NucleotideState[]{Nucleotides.getState(parent1_index),Nucleotides.getState(parent2_index)};
     }
 
     /**
@@ -229,8 +224,6 @@ public final class PhasedGenotype extends DataType {
         int phasedIndex = getPhasedGenotypeIndex(parent1.getIndex() , parent2.getIndex());
 
         // convert the phased index into state
-        PhasedGenotypeState phasedState = (PhasedGenotypeState) PhasedGenotype.INSTANCE.getState(phasedIndex);
-
-        return phasedState;
+        return (PhasedGenotypeState) PhasedGenotype.INSTANCE.getState(phasedIndex);
     }
 }

@@ -3,7 +3,6 @@ package phylonco.lphy.evolution.alignment;
 import lphy.base.distribution.ParametricDistribution;
 import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.Taxa;
-import lphy.base.evolution.alignment.AbstractAlignment;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.base.function.io.ReaderConst;
