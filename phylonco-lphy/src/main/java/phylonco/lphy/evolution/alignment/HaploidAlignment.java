@@ -1,6 +1,5 @@
 package phylonco.lphy.evolution.alignment;
 
-import jebl.evolution.sequences.Nucleotides;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.AbstractAlignment;
