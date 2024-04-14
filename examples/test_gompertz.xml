@@ -1,6 +1,26 @@
-<beast version='2.0'
-       namespace='beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood'>
-
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood"
+       version="2.7">
 
     <!-- The sequence alignment (each sequence refers to a taxon above).         -->
     <!-- ntax=6 nchar=768                                                        -->
@@ -52,8 +72,8 @@
     <parameter id="hky.kappa" value="2.0" lower="0.0"/>
     <parameter id="hky.frequencies" value="0.25" dimension="4" lower='0.0'/>
     <parameter id="f0" name="stateNode" value="0.5" lower="0.0" upper="1.0"/>
-    <parameter id="NInfinity" name="stateNode" value="1000.0" lower="0.0"/>
-    <parameter id="b" name="stateNode" value="0.1" lower="0.0"/>
+    <parameter id="NInfinity" name="stateNode" value="1e11" lower="0.0" upper="Infinity"/>
+    <parameter id="b" name="stateNode" value="0.1" lower="-Infinity" upper="Infinity"/>
     <!--    <parameter id="popSize" value="0.077" lower="0.0"/>-->
     <!--    <parameter id="growthRate" value="7.7E-5"/>-->
 
@@ -66,11 +86,12 @@
                            <input name='taxa' idref='alignment'/>
                         </tree>
             -->
+
             <input name='stateNode' idref='hky.kappa'/>
-            <input name='stateNode' idref='hky.frequencies'/>
-            <input name="stateNode" idref="f0"/>
-            <input name="stateNode" idref="NInfinity"/>
-            <input name="stateNode" idref="b"/>
+            <input name='stateNode' idref='hky.frequencies' />
+            <input name='stateNode' idref='f0' />
+            <input name='stateNode' idref='NInfinity' />
+            <input name='stateNode' idref='b' />
             <input name='stateNode' idref='tree'/>
         </state>
 
@@ -88,8 +109,13 @@
                 <distribution id="f0.prior" spec="beast.base.inference.distribution.Prior" x="@f0">
                     <distr spec="beast.base.inference.distribution.Beta" alpha="20.0" beta="2.0"/>
                 </distribution>
+<!--                <distribution id="NInfinity.prior" spec="beast.base.inference.distribution.Prior" x="@NInfinity">-->
+<!--                    <distr spec="beast.base.inference.distribution.Normal" mean="1e11" sigma="50.0"/>-->
                 <distribution id="NInfinity.prior" spec="beast.base.inference.distribution.Prior" x="@NInfinity">
-                    <distr spec="beast.base.inference.distribution.Normal" mean="1e12" sigma="50.0"/>
+                    <distr spec="beast.base.inference.distribution.LogNormalDistributionModel" meanInRealSpace="true">
+                        <parameter name="M" value="11"/> <!-- log(1e11) to convert mean to log-scale -->
+                        <parameter name="S" value="0.2"/>
+                    </distr>
                 </distribution>
                 <distribution id="b.prior" spec="beast.base.inference.distribution.Prior" x="@b">
                     <distr spec='beast.base.inference.distribution.LogNormalDistributionModel' M="-0.415" S="0.71" meanInRealSpace="false"/>
@@ -99,7 +125,7 @@
                     <treeIntervals spec='beast.base.evolution.tree.TreeIntervals' id='TreeIntervals'>
                         <tree idref="tree"/>
                     </treeIntervals>
-                    <populationModel spec="GompertzGrowth" id="gompertzPopulationModel">
+                    <populationModel id="gompertzPopulationModel" spec="phylonco.beast.evolution.populationmodel.GompertzGrowth">
                         <parameter name="f0" idref="f0"/>
                         <parameter name="NInfinity" idref="NInfinity"/>
                         <parameter name="b" idref="b"/>
@@ -134,6 +160,7 @@
             <log idref="hky.kappa"/>
             <log idref="hky.frequencies"/>
             <log idref="likelihood"/>
+            <log idref="coalescent"/>
             <!-- Assuming 'gompertzPopulationModel' is your Gompertz population model id -->
             <log idref="gompertzPopulationModel"/>
         </logger>
@@ -154,6 +181,7 @@
             <log idref="hky.kappa"/>
             <log idref="hky.frequencies"/>
             <log idref="likelihood"/>
+            <log idref="coalescent"/>
             <log idref="gompertzPopulationModel"/>
         </logger>
     </run>

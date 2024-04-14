@@ -1,20 +1,19 @@
-package phylonco.beast.evolution.substitutionmodel;
+package phylonco.beast.evolution.populationmodel;
 
-import beast.base.core.BEASTInterface;
-import beast.base.core.Description;
-import beast.base.core.Function;
-import beast.base.core.Input;
+import beast.base.core.*;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
 
     @Description("Coalescent intervals for a gompertz growing population.")
-    public class GompertzGrowth extends PopulationFunction.Abstract {
+    public class GompertzGrowth extends PopulationFunction.Abstract implements Loggable{
         final public Input<Function> f0Input = new Input<>("f0",
                 "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
         final public Input<Function> bInput = new Input<>("b",
@@ -24,9 +23,9 @@ import java.util.List;
 
         public GompertzGrowth() {
             // Example of setting up inputs with default values
-            f0Input.setValue(new RealParameter("0.5"), this);
-            bInput.setValue(new RealParameter("0.1"), this);
-            NInfinityInput.setValue(new RealParameter("1000"), this);
+//            f0Input.setValue(new RealParameter("0.5"), this);
+//            bInput.setValue(new RealParameter("0.1"), this);
+//            NInfinityInput.setValue(new RealParameter("1000"), this);
         }
 
 
@@ -92,6 +91,7 @@ import java.util.List;
         }
 
 
+
         @Override
         public double getPopSize(double t) {
             double f0 = getF0();
@@ -99,24 +99,54 @@ import java.util.List;
             double NInfinity = getNInfinity();
             double N0 = getN0();
 
-            return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
+            double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
+
+            return popSize;
         }
+
 
         @Override
         public double getIntensity(double t) {
             if (t == 0) return 0;
-
-            UnivariateFunction function = time -> 1 / getPopSize(time);
-
-            //  Use the separate method to create the integrator
-            //  return legrandeIntegrator(function, t);
+            UnivariateFunction function = time -> {
+                double popSize = getPopSize(time);
+                return 1 / Math.max(popSize, 1e-20);
+            };
             IterativeLegendreGaussIntegrator integrator = createIntegrator();
-            return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+            // default intensity if fails
+            double intensity = 0;
+            try {
+                intensity = integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+            } catch (TooManyEvaluationsException ex) {
+                System.err.println("f0 = " + getF0() + ", b=" + getGrowthRateB() + " K=" + getNInfinity());
+                return intensity;
+            }
+            return intensity;
         }
+
+
 
         @Override
         public double getInverseIntensity(double x) {
             return 0;
+        }
+
+        @Override
+        public void init(PrintStream printStream) {
+            printStream.println("# Step\tf0\tNInfinity\tb");
+
+        }
+
+        @Override
+        public void log(long step, PrintStream printStream) {
+            printStream.println(step + "\t" + getF0() + "\t" + getNInfinity() + "\t" + getGrowthRateB());
+
+        }
+
+        @Override
+        public void close(PrintStream printStream) {
+            printStream.println("# End of log");
+
         }
     }
 

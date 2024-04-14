@@ -12,9 +12,7 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
-import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
-import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
-import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
+import phylonco.lphybeast.tobeast.generators.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,7 +37,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GTUnphaseToBEAST.class );
+                GT16ToBEAST.class, GTUnphaseToBEAST.class,
+                GompertzToBEAST.class, LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class);
     }
 
     @Override

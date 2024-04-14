@@ -19,6 +19,8 @@ dependencies {
      */
     api("io.github.linguaphylo:lphy:1.5.1-SNAPSHOT") //-SNAPSHOT
     api("io.github.linguaphylo:lphy-base:1.5.1-SNAPSHOT")
+    testImplementation(project(mapOf("path" to ":phylonco-beast")))
+    testImplementation(project(mapOf("path" to ":phylonco-beast")))
 
     // launch studio from its jar, but not depend on it
     runtimeOnly("io.github.linguaphylo:lphy-studio:1.5.1-SNAPSHOT")
