@@ -2,6 +2,8 @@ package phylonco.lphybeast.spi;
 
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
+import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
+import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction;
 import lphy.core.model.Generator;
 import lphy.core.model.Value;
 import lphybeast.GeneratorToBEAST;
@@ -15,6 +17,8 @@ import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
 import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
+import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
+import phylonco.lphybeast.tobeast.values.PopulationFunctionToBEAST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -33,14 +37,17 @@ public class LBPhylonco implements LPhyBEASTExt {
 
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
-        return new ArrayList<>();
+        return Arrays.asList(
+                PopulationFunctionToBEAST.class // TODO
+        );
     }
 
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GTUnphaseToBEAST.class
-//                GompertzToBEAST.class, LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
+                GT16ToBEAST.class, GTUnphaseToBEAST.class,
+                PopFuncCoalescentToBEAST.class//, GompertzToBEAST.class
+//                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
         );
     }
 
@@ -54,7 +61,9 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends Generator>> getExcludedGenerator() {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
-                HaploidAlignment.class);
+                HaploidAlignment.class,
+                PopulationFunctionCoalescent.class,
+                GompertzPopulationFunction.class);
     }
 
     @Override

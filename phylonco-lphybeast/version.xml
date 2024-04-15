@@ -30,7 +30,7 @@
         <provider classname="phylonco.beast.evolution.substitutionmodel.MethylationHKY"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit2"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit3"/>
-<!--        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth"/>-->
+        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth"/>
 <!--        <provider classname="phylonco.beast.evolution.populationmodel.ExponentialGrowth"/>-->
     </service>
 
