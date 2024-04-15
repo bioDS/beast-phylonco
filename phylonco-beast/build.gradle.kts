@@ -18,6 +18,7 @@ dependencies {
 //        include("*.jar")
         exclude("**/*-src.jar")
         exclude("**/BEAST-app-*.jar")
+        exclude("**/*.xml")
     })
 
     // tests
