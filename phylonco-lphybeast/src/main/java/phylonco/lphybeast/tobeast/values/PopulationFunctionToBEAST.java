@@ -9,7 +9,7 @@ import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
 import lphybeast.tobeast.values.ValueToParameter;
 import phylonco.beast.evolution.populationmodel.GompertzGrowth;
-//TODO exclude
+
 public class PopulationFunctionToBEAST implements ValueToBEAST<PopulationFunction, beast.base.evolution.tree.coalescent.PopulationFunction.Abstract> {
 
     public beast.base.evolution.tree.coalescent.PopulationFunction.Abstract valueToBEAST(Value<PopulationFunction> lphyPopFuncVal, BEASTContext context) {

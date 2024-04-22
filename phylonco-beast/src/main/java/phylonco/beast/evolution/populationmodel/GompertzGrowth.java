@@ -28,18 +28,6 @@ import java.util.List;
 //            NInfinityInput.setValue(new RealParameter("1000"), this);
         }
 
-
-        private IterativeLegendreGaussIntegrator createIntegrator() {
-            int numberOfPoints = 5; // Legendre-Gauss points
-            double relativeAccuracy = 1.0e-10; // relative precision
-            double absoluteAccuracy = 1.0e-9; // absolute accuracy
-            int minimalIterationCount = 2; // Minimum number of iterations
-            int maximalIterationCount = 100000; //Maximum number of iterations, adjust as needed
-            return new IterativeLegendreGaussIntegrator(numberOfPoints, relativeAccuracy, absoluteAccuracy, minimalIterationCount, maximalIterationCount);
-        }
-
-
-
         @Override
         public void initAndValidate() {
             if (f0Input.get() != null && f0Input.get() instanceof RealParameter) {
@@ -90,8 +78,6 @@ import java.util.List;
             return ids;
         }
 
-
-
         @Override
         public double getPopSize(double t) {
             double f0 = getF0();
@@ -104,7 +90,6 @@ import java.util.List;
             return popSize;
         }
 
-
         @Override
         public double getIntensity(double t) {
             if (t == 0) return 0;
@@ -112,7 +97,7 @@ import java.util.List;
                 double popSize = getPopSize(time);
                 return 1 / Math.max(popSize, 1e-20);
             };
-            IterativeLegendreGaussIntegrator integrator = createIntegrator();
+            IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 1.0e-12, 1.0e-8, 2, 10000);
             // default intensity if fails
             double intensity = 0;
             try {
@@ -124,8 +109,6 @@ import java.util.List;
             return intensity;
         }
 
-
-
         @Override
         public double getInverseIntensity(double x) {
             return 0;
@@ -134,19 +117,16 @@ import java.util.List;
         @Override
         public void init(PrintStream printStream) {
             printStream.println("# Step\tf0\tNInfinity\tb");
-
         }
 
         @Override
         public void log(long step, PrintStream printStream) {
             printStream.println(step + "\t" + getF0() + "\t" + getNInfinity() + "\t" + getGrowthRateB());
-
         }
 
         @Override
         public void close(PrintStream printStream) {
             printStream.println("# End of log");
-
         }
     }
 

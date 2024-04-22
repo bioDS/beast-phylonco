@@ -3,7 +3,9 @@ package phylonco.lphybeast.spi;
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
+import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulationFunction;
 import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction;
+import lphy.base.evolution.coalescent.populationmodel.LogisticPopulationFunction;
 import lphy.core.model.Generator;
 import lphy.core.model.Value;
 import lphybeast.GeneratorToBEAST;
@@ -18,7 +20,7 @@ import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
 import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
 import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
-import phylonco.lphybeast.tobeast.values.PopulationFunctionToBEAST;
+import phylonco.lphybeast.tobeast.values.GompertzToBEAST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -38,7 +40,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
-                PopulationFunctionToBEAST.class // TODO
+                //PopulationFunctionToBEAST.class // TODO
+                GompertzToBEAST.class //ExponentialToBEAST.class, LogisticToBEAST.class
         );
     }
 
@@ -63,7 +66,7 @@ public class LBPhylonco implements LPhyBEASTExt {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class,
                 PopulationFunctionCoalescent.class,
-                GompertzPopulationFunction.class);
+                GompertzPopulationFunction.class, ExponentialPopulationFunction.class, LogisticPopulationFunction.class);
     }
 
     @Override

@@ -55,7 +55,6 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
         DeltaExchangeOperator operator = new DeltaExchangeOperator();
         operator.setInputValue("parameter", parameter);
         operator.setInputValue("weight", context.getOperatorWeight(parameter.getDimension() - 1));
-        operator.setInputValue("delta", 1.0 / parameter.getDimension());
         operator.setInputValue("autoOptimize", false);
         operator.initAndValidate();
         operator.setID(parameter.getID() + ".deltaExchange");
