@@ -22,6 +22,8 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
         RealParameter bParam = context.getAsRealParameter(gen.getB());
         RealParameter NInfinityParam = context.getAsRealParameter(gen.getNInfinity());
 
+
+
         beastPopFunc = new GompertzGrowth();
 
         beastPopFunc.setInputValue("f0", f0Param);
@@ -29,27 +31,37 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
         beastPopFunc.setInputValue("NInfinity", NInfinityParam);
         beastPopFunc.initAndValidate();
 
-        //addUpDownOperator(f0Param, bParam, context);
-
         ValueToParameter.setID(beastPopFunc, lphyPopFuncVal);
+
 
         return beastPopFunc;
     }
 
-
-//    private void addUpDownOperator(RealParameter f0, RealParameter b, BEASTContext context) {
-//        UpDownOperator upDownOperator = new UpDownOperator();
-//        upDownOperator.setInputValue("scaleFactor", 0.75);
-//        upDownOperator.setInputValue("weight", 3.0);
+//    private void addScaleOperators(RealParameter f0, RealParameter b, RealParameter NInfinity, BEASTContext context) {
+//        ScaleOperator f0Scaler = new ScaleOperator();
+//        f0Scaler.setInputValue("parameter", f0);
+//        f0Scaler.setInputValue("scaleFactor", 0.75);
+//        f0Scaler.setInputValue("weight", 0.1);
+//        f0Scaler.initAndValidate();
 //
-//        Tree tree = (Tree) context.getBEASTObject("tree");
+//        ScaleOperator bScaler = new ScaleOperator();
+//        bScaler.setInputValue("parameter", b);
+//        bScaler.setInputValue("scaleFactor", 0.75);
+//        bScaler.setInputValue("weight", 0.1);
+//        bScaler.initAndValidate();
 //
-//        upDownOperator.setInputValue("up", Arrays.asList(f0, b));
-//        upDownOperator.setInputValue("down", Arrays.asList(tree));
-//        upDownOperator.initAndValidate();
+//        ScaleOperator NInfinityScaler = new ScaleOperator();
+//        NInfinityScaler.setInputValue("parameter", NInfinity);
+//        NInfinityScaler.setInputValue("scaleFactor", 0.75);
+//        NInfinityScaler.setInputValue("weight", 0.1);
+//        NInfinityScaler.initAndValidate();
 //
-//        context.addExtraOperator(upDownOperator);
+//        // Assuming context is a facility to add these operators to the model
+//        context.addExtraOperator(f0Scaler);
+//        context.addExtraOperator(bScaler);
+//        context.addExtraOperator(NInfinityScaler);
 //    }
+
 
 
     public Class getValueClass() {

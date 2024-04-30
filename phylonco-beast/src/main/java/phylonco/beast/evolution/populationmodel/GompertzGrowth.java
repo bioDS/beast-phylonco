@@ -87,6 +87,9 @@ import java.util.List;
             double NInfinity = getNInfinity();
             double N0 = getN0();
 
+
+
+
             double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
 
             return popSize;
@@ -103,9 +106,11 @@ import java.util.List;
             // default intensity if fails
             double intensity = 0;
             try {
-                intensity = integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+                int maxEval = 100000; // trying maxEval = 100000 to test speed
+                // previous maxEval default = Integer.MAX_VALUE;
+                intensity = integrator.integrate(maxEval, function, 0, t);
             } catch (TooManyEvaluationsException ex) {
-                System.err.println("f0 = " + getF0() + ", b=" + getGrowthRateB() + " K=" + getNInfinity());
+               // System.err.println("f0 = " + getF0() + ", b=" + getGrowthRateB() + " NInfinity=" + getNInfinity());
                 return intensity;
             }
             return intensity;
@@ -118,17 +123,16 @@ import java.util.List;
 
         @Override
         public void init(PrintStream printStream) {
-            printStream.println("# Step\tf0\tNInfinity\tb");
+
         }
 
         @Override
         public void log(long step, PrintStream printStream) {
-            printStream.println(step + "\t" + getF0() + "\t" + getNInfinity() + "\t" + getGrowthRateB());
         }
 
         @Override
         public void close(PrintStream printStream) {
-            printStream.println("# End of log");
+
         }
 
         @Override

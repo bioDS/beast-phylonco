@@ -20,7 +20,9 @@ import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
 import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
 import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
+import phylonco.lphybeast.tobeast.values.ExponentialToBEAST;
 import phylonco.lphybeast.tobeast.values.GompertzToBEAST;
+import phylonco.lphybeast.tobeast.values.LogisticToBEAST;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +43,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
                 //PopulationFunctionToBEAST.class // TODO
-                GompertzToBEAST.class //ExponentialToBEAST.class, LogisticToBEAST.class
+                GompertzToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class
         );
     }
 
