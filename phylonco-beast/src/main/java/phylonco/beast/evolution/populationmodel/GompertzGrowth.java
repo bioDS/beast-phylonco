@@ -1,9 +1,7 @@
 package phylonco.beast.evolution.populationmodel;
 
 import beast.base.core.*;
-import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
-import beast.base.inference.operator.UpDownOperator;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
@@ -15,9 +13,13 @@ import java.util.List;
 
 
     @Description("Coalescent intervals for a gompertz growing population.")
-    public class GompertzGrowth extends PopulationFunction.Abstract implements Loggable, PopFuncWithUpDownOp {
-        final public Input<Function> f0Input = new Input<>("f0",
-                "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
+    public class GompertzGrowth extends PopulationFunction.Abstract implements Loggable {
+//        final public Input<Function> f0Input = new Input<>("f0",
+//                "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
+
+        final public Input<Function> N0Input = new Input<>("N0",
+                "Initial pop", Input.Validate.REQUIRED);
+
         final public Input<Function> bInput = new Input<>("b",
                 "Initial growth rate of tumor growth. Should be greater than 0.", Input.Validate.REQUIRED);
         final public Input<Function> NInfinityInput = new Input<>("NInfinity",
@@ -32,9 +34,14 @@ import java.util.List;
 
         @Override
         public void initAndValidate() {
-            if (f0Input.get() != null && f0Input.get() instanceof RealParameter) {
-                RealParameter f0Param = (RealParameter) f0Input.get();
-                f0Param.setBounds(Math.max(0.0, f0Param.getLower()), f0Param.getUpper());
+//            if (f0Input.get() != null && f0Input.get() instanceof RealParameter) {
+//                RealParameter f0Param = (RealParameter) f0Input.get();
+//                f0Param.setBounds(Math.max(0.0, f0Param.getLower()), f0Param.getUpper());
+//            }
+
+            if (N0Input.get() != null && N0Input.get() instanceof RealParameter) {
+                RealParameter N0Param = (RealParameter) N0Input.get();
+                N0Param.setBounds(Math.max(0.0, N0Param.getLower()), N0Param.getUpper());
             }
 
             if (bInput.get() != null && bInput.get() instanceof RealParameter) {
@@ -48,19 +55,25 @@ import java.util.List;
             }
 
             // Compute N0 from f0 and NInfinity if they are not null and are RealParameters
-            if (f0Input.get() != null && NInfinityInput.get() != null &&
-                    f0Input.get() instanceof RealParameter && NInfinityInput.get() instanceof RealParameter) {
-                double f0 = ((RealParameter) f0Input.get()).getValue();
-                double NInfinity = ((RealParameter) NInfinityInput.get()).getValue();
-            }
+//            if (f0Input.get() != null && NInfinityInput.get() != null &&
+//                    f0Input.get() instanceof RealParameter && NInfinityInput.get() instanceof RealParameter) {
+//                double f0 = ((RealParameter) f0Input.get()).getValue();
+//                double NInfinity = ((RealParameter) NInfinityInput.get()).getValue();
+
+
+
         }
+
+//        public double getN0() {
+//            return getNInfinity() * getF0();
+//        }
+
+//        public double getF0() {
+//            return f0Input.get().getArrayValue();
+//        }
 
         public double getN0() {
-            return getNInfinity() * getF0();
-        }
-
-        public double getF0() {
-            return f0Input.get().getArrayValue();
+            return N0Input.get().getArrayValue();
         }
 
         public final double getGrowthRateB() {
@@ -82,7 +95,7 @@ import java.util.List;
 
         @Override
         public double getPopSize(double t) {
-            double f0 = getF0();
+//            double f0 = getF0();
             double b = getGrowthRateB();
             double NInfinity = getNInfinity();
             double N0 = getN0();
@@ -90,7 +103,7 @@ import java.util.List;
 
 
 
-            double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
+            double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)));
 
             return popSize;
         }
@@ -135,24 +148,24 @@ import java.util.List;
 
         }
 
-        @Override
-        public UpDownOperator getUpDownOperator(Tree tree) {
-
-                UpDownOperator upDownOperator = new UpDownOperator();
-
-            String idStr = getID() + "Up" + tree.getID() + "DownOperator";
-            upDownOperator.setID(idStr);
-
-                upDownOperator.setInputValue("scaleFactor", 0.75);
-                upDownOperator.setInputValue("weight", 3.0);
-
-                upDownOperator.setInputValue("up", this.f0Input.get());
-            upDownOperator.setInputValue("up", this.bInput.get());
-                upDownOperator.setInputValue("down", tree);
-                upDownOperator.initAndValidate();
-                return upDownOperator;
-
-        }
+//        @Override
+//        public UpDownOperator getUpDownOperator(Tree tree) {
+//
+//                UpDownOperator upDownOperator = new UpDownOperator();
+//
+//            String idStr = getID() + "Up" + tree.getID() + "DownOperator";
+//            upDownOperator.setID(idStr);
+//
+//                upDownOperator.setInputValue("scaleFactor", 0.75);
+//                upDownOperator.setInputValue("weight", 3.0);
+//
+//                upDownOperator.setInputValue("up", this.f0Input.get());
+//            upDownOperator.setInputValue("up", this.bInput.get());
+//                upDownOperator.setInputValue("down", tree);
+//                upDownOperator.initAndValidate();
+//                return upDownOperator;
+//
+//        }
     }
 
 
