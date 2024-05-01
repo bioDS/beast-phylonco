@@ -103,7 +103,7 @@ import java.util.List;
 
 
 
-            double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(-b * t)));
+            double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
 
             return popSize;
         }
