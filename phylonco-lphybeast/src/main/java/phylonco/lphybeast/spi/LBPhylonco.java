@@ -2,12 +2,13 @@ package phylonco.lphybeast.spi;
 
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
+import lphy.base.evolution.branchrate.LocalClock;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulationFunction;
 import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction;
 import lphy.base.evolution.coalescent.populationmodel.LogisticPopulationFunction;
+import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.Generator;
-import lphy.core.model.Value;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
@@ -24,7 +25,6 @@ import phylonco.lphybeast.tobeast.values.ExponentialToBEAST;
 import phylonco.lphybeast.tobeast.values.GompertzToBEAST;
 import phylonco.lphybeast.tobeast.values.LogisticToBEAST;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -67,14 +67,14 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends Generator>> getExcludedGenerator() {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class,
+                LocalClock.class, //TODO
                 PopulationFunctionCoalescent.class,
                 GompertzPopulationFunction.class, ExponentialPopulationFunction.class, LogisticPopulationFunction.class);
     }
 
     @Override
-    public List<Class<? extends Value>> getExcludedValue() {
-        return new ArrayList<>();
+    public List<Class> getExcludedValueType() {
+        return Arrays.asList(TimeTreeNode.class);
     }
-
 
 }
