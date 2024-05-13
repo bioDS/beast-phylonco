@@ -151,6 +151,15 @@ public final class PhasedGenotype extends DataType {
 
     /**
      *
+     * @param index index of state
+     * @return canonical state at index
+     */
+    public static PhasedGenotypeState getCanonicalState(int index) {
+        return CANONICAL_STATES[index];
+    }
+
+    /**
+     *
      * @param stateIndex the phased genotype state index
      * @return The two indices array for the two parents nucleotide states. The first index is the fist parent index and the
      * second index is the second parent index.

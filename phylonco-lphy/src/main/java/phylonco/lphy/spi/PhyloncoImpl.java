@@ -8,6 +8,8 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
+import phylonco.lphy.evolution.readcountmodel.Multinomial;
+import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
 import java.util.Arrays;
@@ -30,7 +32,9 @@ public class PhyloncoImpl extends LPhyBaseImpl {
 
     @Override
     public List<Class<? extends GenerativeDistribution>> declareDistributions() {
-        return Arrays.asList( GT16ErrorModel.class, HomozygousAlignmentDistribution.class);
+        return Arrays.asList( GT16ErrorModel.class, HomozygousAlignmentDistribution.class,
+                Multinomial.class,
+                ReadCountModel.class);
     }
 
     @Override

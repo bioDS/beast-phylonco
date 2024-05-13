@@ -8,6 +8,7 @@ module phylonco.lphy {
     exports phylonco.lphy.evolution.alignment;
     exports phylonco.lphy.evolution.datatype;
     exports phylonco.lphy.evolution.substitutionmodel;
+    exports phylonco.lphy.evolution.readcountmodel;
 
 
     // declare what service interface the provider intends to use

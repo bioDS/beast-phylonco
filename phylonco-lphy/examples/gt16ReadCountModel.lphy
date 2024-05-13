@@ -1,0 +1,28 @@
+n = 4;
+l = 5;
+
+Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
+ψ ~ Coalescent(n=n, theta=Θ);
+π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
+rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
+A ~ PhyloCTMC(L=l, Q=Q, tree=ψ, dataType=phasedGenotype());
+epsilon ~ Beta(alpha=2, beta=18);
+delta ~ Beta(alpha=1.5, beta=4.5);
+//epsilon = 0.01;
+//delta = 0.24;
+// cov = [rep(1, 5), rep(2, 5), rep(3, 5), rep(4, 5)];
+meanT = 2.3; // average coverage = lognormal(meanT, sdT)
+sdT = 0.1;
+meanV = 0.1; // variance coverage = lognormal(meanV, sdV)
+sdV = 0.05;
+meanS = 0.04; // cell-specific scaling
+sdS = 0.001;
+t ~ LogNormal(meanlog= meanT, sdlog= sdT);
+v ~ LogNormal(meanlog= meanV, sdlog= sdV);
+s ~ LogNormal(meanlog= meanS, sdlog= sdS,repe);
+alpha ~ AlphaSimulator(l= l, n=n, delta= delta);
+coverage ~ CoverageSimulator(alpha= alpha, t= t, v= v, s= s);
+
+
+r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=coverage);
