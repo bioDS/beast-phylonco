@@ -1,6 +1,8 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
+import beast.base.evolution.likelihood.GenericTreeLikelihood;
+import beast.base.evolution.likelihood.ThreadedTreeLikelihood;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.Generator;
 import lphy.core.model.GraphicalModelNode;
@@ -18,11 +20,13 @@ import java.util.List;
  * E ~ ErrorModel(A);
  * D = unphase(E);
  * @author Walter Xie
+ * @author Kylie Chen
+ * @author Yuan Xu
  */
-public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, TreeLikelihoodWithError>  {
+public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, GenericTreeLikelihood>  {
 
     @Override
-    public TreeLikelihoodWithError generatorToBEAST(UnphaseGenotypeAlignment generator, BEASTInterface value, BEASTContext context) {
+    public GenericTreeLikelihood generatorToBEAST(UnphaseGenotypeAlignment generator, BEASTInterface value, BEASTContext context) {
 
         assert value instanceof beast.base.evolution.alignment.Alignment;
         beast.base.evolution.alignment.Alignment unphasedErrAlignment = (beast.base.evolution.alignment.Alignment)value;
@@ -38,26 +42,33 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
             }
         }
 
-        // TreeLikelihoodWithError should be already created for err alignment
-        TreeLikelihoodWithError treeLikelihoodWithError =
-                (TreeLikelihoodWithError) context.getBEASTObject(errAligGenerator);
+        GenericTreeLikelihood treeLikelihood = null;
 
-        if (treeLikelihoodWithError == null)
+        // only cast if TreeLikelihoodWithError if using an error model
+        if (context.getBEASTObject(errAligGenerator) instanceof TreeLikelihoodWithError) {
+            treeLikelihood = (TreeLikelihoodWithError) context.getBEASTObject(errAligGenerator);
+        } else {
+            treeLikelihood = (ThreadedTreeLikelihood) context.getBEASTObject(errAligGenerator);
+        }
+
+        if (treeLikelihood == null)
             throw new IllegalArgumentException("Cannot find err alignment tree likelihood !");
 
-        treeLikelihoodWithError.setInputValue("data", unphasedErrAlignment);
+        treeLikelihood.setInputValue("data", unphasedErrAlignment);
 
-        treeLikelihoodWithError.initAndValidate();
-        treeLikelihoodWithError.setID(unphasedErrAlignment.getID() + ".treeLikelihood");
+        treeLikelihood.initAndValidate();
+        treeLikelihood.setID(unphasedErrAlignment.getID() + ".treeLikelihood");
 
-        BEASTInterface errAlignment = context.getBEASTObject(errAlignmentInput);
-        context.removeBEASTObject(errAlignment);
-        // remove previous treeLikelihoodWithError added by GT16ErrorModelToBEAST
-        context.removeBEASTObject(treeLikelihoodWithError);
+        if (context.getBEASTObject(errAligGenerator) instanceof TreeLikelihoodWithError) {
+            BEASTInterface errAlignment = context.getBEASTObject(errAlignmentInput);
+            context.removeBEASTObject(errAlignment);
+            // remove previous treeLikelihood added by GT16ErrorModelToBEAST
+            context.removeBEASTObject(treeLikelihood);
+        }
 
         // logging
-        context.addExtraLoggable(treeLikelihoodWithError);
-        return treeLikelihoodWithError;
+        context.addExtraLoggable(treeLikelihood);
+        return treeLikelihood;
     }
 
 
@@ -67,7 +78,7 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
     }
 
     @Override
-    public Class<TreeLikelihoodWithError> getBEASTClass() {
-        return TreeLikelihoodWithError.class;
+    public Class<GenericTreeLikelihood> getBEASTClass() {
+        return GenericTreeLikelihood.class;
     }
 }

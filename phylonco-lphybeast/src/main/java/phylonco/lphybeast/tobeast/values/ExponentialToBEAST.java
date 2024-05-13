@@ -1,5 +1,6 @@
 package phylonco.lphybeast.tobeast.values;
 
+import beast.base.evolution.tree.coalescent.ExponentialGrowth;
 import beast.base.inference.parameter.RealParameter;
 import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulation;
 import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulationFunction;
@@ -7,9 +8,6 @@ import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
 import lphybeast.tobeast.values.ValueToParameter;
-import phylonco.beast.evolution.populationmodel.ExponentialGrowth;
-
-
 
 public class ExponentialToBEAST implements ValueToBEAST<ExponentialPopulation, ExponentialGrowth> {
 

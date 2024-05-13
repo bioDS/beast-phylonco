@@ -22,7 +22,8 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
 
 //        RealParameter N0Param = context.getAsRealParameter(gen.getN0());
         RealParameter bParam = context.getAsRealParameter(gen.getB());
-        RealParameter NInfinityParam = context.getAsRealParameter(gen.getNInfinity());
+ //       RealParameter NInfinityParam = context.getAsRealParameter(gen.getNInfinity());
+        RealParameter N0Param = context.getAsRealParameter(gen.getN0());
 
 
 
@@ -33,7 +34,7 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
 
         beastPopFunc.setInputValue("f0", f0Param);
         beastPopFunc.setInputValue("b", bParam);
-        beastPopFunc.setInputValue("NInfinity", NInfinityParam);
+        beastPopFunc.setInputValue("N0", N0Param);
         beastPopFunc.initAndValidate();
 
         ValueToParameter.setID(beastPopFunc, lphyPopFuncVal);

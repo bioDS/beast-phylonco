@@ -1,12 +1,15 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
+import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.TreeIntervals;
+import beast.base.inference.operator.UpDownOperator;
 import lphy.base.evolution.coalescent.PopulationFunction;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
+import phylonco.beast.evolution.populationmodel.PopFuncWithUpDownOp;
 //import phylonco.beast.evolution.populationmodel.PopFuncWithUpDownOp;
 
 public class PopFuncCoalescentToBEAST implements
@@ -41,10 +44,10 @@ public class PopFuncCoalescentToBEAST implements
 //            populationFunction.initAndValidate();
 //        }
 
-//        if (populationFunction instanceof PopFuncWithUpDownOp popFuncWithUpDownOp) {
-//            UpDownOperator upDownOperator = popFuncWithUpDownOp.getUpDownOperator((Tree) value);
-//            context.addExtraOperator(upDownOperator);
-//        }
+        if (populationFunction instanceof PopFuncWithUpDownOp popFuncWithUpDownOp) {
+            UpDownOperator upDownOperator = popFuncWithUpDownOp.getUpDownOperator((Tree) value);
+            context.addExtraOperator(upDownOperator);
+        }
 
         beastCoalescent.setInputValue("populationModel", populationFunction);
 
