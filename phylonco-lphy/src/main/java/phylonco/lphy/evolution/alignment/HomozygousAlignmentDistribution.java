@@ -13,22 +13,26 @@ import lphy.core.model.annotation.ParameterInfo;
 import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignmentValue;
+
     public HomozygousAlignmentDistribution(@ParameterInfo(name = ReaderConst.ALIGNMENT,
-            description = "Convert the input haploid alignment into genotype alignment (homozygous)." )
-                                           Value<Alignment> alignmentValue){
+            description = "Convert the input haploid alignment into genotype alignment (homozygous).")
+                                           Value<Alignment> alignmentValue) {
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
         this.alignmentValue = alignmentValue;
     }
 
     @Override
-    protected void constructDistribution(RandomGenerator random) {}
+    protected void constructDistribution(RandomGenerator random) {
+    }
 
     @GeneratorInfo(name = "Homozygous", description = "Convert the haploid to homozygous alignment. The transformation is deterministic" +
             " when there are no ambiguities in the input alignment. If there are ambiguous states or gaps in the sequence," +
@@ -40,7 +44,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
 
         // obtain the taxa names
         List<String> taxa = new ArrayList<>();
-        for (int s = 0; s < originalAlignment.ntaxa(); s++){
+        for (int s = 0; s < originalAlignment.ntaxa(); s++) {
             taxa.add(originalAlignment.getTaxonName(s));
         }
         String[] taxaNames = taxa.toArray(new String[0]);
@@ -53,16 +57,16 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
         for (int i = 0; i < genotypeAlignment.ntaxa(); i++) {
             for (int j = 0; j < genotypeAlignment.nchar(); j++) {
                 // get the nucleotide index of each site
-                int originalStateIndex = originalAlignment.getState(i,j);
+                int originalStateIndex = originalAlignment.getState(i, j);
 
                 // get the certain nucleotide index for each site
                 int stateIndex = getAmbiguousStateIndex(originalStateIndex);
 
                 // convert the nucleotide states into phased genotypes
-                int index = getPhasedGenotypeIndex(stateIndex,stateIndex);
+                int index = getPhasedGenotypeIndex(stateIndex, stateIndex);
 
                 // map the new alignment states
-                genotypeAlignment.setState(i,j,index);
+                genotypeAlignment.setState(i, j, index);
             }
         }
         return new RandomVariable<>(null, genotypeAlignment, this);
@@ -71,17 +75,16 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
     // for unit test use
 
     /**
-     *
      * @param stateIndex state index of the nucleotide
      * @return the certain homozygous phased genotype state index
      */
     public int getAmbiguousStateIndex(int stateIndex) {
-        if (stateIndex >= 4){
+        if (stateIndex >= 4) {
             // get the array for the states
             int[] ambiguousState = ambiguousState(stateIndex);
             // get the Value<Integer> for the lower and upper boundary
             Value<Integer> lower = new Value<>("id", 0);
-            Value<Integer> upper = new Value<>("id",ambiguousState.length-1);
+            Value<Integer> upper = new Value<>("id", ambiguousState.length - 1);
 
             // get the random index for the integer in the array
             UniformDiscrete uniformDiscrete = new UniformDiscrete(lower, upper);
@@ -94,7 +97,6 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
     }
 
     /**
-     *
      * @param stateIndex the state index of nucleotide
      * @return the array of all possible states indices of the ambiguous nucleotide states (unkown and gap states have
      * all four possible states)
@@ -102,7 +104,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
 
     private int[] ambiguousState(int stateIndex) {
         // switch the ambiguous states into canonical states (0=A, 1=C, 2=G, 3=T)
-        switch (stateIndex){
+        switch (stateIndex) {
             case 4:
                 // 4 = A/G
                 return new int[]{0, 2};
@@ -145,8 +147,12 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
 
     @Override
     public Map<String, Value> getParams() {
-        return new TreeMap<>(){{
-            put(ReaderConst.ALIGNMENT,alignmentValue);
+        return new TreeMap<>() {{
+            put(ReaderConst.ALIGNMENT, alignmentValue);
         }};
+    }
+
+    public void setParam(String paramName, Value value) {
+        if (paramName.equals(ReaderConst.ALIGNMENT)) alignmentValue = value;
     }
 }
