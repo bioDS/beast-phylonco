@@ -1,6 +1,6 @@
 data {
   L = 200;
-  n = 10;
+
 }
 
 model {
@@ -9,4 +9,5 @@ model {
   exponentialPopFunc = exponential1(GrowthRate=GrowthRate, N0=N0);
   times ~ CoalescentPopFunc(popFunc=exponentialPopFunc, n=16);
   D ~ PhyloCTMC(tree=times, L=L, Q=jukesCantor());
+  rootAge = times.rootAge();
 }

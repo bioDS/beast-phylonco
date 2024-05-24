@@ -1,22 +1,19 @@
 data {
-  L = 1000;
-
+  L = 200;
 }
 model {
-N0 ~ LogNormal(meanlog=9,sdlog=0.3);
-f0 ~ Beta(alpha=30, beta=6);
-b ~ LogNormal(meanlog=-0.95,sdlog=0.2);
-gompertzPopFunc = gompertz(N0=N0,f0=f0, b=b);
-
-gompertzPopFunc= gompertz(N0=N0,f0=f0, b=b);
-ψ ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
-
-π ~ Dirichlet(conc=[30.0,3.0,3.0,3.0,3.0,30.0,3.0,3.0,3.0,3.0,30.0,3.0,3.0,3.0,3.0,30.0]);
+π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
-Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
-A ~ PhyloCTMC(L=1000, Q=Q, tree=ψ, dataType=phasedGenotype(), mu=0.01);
-// epsilon ~ Beta(alpha=1, beta=50);
-// delta ~ Beta(alpha=1, beta=2);
-// E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
-D = unphase(A);
+Q = gt16(rates=rates, freq=π);
+N0 ~ LogNormal(meanlog=8, sdlog=0.5);
+b ~ LogNormal(meanlog=-0.95, sdlog=0.2);
+f0 ~ Beta(alpha=40, beta=2);
+gompertzPopFunc = gompertz(f0=f0, b=b, N0=N0);
+ψ ~ CoalescentPopFunc(n=16, popFunc=gompertzPopFunc);
+A ~ PhyloCTMC(L=200, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
+epsilon ~ Beta(alpha=1, beta=1000);
+delta ~ Beta(alpha=1.5, beta=4.5);
+E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
+D = unphase(alignment=E);
 }
+

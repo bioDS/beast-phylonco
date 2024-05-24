@@ -1,9 +1,11 @@
 package phylonco.beast.evolution.populationmodel;
 
 import beast.base.core.*;
+import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
 import beast.base.inference.operator.UpDownOperator;
+import beast.base.inference.operator.kernel.Transform;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
@@ -13,23 +15,22 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-
 @Description("Coalescent intervals for a gompertz growing population.")
 public class GompertzGrowth extends PopulationFunction.Abstract implements Loggable, PopFuncWithUpDownOp {
     final public Input<Function> f0Input = new Input<>("f0",
             "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
     final public Input<Function> bInput = new Input<>("b",
             "Initial growth rate of tumor growth. Should be greater than 0.", Input.Validate.REQUIRED);
-//    final public Input<Function> NInfinityInput = new Input<>("NInfinity",
-//            "Carrying capacity of the population.", Input.Validate.REQUIRED);
     final public Input<Function> N0Input = new Input<>("N0",
-        "Initial population size.", Input.Validate.REQUIRED);
+            "Initial population size.", Input.Validate.REQUIRED);
+
+    private AdaptableVarianceMultivariateNormalOperator avmnOperator;
 
     public GompertzGrowth() {
         // Example of setting up inputs with default values
-        //            f0Input.setValue(new RealParameter("0.5"), this);
-        //            bInput.setValue(new RealParameter("0.1"), this);
-        //            NInfinityInput.setValue(new RealParameter("1000"), this);
+        // f0Input.setValue(new RealParameter("0.5"), this);
+        // bInput.setValue(new RealParameter("0.1"), this);
+        // N0Input.setValue(new RealParameter("100"), this);
     }
 
     @Override
@@ -44,22 +45,39 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
             bParam.setBounds(0.0, Double.POSITIVE_INFINITY);  // b should be positive for Gompertz growth
         }
 
-//        if (NInfinityInput.get() != null && NInfinityInput.get() instanceof RealParameter) {
-//            RealParameter NInfinityParam = (RealParameter) NInfinityInput.get();
-//            NInfinityParam.setBounds(Math.max(0.0, NInfinityParam.getLower()), NInfinityParam.getUpper());
-//        }
-
         if (N0Input.get() != null && N0Input.get() instanceof RealParameter) {
             RealParameter N0Param = (RealParameter) N0Input.get();
             N0Param.setBounds(Math.max(0.0, N0Param.getLower()), N0Param.getUpper());
         }
 
-        // Compute N0 from f0 and NInfinity if they are not null and are RealParameters
-//        if (f0Input.get() != null && NInfinityInput.get() != null &&
-//                f0Input.get() instanceof RealParameter && NInfinityInput.get() instanceof RealParameter) {
-//            double f0 = ((RealParameter) f0Input.get()).getValue();
-//            double NInfinity = ((RealParameter) NInfinityInput.get()).getValue();
-//        }
+        // Setup AVMN operator with transformations
+        setupAVMNOperator();
+    }
+
+    private void setupAVMNOperator() {
+        avmnOperator = new AdaptableVarianceMultivariateNormalOperator();
+        avmnOperator.setID("AVMNOperator");
+        avmnOperator.setInputValue("beta", 0.05);
+        avmnOperator.setInputValue("burnin", 400);
+        avmnOperator.setInputValue("initial", 800);
+        avmnOperator.setInputValue("weight", 2.0);
+
+        List<Transform> transformations = new ArrayList<>();
+
+        // f0 transformation using Interval
+        Transform.Interval f0Transform = new Transform.Interval();
+        f0Transform.setInputValue("lower", 0.0);
+        f0Transform.setInputValue("upper", 1.0);
+        f0Transform.setParameter((RealParameter) f0Input.get());
+        transformations.add(f0Transform);
+
+        // b transformation using LogTransform
+        Transform.LogTransform bTransform = new Transform.LogTransform();
+        bTransform.setParameter((RealParameter) bInput.get());
+        transformations.add(bTransform);
+
+        avmnOperator.setInputValue("transformations", transformations);
+        avmnOperator.initAndValidate();
     }
 
     public double getNInfinity() {
@@ -74,9 +92,6 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
         return bInput.get().getArrayValue();
     }
 
-//    public double getNInfinity() {
-//        return NInfinityInput.get().getArrayValue();
-//    }
     public double getN0() {
         return N0Input.get().getArrayValue();
     }
@@ -84,9 +99,12 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
     @Override
     public List<String> getParameterIds() {
         List<String> ids = new ArrayList<>();
-        // add f0 and b parameter ids
+        if (f0Input.get() instanceof BEASTInterface)
+            ids.add(((BEASTInterface) f0Input.get()).getID());
+        if (bInput.get() instanceof BEASTInterface)
+            ids.add(((BEASTInterface) bInput.get()).getID());
         if (N0Input.get() instanceof BEASTInterface)
-            ids.add(((BEASTInterface)N0Input.get()).getID());
+            ids.add(((BEASTInterface) N0Input.get()).getID());
         return ids;
     }
 
@@ -97,30 +115,18 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
         double NInfinity = getNInfinity();
         double N0 = getN0();
 
-
-
-
-        double popSize = N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
-
-        return popSize;
+        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
     }
 
     @Override
     public double getIntensity(double t) {
         if (t == 0) return 0;
-        UnivariateFunction function = time -> {
-            double popSize = getPopSize(time);
-            return 1 / Math.max(popSize, 1e-20);
-        };
+        UnivariateFunction function = time -> 1 / Math.max(getPopSize(time), 1e-20);
         IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 1.0e-12, 1.0e-8, 2, 10000);
-        // default intensity if fails
         double intensity = 0;
         try {
-            int maxEval = 100000; // trying maxEval = 100000 to test speed
-            // previous maxEval default = Integer.MAX_VALUE;
-            intensity = integrator.integrate(maxEval, function, 0, t);
+            intensity = integrator.integrate(100000, function, 0, t);
         } catch (TooManyEvaluationsException ex) {
-            // System.err.println("f0 = " + getF0() + ", b=" + getGrowthRateB() + " NInfinity=" + getNInfinity());
             return intensity;
         }
         return intensity;
@@ -133,7 +139,6 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
 
     @Override
     public void init(PrintStream printStream) {
-
     }
 
     @Override
@@ -142,25 +147,19 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
 
     @Override
     public void close(PrintStream printStream) {
-
     }
 
     @Override
     public UpDownOperator getUpDownOperator(Tree tree) {
-
         UpDownOperator upDownOperator = new UpDownOperator();
-
         String idStr = getID() + "Up" + tree.getID() + "DownOperator";
         upDownOperator.setID(idStr);
-
         upDownOperator.setInputValue("scaleFactor", 0.75);
         upDownOperator.setInputValue("weight", 3.0);
-
-        upDownOperator.setInputValue("up", this.f0Input.get());
-        upDownOperator.setInputValue("up", this.bInput.get());
+        upDownOperator.setInputValue("up", f0Input.get());
+        upDownOperator.setInputValue("up", bInput.get());
         upDownOperator.setInputValue("down", tree);
         upDownOperator.initAndValidate();
         return upDownOperator;
-
     }
 }

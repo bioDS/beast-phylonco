@@ -56,15 +56,20 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
 
         treeLikelihood.setInputValue("data", unphasedErrAlignment);
 
+
+
+        //Add this open the ambiguities function
+        treeLikelihood.setInputValue("useAmbiguities", true);
+//        treeLikelihood.setInputValue("useTipLikelihoods", true);
+
+
         treeLikelihood.initAndValidate();
         treeLikelihood.setID(unphasedErrAlignment.getID() + ".treeLikelihood");
 
-        if (context.getBEASTObject(errAligGenerator) instanceof TreeLikelihoodWithError) {
-            BEASTInterface errAlignment = context.getBEASTObject(errAlignmentInput);
-            context.removeBEASTObject(errAlignment);
-            // remove previous treeLikelihood added by GT16ErrorModelToBEAST
-            context.removeBEASTObject(treeLikelihood);
-        }
+        BEASTInterface errAlignment = context.getBEASTObject(errAlignmentInput);
+        context.removeBEASTObject(errAlignment);
+        // remove previous treeLikelihood added by GT16ErrorModelToBEAST
+        context.removeBEASTObject(treeLikelihood);
 
         // logging
         context.addExtraLoggable(treeLikelihood);

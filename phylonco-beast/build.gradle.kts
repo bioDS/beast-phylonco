@@ -20,6 +20,7 @@ dependencies {
         exclude("**/BEAST-app-*.jar")
         exclude("**/*.xml")
     })
+    implementation("org.junit.jupiter:junit-jupiter:5.8.1")
 
     // tests
     testImplementation("junit:junit:4.13.2")

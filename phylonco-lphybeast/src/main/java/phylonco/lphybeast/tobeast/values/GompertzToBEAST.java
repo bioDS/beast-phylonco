@@ -24,6 +24,11 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
         RealParameter bParam = context.getAsRealParameter(gen.getB());
  //       RealParameter NInfinityParam = context.getAsRealParameter(gen.getNInfinity());
         RealParameter N0Param = context.getAsRealParameter(gen.getN0());
+//        RealParameter alphaParam = context.getAsRealParameter(gen.getAlpha());
+//        RealParameter betaParam = context.getAsRealParameter(gen.getBeta());
+
+//        RealParameter alphaParam = context.getAsRealParameter(gen.getAlpha());
+//        RealParameter betaParam = context.getAsRealParameter(gen.getBeta());
 
 
 
@@ -43,30 +48,6 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
         return beastPopFunc;
     }
 
-//    private void addScaleOperators(RealParameter f0, RealParameter b, RealParameter NInfinity, BEASTContext context) {
-//        ScaleOperator f0Scaler = new ScaleOperator();
-//        f0Scaler.setInputValue("parameter", f0);
-//        f0Scaler.setInputValue("scaleFactor", 0.75);
-//        f0Scaler.setInputValue("weight", 0.1);
-//        f0Scaler.initAndValidate();
-//
-//        ScaleOperator bScaler = new ScaleOperator();
-//        bScaler.setInputValue("parameter", b);
-//        bScaler.setInputValue("scaleFactor", 0.75);
-//        bScaler.setInputValue("weight", 0.1);
-//        bScaler.initAndValidate();
-//
-//        ScaleOperator NInfinityScaler = new ScaleOperator();
-//        NInfinityScaler.setInputValue("parameter", NInfinity);
-//        NInfinityScaler.setInputValue("scaleFactor", 0.75);
-//        NInfinityScaler.setInputValue("weight", 0.1);
-//        NInfinityScaler.initAndValidate();
-//
-//        // Assuming context is a facility to add these operators to the model
-//        context.addExtraOperator(f0Scaler);
-//        context.addExtraOperator(bScaler);
-//        context.addExtraOperator(NInfinityScaler);
-//    }
 
 
 
