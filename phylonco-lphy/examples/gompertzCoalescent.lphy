@@ -1,11 +1,11 @@
 data {
-  L = 200;
+  L = 1000;
 }
 model {
   N0 ~ LogNormal(meanlog=8, sdlog=0.5);
-  b ~ LogNormal(meanlog=-0.5, sdlog=0.05);
+  b ~ LogNormal(meanlog=-0.95, sdlog=0.2);
   f0 ~ Beta(alpha=20, beta=7);
   gompertzPopFunc = gompertz(f0=f0, b=b, N0=N0);
-  tree ~ CoalescentPopFunc(n=16, popFunc=gompertzPopFunc);
+  tree ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
   D ~ PhyloCTMC(L=L, Q=jukesCantor(), mu=0.01, tree=tree);
 }
