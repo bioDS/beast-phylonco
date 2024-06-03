@@ -10,9 +10,9 @@ import java.util.List;
 
 @Description("Coalescent intervals for a exponentially growing population.")
 public class ExponentialGrowth extends PopulationFunction.Abstract implements Loggable {
-    final public Input<Function> popSizeParameterInput = new Input<>("popSize",
+    final public Input<Function> popSizeParameterInput = new Input<>("N0",
             "present-day population size (defaults to 1.0). ");
-    final public Input<Function> growthRateParameterInput = new Input<>("growthRate",
+    final public Input<Function> growthRateParameterInput = new Input<>("GrowthRate",
             "Growth rate is the exponent of the exponential growth. " +
                     "A value of zero represents a constant population size, negative values represent " +
                     "decline towards the present, positive numbers represents exponential growth towards " +

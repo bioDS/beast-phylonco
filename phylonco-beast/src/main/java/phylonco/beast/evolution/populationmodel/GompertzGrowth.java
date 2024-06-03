@@ -150,16 +150,29 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
     }
 
     @Override
-    public UpDownOperator getUpDownOperator(Tree tree) {
+    public UpDownOperator getUpDownOperator1(Tree tree) {
         UpDownOperator upDownOperator = new UpDownOperator();
-        String idStr = getID() + "Up" + tree.getID() + "DownOperator";
+        String idStr = getID() + "Up" + tree.getID() + "DownOperator1";
         upDownOperator.setID(idStr);
         upDownOperator.setInputValue("scaleFactor", 0.75);
         upDownOperator.setInputValue("weight", 3.0);
         upDownOperator.setInputValue("up", f0Input.get());
+        upDownOperator.setInputValue("down", tree);
+        upDownOperator.initAndValidate();
+        return upDownOperator;
+    }
+
+    @Override
+    public UpDownOperator getUpDownOperator2(Tree tree) {
+        UpDownOperator upDownOperator = new UpDownOperator();
+        String idStr = getID() + "Up" + tree.getID() + "DownOperator2";
+        upDownOperator.setID(idStr);
+        upDownOperator.setInputValue("scaleFactor", 0.75);
+        upDownOperator.setInputValue("weight", 3.0);
         upDownOperator.setInputValue("up", bInput.get());
         upDownOperator.setInputValue("down", tree);
         upDownOperator.initAndValidate();
         return upDownOperator;
     }
+
 }
