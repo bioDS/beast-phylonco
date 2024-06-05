@@ -7,7 +7,7 @@ model {
   b ~ Normal(mean=0.0555, sd=0.0005);
   nCarryingCapacity ~ Normal(mean=1e13, sd=50.0);
 
-  logisticPopFunc = logistic(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
+  logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
 
   tree ~ CoalescentPopFunc(popFunc=logisticPopFunc, n=16);
 

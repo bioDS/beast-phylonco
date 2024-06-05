@@ -1,13 +1,18 @@
+
+
 data {
-  L = 200;
-
 }
-
 model {
-  GrowthRate ~ Normal(mean=0.055, sd=0.0005);
-  N0 ~ Normal(mean=30, sd=1.0);
-  exponentialPopFunc = exponential1(GrowthRate=GrowthRate, N0=N0);
-  times ~ CoalescentPopFunc(popFunc=exponentialPopFunc, n=16);
-  D ~ PhyloCTMC(tree=times, L=L, Q=jukesCantor());
-  rootAge = times.rootAge();
+π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
+rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+Q = gt16(rates=rates, freq=π);
+GrowthRate ~ LogNormal(meanlog=-0.95, sdlog=0.2);
+N0 ~ LogNormal(meanlog=8, sdlog=0.5);
+exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0);
+ψ ~ CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);
+A ~ PhyloCTMC(L=2000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
+epsilon ~ Beta(alpha=2, beta=999);
+delta ~ Beta(alpha=1.5, beta=4.5);
+E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
+D = unphase(alignment=E);
 }
