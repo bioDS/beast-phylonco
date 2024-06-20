@@ -1,30 +1,27 @@
 package phylonco.lphy.evolution.readcountmodel;
 
+import lphy.base.distribution.Multinomial;
 import lphy.core.model.GenerativeDistribution;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
+import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 
 import java.util.Map;
 
-public class AlphaSimulator implements GenerativeDistribution<Integer[][]>  {
+public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
     private Value<Integer> l;
     private Value<Integer> n;
     private Value<Double> delta;
 
     private RandomVariable<Integer[][]> alpha;
 
-
-
     public static final String lParamName = "l";
     public static final String nParamName = "n";
     public static final String deltaParamName = "delta";
 
-
-
-
-    private AlphaSimulator(
-            @ParameterInfo(name = lParamName, description = "the length of sequencing") Value<Integer> l,
+    public PloidyModel(
+            @ParameterInfo(name = lParamName, description = "the length of sequencing.") Value<Integer> l,
             @ParameterInfo(name = nParamName, description = "the number of cells.") Value<Integer> n,
             @ParameterInfo(name = deltaParamName, description = "allelic dropout error probability.") Value<Double> delta
 
@@ -34,9 +31,12 @@ public class AlphaSimulator implements GenerativeDistribution<Integer[][]>  {
         this.n = n;
         this.delta = delta;
 
-
-
     }
+
+    @GeneratorInfo(
+            name = "Ploidy",
+            description = "Observed ploidy after allelic dropout.")
+
 
     @Override
     public RandomVariable<Integer[][]> sample() {
@@ -46,9 +46,9 @@ public class AlphaSimulator implements GenerativeDistribution<Integer[][]>  {
         Value<Integer> numberA = new Value<>("numberA", 1);
         multinomialAlpha = new Multinomial(numberA, proA);
 
-        Integer[][] alp = new Integer[n.value()][l.value()];
-        for (int i = 0; i < n.value(); i++) {
-            for (int j = 0; j < l.value(); j++) {
+        Integer[][] alp = new Integer[this.n.value()][this.l.value()];
+        for (int i = 0; i < this.n.value(); i++) {
+            for (int j = 0; j < this.l.value(); j++) {
                 Value<Integer[]> alpha1 = multinomialAlpha.sample();
                 if (alpha1.value()[0] == 1) {
                     alp[i][j] = 1;

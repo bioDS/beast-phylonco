@@ -1,6 +1,7 @@
 package phylonco.lphy.evolution.readcountmodel;
 
 import lphy.base.distribution.LogNormal;
+import lphy.base.distribution.Multinomial;
 import lphy.base.distribution.NegativeBinomial;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
@@ -114,8 +115,8 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         Double pG;
         Double pT;
         Integer[][][] readC = new Integer[n][l][4];
-        Integer[][] cov = new Integer[n][l];
-        Integer[][] alp = new Integer[n][l];
+//        Integer[][] cov = new Integer[n][l];
+//        Integer[][] alp = new Integer[n][l];
 //        Double[] proAlpha = {this.delta.value(), 1-this.delta.value()};
 //        Value<Double[]> proA = new Value<>("proA", proAlpha);
 //        Value<Integer> numberA = new Value<>("numberA", 1);
@@ -343,7 +344,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         ReadCount[][] readCountMatrix = new ReadCount[n][l];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < l; j++) {
-                System.out.println("cell = " + j + ", site = " + i);
+                System.out.println("cell = " + i + ", site = " + j);
                 System.out.println("coverage = " + coverage.value()[i][j]);
                 int stateIndex = data.value().getState(i, j);
                 PhasedGenotypeState genotypeState = PhasedGenotype.getCanonicalState(stateIndex);

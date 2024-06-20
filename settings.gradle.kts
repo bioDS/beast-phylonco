@@ -6,6 +6,7 @@ rootProject.name = "beast-phylonco"
 include("phylonco-lphy")
 include("phylonco-beast")
 include("phylonco-lphybeast")
+include("phylonco-lphy-studio")
 
 pluginManagement {
     // the repos to load Gradle plugins

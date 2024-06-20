@@ -1,20 +1,20 @@
 package phylonco.lphy.evolution.readcountmodel;
 
 import lphy.base.distribution.NegativeBinomial;
-import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.GenerativeDistribution;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
+import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 
 import java.util.Map;
 
-public class CoverageSimulator implements GenerativeDistribution<Integer[][]> {
+public class CoverageModel implements GenerativeDistribution<Integer[][]> {
     private NegativeBinomial negativeBinomial;
     private Value<Integer[][]> alpha;
-    private Value<Integer> t;
-    private Value<Integer> v;
-    private Value<Integer[]> s;
+    private Value<Double> t;
+    private Value<Double> v;
+    private Value<Double[]> s;
     private RandomVariable<Integer[][]> coverage;
 
 
@@ -26,11 +26,11 @@ public class CoverageSimulator implements GenerativeDistribution<Integer[][]> {
     public static final String sParamName = "s";
 
 
-    public CoverageSimulator(
+    public CoverageModel(
             @ParameterInfo(name = alphaParamName, description = "alpha, allelic dropout events for each cell at each site.") Value<Integer[][]> alpha,
-            @ParameterInfo(name = tParamName, description = "t") Value<Integer> t,
-            @ParameterInfo(name = vParamName, description = "v") Value<Integer> v,
-            @ParameterInfo(name = sParamName, description = "s") Value<Integer[]> s
+            @ParameterInfo(name = tParamName, description = "t, mean of allelic coverage.") Value<Double> t,
+            @ParameterInfo(name = vParamName, description = "v, variance of allelic coverage.") Value<Double> v,
+            @ParameterInfo(name = sParamName, description = "s, size factor of cell.") Value<Double[]> s
 
             ) {
         super();
@@ -42,6 +42,10 @@ public class CoverageSimulator implements GenerativeDistribution<Integer[][]> {
 
     }
 
+
+    @GeneratorInfo(
+            name = "CoverageModel",
+            description = "")
     @Override
     public RandomVariable<Integer[][]> sample(){
         int n = alpha.value().length;

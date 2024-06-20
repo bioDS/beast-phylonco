@@ -3,7 +3,7 @@ package phylonco.lphy.evolution.readcountmodel;
 
 import lphy.base.distribution.LogNormal;
 import lphy.base.distribution.NegativeBinomial;
-import lphy.base.distribution.Normal;
+import lphy.base.distribution.Multinomial;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.coalescent.Coalescent;
 import lphy.base.evolution.likelihood.PhyloCTMC;

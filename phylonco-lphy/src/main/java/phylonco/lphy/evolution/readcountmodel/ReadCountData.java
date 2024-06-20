@@ -50,17 +50,20 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     @Override
     public String toString() {
-        String result = "";
+        String result = "\n";
         int n = getTaxa().getDimension();;
         int l = nchar();
         for (int i = 0; i < n; i++) {
+            // n taxa
             for (int j = 0; j < l; j++) {
+                // n sites
                 int countA = readCountDataMatrix[i][j].getCount("A");
                 int countC = readCountDataMatrix[i][j].getCount("C");
                 int countG = readCountDataMatrix[i][j].getCount("G");
                 int countT = readCountDataMatrix[i][j].getCount("T");
                 result += String.format("A: %d, C: %d, G: %d, T: %d; \t", countA, countC, countG, countT);
             }
+            result += "\n";
         }
         return result;
     }

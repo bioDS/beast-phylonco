@@ -10,7 +10,7 @@ plugins {
 version = "0.0.1-SNAPSHOT"//-SNAPSHOT"
 
 dependencies {
-    implementation(project(":popsizefunc-lphy"))
+    implementation(project(":phylonco-lphy"))
 
     api("io.github.linguaphylo:lphy-studio:1.5.1-SNAPSHOT") //-SNAPSHOT
 
@@ -51,7 +51,7 @@ tasks.jar {
         // shared attr in the root build
         attributes(
             "Main-Class" to maincls,
-            "Implementation-Title" to "Pop-size function",
+            "Implementation-Title" to "Phylonco Lphy Studio",
             "Implementation-Vendor" to developers,
         )
     }
@@ -63,7 +63,7 @@ publishing {
         create<MavenPublication>(project.name) {
             artifactId = project.base.archivesName.get()
             pom {
-                description.set("The LPhy extension including pop-size functions.")
+                description.set("The LPhy Studio extension.")
                 developers {
                     developer {
                         name.set(developers)

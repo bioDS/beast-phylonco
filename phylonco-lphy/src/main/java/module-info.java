@@ -4,6 +4,7 @@
 module phylonco.lphy {
     requires transitive lphy.core;
     requires transitive lphy.base;
+    requires jdk.jfr;
 
     exports phylonco.lphy.evolution.alignment;
     exports phylonco.lphy.evolution.datatype;
