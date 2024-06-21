@@ -3,6 +3,15 @@
 
 rootProject.name = "beast-phylonco"
 
+//val lphyProject = "../linguaPhylo"
+//includeBuild(lphyProject)
+//include("lphy")
+//project(":lphy").projectDir = file("$lphyProject/lphy")
+//include("lphy-base")
+//project(":lphy-base").projectDir = file("$lphyProject/lphy-base")
+//include("lphy-studio")
+//project(":lphy-studio").projectDir = file("$lphyProject/lphy-studio")
+
 include("phylonco-lphy")
 include("phylonco-beast")
 include("phylonco-lphybeast")
