@@ -5,7 +5,6 @@ import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalO
 import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
 import beast.base.inference.operator.UpDownOperator;
-import beast.base.inference.operator.kernel.Transform;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
@@ -16,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Description("Coalescent intervals for a gompertz growing population.")
-public class GompertzGrowth extends PopulationFunction.Abstract implements Loggable, PopFuncWithUpDownOp {
+public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Loggable, PopFuncWithUpDownOp {
     final public Input<Function> f0Input = new Input<>("f0",
             "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
     final public Input<Function> bInput = new Input<>("b",
@@ -26,7 +25,7 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
 
     private AdaptableVarianceMultivariateNormalOperator avmnOperator;
 
-    public GompertzGrowth() {
+    public GompertzGrowth_f0() {
         // Example of setting up inputs with default values
         // f0Input.setValue(new RealParameter("0.5"), this);
         // bInput.setValue(new RealParameter("0.1"), this);
@@ -51,34 +50,34 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
         }
 
         // Setup AVMN operator with transformations
-        setupAVMNOperator();
+//        setupAVMNOperator();
     }
 
-    private void setupAVMNOperator() {
-        avmnOperator = new AdaptableVarianceMultivariateNormalOperator();
-        avmnOperator.setID("AVMNOperator");
-        avmnOperator.setInputValue("beta", 0.05);
-        avmnOperator.setInputValue("burnin", 400);
-        avmnOperator.setInputValue("initial", 800);
-        avmnOperator.setInputValue("weight", 2.0);
-
-        List<Transform> transformations = new ArrayList<>();
-
-        // f0 transformation using Interval
-        Transform.Interval f0Transform = new Transform.Interval();
-        f0Transform.setInputValue("lower", 0.0);
-        f0Transform.setInputValue("upper", 1.0);
-        f0Transform.setParameter((RealParameter) f0Input.get());
-        transformations.add(f0Transform);
-
-        // b transformation using LogTransform
-        Transform.LogTransform bTransform = new Transform.LogTransform();
-        bTransform.setParameter((RealParameter) bInput.get());
-        transformations.add(bTransform);
-
-        avmnOperator.setInputValue("transformations", transformations);
-        avmnOperator.initAndValidate();
-    }
+//    private void setupAVMNOperator() {
+//        avmnOperator = new AdaptableVarianceMultivariateNormalOperator();
+//        avmnOperator.setID("AVMNOperator");
+//        avmnOperator.setInputValue("beta", 0.05);
+//        avmnOperator.setInputValue("burnin", 400);
+//        avmnOperator.setInputValue("initial", 800);
+//        avmnOperator.setInputValue("weight", 2.0);
+//
+//        List<Transform> transformations = new ArrayList<>();
+//
+//        // f0 transformation using Interval
+//        Transform.Interval f0Transform = new Transform.Interval();
+//        f0Transform.setInputValue("lower", 0.0);
+//        f0Transform.setInputValue("upper", 1.0);
+//        f0Transform.setParameter((RealParameter) f0Input.get());
+//        transformations.add(f0Transform);
+//
+//        // b transformation using LogTransform
+//        Transform.LogTransform bTransform = new Transform.LogTransform();
+//        bTransform.setParameter((RealParameter) bInput.get());
+//        transformations.add(bTransform);
+//
+//        avmnOperator.setInputValue("transformations", transformations);
+//        avmnOperator.initAndValidate();
+//    }
 
     public double getNInfinity() {
         return getN0() / getF0();
@@ -108,6 +107,8 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
         return ids;
     }
 
+
+
     @Override
     public double getPopSize(double t) {
         double f0 = getF0();
@@ -115,8 +116,13 @@ public class GompertzGrowth extends PopulationFunction.Abstract implements Logga
         double NInfinity = getNInfinity();
         double N0 = getN0();
 
-        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
-    }
+
+        return N0 * Math.exp(Math.log( 1/f0 ) * (1 - Math.exp(b * t)));
+
+        }
+
+//        return N0 * Math.exp(Math.log(NInfinity / N0) * (1 - Math.exp(b * t)));
+
 
     @Override
     public double getIntensity(double t) {

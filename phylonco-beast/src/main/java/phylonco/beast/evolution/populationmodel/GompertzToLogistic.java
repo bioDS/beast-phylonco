@@ -1,5 +1,7 @@
 package phylonco.beast.evolution.populationmodel;
 
+
+
 public class GompertzToLogistic {
     public static double computeT50(double NInfinity, double N0, double b) {
         if (N0 >= NInfinity || b <= 0) {
@@ -12,10 +14,10 @@ public class GompertzToLogistic {
     }
 
     public static void main(String[] args) {
-        double f0Min = 0.5;
-        double f0Max = 0.7;
-        double bMin = 0.3;
-        double bMax = 0.5;
+        double f0Min = 0.9033885;
+        double f0Max = 0.9977269;
+        double bMin = 0.0962412;
+        double bMax = 0.1361323;
         double step = 0.01;
         double N0 = 2000000000000000.0;
 
@@ -36,6 +38,7 @@ public class GompertzToLogistic {
             }
         }
 
+        // 检查边界值
         double[] f0Edges = {f0Min, f0Max};
         double[] bEdges = {bMin, bMax};
         for (double f0 : f0Edges) {

@@ -1,22 +1,21 @@
 package phylonco.lphybeast.tobeast.values;
 
 import beast.base.inference.parameter.RealParameter;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulation;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction;
+import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction_f0;
+import lphy.base.evolution.coalescent.populationmodel.GompertzPopulation_f0;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
 import lphybeast.tobeast.values.ValueToParameter;
-import phylonco.beast.evolution.populationmodel.GompertzGrowth;
+import phylonco.beast.evolution.populationmodel.GompertzGrowth_f0;
 
+public class Gompertz_f0ToBEAST implements ValueToBEAST<GompertzPopulation_f0, GompertzGrowth_f0> {
 
-public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,GompertzGrowth> {
+    public GompertzGrowth_f0 valueToBEAST(Value<GompertzPopulation_f0> lphyPopFuncVal, BEASTContext context) {
 
-    public GompertzGrowth valueToBEAST(Value<GompertzPopulation> lphyPopFuncVal, BEASTContext context) {
+        GompertzGrowth_f0 beastPopFunc;
 
-        GompertzGrowth beastPopFunc;
-
-        GompertzPopulationFunction gen = (GompertzPopulationFunction) lphyPopFuncVal.getGenerator();
+        GompertzPopulationFunction_f0 gen = (GompertzPopulationFunction_f0) lphyPopFuncVal.getGenerator();
 
         RealParameter f0Param = context.getAsRealParameter(gen.getF0());
 
@@ -32,7 +31,7 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
 
 
 
-        beastPopFunc = new GompertzGrowth();
+        beastPopFunc = new GompertzGrowth_f0();
 
 
 //        beastPopFunc.setInputValue("N0", N0Param);
@@ -52,11 +51,11 @@ public class GompertzToBEAST implements ValueToBEAST<GompertzPopulation,Gompertz
 
 
     public Class getValueClass() {
-        return GompertzPopulation.class;
+        return GompertzPopulation_f0.class;
     }
 
-    public Class<GompertzGrowth> getBEASTClass() {
-        return GompertzGrowth.class;
+    public Class<GompertzGrowth_f0> getBEASTClass() {
+        return GompertzGrowth_f0.class;
     }
 
 }

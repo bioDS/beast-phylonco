@@ -125,7 +125,7 @@
                     <treeIntervals spec='beast.base.evolution.tree.TreeIntervals' id='TreeIntervals'>
                         <tree idref="tree"/>
                     </treeIntervals>
-                    <populationModel id="gompertzPopulationModel" spec="phylonco.beast.evolution.populationmodel.GompertzGrowth">
+                    <populationModel id="gompertzPopulationModel" spec="phylonco.beast.evolution.populationmodel.GompertzGrowth_f0">
                         <parameter name="f0" idref="f0"/>
                         <parameter name="NInfinity" idref="NInfinity"/>
                         <parameter name="b" idref="b"/>

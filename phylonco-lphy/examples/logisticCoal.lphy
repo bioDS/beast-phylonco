@@ -1,15 +1,26 @@
 
 data {
-  L = 200;
 }
 model {
-  t50 ~ Normal(mean=40.0, sd=1.0);
-  b ~ Normal(mean=0.0555, sd=0.0005);
-  nCarryingCapacity ~ Normal(mean=1e13, sd=50.0);
+π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
+rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+Q = gt16(rates=rates, freq=π);
+//t50 ~ Normal(mean=3.9545, sd=1.445417);
+//b ~ LogNormal(meanlog=-0.95, sdlog=0.2);
+//nCarryingCapacity ~ LogNormal(meanlog=8.331699, sdlog=0.5155791);
 
-  logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
+t50 ~ Normal(mean=0.05, sd=0.02);
+b ~ LogNormal(meanlog=3, sdlog=0.5);
+nCarryingCapacity ~ LogNormal(meanlog=2, sdlog=0.3);
 
-  tree ~ CoalescentPopFunc(popFunc=logisticPopFunc, n=16);
 
-  D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor());
+
+logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
+ψ ~ CoalescentPopFunc(n=40, popFunc=logisticPopFunc);
+A ~ PhyloCTMC(L=2000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
+epsilon ~ Beta(alpha=2, beta=999);
+delta ~ Beta(alpha=1.5, beta=4.5);
+E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
+D = unphase(alignment=E);
+height = ψ.rootAge();
 }
