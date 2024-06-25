@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../LPhyBeast/LPhyBeast.iml" filepath="$PROJECT_DIR$/../LPhyBeast/LPhyBeast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/beast-phylonco.iml" filepath="$PROJECT_DIR$/beast-phylonco.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../linguaPhylo/linguaPhylo.iml" filepath="$PROJECT_DIR$/../linguaPhylo/linguaPhylo.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../linguaPhylo/lphy/lphy.iml" filepath="$PROJECT_DIR$/../linguaPhylo/lphy/lphy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../linguaPhylo/lphy-base/lphy-base.iml" filepath="$PROJECT_DIR$/../linguaPhylo/lphy-base/lphy-base.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../linguaPhylo/lphy-studio/lphy-studio.iml" filepath="$PROJECT_DIR$/../linguaPhylo/lphy-studio/lphy-studio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../LPhyBeast/lphybeast/lphybeast.iml" filepath="$PROJECT_DIR$/../LPhyBeast/lphybeast/lphybeast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phylonco-beast/phylonco-beast.iml" filepath="$PROJECT_DIR$/phylonco-beast/phylonco-beast.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phylonco-lphy/phylonco-lphy.iml" filepath="$PROJECT_DIR$/phylonco-lphy/phylonco-lphy.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phylonco-lphy-studio/phylonco-lphy-studio.iml" filepath="$PROJECT_DIR$/phylonco-lphy-studio/phylonco-lphy-studio.iml" />
+      <module fileurl="file://$PROJECT_DIR$/phylonco-lphybeast/phylonco-lphybeast.iml" filepath="$PROJECT_DIR$/phylonco-lphybeast/phylonco-lphybeast.iml" />
+    </modules>
+  </component>
+</project>
