@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="junit-test4-lib">
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/phylonco-lphy/lib" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <jarDirectory url="file://$PROJECT_DIR$/phylonco-lphy/lib" recursive="false" />
+  </library>
+</component>
