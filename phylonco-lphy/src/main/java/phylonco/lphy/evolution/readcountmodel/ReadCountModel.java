@@ -183,7 +183,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     }else {
-                        pA = 0.5 - eps / 3; pC = 0.5 - eps / 3; pG = eps / 3; pT = eps / 3;
+                        pA = 0.5 - eps / 6; pC = 0.5 - eps / 6; pG = eps / 6; pT = eps / 6;
                         proMatrix = new Double[]{pA, pC, pG, pT};
                         Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                         multinomial.setParam("p", proMat);
@@ -207,7 +207,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     }else {
-                    pA = 0.5-eps/3; pC = eps/3; pG = 0.5-eps/3; pT = eps/3;
+                    pA = 0.5-eps/6; pC = eps/6; pG = 0.5-eps/6; pT = eps/6;
                     proMatrix = new Double[]{pA, pC, pG, pT};
                     Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                     multinomial.setParam("p", proMat);
@@ -231,7 +231,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     }else {
-                        pA = 0.5 - eps / 3; pC = eps / 3; pG = eps / 3; pT = 0.5 - eps / 3;
+                        pA = 0.5 - eps / 6; pC = eps / 6; pG = eps / 6; pT = 0.5 - eps / 6;
                         proMatrix = new Double[]{pA, pC, pG, pT};
                         Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                         multinomial.setParam("p", proMat);
@@ -263,7 +263,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     } else {
-                        pA = eps / 3; pC = 0.5 - eps / 3; pG = 0.5 - eps / 3; pT = eps / 3;
+                        pA = eps / 6; pC = 0.5 - eps / 6; pG = 0.5 - eps / 6; pT = eps / 6;
                         proMatrix = new Double[]{pA, pC, pG, pT};
                         Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                         multinomial.setParam("p", proMat);
@@ -287,7 +287,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     } else {
-                        pA = eps / 3; pC = 0.5 - eps / 3; pG = eps / 3; pT = 0.5 - eps / 3;
+                        pA = eps / 6; pC = 0.5 - eps / 6; pG = eps / 6; pT = 0.5 - eps / 6;
                         proMatrix = new Double[]{pA, pC, pG, pT};
                         Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                         multinomial.setParam("p", proMat);
@@ -320,7 +320,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = multinomial.sample().value();
                         }
                     }else {
-                        pA = eps / 3; pC = eps / 3; pG = 0.5 - eps / 3; pT = 0.5 - eps / 3;
+                        pA = eps / 6; pC = eps / 6; pG = 0.5 - eps / 6; pT = 0.5 - eps / 6;
                         proMatrix = new Double[]{pA, pC, pG, pT};
                         Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
                         multinomial.setParam("p", proMat);
