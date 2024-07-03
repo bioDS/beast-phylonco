@@ -4,10 +4,7 @@ import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.evolution.branchrate.LocalClock;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
-import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulationFunction;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction_f0;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulationFunction_t50;
-import lphy.base.evolution.coalescent.populationmodel.LogisticPopulationFunction;
+import lphy.base.evolution.coalescent.populationmodel.*;
 import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
@@ -22,10 +19,7 @@ import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
 import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
 import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
-import phylonco.lphybeast.tobeast.values.ExponentialToBEAST;
-import phylonco.lphybeast.tobeast.values.Gompertz_f0ToBEAST;
-import phylonco.lphybeast.tobeast.values.Gompertz_t50ToBEAST;
-import phylonco.lphybeast.tobeast.values.LogisticToBEAST;
+import phylonco.lphybeast.tobeast.values.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +39,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
                 //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class, Gompertz_t50ToBEAST.class
+                Gompertz_f0ToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class, Gompertz_t50ToBEAST.class, ConstantToBEAST.class
         );
     }
 
@@ -71,7 +65,7 @@ public class LBPhylonco implements LPhyBEASTExt {
                 HaploidAlignment.class,
                 LocalClock.class, //TODO
                 PopulationFunctionCoalescent.class,
-                GompertzPopulationFunction_f0.class, GompertzPopulationFunction_t50.class, ExponentialPopulationFunction.class, LogisticPopulationFunction.class);
+                ConstantPopulationFunction.class, GompertzPopulationFunction_f0.class, GompertzPopulationFunction_t50.class, ExponentialPopulationFunction.class, LogisticPopulationFunction.class);
     }
 
     @Override

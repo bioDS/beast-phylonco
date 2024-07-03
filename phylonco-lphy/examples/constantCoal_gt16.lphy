@@ -6,10 +6,9 @@ model {
 π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(rates=rates, freq=π);
-GrowthRate ~ LogNormal(meanlog=2, sdlog=0.5);
 N0 ~ LogNormal(meanlog=5, sdlog=0.3);
-exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0);
-ψ ~ CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);
+constantPopFunc = constantPopFunc(N0=N0);
+ψ ~ CoalescentPopFunc(n=40, popFunc=constantPopFunc);
 A ~ PhyloCTMC(L=2000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
 epsilon ~ Beta(alpha=2, beta=999);
 delta ~ Beta(alpha=1.5, beta=4.5);

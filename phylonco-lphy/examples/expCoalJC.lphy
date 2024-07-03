@@ -1,0 +1,9 @@
+
+model {
+GrowthRate ~ LogNormal(meanlog=2, sdlog=0.5);
+N0 ~ LogNormal(meanlog=5, sdlog=0.3);
+exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0);
+tree ~CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);
+D ~ PhyloCTMC(L=2000, Q=jukesCantor(),mu=0.01, tree=tree);
+//height = tree.rootAge();
+}

@@ -34,6 +34,7 @@
         <provider classname="phylonco.beast.evolution.populationmodel.ExponentialGrowth"/>
         <provider classname="phylonco.beast.evolution.populationmodel.LogisticGrowth"/>
         <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_t50"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.ConstantGrowth"/>
 
     </service>
 
