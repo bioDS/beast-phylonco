@@ -20,7 +20,6 @@ models = [constantPopFunc, exponentialPopFunc, gompertzPopFunc, logisticPopFunc]
 I ~ UniformDiscrete(lower=0, upper=3);
 SVSmodel = stochasticVariableSelection(indicator=I, models=models);
 
-
 π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(rates=rates, freq=π);
