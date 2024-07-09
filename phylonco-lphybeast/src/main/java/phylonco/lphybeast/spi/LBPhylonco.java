@@ -12,7 +12,6 @@ import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
-import lphybeast.tobeast.generators.CalibratedYuleToBeast;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
@@ -48,7 +47,7 @@ public class LBPhylonco implements LPhyBEASTExt {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
                 PopFuncCoalescentToBEAST.class,
-                LocalClockToBeast.class, CalibratedYuleToBeast.class//, GompertzToBEAST.class
+                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
         );
     }
