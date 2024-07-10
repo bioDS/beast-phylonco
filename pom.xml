@@ -21,6 +21,7 @@
         <module>../linguaPhylo</module>
         <module>../linguaPhylo/lphy</module>
         <module>../linguaPhylo/lphy-base</module>
+        <module>../LPhyBeast/</module>
         <module>../LPhyBeast/lphybeast</module>
         <module>phylonco-beast</module>
         <module>phylonco-lphy</module>
