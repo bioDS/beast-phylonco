@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/lblauncher/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/lblauncher/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/lphybeast/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/lphybeast/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../LPhyBeast/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-beast/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-beast/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphy-studio/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphy-studio/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphy/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphy/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphybeast/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/phylonco-lphybeast/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy-base/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy-base/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy-studio/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy-studio/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/lphy/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/../linguaPhylo/src/main/resources" charset="UTF-8" />
+  </component>
+</project>
