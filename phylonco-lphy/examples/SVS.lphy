@@ -15,9 +15,9 @@ b_log ~ LogNormal(meanlog=2, sdlog=0.5);
 Ninf_log ~ LogNormal(meanlog=5, sdlog=0.3);
 logisticPopFunc = logisticPopFunc(t50=t50_log, nCarryingCapacity=Ninf_log, b=b_log);
 
-models = [constantPopFunc, exponentialPopFunc, gompertzPopFunc, logisticPopFunc];
+models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc];
 
-I ~ UniformDiscrete(lower=0, upper=3);
+I ~ UniformDiscrete(lower=0, upper=length(models)-1);
 SVSmodel = stochasticVariableSelection(indicator=I, models=models);
 
 π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);

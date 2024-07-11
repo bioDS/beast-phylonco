@@ -59,7 +59,7 @@ public class PopFuncCoalescentToBEAST implements
         beastCoalescent.initAndValidate();
 
 
-//        AdaptableVarianceMultivariateNormalOperator avmnOperator = new AdaptableVarianceMultivariateNormalOperator();
+        //        AdaptableVarianceMultivariateNormalOperator avmnOperator = new AdaptableVarianceMultivariateNormalOperator();
         ////        avmnOperator.setID("AVMNOperator");
         ////        avmnOperator.setInputValue("beta", 0.05);
         ////        avmnOperator.setInputValue("burnin", 400);

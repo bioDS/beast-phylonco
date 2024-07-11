@@ -10,5 +10,6 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="phylonco-lphy" exported="" />
     <orderEntry type="module" module-name="phylonco-beast" exported="" />
+    <orderEntry type="module" module-name="lphy-base" />
   </component>
 </module>

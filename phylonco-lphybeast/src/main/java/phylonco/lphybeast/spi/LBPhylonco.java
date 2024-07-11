@@ -2,9 +2,11 @@ package phylonco.lphybeast.spi;
 
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
+import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.branchrate.LocalClock;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.base.evolution.coalescent.populationmodel.*;
+import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
 import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
@@ -39,7 +41,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
                 //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class, Gompertz_t50ToBEAST.class, ConstantToBEAST.class
+                Gompertz_f0ToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class, Gompertz_t50ToBEAST.class, ConstantToBEAST.class, SVSToBEAST.class
         );
     }
 
@@ -65,12 +67,19 @@ public class LBPhylonco implements LPhyBEASTExt {
                 HaploidAlignment.class,
                 LocalClock.class, //TODO
                 PopulationFunctionCoalescent.class,
-                ConstantPopulationFunction.class, GompertzPopulationFunction_f0.class, GompertzPopulationFunction_t50.class, ExponentialPopulationFunction.class, LogisticPopulationFunction.class);
+                SVSFunction.class,
+                GompertzPopulationFunction_f0.class,
+                GompertzPopulationFunction_t50.class,
+                ExponentialPopulationFunction.class,
+                LogisticPopulationFunction.class,
+                ConstantPopulationFunction.class,
+                UniformDiscrete.class);
     }
 
     @Override
     public List<Class> getExcludedValueType() {
-        return Arrays.asList(TimeTreeNode.class);
+        return Arrays.asList(TimeTreeNode.class,
+                SVSPopulationFunction.class);
     }
 
 }
