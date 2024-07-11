@@ -6,6 +6,10 @@ import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.branchrate.LocalClock;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.base.evolution.coalescent.populationmodel.*;
+import lphy.base.evolution.tree.*;
+import lphy.base.function.Difference;
+import lphy.base.function.Union;
+import lphy.base.function.io.ReadTrees;
 import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
 import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.Generator;
@@ -17,10 +21,7 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
-import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
-import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
-import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
-import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
+import phylonco.lphybeast.tobeast.generators.*;
 import phylonco.lphybeast.tobeast.values.*;
 
 import java.util.Arrays;
@@ -49,7 +50,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class//, GompertzToBEAST.class
+                PopFuncCoalescentToBEAST.class
+//                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
         );
     }
@@ -64,8 +66,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends Generator>> getExcludedGenerator() {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
-                HaploidAlignment.class,
-                LocalClock.class, //TODO
+                HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
+                SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 PopulationFunctionCoalescent.class,
                 SVSFunction.class,
                 GompertzPopulationFunction_f0.class,

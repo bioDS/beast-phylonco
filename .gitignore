@@ -10,7 +10,7 @@ build
 tmp/
 
 # idea directory
-.idea
+/.idea/
 
 # gradle directory
 .gradle
