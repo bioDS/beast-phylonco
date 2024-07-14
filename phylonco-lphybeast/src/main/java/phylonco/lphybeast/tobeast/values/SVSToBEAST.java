@@ -2,51 +2,42 @@ package phylonco.lphybeast.tobeast.values;
 
 import beast.base.inference.parameter.RealParameter;
 import lphy.base.evolution.coalescent.PopulationFunction;
-import lphy.base.evolution.coalescent.populationmodel.SVS;
 import lphy.base.evolution.coalescent.populationmodel.SVSFunction;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
-import lphybeast.tobeast.values.ValueToParameter;
 import phylonco.beast.evolution.populationmodel.StochasticVariableSelection;
 
-public class SVSToBEAST implements ValueToBEAST<SVS, StochasticVariableSelection> {
+public class SVSToBEAST implements ValueToBEAST<SVSFunction, StochasticVariableSelection> {
 
     @Override
-    public StochasticVariableSelection valueToBEAST(Value<SVS> lphyPopFuncVal, BEASTContext context) {
-
-        StochasticVariableSelection SVSPopFunc;
+    public StochasticVariableSelection valueToBEAST(Value<SVSFunction> lphyPopFuncVal, BEASTContext context) {
 
         SVSFunction gen = (SVSFunction) lphyPopFuncVal.getGenerator();
 
         // Get the indicator and models
         RealParameter indicatorParam = context.getAsRealParameter(gen.getIndicator());
-        Value<PopulationFunction[]> modelsValue = gen.getModels();
-        PopulationFunction[] modelsArray = modelsValue.value();
+        PopulationFunction[] modelsArray = gen.getModels().value();
 
         // Store the converted models
         beast.base.evolution.tree.coalescent.PopulationFunction[] modelFuncs = new beast.base.evolution.tree.coalescent.PopulationFunction[modelsArray.length];
 
-        for (int i =0; i < modelsArray.length; i++) {
-            modelFuncs[i] = (beast.base.evolution.tree.coalescent.PopulationFunction)context.getBEASTObject((Value<PopulationFunction>)modelsArray[i]);
+        for (int i = 0; i < modelsArray.length; i++) {
+            modelFuncs[i] = (beast.base.evolution.tree.coalescent.PopulationFunction) context.getBEASTObject(new Value<>(modelsArray[i], gen));
         }
 
         // Create and return the StochasticVariableSelection instance with the converted models
-        SVSPopFunc = new StochasticVariableSelection();
-        SVSPopFunc.setInputValue("indicator", indicatorParam);
-        SVSPopFunc.setInputValue("models", modelFuncs);
-        SVSPopFunc.initAndValidate();
+        StochasticVariableSelection stochasticGrowth = new StochasticVariableSelection();
+        stochasticGrowth.setInputValue("indicator", indicatorParam);
+        stochasticGrowth.setInputValue("models", modelFuncs);
+        stochasticGrowth.initAndValidate();
 
-        ValueToParameter.setID(SVSPopFunc, lphyPopFuncVal);
-
-        return SVSPopFunc;
+        return stochasticGrowth;
     }
 
-
-
     @Override
-    public Class getValueClass() {
-        return SVS.class;
+    public Class<SVSFunction> getValueClass() {
+        return SVSFunction.class;
     }
 
     @Override

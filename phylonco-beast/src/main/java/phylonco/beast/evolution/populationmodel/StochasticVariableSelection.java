@@ -25,10 +25,14 @@ public class StochasticVariableSelection extends PopulationFunction.Abstract imp
         PopulationFunction[] models = modelsInput.get();
 
         if (indicator < 0 || indicator >= models.length) {
-            throw new IllegalArgumentException("Invalid indicator value");
+            throw new IllegalArgumentException("Invalid indicator value: " + indicator);
         }
 
         selectedModel = models[indicator];
+
+        if (selectedModel == null) {
+            throw new IllegalArgumentException("Selected model is null. Indicator: " + indicator);
+        }
     }
 
     @Override
@@ -40,11 +44,6 @@ public class StochasticVariableSelection extends PopulationFunction.Abstract imp
     public double getIntensity(double t) {
         return selectedModel.getIntensity(t);
     }
-
-    //    @Override
-    //    public double getIntegral(double start, double finish) {
-    //        return selectedModel.getIntegral(start, finish);
-    //    }
 
     @Override
     public double getInverseIntensity(double x) {
@@ -62,17 +61,11 @@ public class StochasticVariableSelection extends PopulationFunction.Abstract imp
     }
 
     @Override
-    public void init(PrintStream out) {
-
-    }
+    public void init(PrintStream out) {}
 
     @Override
-    public void log(long sample, PrintStream out) {
-
-    }
+    public void log(long sample, PrintStream out) {}
 
     @Override
-    public void close(PrintStream out) {
-
-    }
+    public void close(PrintStream out) {}
 }

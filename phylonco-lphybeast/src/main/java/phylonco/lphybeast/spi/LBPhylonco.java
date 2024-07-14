@@ -3,15 +3,12 @@ package phylonco.lphybeast.spi;
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.distribution.UniformDiscrete;
-import lphy.base.evolution.branchrate.LocalClock;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
 import lphy.base.evolution.coalescent.populationmodel.*;
 import lphy.base.evolution.tree.*;
 import lphy.base.function.Difference;
 import lphy.base.function.Union;
 import lphy.base.function.io.ReadTrees;
-import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
-import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
@@ -21,7 +18,10 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
-import phylonco.lphybeast.tobeast.generators.*;
+import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
+import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
+import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
+import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
 import phylonco.lphybeast.tobeast.values.*;
 
 import java.util.Arrays;
@@ -42,7 +42,12 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
                 //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class , ExponentialToBEAST.class, LogisticToBEAST.class, Gompertz_t50ToBEAST.class, ConstantToBEAST.class, SVSToBEAST.class
+                Gompertz_f0ToBEAST.class ,
+                ExponentialToBEAST.class,
+                LogisticToBEAST.class,
+                Gompertz_t50ToBEAST.class,
+                ConstantToBEAST.class,
+                SVSToBEAST.class
         );
     }
 
