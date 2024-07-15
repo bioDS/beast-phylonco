@@ -3,20 +3,59 @@
     <parent>
         <groupId>io.github.linguaphylo</groupId>
         <artifactId>beast-phylonco</artifactId>
-        <version>1.2.0-SNAPSHOT</version>
+        <version>${revision}</version>
     </parent>
 
-<!--    <groupId>io.github.linguaphylo</groupId>-->
     <artifactId>phylonco-beast</artifactId>
-<!--    <version>1.6.0-SNAPSHOT</version>-->
+
+    <properties>
+        <beastVersion>2.7.6</beastVersion>
+    </properties>
 
     <dependencies>
+<!--        <dependency>-->
+<!--            <groupId>io.github.linguaphylo</groupId>-->
+<!--            <artifactId>lphybeast</artifactId>-->
+<!--            <version>1.2.0-SNAPSHOT</version>-->
+<!--        </dependency>-->
+
         <dependency>
-            <groupId>io.github.linguaphylo</groupId>
-            <artifactId>lphybeast</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <groupId>beast2</groupId>
+            <artifactId>beast-base</artifactId>
+            <version>${beastVersion}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/BEAST.base-${beastVersion}.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>beast-app</artifactId>
+            <version>${beastVersion}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/BEAST.app-${beastVersion}.jar</systemPath>
+        </dependency>
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>beast-launcher</artifactId>
+            <version>${beastVersion}</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/launcher-${beastVersion}.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>beast-labs</artifactId>
+            <version>2.0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/BEASTlabs.v2.0.2.jar</systemPath>
+        </dependency>
+
+        <dependency>
+            <groupId>java1.8</groupId>
+            <artifactId>nashorn</artifactId>
+            <version>1.8</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/nashorn.jar</systemPath>
+        </dependency>
     </dependencies>
 
 

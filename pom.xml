@@ -1,29 +1,37 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<modelVersion>4.0.0</modelVersion>
+    <!-- not working because of beast2 jars -->
+<!--    <parent>-->
+<!--        <groupId>io.github.linguaphylo</groupId>-->
+<!--        <artifactId>lphybeast</artifactId>-->
+<!--        <version>1.2.0-SNAPSHOT</version>-->
+<!--    </parent>-->
 
     <groupId>io.github.linguaphylo</groupId>
     <artifactId>beast-phylonco</artifactId>
-    <version>1.2.0-SNAPSHOT</version>
+    <version>${revision}</version>
     <packaging>pom</packaging>
 
     <name>beast-phylonco</name>
 
     <properties>
+        <!-- https://maven.apache.org/maven-ci-friendly.html -->
+        <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <lphyVersion>1.6.0-SNAPSHOT</lphyVersion>
+<!--        <lphyVersion>1.6.0-SNAPSHOT</lphyVersion>-->
     </properties>
 
     <modules>
         <module>../linguaPhylo</module>
-        <module>../linguaPhylo/lphy</module>
-        <module>../linguaPhylo/lphy-base</module>
-        <module>../linguaPhylo/lphy-studio</module>
+        <!-- <module>../linguaPhylo/lphy</module>-->
+        <!-- <module>../linguaPhylo/lphy-base</module>-->
+        <!-- <module>../linguaPhylo/lphy-studio</module>-->
         <module>../LPhyBeast/</module>
-        <module>../LPhyBeast/lphybeast</module>
+<!--        <module>../LPhyBeast/lphybeast</module>-->
         <module>phylonco-beast</module>
         <module>phylonco-lphy</module>
         <module>phylonco-lphy-studio</module>
@@ -42,20 +50,34 @@
         </pluginManagement>
     </build>
 
-    <dependencies>
-        <dependency>
-            <groupId>io.github.linguaphylo</groupId>
-            <artifactId>lphy-base</artifactId>
-            <version>${lphyVersion}</version>
-        </dependency>
+<!--    <dependencyManagement>-->
+<!--        <dependencies>-->
+<!--            <dependency>-->
+<!--                <groupId>io.github.linguaphylo</groupId>-->
+<!--                <artifactId>lphy-base</artifactId>-->
+<!--                <version>1.6.0-SNAPSHOT</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.github.linguaphylo</groupId>-->
+<!--                <artifactId>lphy-studio</artifactId>-->
+<!--                <version>1.6.0-SNAPSHOT</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.github.linguaphylo</groupId>-->
+<!--                <artifactId>lphybeast</artifactId>-->
+<!--                <version>1.2.0-SNAPSHOT</version>-->
+<!--            </dependency>-->
+<!--        </dependencies>-->
+<!--    </dependencyManagement>-->
 
+    <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>5.9.2</version>
             <scope>test</scope>
         </dependency>
-<!-- why junit 4 ?-->
+        <!-- why junit 4 ?-->
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
@@ -63,5 +85,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
 </project>
