@@ -47,7 +47,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 LogisticToBEAST.class,
                 Gompertz_t50ToBEAST.class,
                 ConstantToBEAST.class,
-                SVSToBEAST.class
+                SVSToBEAST.class,
+                SVSPopulationFunctionToBEAST.class
         );
     }
 
