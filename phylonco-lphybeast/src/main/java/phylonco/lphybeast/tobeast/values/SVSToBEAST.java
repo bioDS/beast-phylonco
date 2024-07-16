@@ -23,7 +23,7 @@ public class SVSToBEAST implements ValueToBEAST<SVSFunction, StochasticVariableS
         beast.base.evolution.tree.coalescent.PopulationFunction[] modelFuncs = new beast.base.evolution.tree.coalescent.PopulationFunction[modelsArray.length];
 
         for (int i = 0; i < modelsArray.length; i++) {
-            modelFuncs[i] = (beast.base.evolution.tree.coalescent.PopulationFunction) context.getBEASTObject(new Value<>(modelsArray[i], gen));
+            modelFuncs[i] = (beast.base.evolution.tree.coalescent.PopulationFunction) context.getBEASTObject(new Value<>(null, modelsArray[i]));
         }
 
         // Create and return the StochasticVariableSelection instance with the converted models

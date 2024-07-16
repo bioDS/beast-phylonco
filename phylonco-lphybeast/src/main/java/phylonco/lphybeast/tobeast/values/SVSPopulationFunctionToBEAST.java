@@ -2,7 +2,9 @@ package phylonco.lphybeast.tobeast.values;
 
 import beast.base.inference.parameter.RealParameter;
 import lphy.base.evolution.coalescent.PopulationFunction;
+import lphy.base.evolution.coalescent.populationmodel.SVSFunction;
 import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
+import lphy.core.model.GraphicalModelNode;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
@@ -16,18 +18,27 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
 
         StochasticVariableSelection beastPopFunc = new StochasticVariableSelection();
 
-        SVSPopulationFunction gen = (SVSPopulationFunction) lphyPopFuncVal.getGenerator();
+        SVSFunction gen = (SVSFunction) lphyPopFuncVal.getGenerator();
 
 
         RealParameter indicatorParam = context.getAsRealParameter(gen.getIndicator());
         Value<PopulationFunction[]> modelsValue = gen.getModels();
-        PopulationFunction[] modelsArray = modelsValue.value();
+        Object[] modelsObjArray = modelsValue.value();
 
+        PopulationFunction[] modelsArray = new PopulationFunction[modelsObjArray.length];
+        for (int i = 0; i < modelsArray.length; i++) {
+            modelsArray[i] = (PopulationFunction) modelsObjArray[i];
+        }
 
         beast.base.evolution.tree.coalescent.PopulationFunction[] modelFuncs = new beast.base.evolution.tree.coalescent.PopulationFunction[modelsArray.length];
 
         for (int i = 0; i < modelsArray.length; i++) {
-            modelFuncs[i] = (beast.base.evolution.tree.coalescent.PopulationFunction) context.getBEASTObject(new Value<>(String.valueOf(modelsArray[i]), gen));
+            String modelName = gen.MODELS_PARAM_NAME;
+            GraphicalModelNode node = (GraphicalModelNode) (gen.getParams().get(modelName).getInputs().get(0));
+            Object contextObj = context.getBEASTObject((Value) node.getInputs().get(i));
+            beast.base.evolution.tree.coalescent.PopulationFunction beastPopFunction;
+            beastPopFunction = (beast.base.evolution.tree.coalescent.PopulationFunction) contextObj;
+            modelFuncs[i] = beastPopFunction;
         }
 
 
