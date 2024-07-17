@@ -1,14 +1,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
-    <!-- not working because of beast2 jars -->
-<!--    <parent>-->
-<!--        <groupId>io.github.linguaphylo</groupId>-->
-<!--        <artifactId>lphybeast</artifactId>-->
-<!--        <version>1.2.0-SNAPSHOT</version>-->
-<!--    </parent>-->
+    <!-- inherit pom in lphybeast-root -->
+    <parent>
+        <groupId>io.github.linguaphylo</groupId>
+        <artifactId>lphybeast-root</artifactId>
+        <version>1.2.0-SNAPSHOT</version>
+    </parent>
 
-    <groupId>io.github.linguaphylo</groupId>
+<!--    <groupId>io.github.linguaphylo</groupId>-->
     <artifactId>beast-phylonco</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
@@ -26,12 +26,8 @@
     </properties>
 
     <modules>
-        <module>../linguaPhylo</module>
-        <!-- <module>../linguaPhylo/lphy</module>-->
-        <!-- <module>../linguaPhylo/lphy-base</module>-->
-        <!-- <module>../linguaPhylo/lphy-studio</module>-->
+        <!-- this already has linguaPhylo, importing again will cause duplication err -->
         <module>../LPhyBeast/</module>
-<!--        <module>../LPhyBeast/lphybeast</module>-->
         <module>phylonco-beast</module>
         <module>phylonco-lphy</module>
         <module>phylonco-lphy-studio</module>
@@ -71,12 +67,12 @@
 <!--    </dependencyManagement>-->
 
     <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.9.2</version>
-            <scope>test</scope>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>org.junit.jupiter</groupId>-->
+<!--            <artifactId>junit-jupiter</artifactId>-->
+<!--            <version>5.9.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
         <!-- why junit 4 ?-->
         <dependency>
             <groupId>junit</groupId>
