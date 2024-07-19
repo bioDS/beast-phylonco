@@ -1,7 +1,6 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-import lphy.base.distribution.Dirichlet;
-import lphy.base.distribution.Multinomial;
+import lphy.base.distribution.DirichletMultinomial;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.GenerativeDistribution;
@@ -34,13 +33,11 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
 
     private Value<Integer[][]> coverage;
     private Value<Alignment> data;
-    private Multinomial multinomial = new Multinomial();
-    private Value<Number> w;
-    private Value<Number[]> concentration;
-    private Dirichlet dirichlet = new Dirichlet(concentration);
+    private Value<Double> w;
     private Value<Double> epsilon;
     private RandomVariable<ReadCountData> readCountData;
     private Value<Integer[][]> alpha;
+    private DirichletMultinomial dirichletMultinomial = new DirichletMultinomial();
 
     public static final String dParamName = "D";
     public static final String covParamName = "coverage";
@@ -54,7 +51,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
             @ParameterInfo(name = covParamName, description = "coverage.") Value<Integer[][]> coverage,
             @ParameterInfo(name = alphaParamName, description = "allelic dropout events for each cell at each site.") Value<Integer[][]> alpha,
             @ParameterInfo(name = epsilonParamName, description = "sequencing and amplification error probability.") Value<Double> epsilon,
-            @ParameterInfo(name = wParamName, description = "overdispersion parameter of Dirichlet multinomial distribution.") Value<Number> w
+            @ParameterInfo(name = wParamName, description = "overdispersion parameter of Dirichlet multinomial distribution.") Value<Double> w
             ) {
         super();
         this.data = data;
@@ -74,19 +71,19 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         int l = data.value().nchar();
         Double eps = epsilon.value();
         Integer[][][] readC = new Integer[n][l][4];
+        dirichletMultinomial.setParam("w", this.w);
 
-        double wv = w.value().doubleValue();
         Double[][] propensities = {
-                {(1 - eps) * wv, (eps/3) * wv, (eps/3) * wv, (eps/3) * wv},             // AA or A_ 0
-                {(0.5 - eps/6) * wv, (0.5 - eps/6) * wv, (eps/6) * wv, (eps/6) * wv},   // AC or CA 1
-                {(0.5 - eps/6) * wv, (eps/6) * wv, (0.5 - eps/6) * wv, (eps/6) * wv},   // AG or GA 2
-                {(0.5 - eps/6) * wv,(eps/6) * wv,(eps/6) * wv,(0.5 - eps/6) * wv},      // AT or TA 3
-                {(eps/3) * wv, (1 - eps) * wv, (eps/3) * wv, (eps/3) * wv},             // CC or C_ 4
-                {(eps/6) * wv, (0.5 - eps/6) * wv, (0.5 - eps/6) * wv, (eps/6) * wv},   // CG or GC 5
-                {(eps/6) * wv, (0.5 - eps/6) * wv, (eps/6) * wv, (0.5 - eps/6) * wv},   // CT or TC 6
-                {(eps/3) * wv, (eps/3) * wv, (1 - eps) * wv, (eps/3) * wv},             // GG or G_ 7
-                {(eps/6) * wv, (eps/6) * wv, (0.5 - eps/6) * wv, (0.5 - eps/6) * wv},   // GT or TG 8
-                {(eps/3) * wv, (eps/3) * wv, (eps/3) * wv, (1 - eps) * wv},             // TT or T_ 9
+                {(1 - eps), (eps/3), (eps/3), (eps/3)},             // AA or A_ 0
+                {(0.5 - eps/6), (0.5 - eps/6), (eps/6), (eps/6)},   // AC or CA 1
+                {(0.5 - eps/6), (eps/6), (0.5 - eps/6), (eps/6)},   // AG or GA 2
+                {(0.5 - eps/6),(eps/6),(eps/6),(0.5 - eps/6)},      // AT or TA 3
+                {(eps/3), (1 - eps), (eps/3), (eps/3)},             // CC or C_ 4
+                {(eps/6), (0.5 - eps/6), (0.5 - eps/6), (eps/6)},   // CG or GC 5
+                {(eps/6), (0.5 - eps/6), (eps/6), (0.5 - eps/6)},   // CT or TC 6
+                {(eps/3), (eps/3), (1 - eps), (eps/3)},             // GG or G_ 7
+                {(eps/6), (eps/6), (0.5 - eps/6), (0.5 - eps/6)},   // GT or TG 8
+                {(eps/3), (eps/3), (eps/3), (1 - eps)},             // TT or T_ 9
         };
 
         for (int i = 0; i < n; i++) {
@@ -95,120 +92,120 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                 PhasedGenotypeState genotypeState = PhasedGenotype.getCanonicalState(stateIndex);
                 String genotype = genotypeState.getFullName();//get genotype
                 Integer cov_ij = coverage.value()[i][j];
-                Double[] proMatrix;
+                Double[] prob;
                 Value<Integer> cover = new Value<>("cover", cov_ij);
-                multinomial.setParam("n", cover);
+                dirichletMultinomial.setParam("n", cover);
                 if (genotype.equals("AA")){
-                    proMatrix = propensities[0];
-                    readC[i][j] = readCountSample(proMatrix);
+                    prob = propensities[0];
+                    readC[i][j] = DirichletMultinomialSample(prob);
                 }
 
 
                 else if (genotype.equals("AC") || genotype.equals("CA")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[0];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[0];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[4];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[4];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
-                        proMatrix = propensities[1];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[1];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("AG") || genotype.equals("GA")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[0];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[0];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[7];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[7];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
-                        proMatrix = propensities[2];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[2];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("AT") || genotype.equals("TA")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[0];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[0];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[9];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[9];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
-                        proMatrix = propensities[3];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[3];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("CC")){
-                    proMatrix = propensities[4];
-                    readC[i][j] = readCountSample(proMatrix);
+                    prob = propensities[4];
+                    readC[i][j] = DirichletMultinomialSample(prob);
                 }
 
 
                 else if (genotype.equals("CG") || genotype.equals("GC")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[4];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[4];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[7];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[7];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     } else {
-                        proMatrix = propensities[5];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[5];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("CT") || genotype.equals("TC")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[4];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[4];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[9];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[9];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     } else {
-                        proMatrix = propensities[6];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[6];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("GG")){
-                    proMatrix = propensities[7];
-                    readC[i][j] = readCountSample(proMatrix);
+                    prob = propensities[7];
+                    readC[i][j] = DirichletMultinomialSample(prob);
                 }
 
 
                 else if (genotype.equals("GT") || genotype.equals("TG")){
                     if (alpha.value()[i][j] == 1){
                         if (Math.random() < 0.5){
-                            proMatrix = propensities[7];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[7];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }else {
-                            proMatrix = propensities[9];
-                            readC[i][j] = readCountSample(proMatrix);
+                            prob = propensities[9];
+                            readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
-                        proMatrix = propensities[8];
-                        readC[i][j] = readCountSample(proMatrix);
+                        prob = propensities[8];
+                        readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("TT")){
-                    proMatrix = propensities[9];
-                    readC[i][j] = readCountSample(proMatrix);
+                    prob = propensities[9];
+                    readC[i][j] = DirichletMultinomialSample(prob);
                 }
 
             }
@@ -230,12 +227,10 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         return readCountData;
     }
 
-    private Integer[] readCountSample(Double[] proMatrix){
-        Value<Double[]> proMat = new Value<>("proMatrix", proMatrix);
-        dirichlet.setParam("conc", proMat);
-        proMat = dirichlet.sample();
-        multinomial.setParam("p", proMat);
-        return multinomial.sample().value();
+    private Integer[] DirichletMultinomialSample(Double[] prob){
+        Value<Double[]> pro = new Value<>("proMatrix", prob);
+        dirichletMultinomial.setParam("p", pro);
+        return dirichletMultinomial.sample().value();
     }
 
     @Override
