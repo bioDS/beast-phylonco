@@ -8,6 +8,8 @@ out/
 # build directory
 build
 tmp/
+**/target/**
+*.class
 
 # idea directory
 /.idea/
