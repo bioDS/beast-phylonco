@@ -10,7 +10,6 @@ import lphy.core.model.annotation.ParameterInfo;
 import java.util.Map;
 
 public class CoverageModel implements GenerativeDistribution<Integer[][]> {
-    private NegativeBinomial negativeBinomial;
     private Value<Integer[][]> alpha;
     private Value<Double> t;
     private Value<Double> v;
@@ -56,7 +55,7 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < l; j++) {
-                Double mean = (double) (this.alpha.value()[i][j] * this.t.value() * this.s.value()[i]);
+                Double mean = (this.alpha.value()[i][j] * this.t.value() * this.s.value()[i]);
                 Double variance = mean + (Math.pow((double) alpha.value()[i][j], 2.0) * v.value() * Math.pow(this.s.value()[i], 2.0));
                 double pValue = mean / variance;
                 float rFloat = (float) (Math.pow(mean, 2) / (variance - mean));
