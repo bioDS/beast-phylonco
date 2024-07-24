@@ -24,6 +24,19 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
 
 
         IntegerParameter indicatorParam = context.getAsIntegerParameter(gen.getIndicator());
+        Integer lowerBound = 0;
+        Integer upperBound = 3;
+
+
+        indicatorParam.setInputValue("lower", lowerBound);
+        indicatorParam.setInputValue("upper", upperBound);
+
+        int currentValue = indicatorParam.getValue();
+        if (currentValue < lowerBound) {
+            indicatorParam.setValue(lowerBound);
+        } else if (currentValue > upperBound) {
+            indicatorParam.setValue(upperBound);
+        }
 
         Value<PopulationFunction[]> modelsValue = gen.getModels();
         Object[] modelsObjArray = modelsValue.value();
