@@ -85,15 +85,17 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
     @Override
     public double getIntensity(double t) {
         if (t == 0) return 0;
-        UnivariateFunction function = time -> 1 / getPopSize(time);
+        UnivariateFunction function = time -> 1 / Math.max(getPopSize(time), 1e-20);
         IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 1.0e-12, 1.0e-8, 2, 10000);
+        double intensity = 0;
         try {
-            return integrator.integrate(Integer.MAX_VALUE, function, 0, t);
+            intensity = integrator.integrate(100000, function, 0, t);
         } catch (TooManyEvaluationsException ex) {
-            System.err.println("Numerical Integration Error: " + ex.getMessage());
-            return 0;
+            return intensity;
         }
+        return intensity;
     }
+
 
     @Override
     public double getInverseIntensity(double x) {
