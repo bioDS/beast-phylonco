@@ -22,11 +22,19 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
 
         SVSFunction gen = (SVSFunction) lphyPopFuncVal.getGenerator();
 
-
         IntegerParameter indicatorParam = context.getAsIntegerParameter(gen.getIndicator());
-        Integer lowerBound = 0;
-        Integer upperBound = 3;
 
+
+        Value<PopulationFunction[]> modelsValue = gen.getModels();
+        Object[] modelsObjArray = modelsValue.value();
+
+        PopulationFunction[] modelsArray = new PopulationFunction[modelsObjArray.length];
+        for (int i = 0; i < modelsArray.length; i++) {
+            modelsArray[i] = (PopulationFunction) modelsObjArray[i];
+        }
+
+        Integer lowerBound = 0;
+        Integer upperBound = modelsArray.length - 1;
 
         indicatorParam.setInputValue("lower", lowerBound);
         indicatorParam.setInputValue("upper", upperBound);
@@ -38,17 +46,7 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
             indicatorParam.setValue(upperBound);
         }
 
-        Value<PopulationFunction[]> modelsValue = gen.getModels();
-        Object[] modelsObjArray = modelsValue.value();
-
-        PopulationFunction[] modelsArray = new PopulationFunction[modelsObjArray.length];
-        for (int i = 0; i < modelsArray.length; i++) {
-            modelsArray[i] = (PopulationFunction) modelsObjArray[i];
-        }
-
-
         ArrayList<beast.base.evolution.tree.coalescent.PopulationFunction> modelFuncs = new ArrayList<>(modelsArray.length);
-
 
         for (int i = 0; i < modelsArray.length; i++) {
             String modelName = gen.MODELS_PARAM_NAME;
@@ -58,7 +56,6 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
             beastPopFunction = (beast.base.evolution.tree.coalescent.PopulationFunction) contextObj;
             modelFuncs.add(i, beastPopFunction);
         }
-
 
         beastPopFunc.setInputValue("indicator", indicatorParam);
         beastPopFunc.setInputValue("models", modelFuncs);
