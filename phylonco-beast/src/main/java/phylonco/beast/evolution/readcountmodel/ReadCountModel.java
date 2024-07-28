@@ -78,14 +78,7 @@ public class ReadCountModel extends Distribution {
         this.w = wInput.get();
         this.alpha1 = 1;
         this.alpha2 = 2;
-        this.mean1 = alpha1 * this.t.getValue() *this.s.getValue();
-        this.mean2 = alpha2 * this.t.getValue() *this.s.getValue();
-        this.variance1 = mean1 + Math.pow(this.alpha1, 2) * this.v.getValue() * Math.pow(this.s.getValue(), 2);
-        this.variance2 = mean2 + Math.pow(this.alpha2, 2) * this.v.getValue() * Math.pow(this.s.getValue(), 2);
-        this.negp1 = this.mean1 / variance1;
-        this.negp2 = this.mean2 / variance2;
-        this.negr1 = Math.round((float) (Math.pow(this.mean1, 2) / (this.variance1 - this.mean1)));
-        this.negr2 = Math.round((float) (Math.pow(this.mean2, 2) / (this.variance2 - this.mean2)));
+
         Double eps = epsilon.getValue();
         double wv = w.getValue();
         this.propensities = new Double[][]{
@@ -111,6 +104,15 @@ public class ReadCountModel extends Distribution {
     @Override
     public double calculateLogP() {
         for (int i = 0; i < alignmentInput.get().getTaxonCount(); i++) {
+            Double sv = s.getDoubleValues()[i];
+            this.mean1 = alpha1 * this.t.getValue() * sv;
+            this.mean2 = alpha2 * this.t.getValue() * sv;
+            this.variance1 = mean1 + Math.pow(this.alpha1, 2) * this.v.getValue() * Math.pow(sv, 2);
+            this.variance2 = mean2 + Math.pow(this.alpha2, 2) * this.v.getValue() * Math.pow(sv, 2);
+            this.negp1 = this.mean1 / variance1;
+            this.negp2 = this.mean2 / variance2;
+            this.negr1 = Math.round((float) (Math.pow(this.mean1, 2) / (this.variance1 - this.mean1)));
+            this.negr2 = Math.round((float) (Math.pow(this.mean2, 2) / (this.variance2 - this.mean2)));
             for (int j = 0; j < alignmentInput.get().getSiteCount(); j++) {///？
                 // dirichlet multinomial pmf
                 int patternIndex = alignmentInput.get().getPatternIndex(j);
