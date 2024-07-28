@@ -16,6 +16,10 @@ public class ReadCount {
         return data[taxa][site];
     }
 
+    public void setReadCounts(int taxa, int site, int[] counts) {
+        data[taxa][site] = counts;
+    }
+
 
     public String getTypeDescription() {
         return "readCount";
