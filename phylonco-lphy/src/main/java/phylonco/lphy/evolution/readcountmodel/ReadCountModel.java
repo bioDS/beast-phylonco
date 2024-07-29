@@ -243,4 +243,16 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                 wParamName, w
         );
     }
+
+    @Override
+    public void setParam(String paramName, Value value) {
+        if (paramName.equals(dParamName)) data = value;
+        else if (paramName.equals(covParamName)) coverage = value;
+        else if (paramName.equals(alphaParamName)) alpha = value;
+        else if (paramName.equals(epsilonParamName)) epsilon = value;
+        else if (paramName.equals(wParamName)) w = value;
+        else throw new RuntimeException("Unrecognised parameter name: " + paramName);
+
+        //super.setParam(paramName, value); // constructDistribution
+    }
 }
