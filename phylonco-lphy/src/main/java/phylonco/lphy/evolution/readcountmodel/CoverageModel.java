@@ -80,4 +80,13 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
         );
     }
 
+    @Override
+    public void setParam(String paramName, Value value) {
+        if (paramName.equals(alphaParamName)) alpha = value;
+        else if (paramName.equals(tParamName)) t = value;
+        else if (paramName.equals(vParamName)) v = value;
+        else if (paramName.equals(sParamName)) s = value;
+        else throw new RuntimeException("Unrecognised parameter name: " + paramName);
+    }
+
 }
