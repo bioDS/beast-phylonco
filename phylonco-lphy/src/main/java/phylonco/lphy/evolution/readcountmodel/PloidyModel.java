@@ -70,6 +70,13 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
         );
     }
 
+    @Override
+    public void setParam(String paramName, Value value) {
+        if (paramName.equals(lParamName)) l = value;
+        else if (paramName.equals(nParamName)) n = value;
+        else if (paramName.equals(deltaParamName)) delta = value;
+        else throw new RuntimeException("Unrecognised parameter name: " + paramName);
+    }
 
 
 }
