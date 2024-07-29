@@ -1,7 +1,8 @@
+data {
 n = 2;
 l = 2;
 w1 = 10.0;
-epsilon = 0.6; // try 0.5
+epsilon = 0.06; // try 0.5
 delta = 0.5;
 meanT = 2.3; // average coverage = lognormal(meanT, sdT)
 sdT = 0.1;
@@ -9,7 +10,9 @@ meanV = 0.1; // variance coverage = lognormal(meanV, sdV)
 sdV = 0.05;
 meanS = 0.04; // cell-specific scaling
 sdS = 0.001;
+}
 
+model {
 Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
 ψ ~ Coalescent(n=n, theta=Θ);
 π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
@@ -22,3 +25,4 @@ s ~ LogNormal(meanlog= meanS, sdlog= sdS, replicates=n);
 alpha ~ Ploidy(l= l, n= n, delta= delta);
 cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
 r1 ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w=w1);
+}
