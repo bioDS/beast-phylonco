@@ -104,7 +104,7 @@ public class ReadCountModel extends Distribution {
     @Override
     public double calculateLogP() {
         for (int i = 0; i < alignmentInput.get().getTaxonCount(); i++) {
-            Double sv = s.getDoubleValues()[i];
+            Double sv = s.getValues()[i];
             this.mean1 = alpha1 * this.t.getValue() * sv;
             this.mean2 = alpha2 * this.t.getValue() * sv;
             this.variance1 = mean1 + Math.pow(this.alpha1, 2) * this.v.getValue() * Math.pow(sv, 2);
@@ -197,10 +197,10 @@ public class ReadCountModel extends Distribution {
         } else return 1.0;
     }
 
-    public double likelihoodDirichletMD(double w, int coverage, Double[] probabilities, int[] readCountNumbers){
+    public double likelihoodDirichletMD(double w, int coverage, Double[] propensities, int[] readCountNumbers){
         double result = fFunction(w, coverage);
         for (int i = 0; i < readCountNumbers.length; i++) {
-            result = result / fFunction(probabilities[i], readCountNumbers[i]);
+            result = result / fFunction(propensities[i], readCountNumbers[i]);
         }
         return result;
     }
