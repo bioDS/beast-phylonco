@@ -6,8 +6,8 @@ model {
   b ~ LogNormal(meanlog=2, sdlog=0.5);
   NInfinity ~ LogNormal(meanlog=5, sdlog=0.3);
   gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b);
-  n0 = gompertzPopFunc.getN0();
-  f0=n0/NInfinity;
+  //n0 = gompertzPopFunc.getN0();
+  //f0=n0/NInfinity;
   tree ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
   D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor(), mu=1e-2);
   height = tree.rootAge();

@@ -1,14 +1,14 @@
 N0_con ~ LogNormal(meanlog=4, sdlog=0.3);
 constantPopFunc = constantPopFunc(N0=N0_con);
 
-//b_exp ~ LogNormal(meanlog=2, sdlog=0.5);
-//N0_exp ~ LogNormal(meanlog=5, sdlog=0.3);
-//exponentialPopFunc = exponentialPopFunc(GrowthRate=b_exp, N0=N0_exp);
+b_exp ~ LogNormal(meanlog=-3.6, sdlog=0.36);
+N0_exp ~ LogNormal(meanlog=5, sdlog=0.3);
+exponentialPopFunc = exponentialPopFunc(GrowthRate=b_exp, N0=N0_exp);
 
-//t50_gom ~ LogNormal(meanlog=0.3, sdlog=0.1);
-//b_gom ~ LogNormal(meanlog=2, sdlog=0.5);
-//NInf_gomp ~ LogNormal(meanlog=5, sdlog=0.3);
-//gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInf_gomp, t50=t50_gom, b=b_gom);
+t50_gom ~ LogNormal(meanlog=4, sdlog=0.3);
+b_gom ~ LogNormal(meanlog=-4.6, sdlog=0.36);
+NInf_gomp ~ LogNormal(meanlog=4, sdlog=0.3);
+gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInf_gomp, t50=t50_gom, b=b_gom);
 
 t50_log ~ LogNormal(meanlog=4, sdlog=0.3);
 b_log ~ LogNormal(meanlog=-4.6, sdlog=0.36);
@@ -16,9 +16,9 @@ Ninf_log ~ LogNormal(meanlog=4, sdlog=0.3);
 logisticPopFunc = logisticPopFunc(t50=t50_log, nCarryingCapacity=Ninf_log, b=b_log);
 
 //models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc];
-
-models = [constantPopFunc, logisticPopFunc];
-
+//models = [constantPopFunc, logisticPopFunc, gompertzPopFunc];
+//models = [constantPopFunc, logisticPopFunc];
+models = [constantPopFunc, logisticPopFunc, gompertzPopFunc, exponentialPopFunc];
 I ~ UniformDiscrete(lower=0, upper=length(models)-1);
 //I ~ Uniform(lower=0, upper=length(models)-1);
 
