@@ -17,7 +17,9 @@ public class ReadCount {
     }
 
     public void setReadCounts(int taxa, int site, int[] counts) {
-        data[taxa][site] = counts;
+        for (int i = 0; i < data[taxa][site].length; i++) {
+            data[taxa][site][i] = counts[i];
+        }
     }
 
 
