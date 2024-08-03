@@ -12,6 +12,12 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.junit.Assert.assertEquals;
+
 
 public class ReadCountModelTest {
 
@@ -40,16 +46,15 @@ public class ReadCountModelTest {
         ReadCountModel readCountModel = new ReadCountModel();
 
         // read from file
-        Double epsilon = 0.1;
-        Double delta = 0.24;
-        Double t = 10.533354280335304;
-        Double v = 1.0158887508905496;
-        Double[] s = new Double[]{1.040558132021848, 1.0411303267252416, 1.0404430631662909, 1.0403929520996686};
-        Double w = 100.0;
+        Double epsilon = 0.06;
+        Double delta = 0.5;
+        Double t = 9.996182050184155;
+        Double v = 1.0670434040009762;
+        Double[] s = new Double[]{1.0399635911708527, 1.0419228814287969};
+        Double w = 10.0;
 
-
-        String alignmentFile = "/Users/yxia415/Desktop/data/alignment.nexus";
-        String readCountFile = "/Users/yxia415/Desktop/data/readCount.txt";
+        String alignmentFile = "/Users/yxia415/Desktop/data_new/gt16ReadCountModel_A.nexus";
+        String readCountFile = "/Users/yxia415/Desktop/data_new/readCountNumbers.txt";
         Alignment alignment = getAlignment(alignmentFile);
         ReadCount readCounts = getReadCounts(readCountFile);
 
@@ -71,9 +76,9 @@ public class ReadCountModelTest {
         readCountModel.initAndValidate();
 
         double observedLogP = readCountModel.calculateLogP();
-        double expectedLogP = -1.0;
+        double expectedLogP = -35.6332280063929;
 
-//        assertEquals(expectedLogP, observedLogP, DELTA);
+        assertEquals(expectedLogP, observedLogP, DELTA);
 
 //        public Input<Alignment> alignmentInput = new Input<>("alignment", "alignment");
 //        public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");
@@ -105,17 +110,37 @@ public class ReadCountModelTest {
     }
 
     private ReadCount getReadCounts(String fileName) throws IOException {
+        ReadCount readCount;
+        int ntaxa;
+        int nchar;
+        int lineCount = 0;
+        ArrayList<Integer> numbers = new ArrayList<>();
         // File reader
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        String line = reader.readLine();
-        System.out.println(line);
-        // for loop for reading each line
-        // split by tabs for each site
-        // split by commas for each nucleotide
-        // put read count numbers into int array a
-        int[] a; // hard code if you want??
-        // ReadCount r = new ReadCount(a);
-        return null;
+        String line;
+        while ((line = reader.readLine()) != null) {
+            Pattern pattern = Pattern.compile("\\d+");
+            Matcher matcher = pattern.matcher(line);
+            while (matcher.find()) {
+                numbers.add(Integer.parseInt(matcher.group()));
+            }
+            lineCount++;
+        }
+        int[] numArray = numbers.stream().mapToInt(i -> i).toArray();
+        ntaxa = lineCount;
+        nchar = numbers.size()/lineCount/4;
+        readCount = new ReadCount(ntaxa, nchar);
+        int[] Count = new int[4];
+        for (int i = 0; i < ntaxa; i++) {
+            for (int j = 0; j < nchar; j++) {
+                for (int k = 0; k < 4; k++) {
+                    Count[k] = numArray[i*nchar*4+j*4+k];
+                }
+                readCount.setReadCounts(i, j, Count);
+            }
+        }
+
+        return readCount;
     }
 
 }
