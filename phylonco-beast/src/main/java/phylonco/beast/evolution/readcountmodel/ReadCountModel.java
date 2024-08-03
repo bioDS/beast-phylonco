@@ -103,14 +103,15 @@ public class ReadCountModel extends Distribution {
 
     @Override
     public double calculateLogP() {
+        double logP = 0;
         for (int i = 0; i < alignmentInput.get().getTaxonCount(); i++) {
             Double sv = s.getValues()[i];
             this.mean1 = alpha1 * this.t.getValue() * sv;
             this.mean2 = alpha2 * this.t.getValue() * sv;
             this.variance1 = mean1 + Math.pow(this.alpha1, 2) * this.v.getValue() * Math.pow(sv, 2);
             this.variance2 = mean2 + Math.pow(this.alpha2, 2) * this.v.getValue() * Math.pow(sv, 2);
-            this.negp1 = this.mean1 / variance1;
-            this.negp2 = this.mean2 / variance2;
+            this.negp1 = this.mean1 / this.variance1;
+            this.negp2 = this.mean2 / this.variance2;
             this.negr1 = Math.round((float) (Math.pow(this.mean1, 2) / (this.variance1 - this.mean1)));
             this.negr2 = Math.round((float) (Math.pow(this.mean2, 2) / (this.variance2 - this.mean2)));
             for (int j = 0; j < alignmentInput.get().getSiteCount(); j++) {///？
@@ -126,18 +127,22 @@ public class ReadCountModel extends Distribution {
 
     public double calculateCoverageLikelihood(int[] readCountNumbers, double p, int r) {
         // negative binomial pmf
+        double coverageLikelihood;
+        double fac;
         int c = 0;
         for (int i = 0; i < readCountNumbers.length; i++) {
             c = c + readCountNumbers[i];
         }
-        double fac = Gamma.gamma(c + r) / (Gamma.gamma(r) + Gamma.gamma(c + 1));
-        return fac * Math.pow(p, r) * Math.pow(1 - p, c);
+        fac = Gamma.gamma(c + r) / (Gamma.gamma(r) * Gamma.gamma(c + 1));
+        coverageLikelihood = fac * Math.pow(p, r) * Math.pow(1 - p, c);
+        return coverageLikelihood;
     }
 
 
     // calculate probability of read counts given genotype
     // genotypeState represents genotype alignment
     public double liklihoodRC(int genotypeState, int[] readCountNumbers, double w) {
+        double result;
         int coverage = 0;
         for (int i = 0; i < readCountNumbers.length; i++) {
             coverage = coverage + readCountNumbers[i];
@@ -146,18 +151,22 @@ public class ReadCountModel extends Distribution {
 
         int[] indices = getGenotypeIndices(genotypeState);
 
+        double likelihood = 0;
+
         if (homozygous(genotypeState)) {
-            return likelihoodDirichletMD(w, coverage, propensities[indices[0]], readCountNumbers)
+            likelihood = likelihoodDirichletMD(w, coverage, propensities[indices[0]], readCountNumbers)
                     * calculateCoverageLikelihood(readCountNumbers, negp2, negr2) * (1 - deltav)
                     + likelihoodDirichletMD(w, coverage, propensities[indices[1]], readCountNumbers)
                     * calculateCoverageLikelihood(readCountNumbers, negp1, negr1) * deltav;
         } else {
-            return likelihoodDirichletMD(w, coverage, propensities[indices[0]], readCountNumbers)
+            likelihood = likelihoodDirichletMD(w, coverage, propensities[indices[0]], readCountNumbers)
                     * calculateCoverageLikelihood(readCountNumbers, negp2, negr2) * (1 - deltav)
                     + 0.5 * (likelihoodDirichletMD(w, coverage, propensities[indices[1]], readCountNumbers)
                     + likelihoodDirichletMD(w, coverage, propensities[indices[2]], readCountNumbers))
                     * calculateCoverageLikelihood(readCountNumbers, negp1, negr1) * deltav;
         }
+        System.out.println(likelihood);
+        return likelihood;
     }
 
     private static int[] getGenotypeIndices(int genotypeState) {
@@ -191,16 +200,18 @@ public class ReadCountModel extends Distribution {
         };
     }
 
-    public double fFunction( double w, int coverage){
-        if (w > 0){
-            return w * Gamma.gamma(w) * Gamma.gamma(coverage) / Gamma.gamma(w + coverage);
+    public double fFunction(int coverage, double w){
+        double result;
+        if (coverage > 0){
+            result = coverage * Gamma.gamma(w) * Gamma.gamma(coverage) / Gamma.gamma(w + coverage);
+            return result;
         } else return 1.0;
     }
 
     public double likelihoodDirichletMD(double w, int coverage, Double[] propensities, int[] readCountNumbers){
-        double result = fFunction(w, coverage);
+        double result = fFunction(coverage, w);
         for (int i = 0; i < readCountNumbers.length; i++) {
-            result = result / fFunction(propensities[i], readCountNumbers[i]);
+            result = result / fFunction(readCountNumbers[i], propensities[i]);
         }
         return result;
     }
