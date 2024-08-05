@@ -1,0 +1,40 @@
+<package name='phylonco' version='1.2.0'>
+    <!-- phylonco beast -->
+    <depends on='BEAST.base' atleast='2.7.6'/>
+    <depends on='BEAST.app' atleast='2.7.6'/>
+    <depends on='BEASTLabs' atleast='2.0.2'/>
+
+    <!-- add BEAST2 service below  -->
+    <service type="beast.base.evolution.datatype.DataType">
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideDiploid10"/>
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideDiploid16"/>
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideMethylation"/>
+        <provider classname="phylonco.beast.evolution.datatype.Ternary"/>
+    </service>
+    <service type="beast.base.core.BEASTInterface">
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideDiploid10"/>
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideDiploid16"/>
+        <provider classname="phylonco.beast.evolution.datatype.NucleotideMethylation"/>
+        <provider classname="phylonco.beast.evolution.datatype.Ternary"/>
+        <provider classname="phylonco.beast.evolution.errormodel.BinaryErrorModel"/>
+        <provider classname="phylonco.beast.evolution.errormodel.ErrorModel"/>
+        <provider classname="phylonco.beast.evolution.errormodel.ErrorModelBase"/>
+        <provider classname="phylonco.beast.evolution.errormodel.GT16ErrorModel"/>
+        <provider classname="phylonco.beast.evolution.likelihood.BeagleTreeLikelihoodWithError"/>
+        <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithError"/>
+        <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast"/>
+        <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.GT16"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.MethylationHKY"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit2"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit3"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_f0"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.ExponentialGrowth"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.LogisticGrowth"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_t50"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.ConstantGrowth"/>
+        <provider classname="phylonco.beast.evolution.populationmodel.StochasticVariableSelection"/>
+    </service>
+
+</package>
