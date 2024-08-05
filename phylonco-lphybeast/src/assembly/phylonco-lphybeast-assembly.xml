@@ -1,0 +1,51 @@
+<assembly xmlns="http://maven.apache.org/ASSEMBLY/2.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.2.0 http://maven.apache.org/xsd/assembly-2.2.0.xsd">
+    <id>phylonco-lphybeast-assembly</id>
+    <formats>
+        <format>dir</format>
+        <format>zip</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+<!--    <baseDirectory>${project.artifactId}-${project.version}</baseDirectory>-->
+
+    <moduleSets>
+        <moduleSet>
+            <useAllReactorProjects>true</useAllReactorProjects>
+            <includes>
+                <include>io.github.linguaphylo:phylonco-lphybeast</include>
+            </includes>
+
+            <sources>
+                <includeModuleDirectory>false</includeModuleDirectory>
+                <fileSets>
+                    <fileSet>
+                        <outputDirectory>src/${module.artifactId}</outputDirectory>
+                        <excludes>
+                            <exclude>${project.build.directory}/**</exclude>
+                            <exclude>**/target/**</exclude>
+                            <exclude>**/lib/**</exclude>
+                        </excludes>
+                    </fileSet>
+                </fileSets>
+            </sources>
+        </moduleSet>
+    </moduleSets>
+    <files>
+        <file>
+            <source>version.xml</source>
+        </file>
+    </files>
+    <dependencySets>
+        <!-- Dependency set for lphybeast with useTransitiveDependencies set to false -->
+        <dependencySet>
+            <outputDirectory>/lib</outputDirectory>
+            <includes>
+                <include>io.github.linguaphylo:phylonco-lphybeast</include>
+            </includes>
+            <useTransitiveDependencies>false</useTransitiveDependencies>
+        </dependencySet>
+
+    </dependencySets>
+
+</assembly>

@@ -7,12 +7,14 @@
     </parent>
 
     <artifactId>phylonco-lphybeast</artifactId>
+    <!-- must be consisting with version.xml   -->
+    <version>1.2.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
             <groupId>io.github.linguaphylo</groupId>
             <artifactId>lphybeast</artifactId>
-            <version>1.2.0-SNAPSHOT</version>
+            <version>${lphybeast.vision}</version>
         </dependency>
 
         <dependency>
@@ -25,9 +27,33 @@
             <artifactId>phylonco-lphy</artifactId>
             <version>${project.version}</version>
         </dependency>
-
-
     </dependencies>
 
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.7.1</version>
+                <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/phylonco-lphybeast-assembly.xml</descriptor>
+                    </descriptors>
+                    <outputDirectory>${project.build.directory}</outputDirectory>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <finalName>${project.artifactId}-${project.version}</finalName>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
+                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
 </project>
