@@ -4,6 +4,7 @@ import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.TaxaCharacterMatrix;
 import lphy.core.model.datatype.Array2DUtils;
 
+
 public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     ReadCount[][] readCountDataMatrix; // taxa, position
@@ -19,6 +20,12 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
         return readCountDataMatrix[taxa.indexOfTaxon(taxon)][column];
     }
 
+    @Override
+    public void setState(int taxon, int position, ReadCount state) {
+        // Change it if setState requires
+        throw new UnsupportedOperationException("Not supported in ReadCountData yet !");
+    }
+
     public ReadCount getState(int taxonIndex, int column) {
         return readCountDataMatrix[taxonIndex][column];
     }
@@ -26,6 +33,11 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
     @Override
     public Class getComponentType() {
         return ReadCount.class;
+    }
+
+    @Override
+    public ReadCount[] getCharacterSequence(String taxon) {
+        return TaxaCharacterMatrix.super.getCharacterSequence(taxon);
     }
 
     @Override
