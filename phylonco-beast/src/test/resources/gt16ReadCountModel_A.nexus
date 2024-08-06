@@ -1,0 +1,16 @@
+#NEXUS
+
+begin taxa;
+	dimensions ntax=2;
+	taxlabels 0 1;
+end;
+
+begin characters;
+	dimensions nchar=2;
+	format datatype=nucleotideDiploid16;
+	matrix 
+		0 26
+		1 22;
+
+end;
+

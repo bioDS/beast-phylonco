@@ -12,6 +12,8 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -41,7 +43,7 @@ public class ReadCountModelTest {
      *
      * Expected log likelihoood calculated using R script: calcLogP.R
      */
-//    @Test
+    @Test
     public void testReadCountModel() throws IOException {
         ReadCountModel readCountModel = new ReadCountModel();
 
@@ -53,8 +55,10 @@ public class ReadCountModelTest {
         Double[] s = new Double[]{1.0399635911708527, 1.0419228814287969};
         Double w = 10.0;
 
-        String alignmentFile = "/Users/yxia415/Desktop/data_new/gt16ReadCountModel_A.nexus";
-        String readCountFile = "/Users/yxia415/Desktop/data_new/readCountNumbers.txt";
+        Path dir = Path.of("src","test", "resources");
+        File alignmentFile = Paths.get(dir.toString(),"gt16ReadCountModel_A.nexus").toFile();
+        File readCountFile = Paths.get(dir.toString(),"readCountNumbers.txt").toFile();
+
         Alignment alignment = getAlignment(alignmentFile);
         ReadCount readCounts = getReadCounts(readCountFile);
 
@@ -94,29 +98,27 @@ public class ReadCountModelTest {
 
     }
 
-    private Alignment getAlignment(String fileName) {
-        System.out.println("Processing " + fileName);
+    private Alignment getAlignment(File file) {
+        System.out.println("Processing " + file);
         NexusParser parser = new NexusParser();
         try {
-            parser.parseFile(new File(fileName));
+            parser.parseFile(file);
+            System.out.println("Done " + file);
             return parser.m_alignment;
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println("ExampleNexusParsing::Failed for " + fileName
+            throw new RuntimeException("ExampleNexusParsing::Failed for " + file
                     + ": " + e.getMessage());
         }
-        System.out.println("Done " + fileName);
-        return null;
     }
 
-    private ReadCount getReadCounts(String fileName) throws IOException {
+    private ReadCount getReadCounts(File file) throws IOException {
         ReadCount readCount;
         int ntaxa;
         int nchar;
         int lineCount = 0;
         ArrayList<Integer> numbers = new ArrayList<>();
         // File reader
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
+        BufferedReader reader = new BufferedReader(new FileReader(file));
         String line;
         while ((line = reader.readLine()) != null) {
             Pattern pattern = Pattern.compile("\\d+");
