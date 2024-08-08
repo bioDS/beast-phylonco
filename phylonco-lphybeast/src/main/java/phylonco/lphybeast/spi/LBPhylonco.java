@@ -74,6 +74,7 @@ public class LBPhylonco implements LPhyBEASTExt {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
+                MRCA.class,
                 PopulationFunctionCoalescent.class,
                 SVSFunction.class,
                 GompertzPopulationFunction_f0.class,
