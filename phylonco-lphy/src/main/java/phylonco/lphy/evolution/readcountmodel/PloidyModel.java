@@ -1,6 +1,6 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-import lphy.base.distribution.Multinomial;
+import lphy.base.distribution.Binomial;
 import lphy.core.model.GenerativeDistribution;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
@@ -40,17 +40,14 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
 
     @Override
     public RandomVariable<Integer[][]> sample() {
-        Multinomial multinomialAlpha;
-        Double[] proAlpha = {this.delta.value(), 1-this.delta.value()};
-        Value<Double[]> proA = new Value<>("proA", proAlpha);
         Value<Integer> numberA = new Value<>("numberA", 1);
-        multinomialAlpha = new Multinomial(numberA, proA);
+        Binomial binomialAlpha = new Binomial(delta, numberA);
 
         Integer[][] alp = new Integer[this.n.value()][this.l.value()];
         for (int i = 0; i < this.n.value(); i++) {
             for (int j = 0; j < this.l.value(); j++) {
-                Value<Integer[]> alpha1 = multinomialAlpha.sample();
-                if (alpha1.value()[0] == 1) {
+                Value<Integer> alpha1 = binomialAlpha.sample();
+                if (alpha1.value() == 1) {
                     alp[i][j] = 1;
                 } else alp[i][j] = 2;
             }
