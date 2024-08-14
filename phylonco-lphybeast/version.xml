@@ -1,7 +1,9 @@
 <package name='phylonco.lphybeast' version='1.2.0'>
     <!-- phylonco beast -->
     <depends on='phylonco' atleast='1.2.0'/>
-    <depends on='lphybeast' atleast='1.2.0'/>
+<!--    <depends on='lphybeast' atleast='1.2.0'/>-->
+<!--  include lphybeast  -->
+    <depends on='lphybeast-flc' atleast='0.0.1'/>
 
     <!-- add BEAST2 service below  -->
     <service type="beast.base.evolution.datatype.DataType">

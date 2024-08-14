@@ -17,7 +17,9 @@
 
     <properties>
         <lphy.vision>1.6.0-SNAPSHOT</lphy.vision>
-        <lphybeast.vision>1.2.0-SNAPSHOT</lphybeast.vision>
+<!--        <lphybeast.vision>1.2.0-SNAPSHOT</lphybeast.vision>-->
+<!--  include lphybeast  -->
+        <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
         <!-- project.version https://maven.apache.org/maven-ci-friendly.html -->
         <revision>1.2.0-SNAPSHOT</revision>
         <maven.compiler.source>17</maven.compiler.source>
