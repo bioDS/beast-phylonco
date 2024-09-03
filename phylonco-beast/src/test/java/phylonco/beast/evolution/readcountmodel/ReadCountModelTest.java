@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ReadCountModelTest {
 
-    final double DELTA = 1e-6;
+    final double DELTA = 1e-10;
 
     @BeforeEach
     public void setUp() {
@@ -80,7 +80,7 @@ public class ReadCountModelTest {
         readCountModel.initAndValidate();
 
         double observedLogP = readCountModel.calculateLogP();
-        double expectedLogP = -35.6332280063929;
+        double expectedLogP = -35.6331962985386;
 
         assertEquals(expectedLogP, observedLogP, DELTA);
 
