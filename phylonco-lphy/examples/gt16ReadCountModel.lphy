@@ -1,9 +1,9 @@
 data {
-n = 2;
-l = 2;
+n = 6;
+l = 10;
 w1 = 10.0;
-epsilon = 0.06; // try 0.5
-delta = 0.5;
+epsilon = 0.1; // try 0.5
+delta = 0.2;
 meanT = 2.3; // average coverage = lognormal(meanT, sdT)
 sdT = 0.1;
 meanV = 0.1; // variance coverage = lognormal(meanV, sdV)
