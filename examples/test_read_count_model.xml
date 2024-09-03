@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<beast namespace="
+    beast.core:
+    beast.evolution.alignment:
+    beast.evolution.tree.coalescent:
+    beast.core.util:
+    beast.evolution.nuc:
+    beast.evolution.operators:
+    beast.evolution.sitemodel:
+    beast.evolution.substitutionmodel:
+    beast.base.evolution.alignment:
+    beast.pkgmgmt:
+    beast.base.core:
+    beast.base.inference:
+    beast.base.evolution.tree.coalescent:
+    beast.pkgmgmt:
+    beast.base.inference.util:
+    beast.base.evolution.operator:
+    beast.base.inference.operator:
+    beast.base.evolution.sitemodel:
+    beast.base.evolution.substitutionmodel:
+    beast.base.evolution.likelihood"
+       required="BEAST.base v2.7.4:phylonco v1.0.0" version="2.7">
+
+    <map name="Beta">beast.base.inference.distribution.Beta</map>
+    <map name="Exponential">beast.base.inference.distribution.Exponential</map>
+    <map name="InverseGamma">beast.base.inference.distribution.InverseGamma</map>
+    <map name="LogNormal">beast.base.inference.distribution.LogNormalDistributionModel</map>
+    <map name="Gamma">beast.base.inference.distribution.Gamma</map>
+    <map name="Uniform">beast.base.inference.distribution.Uniform</map>
+    <map name="prior">beast.base.inference.distribution.Prior</map>
+    <map name="LaplaceDistribution">beast.base.inference.distribution.LaplaceDistribution</map>
+    <map name="OneOnX">beast.base.inference.distribution.OneOnX</map>
+    <map name="Normal">beast.base.inference.distribution.Normal</map>
+
+
+
+    <data id="alignment" spec="Alignment" dataType="nucleotideDiploid16">
+        <sequence id="Sequence" spec="Sequence" taxon="4" totalcount="6" value="b12103762b"/>
+        <sequence id="Sequence1" spec="Sequence" taxon="0" totalcount="6" value="b12103762b"/>
+        <sequence id="Sequence2" spec="Sequence" taxon="1" totalcount="6" value="b12103762b"/>
+        <sequence id="Sequence3" spec="Sequence" taxon="3" totalcount="6" value="b12103562b"/>
+        <sequence id="Sequence4" spec="Sequence" taxon="2" totalcount="6" value="b1a103561b"/>
+        <sequence id="Sequence5" spec="Sequence" taxon="5" totalcount="6" value="b1a103561b"/>
+    </data>
+
+     read counts
+    <readCount id="readcount" spec="phylonco.beast.evolution.datatype.ReadCount">
+            0,0,3,12; 9,0,0,0; 14,0,4,0; 15,1,0,0; 16,0,0,0; 13,0,0,11; 1,2,0,7; 0,8,10,0; 7,0,10,0; 0,0,16,8;
+            0,0,6,17; 13,5,0,0; 14,0,4,0; 3,14,0,0; 16,6,0,1; 5,0,0,14; 0,0,0,11; 1,4,6,8; 13,4,4,0; 0,0,16,10;
+            0,1,0,4; 14,13,0,0; 12,0,3,0; 6,14,0,1; 20,0,0,0; 23,1,1,5; 0,9,0,8; 0,14,2,0; 10,0,3,0; 0,0,5,20;
+            0,1,1,24; 1,6,0,0; 2,0,13,0; 12,6,2,0; 19,0,0,4; 12,1,0,5; 0,25,0,1; 0,10,9,0; 7,0,16,0; 0,0,6,5;
+            1,0,14,3; 12,3,0,0; 0,0,19,1; 0,6,0,0; 13,0,0,2; 13,0,0,2; 0,25,2,0; 0,10,11,0; 11,11,0,0; 0,0,7,4;
+            0,0,15,7; 11,11,0,0; 1,0,19,1; 6,19,0,0; 7,0,0,3; 0,4,0,7; 0,11,0,1; 0,4,7,0; 10,12,0,0; 0,1,8,13;
+    </readCount>
+
+
+    <run spec="MCMC" id="mcmc" chainLength="1000000" preBurnin="50000">
+
+        <state id="state" spec="State">
+            <parameter id="epsilon" lower="0.0" upper="1.0" dimension="1" name="stateNode">0.1</parameter>
+            <parameter id="delta" lower="0.0" upper="1.0" dimension="1" name="stateNode">0.2</parameter>
+            <parameter id="t" lower="1.0" upper="10.0" dimension="1" name="stateNode">9.510591534058255</parameter>
+            <parameter id="v" lower="0.0" upper="10.0" dimension="1" name="stateNode">1.1699892891308206</parameter>
+            <parameter id="s" lower="0.5" upper="1.5" dimension="6" name="stateNode">1.039915 1.042499 1.039479 1.040432 1.042806 1.042825</parameter>
+            <parameter id="w" lower="0.0" dimension="1" name="stateNode">10.0</parameter>
+        </state>
+
+        <distribution spec='CompoundDistribution' id='posterior'>
+            <distribution id="prior" spec="CompoundDistribution">
+                <prior id='tPrior' name='distribution' x='@t'>
+                    <LogNormal id="LogNormalDistributionModel.0" name="distr">
+                        <parameter estimate="false" id="RealParameter.0" name="M" value="0.1"/>
+                        <parameter estimate="false" id="RealParameter.1" lower="0.0" name="S" upper="5.0"
+                                   value="1.25"/>
+                    </LogNormal>
+                </prior>
+                <prior id='vPrior' name='distribution' x='@v'>
+                    <LogNormal id="LogNormalDistributionModel.1" name="distr">
+                        <parameter estimate="false" id="RealParameter.2" name="M" value="0.1"/>
+                        <parameter estimate="false" id="RealParameter.3" lower="0.0" name="S" upper="5.0"
+                                   value="1.25"/>
+                    </LogNormal>
+                </prior>
+                <prior id='sPrior' name='distribution' x='@s'>
+                    <LogNormal id="LogNormalDistributionModel.2" name="distr">
+                        <parameter estimate="false" id="RealParameter.4" name="M" value="0.1"/>
+                        <parameter estimate="false" id="RealParameter.5" lower="0.0" name="S" upper="5.0"
+                                   value="1.25"/>
+                    </LogNormal>
+                </prior>
+            </distribution>
+
+            <distribution id="likelihood" spec="CompoundDistribution">
+                <!-- The read count model -->
+                <!-- read count model        -->
+                <distribution spec='phylonco.beast.evolution.readcountmodel.ReadCountModel' id='readcountmodel'>
+                    <delta idref="delta"/>
+                    <epsilon idref="epsilon"/>
+                    <t idref="t"/>
+                    <v idref="v"/>
+                    <s idref="s"/>
+                    <w idref="w"/>
+                    <alignment idref="alignment"/>
+                    <readCount idref="readcount"/>
+                </distribution>
+            </distribution>
+
+        </distribution>
+
+        <!-- Read count model operators -->
+        <operator id='deltaScaler' spec='ScaleOperator' scaleFactor='0.05' weight='1' parameter='@delta'/>
+        <operator id='epsilonScaler' spec='ScaleOperator' scaleFactor='0.05' weight='1' parameter='@epsilon'/>
+        <operator id='tScaler' spec='ScaleOperator' scaleFactor='0.1' weight='1' parameter='@t'/>
+        <operator id='vScaler' spec='ScaleOperator' scaleFactor='0.01' weight='1' parameter='@v'/>
+        <operator id='sScaler' spec='ScaleOperator' scaleFactor='0.01' weight='1' parameter='@s'/>
+        <operator id='wScaler' spec='ScaleOperator' scaleFactor='0.2' weight='1' parameter='@w'/>
+
+        <!-- RandomWalk or Scale operator for your parameters -->
+
+
+
+        <logger logEvery="1000" fileName="test_read_count.log">
+<!--            <model idref='likelihood'/>-->
+<!--            <log idref="likelihood"/>-->
+            <log idref='delta'/>
+            <log idref='epsilon'/>
+            <log idref='t'/>
+            <log idref='v'/>
+            <log idref='s'/>
+            <log idref='w'/>
+        </logger>
+        <logger logEvery="10000">
+            <model idref='likelihood'/>
+            <log idref="likelihood"/>
+            <ESS spec='ESS' name='log' arg="@likelihood"/>
+            <log idref='delta'/>
+            <ESS spec='ESS' name='log' arg="@delta"/>
+            <log idref='epsilon'/>
+            <ESS spec='ESS' name='log' arg="@epsilon"/>
+            <log idref='t'/>
+            <ESS spec='ESS' name='log' arg="@t"/>
+            <log idref='v'/>
+            <ESS spec='ESS' name='log' arg="@v"/>
+            <log idref='s'/>
+            <ESS spec='ESS' name='log' arg="@s"/>
+            <log idref='w'/>
+            <ESS spec='ESS' name='log' arg="@w"/>
+        </logger>
+    </run>
+
+</beast>
