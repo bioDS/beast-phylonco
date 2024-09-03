@@ -1,10 +1,31 @@
 package phylonco.beast.evolution.datatype;
 
 
-public class ReadCount {
+import beast.base.core.BEASTObject;
+import beast.base.core.Input;
+
+import java.util.ArrayList;
+
+public class ReadCount extends BEASTObject {
     int ntaxa;
     int nchar;
     int data[][][];
+
+    String newline = "\n";
+    String semicolon = ";";
+    String comma = ",";
+
+    public Input<String> readCountStrInput = new Input<>("value", "A string record read counts", Input.Validate.REQUIRED);
+
+    public ReadCount() {
+        // do we need to fill this in?
+    }
+
+    public ReadCount(String data) {
+        this.readCountStrInput = new Input("value", "A string record read counts", Input.Validate.REQUIRED);
+        this.readCountStrInput.setValue(data, this);
+        this.initAndValidate();
+    }
 
     public ReadCount(int ntaxa, int nchar) {
         this.ntaxa = ntaxa;
@@ -25,6 +46,58 @@ public class ReadCount {
 
     public String getTypeDescription() {
         return "readCount";
+    }
+
+    private ArrayList<String> getTrimmed(String[] array) {
+        ArrayList<String> trimmed = new ArrayList<>();
+        for (String string : array) {
+            String num = string.trim();
+            if (num.length() > 0) {
+                trimmed.add(num);
+            }
+        }
+        return trimmed;
+    }
+
+    @Override
+    public void initAndValidate() {
+
+        // getValue from readCountStrInput
+        String readCountStr = readCountStrInput.get();
+        // data format A,C,G,T; A,C,G,T;
+        /**
+         * 0,7,11,0; 0,9,0,0;
+         * 1,0,5,0; 11,1,0,0;
+         */
+        ArrayList<String> cellArray;
+        ArrayList<String> siteArray;
+        String[] cells = readCountStr.split(newline);
+        cellArray = getTrimmed(cells);
+
+        // set nchar and ntaxa
+        this.ntaxa = cellArray.size();
+        this.nchar = cellArray.get(0).split(semicolon).length;
+        data = new int[ntaxa][nchar][4];
+
+        int taxaIndex = 0;
+        for (String cell : cellArray) {
+            String[] sites = cell.split(semicolon);
+            siteArray = getTrimmed(sites);
+            // deal with spaces and new lines using trimmed method
+            int siteIndex = 0;
+            for (String site : siteArray) {
+                String[] nucleotideCounts = site.split(comma);
+                // convert counts to int[]
+                int[] counts = new int[nucleotideCounts.length];
+                for (int i = 0; i < nucleotideCounts.length; i++) {
+                    counts[i] = Integer.parseInt(nucleotideCounts[i]);
+                }
+                // fill in counts
+                setReadCounts(taxaIndex, siteIndex, counts);
+                siteIndex++;
+            }
+            taxaIndex++;
+        }
     }
 }
 
