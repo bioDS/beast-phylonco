@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 
-public class ReadCountModel extends Distribution {
+public class LikelihoodReadCountModel extends Distribution {
 
     public Input<Alignment> alignmentInput = new Input<>("alignment", "alignment");
     public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");

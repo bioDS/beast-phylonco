@@ -17,12 +17,12 @@ public class TreeLikelihoodWithReadCounts extends TreeLikelihood {
 //    public Input<RealParameter> epsilonInput = new Input<>("epsilon", "sequencing error");
 //    public Input<RealParameter> deltaInput = new Input<>("delta", "allelic dropout probability");
 
-    public Input<ReadCountModel> readCountModelInput = new Input<>("readCountModel", "read count model");
+    public Input<LikelihoodReadCountModel> readCountModelInput = new Input<>("readCountModel", "read count model");
 
     public Input<ReadCount> readCountdataInput = new Input<>("readcount", "read count data for the beast.tree", Input.Validate.REQUIRED);
 
 
-    private ReadCountModel readCountModel;
+    private LikelihoodReadCountModel likelihoodReadCountModel;
 
     @Override
     public void initAndValidate() {
@@ -135,7 +135,7 @@ public class TreeLikelihoodWithReadCounts extends TreeLikelihood {
                 int state = genotypeAlignment.getPattern(taxonIndex, patternIndex);
                 // update the leaf partials using read count model
                 int[] states = genotypeAlignment.getDataType().getStatesForCode(state);
-                readCountModel.calculateLogPLeaf(node, states);
+                likelihoodReadCountModel.calculateLogPLeaf(node, states);
             }
         }
         return update;

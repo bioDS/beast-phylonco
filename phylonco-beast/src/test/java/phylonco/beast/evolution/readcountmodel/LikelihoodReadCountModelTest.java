@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
 import static org.junit.Assert.assertEquals;
 
 
-public class ReadCountModelTest {
+public class LikelihoodReadCountModelTest {
 
     final double DELTA = 1e-10;
 
@@ -45,7 +45,7 @@ public class ReadCountModelTest {
      */
     @Test
     public void testReadCountModel() throws IOException {
-        ReadCountModel readCountModel = new ReadCountModel();
+        LikelihoodReadCountModel likelihoodReadCountModel = new LikelihoodReadCountModel();
 
         // read from file
         Double epsilon = 0.06;
@@ -66,20 +66,20 @@ public class ReadCountModelTest {
         RealParameter sParam = new RealParameter(s);
 
         // init params
-        readCountModel.setInputValue("alignment", alignment);
-        readCountModel.setInputValue("readCount", readCounts);
-        readCountModel.setInputValue("epsilon", epsilon.toString());
-        readCountModel.setInputValue("delta", delta.toString());
-        readCountModel.setInputValue("t", t.toString());
-        readCountModel.setInputValue("v", v.toString());
-        readCountModel.setInputValue("s", sParam);
-        readCountModel.setInputValue("w", w.toString());
+        likelihoodReadCountModel.setInputValue("alignment", alignment);
+        likelihoodReadCountModel.setInputValue("readCount", readCounts);
+        likelihoodReadCountModel.setInputValue("epsilon", epsilon.toString());
+        likelihoodReadCountModel.setInputValue("delta", delta.toString());
+        likelihoodReadCountModel.setInputValue("t", t.toString());
+        likelihoodReadCountModel.setInputValue("v", v.toString());
+        likelihoodReadCountModel.setInputValue("s", sParam);
+        likelihoodReadCountModel.setInputValue("w", w.toString());
 
         // ...
 
-        readCountModel.initAndValidate();
+        likelihoodReadCountModel.initAndValidate();
 
-        double observedLogP = readCountModel.calculateLogP();
+        double observedLogP = likelihoodReadCountModel.calculateLogP();
         double expectedLogP = -35.6331962985386;
 
         assertEquals(expectedLogP, observedLogP, DELTA);
