@@ -2,9 +2,7 @@ package phylonco.beast.evolution.populationmodel;
 
 import beast.base.core.*;
 import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
-import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
-import beast.base.inference.operator.UpDownOperator;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
@@ -15,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Description("Coalescent intervals for a gompertz growing population.")
-public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Loggable, PopFuncWithUpDownOp {
+public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Loggable {
     final public Input<Function> f0Input = new Input<>("f0",
             "Initial proportion of the carrying capacity.", Input.Validate.REQUIRED);
     final public Input<Function> bInput = new Input<>("b",
@@ -155,30 +153,30 @@ public class GompertzGrowth_f0 extends PopulationFunction.Abstract implements Lo
     public void close(PrintStream printStream) {
     }
 
-    @Override
-    public UpDownOperator getUpDownOperator1(Tree tree) {
-        UpDownOperator upDownOperator = new UpDownOperator();
-        String idStr = getID() + "Up" + tree.getID() + "DownOperator1";
-        upDownOperator.setID(idStr);
-        upDownOperator.setInputValue("scaleFactor", 0.75);
-        upDownOperator.setInputValue("weight", 3.0);
-        upDownOperator.setInputValue("up", f0Input.get());
-        upDownOperator.setInputValue("down", tree);
-        upDownOperator.initAndValidate();
-        return upDownOperator;
-    }
-
-    @Override
-    public UpDownOperator getUpDownOperator2(Tree tree) {
-        UpDownOperator upDownOperator = new UpDownOperator();
-        String idStr = getID() + "Up" + tree.getID() + "DownOperator2";
-        upDownOperator.setID(idStr);
-        upDownOperator.setInputValue("scaleFactor", 0.75);
-        upDownOperator.setInputValue("weight", 3.0);
-        upDownOperator.setInputValue("up", bInput.get());
-        upDownOperator.setInputValue("down", tree);
-        upDownOperator.initAndValidate();
-        return upDownOperator;
-    }
+//    @Override
+//    public UpDownOperator getUpDownOperator1(Tree tree) {
+//        UpDownOperator upDownOperator = new UpDownOperator();
+//        String idStr = getID() + "Up" + tree.getID() + "DownOperator1";
+//        upDownOperator.setID(idStr);
+//        upDownOperator.setInputValue("scaleFactor", 0.75);
+//        upDownOperator.setInputValue("weight", 3.0);
+//        upDownOperator.setInputValue("up", f0Input.get());
+//        upDownOperator.setInputValue("down", tree);
+//        upDownOperator.initAndValidate();
+//        return upDownOperator;
+//    }
+//
+//    @Override
+//    public UpDownOperator getUpDownOperator2(Tree tree) {
+//        UpDownOperator upDownOperator = new UpDownOperator();
+//        String idStr = getID() + "Up" + tree.getID() + "DownOperator2";
+//        upDownOperator.setID(idStr);
+//        upDownOperator.setInputValue("scaleFactor", 0.75);
+//        upDownOperator.setInputValue("weight", 3.0);
+//        upDownOperator.setInputValue("up", bInput.get());
+//        upDownOperator.setInputValue("down", tree);
+//        upDownOperator.initAndValidate();
+//        return upDownOperator;
+//    }
 
 }
