@@ -2,7 +2,6 @@
  * @author Walter Xie
  */
 module phylonco.lphy {
-    requires transitive lphy.core;
     requires transitive lphy.base;
     requires jdk.jfr;
 
