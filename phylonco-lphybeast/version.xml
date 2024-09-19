@@ -2,14 +2,16 @@
     <!-- phylonco beast -->
     <depends on='phylonco' atleast='1.2.0'/>
     <depends on='lphybeast' atleast='1.2.0'/>
-<!--  include lphybeast  -->
-<!--    <depends on='lphybeast-flc' atleast='0.0.1'/>-->
+
+    <!--  include lphybeast  -->
+    <depends on='lphybeast-flc' atleast='0.0.1'/>
 
     <!-- add BEAST2 service below  -->
     <service type="beast.base.evolution.datatype.DataType">
         <!-- any ? -->
 <!--        <provider classname="phylonco.beast.evolution.datatype.NucleotideDiploid10"/>-->
     </service>
+    
     <service type="beast.base.core.BEASTInterface">
 <!-- any ? -->
     </service>
