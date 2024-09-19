@@ -31,6 +31,15 @@
             </sources>
         </moduleSet>
     </moduleSets>
+    <fileSets>
+        <fileSet>
+            <directory>../examples</directory>
+            <outputDirectory>examples</outputDirectory>
+            <excludes>
+                <exclude>test_read_count_model.xml</exclude>
+            </excludes>
+        </fileSet>
+    </fileSets>
     <files>
         <file>
             <source>version.xml</source>

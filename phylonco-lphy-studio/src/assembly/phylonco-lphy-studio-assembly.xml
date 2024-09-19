@@ -48,6 +48,7 @@
                 <include>**/data/**</include>
             </includes>
             <excludes>
+                <exclude>**/gt16ReadCountModel.lphy</exclude>
                 <exclude>**/todo/**</exclude>
                 <exclude>**/*.log</exclude>
                 <exclude>**/*.trees</exclude>

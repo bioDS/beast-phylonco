@@ -35,10 +35,10 @@ public class PhyloncoImpl extends LPhyBaseImpl {
     public List<Class<? extends GenerativeDistribution>> declareDistributions() {
         return Arrays.asList(
                 GT16ErrorModel.class,
-                HomozygousAlignmentDistribution.class,
-                ReadCountModel.class,
-                PloidyModel.class,
-                CoverageModel.class);
+                HomozygousAlignmentDistribution.class);
+//                ReadCountModel.class,
+//                PloidyModel.class,
+//                CoverageModel.class);
     }
 
     @Override
