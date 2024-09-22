@@ -1,5 +1,5 @@
 data {
- L = 2000;
+ L = 1000;
 }
 model {
 t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
@@ -8,5 +8,5 @@ nCarryingCapacity ~ LogNormal(meanlog=5, sdlog=0.3);
 logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
 tree ~CoalescentPopFunc(n=40, popFunc=logisticPopFunc);
 D ~ PhyloCTMC(L=L, Q=jukesCantor(),mu=0.01, tree=tree);
-height = tree.rootAge();
+
 }

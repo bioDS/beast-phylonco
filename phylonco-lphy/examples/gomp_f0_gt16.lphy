@@ -1,24 +1,22 @@
 data {
-  L = 2000;
+  L = 1000;
 }
 model {
 π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(rates=rates, freq=π);
 
-N0 ~ LogNormal(meanlog=4.5, sdlog=0.2);
-b ~ LogNormal(meanlog=3, sdlog=0.4);
-f0 ~ Beta(alpha=40, beta=2);
+N0 ~ LogNormal(meanlog=8, sdlog=0.5);
+b ~ LogNormal(meanlog=-0.95, sdlog=0.2);
+f0 ~ Beta(alpha=20, beta=7);
 
-//b ~ LogNormal(meanlog=-2.16825979, sdlog=0.07445519);
-//f0 ~ Beta(alpha=65, beta=2);
 gompertzPopFunc = gompertzPopFunc_f0(f0=f0, b=b, N0=N0);
 ψ ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
-A ~ PhyloCTMC(L=2000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
+A ~ PhyloCTMC(L=1000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
 epsilon ~ Beta(alpha=2, beta=999);
 delta ~ Beta(alpha=1.5, beta=4.5);
 E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
 D = unphase(alignment=E);
-height = ψ.rootAge();
+//height = ψ.rootAge();
 }
 

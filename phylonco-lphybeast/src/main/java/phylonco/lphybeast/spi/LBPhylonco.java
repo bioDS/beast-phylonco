@@ -48,7 +48,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 Gompertz_t50ToBEAST.class,
                 ConstantToBEAST.class,
              //   SVSToBEAST.class,
-                SVSPopulationFunctionToBEAST.class
+                SVSPopulationFunctionToBEAST.class,
+                ExpansionToBEAST.class
         );
     }
 
@@ -81,6 +82,7 @@ public class LBPhylonco implements LPhyBEASTExt {
                 GompertzPopulationFunction_t50.class,
                 ExponentialPopulationFunction.class,
                 LogisticPopulationFunction.class,
+                ExpansionPopulationFunction.class,
                 ConstantPopulationFunction.class,
                 UniformDiscrete.class);
     }

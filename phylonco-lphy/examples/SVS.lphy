@@ -1,29 +1,28 @@
-N0_con ~ LogNormal(meanlog=4, sdlog=0.4);
+N0_con ~ LogNormal(meanlog=4.2, sdlog=0.12);
 constantPopFunc = constantPopFunc(N0=N0_con);
 
-b_exp ~ LogNormal(meanlog=-3.9, sdlog=0.8);
-N0_exp ~ LogNormal(meanlog=5.5, sdlog=0.6);
+b_exp ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+N0_exp ~ LogNormal(meanlog=9.2, sdlog=0.2);
 exponentialPopFunc = exponentialPopFunc(GrowthRate=b_exp, N0=N0_exp);
 
-t50_gom ~ LogNormal(meanlog=4, sdlog=0.7);
-b_gom ~ LogNormal(meanlog=-4.1, sdlog=0.7);
-NInf_gomp ~ LogNormal(meanlog=4.8, sdlog=0.8);
+t50_gom ~ LogNormal(meanlog=4, sdlog=1.2);
+b_gom ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+NInf_gomp ~ LogNormal(meanlog=9.2, sdlog=0.12);
 gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInf_gomp, t50=t50_gom, b=b_gom);
 
-t50_log ~ LogNormal(meanlog=4.9, sdlog=0.7);
-b_log ~ LogNormal(meanlog=-3.2, sdlog=0.6);
-Ninf_log ~ LogNormal(meanlog=4.5, sdlog=0.9);
+t50_log ~ LogNormal(meanlog=4, sdlog=1.2);
+b_log ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+Ninf_log ~ LogNormal(meanlog=9.2, sdlog=0.12);
 logisticPopFunc = logisticPopFunc(t50=t50_log, nCarryingCapacity=Ninf_log, b=b_log);
 
-//models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc];
-//models = [constantPopFunc, logisticPopFunc, gompertzPopFunc];
-//models = [constantPopFunc, logisticPopFunc];
-models = [constantPopFunc, logisticPopFunc, gompertzPopFunc, exponentialPopFunc];
+models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc];
 I ~ UniformDiscrete(lower=0, upper=length(models)-1);
-//I ~ Uniform(lower=0, upper=length(models)-1);
-
-
 SVSmodel = stochasticVariableSelection(indicator=I, models=models);
+tree ~CoalescentPopFunc(n=40, popFunc=SVSmodel);
+D ~ PhyloCTMC(L=2000, Q=jukesCantor(),mu=0.01, tree=tree);
+height = tree.rootAge();
+length = tree.treeLength();
+
 
 //π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);
 //rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
@@ -34,8 +33,3 @@ SVSmodel = stochasticVariableSelection(indicator=I, models=models);
 //delta ~ Beta(alpha=1.5, beta=4.5);
 //E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
 //D = unphase(alignment=E);
-
-tree ~CoalescentPopFunc(n=40, popFunc=SVSmodel);
-D ~ PhyloCTMC(L=2000, Q=jukesCantor(),mu=0.01, tree=tree);
-height = tree.rootAge();
-length = tree.treeLength();

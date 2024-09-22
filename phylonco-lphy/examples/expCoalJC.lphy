@@ -1,7 +1,7 @@
 
 model {
-GrowthRate ~ LogNormal(meanlog=-3.6, sdlog=0.36);
-N0 ~ LogNormal(meanlog=5, sdlog=0.3);
+GrowthRate ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+N0 ~ LogNormal(meanlog=9.2, sdlog=0.12);
 exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0);
 tree ~CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);
 D ~ PhyloCTMC(L=200, Q=jukesCantor(),mu=0.01, tree=tree);

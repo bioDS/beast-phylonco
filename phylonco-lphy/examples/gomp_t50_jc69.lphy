@@ -1,10 +1,10 @@
 data {
-  L = 2000;
+  L = 1000;
 }
 model {
   t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
   b ~ LogNormal(meanlog=2, sdlog=0.5);
-  NInfinity ~ LogNormal(meanlog=5, sdlog=0.3);
+  NInfinity ~ LogNormal(meanlog=4.5, sdlog=0.5);
   gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b);
   //n0 = gompertzPopFunc.getN0();
   //f0=n0/NInfinity;
