@@ -2,7 +2,7 @@ package phylonco.lphybeast.tobeast.values;
 
 import beast.base.inference.parameter.IntegerParameter;
 import lphy.base.evolution.coalescent.PopulationFunction;
-import lphy.base.evolution.coalescent.populationmodel.SVSFunction;
+import lphy.base.evolution.coalescent.populationmodel.SVSPopulation;
 import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
 import lphy.core.model.GraphicalModelNode;
 import lphy.core.model.Value;
@@ -13,14 +13,14 @@ import phylonco.beast.evolution.populationmodel.StochasticVariableSelection;
 
 import java.util.ArrayList;
 
-public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationFunction, StochasticVariableSelection> {
+public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulation, StochasticVariableSelection> {
 
     @Override
-    public StochasticVariableSelection valueToBEAST(Value<SVSPopulationFunction> lphyPopFuncVal, BEASTContext context) {
+    public StochasticVariableSelection valueToBEAST(Value<SVSPopulation> lphyPopFuncVal, BEASTContext context) {
 
         StochasticVariableSelection beastPopFunc = new StochasticVariableSelection();
 
-        SVSFunction gen = (SVSFunction) lphyPopFuncVal.getGenerator();
+        SVSPopulationFunction gen = (SVSPopulationFunction) lphyPopFuncVal.getGenerator();
 
         IntegerParameter indicatorParam = context.getAsIntegerParameter(gen.getIndicator());
 
@@ -68,7 +68,7 @@ public class SVSPopulationFunctionToBEAST implements ValueToBEAST<SVSPopulationF
 
     @Override
     public Class getValueClass() {
-        return SVSPopulationFunction.class;
+        return SVSPopulation.class;
     }
 
     @Override

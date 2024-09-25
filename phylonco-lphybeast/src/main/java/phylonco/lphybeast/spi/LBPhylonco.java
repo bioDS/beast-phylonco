@@ -77,7 +77,7 @@ public class LBPhylonco implements LPhyBEASTExt {
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 MRCA.class,
                 PopulationFunctionCoalescent.class,
-                SVSFunction.class,
+                SVSPopulationFunction.class,
                 GompertzPopulationFunction_f0.class,
                 GompertzPopulationFunction_t50.class,
                 ExponentialPopulationFunction.class,
@@ -90,7 +90,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
-                SVSPopulationFunction.class);
+                SVSPopulation.class);
     }
 
 }

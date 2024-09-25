@@ -6,9 +6,9 @@ model {
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(rates=rates, freq=π);
 
-t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
-b ~ LogNormal(meanlog=2, sdlog=0.5);
-NInfinity ~ LogNormal(meanlog=4.5, sdlog=0.5);
+t50 ~ LogNormal(meanlog=4, sdlog=1.2);
+b ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+NInfinity ~ LogNormal(meanlog=9.2, sdlog=0.12);
 
 gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b);
 ψ ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
@@ -19,3 +19,5 @@ E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
 D = unphase(alignment=E);
 height = ψ.rootAge();
 }
+
+

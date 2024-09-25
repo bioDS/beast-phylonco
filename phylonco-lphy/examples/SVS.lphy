@@ -5,23 +5,44 @@ b_exp ~ LogNormal(meanlog=-0.98, sdlog=0.35);
 N0_exp ~ LogNormal(meanlog=9.2, sdlog=0.2);
 exponentialPopFunc = exponentialPopFunc(GrowthRate=b_exp, N0=N0_exp);
 
-t50_gom ~ LogNormal(meanlog=4, sdlog=1.2);
+t50_gom ~ LogNormal(meanlog=4, sdlog=0.2);
 b_gom ~ LogNormal(meanlog=-0.98, sdlog=0.35);
 NInf_gomp ~ LogNormal(meanlog=9.2, sdlog=0.12);
 gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInf_gomp, t50=t50_gom, b=b_gom);
 
-t50_log ~ LogNormal(meanlog=4, sdlog=1.2);
+t50_log ~ LogNormal(meanlog=4, sdlog=0.2);
 b_log ~ LogNormal(meanlog=-0.98, sdlog=0.35);
 Ninf_log ~ LogNormal(meanlog=9.2, sdlog=0.12);
 logisticPopFunc = logisticPopFunc(t50=t50_log, nCarryingCapacity=Ninf_log, b=b_log);
 
-models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc];
+tau_expansion ~ LogNormal(meanlog=4.0, sdlog=0.7);
+r_expansion ~ LogNormal(meanlog=-3.0, sdlog=1.0);
+NC_expansion ~ LogNormal(meanlog=8.0, sdlog=0.7);
+N0_expansion ~ LogNormal(meanlog=5.15, sdlog=0.7);
+expansionPopFunc = expansionPopFunc(tau=tau_expansion, N0=N0_expansion, r=r_expansion, NC=NC_expansion);
+
+models = [constantPopFunc, exponentialPopFunc, logisticPopFunc, gompertzPopFunc, expansionPopFunc];
 I ~ UniformDiscrete(lower=0, upper=length(models)-1);
 SVSmodel = stochasticVariableSelection(indicator=I, models=models);
 tree ~CoalescentPopFunc(n=40, popFunc=SVSmodel);
-D ~ PhyloCTMC(L=2000, Q=jukesCantor(),mu=0.01, tree=tree);
+κ ~ LogNormal(meanlog=1.0, sdlog=0.5);
+π ~ Dirichlet(conc=[2.0,2.0,2.0,2.0]);
+D ~ PhyloCTMC(L=2000, Q=hky(kappa=κ, freq=π), mu=0.00079, tree=tree);
 height = tree.rootAge();
 length = tree.treeLength();
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //π ~ Dirichlet(conc=[30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0, 3.0, 3.0, 3.0, 3.0, 30.0]);

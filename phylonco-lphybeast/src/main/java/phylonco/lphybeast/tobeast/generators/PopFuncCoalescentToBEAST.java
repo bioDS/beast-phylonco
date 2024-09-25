@@ -4,6 +4,7 @@ import beast.base.core.BEASTInterface;
 import beast.base.evolution.tree.TreeIntervals;
 import lphy.base.evolution.coalescent.PopulationFunction;
 import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
+import lphy.base.evolution.coalescent.populationmodel.SVSPopulation;
 import lphy.base.evolution.coalescent.populationmodel.SVSPopulationFunction;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
@@ -29,7 +30,7 @@ public class PopFuncCoalescentToBEAST implements
 
         beast.base.evolution.tree.coalescent.PopulationFunction populationFunction;
 
-        if (beastObj instanceof SVSPopulationFunction) {
+        if (beastObj instanceof SVSPopulation) {
             populationFunction = convertSVSPopulationFunction((SVSPopulationFunction) beastObj, context);
         } else if (beastObj instanceof beast.base.evolution.tree.coalescent.PopulationFunction) {
             populationFunction = (beast.base.evolution.tree.coalescent.PopulationFunction) beastObj;
@@ -58,7 +59,7 @@ public class PopFuncCoalescentToBEAST implements
     }
 
     private beast.base.evolution.tree.coalescent.PopulationFunction convertSVSPopulationFunction(SVSPopulationFunction svsPopFunc, BEASTContext context) {
-        PopulationFunction model = svsPopFunc.getModel();
+        PopulationFunction model = (PopulationFunction) svsPopFunc.getModels();
         Value<PopulationFunction> modelValue = new Value<>(model, null);
 
         Object beastObj = context.getBEASTObject(modelValue);

@@ -1,14 +1,17 @@
 model {
-tau ~ LogNormal(meanlog=1.0, sdlog=0.2);
-r ~ LogNormal(meanlog=-0.95, sdlog=0.2);
-NC ~ LogNormal(meanlog=6.0, sdlog=0.2);
-N0 ~ LogNormal(meanlog=0.15, sdlog=0.2);
+tau ~ LogNormal(meanlog=4.0, sdlog=0.7);
+r ~ LogNormal(meanlog=-3.0, sdlog=0.5);
+NC ~ LogNormal(meanlog=8.0, sdlog=0.7);
+N0 ~ LogNormal(meanlog=5.15, sdlog=0.7);
 expansionPopFunc = expansionPopFunc(tau=tau, N0=N0, r=r, NC=NC);
 tree ~CoalescentPopFunc(n=40, popFunc=expansionPopFunc);
 D ~ PhyloCTMC(L=1000, Q=jukesCantor(),mu=0.01, tree=tree);
 height = tree.rootAge();
 length = tree.treeLength();
 }
+
+
+
 
 tau ~ LogNormal(meanlog=1.0, sdlog=0.2);
 r ~ LogNormal(meanlog=-0.95, sdlog=0.2);
