@@ -6,6 +6,7 @@ import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.GenerativeDistribution;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
+import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeState;
@@ -60,6 +61,10 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         this.epsilon = epsilon;
         this.w = w;
     }
+
+    @GeneratorInfo(name = "ReadCountModel",
+            narrativeName = "read count model",
+            description = "A model to simulate the read counts at each site in each cell.")
 
     // D ~ GT16 genotypes (Alignment)
     // t ~ ...

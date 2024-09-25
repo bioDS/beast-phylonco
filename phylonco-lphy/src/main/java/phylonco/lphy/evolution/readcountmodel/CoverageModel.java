@@ -44,7 +44,8 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
 
     @GeneratorInfo(
             name = "CoverageModel",
-            description = "")
+            narrativeName = "coverage model",
+            description = "A model to simulate the coverage at each site in each cell")
     @Override
     public RandomVariable<Integer[][]> sample(){
         int n = alpha.value().length;

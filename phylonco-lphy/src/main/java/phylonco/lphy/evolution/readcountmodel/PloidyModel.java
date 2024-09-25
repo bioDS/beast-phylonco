@@ -35,6 +35,7 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
 
     @GeneratorInfo(
             name = "Ploidy",
+            narrativeName = "ploidy model",
             description = "Observed ploidy after allelic dropout.")
 
 
