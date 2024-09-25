@@ -72,7 +72,7 @@
     <parameter id="hky.kappa" value="2.0" lower="0.0"/>
     <parameter id="hky.frequencies" value="0.25" dimension="4" lower='0.0'/>
     <parameter id="f0" name="stateNode" value="0.5" lower="0.0" upper="1.0"/>
-    <parameter id="NInfinity" name="stateNode" value="1e11" lower="0.0" upper="Infinity"/>
+    <parameter id="N0" name="stateNode" value="1e11" lower="0.0" upper="Infinity"/>
     <parameter id="b" name="stateNode" value="0.1" lower="-Infinity" upper="Infinity"/>
     <!--    <parameter id="popSize" value="0.077" lower="0.0"/>-->
     <!--    <parameter id="growthRate" value="7.7E-5"/>-->
@@ -90,7 +90,7 @@
             <input name='stateNode' idref='hky.kappa'/>
             <input name='stateNode' idref='hky.frequencies' />
             <input name='stateNode' idref='f0' />
-            <input name='stateNode' idref='NInfinity' />
+            <input name='stateNode' idref='N0' />
             <input name='stateNode' idref='b' />
             <input name='stateNode' idref='tree'/>
         </state>
@@ -109,9 +109,9 @@
                 <distribution id="f0.prior" spec="beast.base.inference.distribution.Prior" x="@f0">
                     <distr spec="beast.base.inference.distribution.Beta" alpha="20.0" beta="2.0"/>
                 </distribution>
-<!--                <distribution id="NInfinity.prior" spec="beast.base.inference.distribution.Prior" x="@NInfinity">-->
+<!--                <distribution id="N0.prior" spec="beast.base.inference.distribution.Prior" x="@N0">-->
 <!--                    <distr spec="beast.base.inference.distribution.Normal" mean="1e11" sigma="50.0"/>-->
-                <distribution id="NInfinity.prior" spec="beast.base.inference.distribution.Prior" x="@NInfinity">
+                <distribution id="N0.prior" spec="beast.base.inference.distribution.Prior" x="@N0">
                     <distr spec="beast.base.inference.distribution.LogNormalDistributionModel" meanInRealSpace="true">
                         <parameter name="M" value="11"/> <!-- log(1e11) to convert mean to log-scale -->
                         <parameter name="S" value="0.2"/>
@@ -127,7 +127,7 @@
                     </treeIntervals>
                     <populationModel id="gompertzPopulationModel" spec="phylonco.beast.evolution.populationmodel.GompertzGrowth_f0">
                         <parameter name="f0" idref="f0"/>
-                        <parameter name="NInfinity" idref="NInfinity"/>
+                        <parameter name="N0" idref="N0"/>
                         <parameter name="b" idref="b"/>
                     </populationModel>
                 </distribution>
@@ -136,7 +136,7 @@
         </distribution>
 
         <operator id='f0Scaler' spec='ScaleOperator' scaleFactor="0.75" weight="0.1" parameter="@f0"/>
-        <operator id='NInfinityScaler' spec='ScaleOperator' scaleFactor="0.75" weight="0.1" parameter="@NInfinity"/>
+        <operator id='N0Scaler' spec='ScaleOperator' scaleFactor="0.75" weight="0.1" parameter="@N0"/>
         <operator id='bRandomWalk' spec='RealRandomWalkOperator' windowSize="0.1" weight="0.1" parameter="@b"/>
 
         <operator id='kappaScaler' spec='ScaleOperator' scaleFactor="0.75" weight="0.1" parameter="@hky.kappa"/>
@@ -155,7 +155,7 @@
             <log idref="prior"/>
             <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
             <log idref="f0"/>
-            <log idref="NInfinity"/>
+            <log idref="N0"/>
             <log idref="b"/>
             <log idref="hky.kappa"/>
             <log idref="hky.frequencies"/>
@@ -176,7 +176,7 @@
             <log idref="prior"/>
             <log spec='beast.base.evolution.tree.TreeHeightLogger' tree='@tree'/>
             <log idref="f0"/>
-            <log idref="NInfinity"/>
+            <log idref="N0"/>
             <log idref="b"/>
             <log idref="hky.kappa"/>
             <log idref="hky.frequencies"/>
