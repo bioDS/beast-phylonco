@@ -1,0 +1,14 @@
+<!-- test package install -->
+
+<packages>
+
+    <package name='phylonco' version='1.2.0'
+           url="https://github.com/bioDS/beast-phylonco/releases/download/v1.2.0/phylonco-beast-1.2.0.zip"
+           projectURL="https://github.com/bioDS/beast-phylonco"
+           description="A package for single cell cancer evolution." >
+        <depends on='BEAST.base' atleast='2.7.6'/>
+        <depends on='BEAST.app' atleast='2.7.6'/>
+        <depends on='BEASTLabs' atleast='2.0.2'/>
+    </package>
+
+</packages>
