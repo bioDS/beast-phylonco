@@ -12,13 +12,12 @@
     </package>
 
     <package name='phyloncoLphybeast' version='1.2.0'
-           
 url="https://github.com/bioDS/beast-phylonco/releases/download/v1.2.0/phylonco-lphybeast-1.2.0.zip"
            projectURL="https://github.com/bioDS/beast-phylonco"
            description="A LPhyBEAST extension for phylonco (also require LPhy and phylonco-lphy)." >
         <depends on='phylonco' atleast='1.2.0'/>
         <depends on='lphybeast' atleast='1.2.0'/>
-        <!~~ No FLC in this version~~>
+        <!-- No FLC in this version-->
     </package>
 
 
