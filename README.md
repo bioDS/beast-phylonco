@@ -115,9 +115,9 @@ BEAUti currently supports the GT16 Substitution model and Binary Substitution mo
 This requires editing the XML generated from Beauti, see examples in the `examples` directory. 
 
 ## For developers 
-To build use `./gradlew clean build` in the root directory, for details see [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
+Project now uses Maven, for details see [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
 
-For manual package installation instructions, see [here](http://www.beast2.org/managing-packages/)
+For manual beast package installation instructions, see [here](http://www.beast2.org/managing-packages/)
 
 ## Citations
 * BEAST v2.5: [Bouckaert at al. (2019)](https://doi.org/10.1371/journal.pcbi.1006650)
