@@ -11,7 +11,7 @@ If you have any questions, please use the `beast-users` google group https://gro
 
 This package requires Java 17 and at least [BEAST v2.7](https://github.com/CompEvol/beast2)
 
-For version requirements and lphy / lphybeast setup instructions see the [latest release notes](https://github.com/bioDS/beast-phylonco/releases/tag/v1.2.0)
+For version requirements and lphy / lphybeast setup instructions see the [latest release notes](https://github.com/bioDS/beast-phylonco/releases/latest)
 
 ## Features
 
