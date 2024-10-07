@@ -1,11 +1,26 @@
+
+
+/**
+ * DemographicAnalysis
+ *
+ * This Java program performs demographic analysis based on various population models,
+ * including constant, exponential, logistic, Gompertz with f0 or t50 parameters, and expansion models.
+ * It reads parameter samples from a log file, computes population sizes over a time grid, and
+ * outputs the results to a CSV file.
+ *
+ * Options:
+ * - modelType: Select between "constant", "exponential", "logistic", "gompertz_f0", "gompertz_t50", or "expansion".
+ * - treeHeightMethod: Choose how to compute maxTime using Tree.height ("mean", "median", "lowerHPD", "upperHPD", or "fixed").
+ * - binCount: Specify the number of time points for the analysis.
+ */
+
+
+
+
 package phylonco.beast.evolution.demographicreconstruction;
 
-
-
-import lphy.base.evolution.coalescent.populationmodel.ExponentialPopulation;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulation_f0;
-import lphy.base.evolution.coalescent.populationmodel.GompertzPopulation_t50;
-import lphy.base.evolution.coalescent.populationmodel.LogisticPopulation;
+import lphy.base.evolution.coalescent.PopulationFunction;
+import lphy.base.evolution.coalescent.populationmodel.*;
 
 import java.io.*;
 import java.util.*;
@@ -13,26 +28,22 @@ import java.util.*;
 public class DemographicAnalysis {
 
     public static void main(String[] args) {
-        // Specify the population model type: "constant", "exponential", "logistic", "gompertz_f0", or "gompertz_t50"
-        String modelType = "gompertz_f0"; // Modify as needed
+        // Specify the population model type: "constant", "exponential", "logistic", "gompertz_f0", "gompertz_t50", or "expansion"
+        String modelType = "expansion"; // Modify as needed
 
         // Input and output file paths
-        String logFilePath = "/Users/xuyuan/workspace/beast-phylonco/gompCoal-40.log";  // Input file path
+        String logFilePath = "/Users/xuyuan/workspace/beast-phylonco/hcvskyline copy.log";  // Input file path
         String outputCsvPath = "/Users/xuyuan/Desktop/output_results.csv";  // Output file path
 
+        // **New** Choose method to set maxTime based on Tree.height (mean, median, lower HPD, upper HPD)
+        String treeHeightMethod = "lowerHPD"; // Options: "mean", "median", "lowerHPD", "upperHPD", "fixed"
+
+        // **New** Set the maximum binCount (number of time points)
+        int binCount = 1000;  // You can modify this value to set the maximum binCount
+
         // Define the parameters to read based on the model type
-        String[] parameterNames;
-        if (modelType.equals("constant")) {
-            parameterNames = new String[]{"N0", "tree.height"};
-        } else if (modelType.equals("exponential")) {
-            parameterNames = new String[]{"N0", "GrowthRate", "tree.height"};
-        } else if (modelType.equals("logistic")) {
-            parameterNames = new String[]{"t50", "nCarryingCapacity", "b", "tree.height"};
-        } else if (modelType.equals("gompertz_f0")) {
-            parameterNames = new String[]{"N0", "f0", "b", "tree.height"};
-        } else if (modelType.equals("gompertz_t50")) {
-            parameterNames = new String[]{"t50", "b", "NInfinity", "tree.height"};
-        } else {
+        String[] parameterNames = determineParameterNames(modelType);
+        if (parameterNames == null) {
             System.err.println("Unknown model type: " + modelType);
             return;
         }
@@ -45,30 +56,46 @@ public class DemographicAnalysis {
             return; // Exit if parameters are missing or inconsistent
         }
 
-        int sampleCount = parameterSamples.get("tree.height").size();
+        // Extract tree height samples to set maxTime
+        List<Double> treeHeight_samples = parameterSamples.get("Tree.height");
+        if (treeHeight_samples == null || treeHeight_samples.isEmpty()) {
+            System.err.println("Error: Tree.height samples not found or empty.");
+            return;
+        }
 
-        // Extract parameter samples
-        List<Double> N0_samples = parameterSamples.get("N0");
-        List<Double> growthRate_samples = parameterSamples.get("GrowthRate");
-        List<Double> t50_samples = parameterSamples.get("t50");
-        List<Double> nCarryingCapacity_samples = parameterSamples.get("nCarryingCapacity");
-        List<Double> b_samples = parameterSamples.get("b");
-        List<Double> f0_samples = parameterSamples.get("f0");
-        List<Double> NInfinity_samples = parameterSamples.get("NInfinity");
-        List<Double> treeHeight_samples = parameterSamples.get("tree.height");
-
-        // Compute the 95% HPD interval of tree.height
-        double[] hpdInterval = calculateHPD(treeHeight_samples, 0.95);
-        double hpdUpper = hpdInterval[1];
+        // **New** Compute maxTime based on treeHeightMethod (mean, median, lower HPD, upper HPD)
+        double maxTime = 0.0;
+        switch (treeHeightMethod) {
+            case "mean":
+                maxTime = calculateMean(treeHeight_samples);
+                System.out.println("Max Time based on mean of Tree.height: " + maxTime);
+                break;
+            case "median":
+                maxTime = calculateMedian(treeHeight_samples);
+                System.out.println("Max Time based on median of Tree.height: " + maxTime);
+                break;
+            case "lowerHPD":
+                maxTime = calculateHPD(treeHeight_samples, 0.95)[0];
+                System.out.println("Max Time based on lower 95% HPD of Tree.height: " + maxTime);
+                break;
+            case "upperHPD":
+                maxTime = calculateHPD(treeHeight_samples, 0.95)[1];
+                System.out.println("Max Time based on upper 95% HPD of Tree.height: " + maxTime);
+                break;
+            case "fixed":
+                maxTime = 100.0; // Example of a fixed maxTime
+                System.out.println("Max Time set to a fixed value: " + maxTime);
+                break;
+            default:
+                System.err.println("Unknown tree height method.");
+                return;
+        }
 
         // Set the time range
         double minTime = 0.0;
-        double maxTime = hpdUpper;
 
-        // Define the time grid
-        int binCount = 100;  // Number of time points
+        // **New** Define the time grid based on the user-specified binCount
         double deltaTime = (maxTime - minTime) / (binCount - 1);
-
         List<Double> timePoints = new ArrayList<>();
         for (int i = 0; i < binCount; i++) {
             double time = minTime + i * deltaTime;
@@ -81,69 +108,65 @@ public class DemographicAnalysis {
             populationSizesAtTimePoints.add(new ArrayList<>());
         }
 
-        // Compute population sizes at each time point for each sample
-        for (int sampleIndex = 0; sampleIndex < sampleCount; sampleIndex++) {
-            if (modelType.equals("gompertz_f0")) {
-                // GompertzPopulation_f0 model
-                double N0 = N0_samples.get(sampleIndex);
-                double f0 = f0_samples.get(sampleIndex);
-                double b = b_samples.get(sampleIndex);
+        // Extract other parameter samples and use them in different models
+        for (int sampleIndex = 0; sampleIndex < treeHeight_samples.size(); sampleIndex++) {
+            switch (modelType) {
+                case "gompertz_f0":
+                    double N0_f0 = parameterSamples.get("N0").get(sampleIndex);
+                    double f0 = parameterSamples.get("f0").get(sampleIndex);
+                    double b_f0 = parameterSamples.get("b").get(sampleIndex);
 
-                GompertzPopulation_f0 gompertzPop = new GompertzPopulation_f0(N0, f0, b);
+                    GompertzPopulation_f0 gompertzPop_f0 = new GompertzPopulation_f0(N0_f0, f0, b_f0);
+                    calculatePopulationSizes(gompertzPop_f0, timePoints, populationSizesAtTimePoints, sampleIndex);
+                    break;
 
-                for (int i = 0; i < timePoints.size(); i++) {
-                    double time = timePoints.get(i);
-                    double size = gompertzPop.getTheta(time);
-                    populationSizesAtTimePoints.get(i).add(size);
-                }
-            } else if (modelType.equals("gompertz_t50")) {
-                // GompertzPopulation_t50 model
-                double t50 = t50_samples.get(sampleIndex);
-                double b = b_samples.get(sampleIndex);
-                double NInfinity = NInfinity_samples.get(sampleIndex);
+                case "gompertz_t50":
+                    double t50 = parameterSamples.get("t50").get(sampleIndex);
+                    double b_t50 = parameterSamples.get("b").get(sampleIndex);
+                    double NInfinity = parameterSamples.get("NInfinity").get(sampleIndex);
 
-                GompertzPopulation_t50 gompertzPop = new GompertzPopulation_t50(t50, b, NInfinity);
+                    GompertzPopulation_t50 gompertzPop_t50 = new GompertzPopulation_t50(t50, b_t50, NInfinity);
+                    calculatePopulationSizes(gompertzPop_t50, timePoints, populationSizesAtTimePoints, sampleIndex);
+                    break;
 
-                for (int i = 0; i < timePoints.size(); i++) {
-                    double time = timePoints.get(i);
-                    double size = gompertzPop.getTheta(time);
-                    populationSizesAtTimePoints.get(i).add(size);
-                }
-            } else if (modelType.equals("logistic")) {
-                // Logistic model
-                double t50 = t50_samples.get(sampleIndex);
-                double nCarryingCapacity = nCarryingCapacity_samples.get(sampleIndex);
-                double b = b_samples.get(sampleIndex);
+                case "logistic":
+                    double t50_log = parameterSamples.get("t50").get(sampleIndex);
+                    double nCarryingCapacity = parameterSamples.get("nCarryingCapacity").get(sampleIndex);
+                    double b_log = parameterSamples.get("b").get(sampleIndex);
 
-                LogisticPopulation logPop = new LogisticPopulation(t50, nCarryingCapacity, b);
+                    LogisticPopulation logPop = new LogisticPopulation(t50_log, nCarryingCapacity, b_log);
+                    calculatePopulationSizes(logPop, timePoints, populationSizesAtTimePoints, sampleIndex);
+                    break;
 
-                for (int i = 0; i < timePoints.size(); i++) {
-                    double time = timePoints.get(i);
-                    double size = logPop.getTheta(time);
-                    populationSizesAtTimePoints.get(i).add(size);
-                }
-            } else if (modelType.equals("exponential")) {
-                // Exponential model
-                double N0 = N0_samples.get(sampleIndex);
-                double growthRate = growthRate_samples.get(sampleIndex);
+                case "exponential":
+                    double N0_exp = parameterSamples.get("N0").get(sampleIndex);
+                    double growthRate = parameterSamples.get("GrowthRate").get(sampleIndex);
 
-                ExponentialPopulation expPop = new ExponentialPopulation(growthRate, N0);
+                    ExponentialPopulation expPop = new ExponentialPopulation(growthRate, N0_exp);
+                    calculatePopulationSizes(expPop, timePoints, populationSizesAtTimePoints, sampleIndex);
+                    break;
 
-                for (int i = 0; i < timePoints.size(); i++) {
-                    double time = timePoints.get(i);
-                    double size = expPop.getTheta(time);
-                    populationSizesAtTimePoints.get(i).add(size);
-                }
-            } else if (modelType.equals("constant")) {
-                // Constant model
-                double N0 = N0_samples.get(sampleIndex);
-                for (int i = 0; i < timePoints.size(); i++) {
-                    double size = N0; // Population size remains constant
-                    populationSizesAtTimePoints.get(i).add(size);
-                }
-            } else {
-                System.err.println("Unknown model type: " + modelType);
-                return;
+                case "constant":
+                    double N0_const = parameterSamples.get("N0").get(sampleIndex);
+                    for (int i = 0; i < timePoints.size(); i++) {
+                        double size = N0_const; // Population size remains constant
+                        populationSizesAtTimePoints.get(i).add(size);
+                    }
+                    break;
+
+                case "expansion":
+                    double N0_expansion = parameterSamples.get("N0").get(sampleIndex);
+                    double tau = parameterSamples.get("tau").get(sampleIndex);
+                    double r = parameterSamples.get("r").get(sampleIndex);
+                    double NC = parameterSamples.get("NC").get(sampleIndex);
+
+                    ExpansionPopulation expanPop = new ExpansionPopulation(N0_expansion, tau, r, NC);
+                    calculatePopulationSizes(expanPop, timePoints, populationSizesAtTimePoints, sampleIndex);
+                    break;
+
+                default:
+                    System.err.println("Unknown model type: " + modelType);
+                    return;
             }
         }
 
@@ -173,46 +196,64 @@ public class DemographicAnalysis {
         System.out.println("Analysis complete. Results saved to " + outputCsvPath);
     }
 
+    // Method to determine parameter names based on model type
+    public static String[] determineParameterNames(String modelType) {
+        switch (modelType) {
+            case "constant":
+                return new String[]{"N0", "Tree.height"};
+            case "exponential":
+                return new String[]{"N0", "GrowthRate", "Tree.height"};
+            case "logistic":
+                return new String[]{"t50", "nCarryingCapacity", "b", "Tree.height"};
+            case "gompertz_f0":
+                return new String[]{"N0", "f0", "b", "Tree.height"};
+            case "gompertz_t50":
+                return new String[]{"t50", "b", "NInfinity", "Tree.height"};
+            case "expansion":
+                return new String[]{"N0", "tau", "r", "NC", "Tree.height"};
+            default:
+                return null;
+        }
+    }
+
+    // Method to calculate population sizes
+    public static void calculatePopulationSizes(PopulationFunction populationFunction, List<Double> timePoints, List<List<Double>> populationSizesAtTimePoints, int sampleIndex) {
+        for (int i = 0; timePoints.size() > i; i++) {
+            double time = timePoints.get(i);
+            double size = populationFunction.getTheta(time);
+            populationSizesAtTimePoints.get(i).add(size);
+        }
+    }
+
     // Method to check if essential parameters exist and have matching sample counts
     public static boolean checkParameters(String modelType, Map<String, List<Double>> parameterSamples) {
-        List<Double> treeHeight_samples = parameterSamples.get("tree.height");
+        List<Double> treeHeight_samples = parameterSamples.get("Tree.height");
 
         if (treeHeight_samples == null || treeHeight_samples.isEmpty()) {
-            System.err.println("tree.height parameter samples not found.");
+            System.err.println("Tree.height parameter samples not found.");
             return false;
         }
 
         int sampleCount = treeHeight_samples.size();
 
-        if (modelType.equals("constant")) {
-            return checkSampleConsistency(parameterSamples, new String[]{"N0"}, sampleCount);
-        } else if (modelType.equals("exponential")) {
-            return checkSampleConsistency(parameterSamples, new String[]{"N0", "GrowthRate"}, sampleCount);
-        } else if (modelType.equals("logistic")) {
-            return checkSampleConsistency(parameterSamples, new String[]{"t50", "nCarryingCapacity", "b"}, sampleCount);
-        } else if (modelType.equals("gompertz_f0")) {
-            return checkSampleConsistency(parameterSamples, new String[]{"N0", "f0", "b"}, sampleCount);
-        } else if (modelType.equals("gompertz_t50")) {
-            return checkSampleConsistency(parameterSamples, new String[]{"t50", "b", "NInfinity"}, sampleCount);
-        } else {
+        String[] requiredParams = determineParameterNames(modelType);
+        if (requiredParams == null) {
             System.err.println("Unknown model type: " + modelType);
             return false;
         }
-    }
 
-    // Helper method to check if specified parameters exist and have matching sample counts
-    public static boolean checkSampleConsistency(Map<String, List<Double>> parameterSamples, String[] paramNames, int sampleCount) {
-        for (String paramName : paramNames) {
-            List<Double> samples = parameterSamples.get(paramName);
+        for (String param : requiredParams) {
+            List<Double> samples = parameterSamples.get(param);
             if (samples == null || samples.isEmpty()) {
-                System.err.println(paramName + " parameter samples not found.");
+                System.err.println(param + " parameter samples not found.");
                 return false;
             }
             if (samples.size() != sampleCount) {
-                System.err.println("Sample counts for " + paramName + " and tree.height do not match.");
+                System.err.println("Sample counts for " + param + " and Tree.height do not match.");
                 return false;
             }
         }
+
         return true;
     }
 
