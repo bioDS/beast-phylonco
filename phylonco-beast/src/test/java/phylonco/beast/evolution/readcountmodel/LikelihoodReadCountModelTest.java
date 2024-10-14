@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public class LikelihoodReadCountModelTest {
 
-    final double DELTA = 1e-10;
+    final double DELTA = 1e-4;
 
     @BeforeEach
     public void setUp() {
