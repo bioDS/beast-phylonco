@@ -9,12 +9,12 @@ import lphy.core.model.annotation.ParameterInfo;
 
 import java.util.Map;
 
-public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
+public class PloidyModel implements GenerativeDistribution<Integer2DMatrix>  {
     private Value<Integer> l;
     private Value<Integer> n;
     private Value<Double> delta;
 
-    private RandomVariable<Integer[][]> alpha;
+
 
     public static final String lParamName = "l";
     public static final String nParamName = "n";
@@ -40,7 +40,8 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
 
 
     @Override
-    public RandomVariable<Integer[][]> sample() {
+    public RandomVariable<Integer2DMatrix> sample() {
+        RandomVariable<Integer2DMatrix> alpha;
         Value<Integer> numberA = new Value<>("numberA", 1);
         Binomial binomialAlpha = new Binomial(delta, numberA);
 
@@ -54,7 +55,7 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
             }
         }
 
-        alpha = new RandomVariable<>("alpha", alp, this);
+        alpha = new RandomVariable<>("alpha", new Integer2DMatrix(alp), this);
         return alpha;
     }
 
@@ -76,5 +77,15 @@ public class PloidyModel implements GenerativeDistribution<Integer[][]>  {
         else throw new RuntimeException("Unrecognised parameter name: " + paramName);
     }
 
+    public Value<Integer> getL() {
+        return l;
+    }
 
+    public Value<Integer> getN() {
+        return n;
+    }
+
+    public Value<Double> getDelta() {
+        return delta;
+    }
 }

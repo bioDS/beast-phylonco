@@ -9,12 +9,12 @@ import lphy.core.model.annotation.ParameterInfo;
 
 import java.util.Map;
 
-public class CoverageModel implements GenerativeDistribution<Integer[][]> {
-    private Value<Integer[][]> alpha;
+public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
+    private Value<Integer2DMatrix> alpha;
     private Value<Double> t;
     private Value<Double> v;
     private Value<Double[]> s;
-    private RandomVariable<Integer[][]> coverage;
+
 
 
 
@@ -26,7 +26,7 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
 
 
     public CoverageModel(
-            @ParameterInfo(name = alphaParamName, description = "alpha, allelic dropout events for each cell at each site.") Value<Integer[][]> alpha,
+            @ParameterInfo(name = alphaParamName, description = "alpha, allelic dropout events for each cell at each site.") Value<Integer2DMatrix> alpha,
             @ParameterInfo(name = tParamName, description = "t, mean of allelic coverage.") Value<Double> t,
             @ParameterInfo(name = vParamName, description = "v, variance of allelic coverage.") Value<Double> v,
             @ParameterInfo(name = sParamName, description = "s, size factor of cell.") Value<Double[]> s
@@ -47,17 +47,18 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
             narrativeName = "coverage model",
             description = "A model to simulate the coverage at each site in each cell")
     @Override
-    public RandomVariable<Integer[][]> sample(){
-        int n = alpha.value().length;
-        int l = alpha.value()[0].length;
+    public RandomVariable<Integer2DMatrix> sample(){
+        RandomVariable<Integer2DMatrix> coverage;
+        int n = alpha.value().nTaxa();
+        int l = alpha.value().nchar();
         Value<Integer> r;
         Value<Double> p;
         Integer[][] cov = new Integer[n][l];
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < l; j++) {
-                Double mean = (this.alpha.value()[i][j] * this.t.value() * this.s.value()[i]);
-                Double variance = mean + (Math.pow((double) alpha.value()[i][j], 2.0) * v.value() * Math.pow(this.s.value()[i], 2.0));
+                Double mean = (this.alpha.value().getState(i,j) * this.t.value() * this.s.value()[i]);
+                Double variance = mean + (Math.pow((double) alpha.value().getState(i,j), 2.0) * v.value() * Math.pow(this.s.value()[i], 2.0));
                 double pValue = mean / variance;
                 float rFloat = (float) (Math.pow(mean, 2) / (variance - mean));
                 int rValue = Math.round(rFloat);
@@ -67,7 +68,7 @@ public class CoverageModel implements GenerativeDistribution<Integer[][]> {
                 cov[i][j] = negativeBinomial.sample().value();
             }
         }
-        coverage = new RandomVariable<>("coverage", cov, this);
+        coverage = new RandomVariable<>("coverage", new Integer2DMatrix(cov), this);
         return coverage;
     }
 
