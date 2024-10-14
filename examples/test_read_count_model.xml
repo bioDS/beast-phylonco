@@ -44,6 +44,8 @@
         <sequence id="Sequence5" spec="Sequence" taxon="5" totalcount="6" value="b1a103561b"/>
     </data>
 
+
+
      read counts
     <readCount id="readcount" spec="phylonco.beast.evolution.datatype.ReadCount">
             0,0,3,12; 9,0,0,0; 14,0,4,0; 15,1,0,0; 16,0,0,0; 13,0,0,11; 1,2,0,7; 0,8,10,0; 7,0,10,0; 0,0,16,8;
@@ -60,33 +62,50 @@
         <state id="state" spec="State">
             <parameter id="epsilon" lower="0.0" upper="1.0" dimension="1" name="stateNode">0.1</parameter>
             <parameter id="delta" lower="0.0" upper="1.0" dimension="1" name="stateNode">0.2</parameter>
-            <parameter id="t" lower="1.0" upper="10.0" dimension="1" name="stateNode">9.510591534058255</parameter>
-            <parameter id="v" lower="0.0" upper="10.0" dimension="1" name="stateNode">1.1699892891308206</parameter>
-            <parameter id="s" lower="0.5" upper="1.5" dimension="6" name="stateNode">1.039915 1.042499 1.039479 1.040432 1.042806 1.042825</parameter>
-            <parameter id="w" lower="0.0" dimension="1" name="stateNode">10.0</parameter>
+            <parameter id="t" dimension="1" name="stateNode">9.510591534058255</parameter>
+            <parameter id="v" dimension="1" name="stateNode">1.1699892891308206</parameter>
+            <parameter id="s" dimension="6" name="stateNode">1.039915 1.042499 1.039479 1.040432 1.042806 1.042825</parameter>
+            <parameter id="w" dimension="1" name="stateNode">10.0</parameter>
         </state>
+
+
 
         <distribution spec='CompoundDistribution' id='posterior'>
             <distribution id="prior" spec="CompoundDistribution">
+                <prior id='epsilonPrior' name='distribution' x='@epsilon'>
+                    <Beta id="BetaDistributionModel.0" name="distr">
+                        <parameter estimate="false" id="RealParameter.0" name="alpha" value="10.0"/>
+                        <parameter estimate="false" id="RealParameter.1" name="beta" value="100.0"/>
+                    </Beta>
+                </prior>
+                <prior id='deltaPrior' name='distribution' x='@delta'>
+                    <Beta id="BetaDistributionModel.1" name="distr">
+                        <parameter estimate="false" id="RealParameter.2" name="alpha" value="25.0"/>
+                        <parameter estimate="false" id="RealParameter.3" name="beta" value="100.0"/>
+                    </Beta>
+                </prior>
                 <prior id='tPrior' name='distribution' x='@t'>
                     <LogNormal id="LogNormalDistributionModel.0" name="distr">
-                        <parameter estimate="false" id="RealParameter.0" name="M" value="0.1"/>
-                        <parameter estimate="false" id="RealParameter.1" lower="0.0" name="S" upper="5.0"
-                                   value="1.25"/>
+                        <parameter estimate="false" id="RealParameter.4" name="M" value="1.702"/>
+                        <parameter estimate="false" id="RealParameter.5" name="S" value="0.8671"/>
                     </LogNormal>
                 </prior>
                 <prior id='vPrior' name='distribution' x='@v'>
                     <LogNormal id="LogNormalDistributionModel.1" name="distr">
-                        <parameter estimate="false" id="RealParameter.2" name="M" value="0.1"/>
-                        <parameter estimate="false" id="RealParameter.3" lower="0.0" name="S" upper="5.0"
-                                   value="1.25"/>
+                        <parameter estimate="false" id="RealParameter.6" name="M" value="0.8"/>
+                        <parameter estimate="false" id="RealParameter.7" name="S" value="0.475"/>
                     </LogNormal>
                 </prior>
                 <prior id='sPrior' name='distribution' x='@s'>
+                    <LogNormal id="NormalDistributionModel.2" name="distr">
+                        <parameter estimate="false" id="RealParameter.8" name="M" value="0.2"/>
+                        <parameter estimate="false" id="RealParameter.9" name="S" value="0.75"/>
+                    </LogNormal>
+                </prior>
+                <prior id='wPrior' name='distribution' x='@w'>
                     <LogNormal id="LogNormalDistributionModel.2" name="distr">
-                        <parameter estimate="false" id="RealParameter.4" name="M" value="0.1"/>
-                        <parameter estimate="false" id="RealParameter.5" lower="0.0" name="S" upper="5.0"
-                                   value="1.25"/>
+                        <parameter estimate="false" id="RealParameter.10" name="M" value="2.5"/>
+                        <parameter estimate="false" id="RealParameter.11" name="S" value="1.0"/>
                     </LogNormal>
                 </prior>
             </distribution>
@@ -94,7 +113,7 @@
             <distribution id="likelihood" spec="CompoundDistribution">
                 <!-- The read count model -->
                 <!-- read count model        -->
-                <distribution spec='phylonco.beast.evolution.readcountmodel.ReadCountModel' id='readcountmodel'>
+                <distribution spec='phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel' id='readcountmodel'>
                     <delta idref="delta"/>
                     <epsilon idref="epsilon"/>
                     <t idref="t"/>
@@ -109,18 +128,18 @@
         </distribution>
 
         <!-- Read count model operators -->
-        <operator id='deltaScaler' spec='ScaleOperator' scaleFactor='0.05' weight='1' parameter='@delta'/>
-        <operator id='epsilonScaler' spec='ScaleOperator' scaleFactor='0.05' weight='1' parameter='@epsilon'/>
-        <operator id='tScaler' spec='ScaleOperator' scaleFactor='0.1' weight='1' parameter='@t'/>
-        <operator id='vScaler' spec='ScaleOperator' scaleFactor='0.01' weight='1' parameter='@v'/>
-        <operator id='sScaler' spec='ScaleOperator' scaleFactor='0.01' weight='1' parameter='@s'/>
-        <operator id='wScaler' spec='ScaleOperator' scaleFactor='0.2' weight='1' parameter='@w'/>
+        <operator id='deltaScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@delta'/>
+        <operator id='epsilonScaler' spec='ScaleOperator' scaleFactor='0.5' weight='1' parameter='@epsilon'/>
+        <operator id='tScaler' spec='ScaleOperator' scaleFactor='0.75' weight='1' parameter='@t'/>
+        <operator id='vScaler' spec='ScaleOperator' scaleFactor='0.75' weight='1' parameter='@v'/>
+        <operator id='sScaler' spec='ScaleOperator' scaleFactor='0.75' weight='1' parameter='@s'/>
+        <operator id='wScaler' spec='ScaleOperator' scaleFactor='0.9' weight='1' parameter='@w'/>
 
         <!-- RandomWalk or Scale operator for your parameters -->
 
 
 
-        <logger logEvery="1000" fileName="test_read_count.log">
+        <logger logEvery="1000" fileName="test_read_count.$(seed).log">
 <!--            <model idref='likelihood'/>-->
 <!--            <log idref="likelihood"/>-->
             <log idref='delta'/>
