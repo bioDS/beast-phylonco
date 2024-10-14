@@ -18,6 +18,9 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
+import phylonco.lphy.evolution.readcountmodel.CoverageModel;
+import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
+import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
 import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
 import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
@@ -76,6 +79,7 @@ public class LBPhylonco implements LPhyBEASTExt {
                 HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 MRCA.class,
+                PloidyModel.class, CoverageModel.class,
                 PopulationFunctionCoalescent.class,
                 SVSPopulationFunction.class,
                 GompertzPopulationFunction_f0.class,
@@ -90,7 +94,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
-                SVSPopulation.class);
+                SVSPopulation.class,
+                Integer2DMatrix.class);
     }
 
 }
