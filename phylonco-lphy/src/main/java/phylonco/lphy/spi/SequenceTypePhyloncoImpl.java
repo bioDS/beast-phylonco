@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * It requires a public no-args constructor.
  * @author Walter Xie
  */
-public class SequenceTypePhyloncoImpl implements SequenceTypeExtension {
+public class SequenceTypePhyloncoImpl extends SequenceTypeBaseImpl { //implements SequenceTypeExtension {
 
     @Override
     public Map<String, ? extends SequenceType> declareSequenceTypes() {
@@ -26,24 +26,25 @@ public class SequenceTypePhyloncoImpl implements SequenceTypeExtension {
         dataTypeMap.put(SequenceTypeBaseImpl.sanitise(UnphasedGenotype.NAME), PhasedGenotype.INSTANCE);
         return dataTypeMap;
     }
-
-    @Override
-    public Set<SequenceType> getSequenceTypes() {
-        return new HashSet<>(dataTypeMap.values());
-    }
+//
+//    @Override
+//    public Set<SequenceType> getSequenceTypes() {
+//        return new HashSet<>(dataTypeMap.values());
+//    }
 
 
     /**
      * LPhy sequence types {@link SequenceType}
      */
-    private static Map<String, SequenceType> dataTypeMap;
+//    protected static Map<String, SequenceType> dataTypeMap;
 
 
     /**
      * Required by ServiceLoader.
      */
     public SequenceTypePhyloncoImpl() {
-        dataTypeMap = new ConcurrentHashMap<>();
+        if (dataTypeMap == null)
+            dataTypeMap = new ConcurrentHashMap<>();
     }
 
     @Override
