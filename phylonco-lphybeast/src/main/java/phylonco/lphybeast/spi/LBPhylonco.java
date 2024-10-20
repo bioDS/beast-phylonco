@@ -21,10 +21,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
-import phylonco.lphybeast.tobeast.generators.GT16ErrorModelToBEAST;
-import phylonco.lphybeast.tobeast.generators.GT16ToBEAST;
-import phylonco.lphybeast.tobeast.generators.GTUnphaseToBEAST;
-import phylonco.lphybeast.tobeast.generators.PopFuncCoalescentToBEAST;
+import phylonco.lphybeast.tobeast.generators.*;
 import phylonco.lphybeast.tobeast.values.*;
 
 import java.util.Arrays;
@@ -52,7 +49,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 ConstantToBEAST.class,
              //   SVSToBEAST.class,
                 SVSPopulationFunctionToBEAST.class,
-                ExpansionToBEAST.class
+                ExpansionToBEAST.class,
+                ReadCountToBEAST.class
         );
     }
 
@@ -60,7 +58,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class
+                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
         );
