@@ -29,4 +29,15 @@ public class Integer2DMatrix {
 
     public Integer nchar () {return matrix[0].length;}
 
+    public String toString () {
+        String string = "\n";
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[i].length; j++) {
+                string += String.format("%d ", matrix[i][j]);
+            }
+            string += "\n";
+        }
+        return string;
+    }
+
 }
