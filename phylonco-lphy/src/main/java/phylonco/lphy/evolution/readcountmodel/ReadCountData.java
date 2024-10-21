@@ -2,7 +2,7 @@ package phylonco.lphy.evolution.readcountmodel;
 
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.TaxaCharacterMatrix;
-import lphy.core.model.datatype.Array2DUtils;
+
 
 
 public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
@@ -62,7 +62,7 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     @Override
     public String toString() {
-        String result = "\n";
+        String string = "\n";
         int n = getTaxa().getDimension();;
         int l = nchar();
         for (int i = 0; i < n; i++) {
@@ -73,10 +73,10 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
                 int countC = readCountDataMatrix[i][j].getCount("C");
                 int countG = readCountDataMatrix[i][j].getCount("G");
                 int countT = readCountDataMatrix[i][j].getCount("T");
-                result += String.format("A: %d, C: %d, G: %d, T: %d; \t", countA, countC, countG, countT);
+                string += String.format("A: %d, C: %d, G: %d, T: %d; \t", countA, countC, countG, countT);
             }
-            result += "\n";
+            string += "\n";
         }
-        return result;
+        return string;
     }
 }
