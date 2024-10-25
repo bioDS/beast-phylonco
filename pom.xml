@@ -11,6 +11,7 @@
 
 <!--    <groupId>io.github.linguaphylo</groupId>-->
     <artifactId>beast-phylonco</artifactId>
+    <!-- phylonco version   -->
     <version>${revision}</version>
     <packaging>pom</packaging>
 
@@ -21,7 +22,8 @@
 <!--        <lphybeast.vision>1.2.0-SNAPSHOT</lphybeast.vision>-->
 <!--  include lphybeast  -->
         <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
-        <!-- project.version https://maven.apache.org/maven-ci-friendly.html -->
+        <!-- phylonco pom version https://maven.apache.org/maven-ci-friendly.html -->
+        <!-- change version in phylonco-beast or phylonco-lphybeast pom, not here  -->
         <revision>1.2.0</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>

@@ -8,10 +8,11 @@
     </parent>
 
     <artifactId>phylonco-beast</artifactId>
-    <!-- must be consisting with version.xml   -->
+    <!-- phylonco-beast version, it must be consisting with version.xml   -->
     <version>1.2.0</version>
 
     <properties>
+        <!-- it must be consisting with version.xml, and the jar names in the lib folder -->
         <beastVersion>2.7.6</beastVersion>
     </properties>
 

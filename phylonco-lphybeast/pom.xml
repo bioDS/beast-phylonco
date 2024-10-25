@@ -7,7 +7,7 @@
     </parent>
 
     <artifactId>phylonco-lphybeast</artifactId>
-    <!-- must be consisting with version.xml   -->
+    <!-- phylonco-lphybeast version, it must be consisting with version.xml   -->
     <version>1.2.0</version>
 
     <dependencies>
