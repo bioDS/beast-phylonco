@@ -1,6 +1,6 @@
 data {
-n = 6;
-l = 10;
+n = 10;
+l = 500;
 w1 = 10.0;
 epsilon = 0.1; // try 0.5
 delta = 0.2;
@@ -10,6 +10,7 @@ meanV = 0.1; // variance coverage = lognormal(meanV, sdV)
 sdV = 0.05;
 meanS = 1.2; // cell-specific scaling
 sdS = 0.2;
+A = readNexus(file="/Users/dxie004/WorkSpace/beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus");
 }
 
 model {

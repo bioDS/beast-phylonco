@@ -9,7 +9,7 @@
 
     <artifactId>phylonco-beast</artifactId>
     <!-- phylonco-beast version, it must be consisting with version.xml   -->
-    <version>1.2.0</version>
+    <version>1.2.1</version>
 
     <properties>
         <!-- it must be consisting with version.xml, and the jar names in the lib folder -->

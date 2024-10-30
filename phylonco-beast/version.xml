@@ -1,4 +1,4 @@
-<package name='phylonco' version='1.2.0'>
+<package name='phylonco' version='1.2.1'>
     <!-- phylonco beast -->
     <depends on='BEAST.base' atleast='2.7.6'/>
     <depends on='BEAST.app' atleast='2.7.6'/>

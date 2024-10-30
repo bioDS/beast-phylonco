@@ -19,12 +19,12 @@
 
     <properties>
         <lphy.vision>1.6.1</lphy.vision>
-<!--        <lphybeast.vision>1.2.0-SNAPSHOT</lphybeast.vision>-->
+        <lphybeast.vision>1.2.1</lphybeast.vision>
 <!--  include lphybeast  -->
         <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
         <!-- phylonco pom version https://maven.apache.org/maven-ci-friendly.html -->
         <!-- change version in phylonco-beast or phylonco-lphybeast pom, not here  -->
-        <revision>1.2.0</revision>
+        <revision>1.2.1</revision>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
