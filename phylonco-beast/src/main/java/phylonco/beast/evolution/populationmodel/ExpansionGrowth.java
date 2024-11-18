@@ -10,33 +10,39 @@ import java.util.List;
 /**
  * Population model with piecewise exponential growth.
  */
-@Description("Expansion exponential growth population model.")
+@Description("Expansion exponential growth population model without N0 as an independent parameter.")
 public class ExpansionGrowth extends PopulationFunction.Abstract implements Loggable {
-    final public Input<Function> N0Input = new Input<>("N0",
-            "Initial population size before tau.", Input.Validate.REQUIRED);
     final public Input<Function> tauInput = new Input<>("tau",
-            "Time before which population size is constant at N0.", Input.Validate.REQUIRED);
+            "Time before which population size is constant.", Input.Validate.REQUIRED);
     final public Input<Function> rInput = new Input<>("r",
             "The exponential growth rate of the population.", Input.Validate.REQUIRED);
     final public Input<Function> NCInput = new Input<>("NC",
-            "Current effective infection number (population size) after time x.", Input.Validate.REQUIRED);
+            "Current effective population size after time x.", Input.Validate.REQUIRED);
+    final public Input<Function> xInput = new Input<>("x",
+            "Transition point time at which growth starts.", Input.Validate.REQUIRED);
 
-
-    private double x;
+    private double N0;
 
     @Override
     public void initAndValidate() {
-
-        double N0 = N0Input.get().getArrayValue();
-        double tau = tauInput.get().getArrayValue();
-        double r = rInput.get().getArrayValue();
         double NC = NCInput.get().getArrayValue();
+        double r = rInput.get().getArrayValue();
+        double tau = tauInput.get().getArrayValue();
+        double x;
 
-        if (N0 <= 0) {
-            throw new IllegalArgumentException("Initial population size N0 must be greater than 0.");
-        }
-        if (NC <= N0) {
-            throw new IllegalArgumentException("Current population size NC must be greater than N0.");
+        // Loop until we get a valid x within the range [0, tau]
+        do {
+            x = xInput.get().getArrayValue();
+
+            // Logging or printing a warning to indicate retrying (optional)
+            if (x < 0 || x > tau) {
+                System.err.println("Warning: Transition time x not in range [0, tau]. Retrying...");
+            }
+
+        } while (x < 0 || x > tau); // Repeat if x is outside the range [0, tau]
+
+        if (NC <= 0) {
+            throw new IllegalArgumentException("Population size NC must be greater than 0.");
         }
         if (r <= 0) {
             throw new IllegalArgumentException("Growth rate r must be greater than 0.");
@@ -45,16 +51,15 @@ public class ExpansionGrowth extends PopulationFunction.Abstract implements Logg
             throw new IllegalArgumentException("Time tau must be non-negative.");
         }
 
-        x = tau + (1.0 / r) * Math.log(N0 / NC);
+        // Calculate N0 based on the relationship N0 = NC * exp(-r * (tau - x))
+        N0 = NC * Math.exp(-r * (tau - x));
     }
+
 
     @Override
     public List<String> getParameterIds() {
         List<String> ids = new ArrayList<>();
 
-        if (N0Input.get() instanceof BEASTInterface) {
-            ids.add(((BEASTInterface) N0Input.get()).getID());
-        }
         if (tauInput.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) tauInput.get()).getID());
         }
@@ -64,21 +69,23 @@ public class ExpansionGrowth extends PopulationFunction.Abstract implements Logg
         if (NCInput.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) NCInput.get()).getID());
         }
+        if (xInput.get() instanceof BEASTInterface) {
+            ids.add(((BEASTInterface) xInput.get()).getID());
+        }
         return ids;
     }
 
     @Override
     public double getPopSize(double t) {
-        double N0 = N0Input.get().getArrayValue();
         double tau = tauInput.get().getArrayValue();
         double r = rInput.get().getArrayValue();
         double NC = NCInput.get().getArrayValue();
-        double x = this.x;
+        double x = xInput.get().getArrayValue();
 
         if (t <= x) {
             return NC;
         } else if (t <= tau) {
-            return NC * Math.exp(-r * (t-x));
+            return NC * Math.exp(-r * (t - x));
         } else {
             return N0;
         }
@@ -86,22 +93,18 @@ public class ExpansionGrowth extends PopulationFunction.Abstract implements Logg
 
     @Override
     public double getIntensity(double t) {
-        double N0 = N0Input.get().getArrayValue();
         double tau = tauInput.get().getArrayValue();
         double r = rInput.get().getArrayValue();
         double NC = NCInput.get().getArrayValue();
-        double x = this.x;
+        double x = xInput.get().getArrayValue();
 
         if (t <= x) {
-            // Case 1: t <= x
             return t / NC;
         } else if (t <= tau) {
-            // Case 2: x < t <= tau
             double firstIntegral = x / NC;
             double secondIntegral = (Math.exp(r * (t - x)) - 1) / (r * NC);
             return firstIntegral + secondIntegral;
         } else {
-            // Case 3: t > tau
             double firstIntegral = x / NC;
             double secondIntegral = (Math.exp(r * (tau - x)) - 1) / (r * NC);
             double thirdIntegral = (t - tau) / N0;
@@ -109,29 +112,33 @@ public class ExpansionGrowth extends PopulationFunction.Abstract implements Logg
         }
     }
 
-
     @Override
     public double getInverseIntensity(double x) {
-
+        // This method implementation can be provided based on model requirements.
         return 0.0;
     }
 
     @Override
     public void init(PrintStream printStream) {
-        printStream.println("# Step\tN0\ttau\tr\tNC");
+        printStream.println("# Step\tN0\tComputed_N0\ttau\tr\tNC");
     }
 
     @Override
     public void log(long step, PrintStream printStream) {
-        printStream.println(step + "\t" + N0Input.get().getArrayValue() + "\t" +
-                tauInput.get().getArrayValue() + "\t" +
-                rInput.get().getArrayValue() + "\t" +
-                NCInput.get().getArrayValue());
+        double NC = NCInput.get().getArrayValue();
+        double r = rInput.get().getArrayValue();
+        double tau = tauInput.get().getArrayValue();
+        double x = xInput.get().getArrayValue();
+
+        // Calculate N0 each time to ensure consistency in logging.
+        double computedN0 = NC * Math.exp(-r * (tau - x));
+
+        printStream.println(step + "\t" + computedN0 + "\t" + tau + "\t" + r + "\t" + NC);
     }
 
     @Override
     public void close(PrintStream printStream) {
         printStream.println("# End of log");
     }
-}
 
+}
