@@ -3,6 +3,8 @@ package phylonco.beast.evolution.populationmodel;
 import beast.base.core.*;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
 import beast.base.inference.parameter.RealParameter;
+import org.apache.commons.math3.analysis.UnivariateFunction;
+import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -17,6 +19,9 @@ public class ExponentialGrowth extends PopulationFunction.Abstract implements Lo
                     "A value of zero represents a constant population size, negative values represent " +
                     "decline towards the present, positive numbers represents exponential growth towards " +
                     "the present.");
+    final public Input<Function> ancestralPopulationParameterInput = new Input<>("NA",
+            "Ancestral population size. If set, the population size approaches NA as time increases.");
+
 
 
     @Override
@@ -25,9 +30,12 @@ public class ExponentialGrowth extends PopulationFunction.Abstract implements Lo
             RealParameter param = (RealParameter) popSizeParameterInput.get();
             param.setBounds( Math.max(0.0, param.getLower()), param.getUpper());
         }
-//        if (growthRateParameter.get() != null) {
-//            growthRateParameter.get().setBounds(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-//        }
+
+        if (ancestralPopulationParameterInput.get() != null && ancestralPopulationParameterInput.get() instanceof RealParameter) {
+            RealParameter param = (RealParameter) ancestralPopulationParameterInput.get();
+            param.setBounds(Math.max(0.0, param.getLower()), param.getUpper());
+        }
+
     }
 
     /**
@@ -37,15 +45,13 @@ public class ExponentialGrowth extends PopulationFunction.Abstract implements Lo
         return popSizeParameterInput.get().getArrayValue();
     }
 
-
-    /**
-     * sets initial population size.
-     *
-     * @param N0 new size
-     */
-//    public void setN0(double N0) {
-//        this.N0 = N0;
-//    }
+    public double getNA() {
+        if (ancestralPopulationParameterInput.get() != null) {
+            return ancestralPopulationParameterInput.get().getArrayValue();
+        } else {
+            return 0.0;
+        }
+    }
 
     /**
      * @return growth rate.
@@ -54,57 +60,71 @@ public class ExponentialGrowth extends PopulationFunction.Abstract implements Lo
         return growthRateParameterInput.get().getArrayValue();
     }
 
-    /**
-     * sets growth rate to r.
-     *
-     * @param r
-     */
-//    public void setGrowthRate(double r) {
-//        this.r = r;
-//    }
+    public boolean isUsingNA() {
+        return ancestralPopulationParameterInput.get() != null && getNA() > 0.0;
+    }
 
-    /**
-     * An alternative parameterization of this model. This
-     * function sets growth rate for a given doubling time.
-     *
-     * @param
-     */
-//    public void setDoublingTime(double doublingTime) {
-//        setGrowthRate(Math.log(2) / doublingTime);
-//    }
 
     // Implementation of abstract methods
     @Override
     public double getPopSize(double t) {
-
         double r = getGrowthRate();
-        if (r == 0) {
-            return getN0();
-        } else {
-            return getN0() * Math.exp(-t * r);
-        }
-    }
+        double N0 = getN0();
+        double NA = getNA();
 
-    /**
-     * Calculates the integral 1/N(x) dx between start and finish.
-     */
-    @Override
-    public double getIntegral(double start, double finish) {
-        double r = getGrowthRate();
         if (r == 0.0) {
-            return (finish - start) / getN0();
+            if (isUsingNA()) {
+                return NA;
+            } else {
+                return N0;
+            }
         } else {
-            return (Math.exp(finish * r) - Math.exp(start * r)) / getN0() / r;
+            if (isUsingNA()) {
+                return (N0 - NA) * Math.exp(-r * t) + NA;
+            } else {
+                return N0 * Math.exp(-r * t);
+            }
         }
     }
+
+//    /**
+//     * Calculates the integral 1/N(x) dx between start and finish.
+//     */
+//    @Override
+//    public double getIntegral(double start, double finish) {
+//        double r = getGrowthRate();
+//        if (r == 0.0) {
+//            return (finish - start) / getN0();
+//        } else {
+//            return (Math.exp(finish * r) - Math.exp(start * r)) / getN0() / r;
+//        }
+//    }
 
     @Override
     public double getIntensity(double t) {
-        double r = getGrowthRate();
-        if (r == 0.0) {
-            return t / getN0();
+        if (t == 0.0) {
+            return 0.0;
+        }
+
+        if (isUsingNA()) {
+
+            UnivariateFunction function = time -> 1 / Math.max(getPopSize(time), 1e-20);
+            IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(5, 1.0e-12, 1.0e-8, 2, 10000);
+
+            try {
+                return integrator.integrate(Integer.MAX_VALUE, function, 0.0, t);
+            } catch (Exception e) {
+                throw new RuntimeException("Numerical integration failed for t = " + t, e);
+            }
         } else {
-            return (Math.exp(t * r) - 1.0) / getN0() / r;
+            double r = getGrowthRate();
+            double N0 = getN0();
+
+            if (r == 0.0) {
+                return t / N0;
+            } else {
+                return (Math.exp(r * t) - 1.0) / (r * N0);
+            }
         }
     }
 
@@ -113,22 +133,16 @@ public class ExponentialGrowth extends PopulationFunction.Abstract implements Lo
         return 0;
     }
 
-//    @Override
-//    public double getInverseIntensity(double x) {
-//
-//        double r = getGrowthRate();
-//        if (r == 0.0) {
-//            return getN0() * x;
-//        } else {
-//            return Math.log(1.0 + getN0() * x * r) / r;
-//        }
-//    }
 
     @Override
     public List<String> getParameterIds() {
         List<String> ids = new ArrayList<>();
         if (popSizeParameterInput.get() instanceof BEASTInterface)
             ids.add(((BEASTInterface)popSizeParameterInput.get()).getID());
+        if (growthRateParameterInput.get() instanceof BEASTInterface)
+            ids.add(((BEASTInterface) growthRateParameterInput.get()).getID());
+        if (ancestralPopulationParameterInput.get() instanceof BEASTInterface)
+            ids.add(((BEASTInterface) ancestralPopulationParameterInput.get()).getID());
         return ids;
     }
 
