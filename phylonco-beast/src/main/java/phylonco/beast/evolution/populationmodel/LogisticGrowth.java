@@ -17,6 +17,7 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
     final public Input<Function> t50Input = new Input<>("t50", "The time at which the population reaches half of its carrying capacity.", Input.Validate.REQUIRED);
     final public Input<Function> nCarryingCapacityInput = new Input<>("nCarryingCapacity", "The carrying capacity of the population.", Input.Validate.REQUIRED);
     final public Input<Function> bInput = new Input<>("b", "The growth rate of the population.", Input.Validate.REQUIRED);
+    final public Input<Function> NAInput = new Input<>("NA", "The ancestral population size. Must be positive and <= nCarryingCapacity.", Input.Validate.OPTIONAL);
 
     public LogisticGrowth() {
         // Example of setting up inputs with default values
@@ -29,15 +30,18 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
             RealParameter t50Param = (RealParameter) t50Input.get();
             t50Param.setBounds(Math.max(0.0, t50Param.getLower()), t50Param.getUpper());
         }
-
         if (nCarryingCapacityInput.get() != null && nCarryingCapacityInput.get() instanceof RealParameter) {
             RealParameter nCarryingCapacityInputParam = (RealParameter) nCarryingCapacityInput.get();
             nCarryingCapacityInputParam.setBounds(0.0, Double.POSITIVE_INFINITY);
         }
-
         if (bInput.get() != null && bInput.get() instanceof RealParameter) {
             RealParameter bParam = (RealParameter) bInput.get();
             bParam.setBounds(Math.max(0.0, bParam.getLower()), bParam.getUpper());
+        }
+        if (NAInput.get() != null && NAInput.get() instanceof RealParameter) {
+            RealParameter NAParam = (RealParameter) NAInput.get();
+            double nCarryingCapacity = ((RealParameter) nCarryingCapacityInput.get()).getUpper();
+            NAParam.setBounds(0.0, nCarryingCapacity);
         }
     }
 
@@ -48,13 +52,14 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
         if (t50Input.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) t50Input.get()).getID());
         }
-
         if (nCarryingCapacityInput.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) nCarryingCapacityInput.get()).getID());
         }
-
         if (bInput.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) bInput.get()).getID());
+        }
+        if (NAInput.get() instanceof BEASTInterface) {
+            ids.add(((BEASTInterface) NAInput.get()).getID());
         }
         return ids;
     }
@@ -71,6 +76,15 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
     public double getT50() {
         return t50Input.get().getArrayValue();
     }
+    public double getNA() {
+        if (NAInput.get() != null) {
+            double NA = NAInput.get().getArrayValue();
+            if (NA > 0.0) {
+                return NA;
+            }
+        }
+        return 0.0;
+    }
 
 
     @Override
@@ -78,8 +92,13 @@ public class LogisticGrowth extends PopulationFunction.Abstract implements Logga
         double b = getGrowthRateB();
         double nCarryingCapacity = getNCarryingCapacity();
         double t50 = getT50();
+        double NA = getNA();
 
-        return nCarryingCapacity / (1 + Math.exp(b * (t - t50)));
+        if (NA > 0.0) {
+            return NA + (nCarryingCapacity - NA) / (1 + Math.exp(b * (t - t50)));
+        } else {
+            return nCarryingCapacity / (1 + Math.exp(b * (t - t50)));
+        }
     }
 
     @Override

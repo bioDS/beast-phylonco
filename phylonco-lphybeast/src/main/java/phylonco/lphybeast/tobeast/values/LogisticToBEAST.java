@@ -25,6 +25,17 @@ public class LogisticToBEAST implements ValueToBEAST <LogisticPopulation, Logist
         beastPopFunc.setInputValue("nCarryingCapacity", NCarryingCapacityParam);
         beastPopFunc.setInputValue("b", bParam);
         beastPopFunc.setInputValue("t50", T50Param);
+
+
+        Value<Double> naValue = gen.getNA();
+        if (naValue != null && naValue.value() != null && naValue.value() > 0.0) {
+
+            RealParameter NAParam = context.getAsRealParameter(gen.getNA());
+
+            beastPopFunc.setInputValue("NA", NAParam);
+        }
+
+
         beastPopFunc.initAndValidate();
 
         ValueToParameter.setID(beastPopFunc, lphyPopFuncVal);
