@@ -1,0 +1,12 @@
+model {
+  x ~ Normal(mean=10, sd=4);
+  NC ~ LogNormal(meanlog=8.0, sdlog=0.7);
+  r ~ Normal(mean=0.4, sd=0.1);
+  NA ~ Normal(mean=70, sd=10);
+
+ExpansionPopFunc = ExpansionPopFunc(NA=NA, NC=NC, r=r, x=x);
+tree ~CoalescentPopFunc(n=40, popFunc=ExpansionPopFunc);
+D ~ PhyloCTMC(L=1000, Q=jukesCantor(),mu=0.01, tree=tree);
+height = tree.rootAge();
+length = tree.treeLength();
+}

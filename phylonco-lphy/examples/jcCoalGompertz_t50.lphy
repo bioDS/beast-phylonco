@@ -2,23 +2,18 @@ data {
   L = 1000;
 }
 model {
-  t50 =8.9;
-   b =0.226;
-  NInfinity =150.0;
-  gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b);
+  t50 ~ LogNormal(meanlog=2.3, sdlog=0.3);
+  b ~ LogNormal(meanlog=-1.5, sdlog=0.2);
+  NInfinity ~ LogNormal(meanlog=6.5, sdlog=0.5);
+  //NA ~ LogNormal(meanlog=0.21, sdlog=0.1);
+
+  gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b, NA=0);
+
+  // n0 = gompertzPopFunc.getN0();
+  // f0=n0/NInfinity;
+
   tree ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
   D ~ PhyloCTMC(tree=tree, L=L, Q=jukesCantor(), mu=1e-2);
   height = tree.rootAge();
   length = tree.treeLength();
 }
-
-
-t50 ~ LogNormal(meanlog=4.0, sdlog=0.5);
-   b ~ LogNormal(meanlog=-0.98, sdlog=0.5);
-  NInfinity ~ LogNormal(meanlog=9.2, sdlog=1.7);
-
-
-  //n0 = gompertzPopFunc.getN0();
-  //f0=n0/NInfinity;
-
-  b ~ LogNormal(meanlog=0.4, sdlog=0.35);

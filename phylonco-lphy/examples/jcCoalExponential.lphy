@@ -1,8 +1,15 @@
 
 model {
-GrowthRate ~ LogNormal(meanlog=-0.98, sdlog=0.35);
+GrowthRate ~ LogNormal(meanlog=-4.0, sdlog=0.9);
 N0 ~ LogNormal(meanlog=9.2, sdlog=0.12);
 exponentialPopFunc = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0);
+
+
+//NA ~ LogNormal(meanlog=2.0, sdlog=0.5);
+//exponentialPopFuncWithNA = exponentialPopFunc(GrowthRate=GrowthRate, N0=N0, NA=NA);
+//tree ~ CoalescentPopFunc(n=40, popFunc=exponentialPopFuncWithNA);
+
+
 tree ~CoalescentPopFunc(n=40, popFunc=exponentialPopFunc);
 D ~ PhyloCTMC(L=200, Q=jukesCantor(),mu=0.01, tree=tree);
 height = tree.rootAge();

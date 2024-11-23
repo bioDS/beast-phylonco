@@ -1,8 +1,10 @@
 model {
 
-N0 ~ LogNormal(meanlog=5, sdlog=0.3);
+N0 ~ LogNormal(meanlog=5.5, sdlog=0.3);
 constantPopFunc = constantPopFunc(N0=N0);
 tree ~CoalescentPopFunc(n=40, popFunc=constantPopFunc);
 D ~ PhyloCTMC(L=2000, Q=jukesCantor(),mu=0.01, tree=tree);
 //height = tree.rootAge();
+height = tree.rootAge();
+length = tree.treeLength();
 }
