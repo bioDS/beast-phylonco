@@ -20,6 +20,8 @@ public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements L
             "Initial growth rate of tumor growth. Should be greater than 0.", Input.Validate.REQUIRED);
     final public Input<Function> NInfinityInput = new Input<>("NInfinity",
             "Initial population size.", Input.Validate.REQUIRED);
+    final public Input<Function> NAInput = new Input<>("NA",
+            "Ancestral population size NA.", Input.Validate.OPTIONAL);
 
     private AdaptableVarianceMultivariateNormalOperator avmnOperator;
 
@@ -34,12 +36,27 @@ public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements L
 
         if (bInput.get() != null && bInput.get() instanceof RealParameter) {
             RealParameter bParam = (RealParameter) bInput.get();
-            bParam.setBounds(0.0, Double.POSITIVE_INFINITY);  // b should be positive for Gompertz growth
+            bParam.setBounds(0.0, Double.POSITIVE_INFINITY);
         }
 
         if (NInfinityInput.get() != null && NInfinityInput.get() instanceof RealParameter) {
             RealParameter NInfinityParam = (RealParameter) NInfinityInput.get();
             NInfinityParam.setBounds(Math.max(0.0, NInfinityParam.getLower()), NInfinityParam.getUpper());
+        }
+        if (NAInput.get() != null && NAInput.get() instanceof RealParameter) {
+            RealParameter NAParam = (RealParameter) NAInput.get();
+            NAParam.setBounds(0.0, Double.POSITIVE_INFINITY);  // NA should be non-negative
+        }
+        if (NAInput.get() != null) {
+            double N0 = getN0();
+            double NInfinity = getNInfinity();
+            double NA = getNA();
+            if (N0 <= NA) {
+                throw new IllegalArgumentException("Initial population size N0 must be greater than NA.");
+            }
+            if (NInfinity <= NA) {
+                throw new IllegalArgumentException("Carrying capacity NInfinity must be greater than NA.");
+            }
         }
 
     }
@@ -62,6 +79,14 @@ public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements L
         return getNInfinity() * Math.pow(2, -Math.exp(-getGrowthRateB() * getT50()));
     }
 
+    public double getNA() {
+        if (NAInput.get() != null) {
+            return NAInput.get().getArrayValue();
+        } else {
+            return 0.0;
+        }
+    }
+
     @Override
     public List<String> getParameterIds() {
         List<String> ids = new ArrayList<>();
@@ -71,6 +96,8 @@ public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements L
             ids.add(((BEASTInterface) bInput.get()).getID());
         if (NInfinityInput.get() instanceof BEASTInterface)
             ids.add(((BEASTInterface) NInfinityInput.get()).getID());
+        if (NAInput.get() instanceof BEASTInterface)
+            ids.add(((BEASTInterface) NAInput.get()).getID());
         return ids;
     }
 
