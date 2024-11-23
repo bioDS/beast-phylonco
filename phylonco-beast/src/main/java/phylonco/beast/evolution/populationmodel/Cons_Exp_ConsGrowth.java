@@ -10,8 +10,8 @@ import java.util.List;
 /**
  * Population model with piecewise exponential growth.
  */
-@Description("Expansion exponential growth population model without N0 as an independent parameter.")
-public class ExpansionGrowth extends PopulationFunction.Abstract implements Loggable {
+@Description("Cons_Exp_Cons exponential growth population model without N0 as an independent parameter.")
+public class Cons_Exp_ConsGrowth extends PopulationFunction.Abstract implements Loggable {
     final public Input<Function> tauInput = new Input<>("tau",
             "Time before which population size is constant.", Input.Validate.REQUIRED);
     final public Input<Function> rInput = new Input<>("r",

@@ -1,0 +1,14 @@
+model {
+  x ~ Normal(mean=40, sd=4);
+  NC ~ LogNormal(meanlog=8.0, sdlog=0.7);
+  r ~ Normal(mean=0.2, sd=0.1);
+  tau ~ Normal(mean=70, sd=10);
+  //N0 ~ LogNormal(meanlog=5.15, sdlog=0.7);
+  //x = tau + (log(NC / N0)) / -r;
+
+Cons_Exp_ConsPopFunc = Cons_Exp_ConsPopFunc(tau=tau, NC=NC, r=r, x=x);
+tree ~CoalescentPopFunc(n=40, popFunc=Cons_Exp_ConsPopFunc);
+D ~ PhyloCTMC(L=1000, Q=jukesCantor(),mu=0.01, tree=tree);
+height = tree.rootAge();
+length = tree.treeLength();
+}
