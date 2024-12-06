@@ -1,6 +1,6 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-import lphy.base.distribution.NegativeBinomial;
+import lphy.base.distribution.GeneralNegativeBinomial;
 import lphy.core.model.GenerativeDistribution;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
@@ -51,7 +51,7 @@ public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
         RandomVariable<Integer2DMatrix> coverage;
         int n = alpha.value().nTaxa();
         int l = alpha.value().nchar();
-        Value<Integer> r;
+        Value<Double> r;
         Value<Double> p;
         Integer[][] cov = new Integer[n][l];
 
@@ -60,12 +60,15 @@ public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
                 Double mean = (this.alpha.value().getState(i,j) * this.t.value() * this.s.value()[i]);
                 Double variance = mean + (Math.pow((double) alpha.value().getState(i,j), 2.0) * v.value() * Math.pow(this.s.value()[i], 2.0));
                 double pValue = mean / variance;
-                float rFloat = (float) (Math.pow(mean, 2) / (variance - mean));
-                int rValue = Math.round(rFloat);
+                double rValue = Math.pow(mean, 2) / (variance - mean);
                 r = new Value<>("r", rValue);
                 p = new Value<>("p", pValue);
-                NegativeBinomial negativeBinomial = new NegativeBinomial(r, p);
-                cov[i][j] = negativeBinomial.sample().value();
+                if (rValue == 0){
+                    cov[i][j] = 0;
+                }else {
+                    GeneralNegativeBinomial negativeBinomial = new GeneralNegativeBinomial(r, p);
+                    cov[i][j] = negativeBinomial.sample().value();
+                }
             }
         }
         coverage = new RandomVariable<>("coverage", new Integer2DMatrix(cov), this);
