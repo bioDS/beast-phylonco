@@ -1,0 +1,26 @@
+N0_con ~ LogNormal(meanlog=7.1, sdlog=0.4);
+
+N_max ~ LogNormal(meanlog=9.16, sdlog=0.22);
+t50 ~ LogNormal(meanlog=3.9, sdlog=0.64);
+b ~ LogNormal(meanlog=-2.2, sdlog=1.0);
+tau ~ LogNormal(meanlog=4.1, sdlog=0.1);
+x ~ Uniform(lower=20, upper=70);
+
+
+constantPopFunc = constantPopFunc(N0=N0_con);
+exponentialPopFunc = exponentialPopFunc(GrowthRate=b, N0=N_max);
+logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=N_max, b=b);
+gompertzPopFunc = gompertzPopFunc_t50(NInfinity=N_max,t50=t50, b=b, NA=0);
+Cons_Exp_ConsPopFunc = Cons_Exp_ConsPopFunc(tau=tau, NC=N_max, r=b, x=x);
+
+
+models = [constantPopFunc,exponentialPopFunc,
+  logisticPopFunc, gompertzPopFunc, Cons_Exp_ConsPopFunc];
+I ~ UniformDiscrete(lower=0, upper=length(models)-1);
+SVSmodel = stochasticVariableSelection(indicator=I, models=models);
+tree ~CoalescentPopFunc(n=40, popFunc=SVSmodel);
+κ ~ LogNormal(meanlog=1.0, sdlog=0.5);
+π ~ Dirichlet(conc=[2.0,2.0,2.0,2.0]);
+D ~ PhyloCTMC(L=500, Q=hky(kappa=κ, freq=π), mu=0.00079, tree=tree);
+height = tree.rootAge();
+length = tree.treeLength();

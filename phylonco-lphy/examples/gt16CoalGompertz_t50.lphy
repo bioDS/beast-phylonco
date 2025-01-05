@@ -6,11 +6,15 @@ model {
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(rates=rates, freq=π);
 
-t50 ~ LogNormal(meanlog=4, sdlog=1.2);
-b ~ LogNormal(meanlog=-0.98, sdlog=0.35);
-NInfinity ~ LogNormal(meanlog=9.2, sdlog=0.12);
+t50 ~ LogNormal(meanlog=2.3, sdlog=0.3);
+  b ~ LogNormal(meanlog=-1.5, sdlog=0.2);
+  NInfinity ~ LogNormal(meanlog=6.5, sdlog=0.5);
+  NA ~ LogNormal(meanlog=2.21, sdlog=0.1);
+  I_na ~ UniformDiscrete(lower=0, upper=1);
 
-gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b);
+
+  gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b, NA=NA,I_na = I_na);
+
 ψ ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
 A ~ PhyloCTMC(L=1000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
 epsilon ~ Beta(alpha=2, beta=999);

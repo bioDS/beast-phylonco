@@ -9,14 +9,16 @@ Q = gt16(rates=rates, freq=π);
 N0 ~ LogNormal(meanlog=8, sdlog=0.5);
 b ~ LogNormal(meanlog=-0.95, sdlog=0.2);
 f0 ~ Beta(alpha=20, beta=7);
+NA ~ LogNormal(meanlog=4, sdlog=0.3);
+I_na ~ UniformDiscrete(lower=0, upper=1);
+gompertzPopFunc = gompertzPopFunc_f0(f0=f0, b=b, N0=N0, NA=NA, I_na = I_na);
 
-gompertzPopFunc = gompertzPopFunc_f0(f0=f0, b=b, N0=N0);
 ψ ~ CoalescentPopFunc(n=40, popFunc=gompertzPopFunc);
-A ~ PhyloCTMC(L=1000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
+A ~ PhyloCTMC(L=1000, Q=Q, dataType=phasedGenotype(), mu=1, tree=ψ);
 epsilon ~ Beta(alpha=2, beta=999);
 delta ~ Beta(alpha=1.5, beta=4.5);
 E ~ GT16ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
 D = unphase(alignment=E);
-//height = ψ.rootAge();
+height = ψ.rootAge();
 }
 

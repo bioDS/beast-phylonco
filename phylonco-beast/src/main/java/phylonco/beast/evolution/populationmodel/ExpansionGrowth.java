@@ -2,6 +2,7 @@ package phylonco.beast.evolution.populationmodel;
 
 import beast.base.core.*;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
+import beast.base.inference.parameter.IntegerParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
 import org.apache.commons.math3.analysis.integration.IterativeLegendreGaussIntegrator;
 
@@ -10,39 +11,193 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Population model with piecewise exponential growth.
+ * A piecewise exponential growth model with an optional ancestral population size NA.
+ *
+ * If I_na=0 or NA<=0, the model ignores NA and behaves like:
+ *   N(t) = NC              for 0 <= t <= x
+ *   N(t) = NC * exp(-r * (t - x))  for t > x
+ *
+ * If I_na=1 and NA>0, then for t > x:
+ *   N(t) = (NC - NA)*exp(-r*(t - x)) + NA
+ *
+ * This model has no closed-form intensity when NA>0; a numerical integrator is used for t > x.
  */
-@Description("Cons_Exp_Cons exponential growth population model without N0 as an independent parameter.")
+@Description("Piecewise exponential growth with optional ancestral size (I_na).")
 public class ExpansionGrowth extends PopulationFunction.Abstract implements Loggable {
-    final public Input<Function> NAInput = new Input<>("NA",
-            "Ancestral population size after growth.", Input.Validate.REQUIRED);
-    final public Input<Function> rInput = new Input<>("r",
-            "The exponential growth rate of the population.", Input.Validate.REQUIRED);
-    final public Input<Function> NCInput = new Input<>("NC",
-            "Current effective population size after time x.", Input.Validate.REQUIRED);
-    final public Input<Function> xInput = new Input<>("x",
-            "Transition point time at which growth starts.", Input.Validate.REQUIRED);
 
+    // NA: ancestral size used only if I_na=1 and NA>0
+    public final Input<Function> NAInput = new Input<>(
+            "NA",
+            "Ancestral population size (only effective if I_na=1 and NA>0).",
+            Input.Validate.REQUIRED
+    );
 
+    // r: exponential growth rate
+    public final Input<Function> rInput = new Input<>(
+            "r",
+            "Exponential growth rate (>0).",
+            Input.Validate.REQUIRED
+    );
+
+    // NC: effective size for [0, x]
+    public final Input<Function> NCInput = new Input<>(
+            "NC",
+            "Population size for t <= x.",
+            Input.Validate.REQUIRED
+    );
+
+    // x: time boundary where exponential starts
+    public final Input<Function> xInput = new Input<>(
+            "x",
+            "Time at which exponential growth begins.",
+            Input.Validate.REQUIRED
+    );
+
+    // I_na: indicator (0 or 1). If 1 and NA>0 => use NA, else ignore NA
+    public final Input<IntegerParameter> I_naInput = new Input<>(
+            "I_na",
+            "Indicator for using NA (0 or 1).",
+            Input.Validate.OPTIONAL
+    );
 
     @Override
     public void initAndValidate() {
         double NC = NCInput.get().getArrayValue();
-        double r = rInput.get().getArrayValue();
+        double r  = rInput.get().getArrayValue();
         double NA = NAInput.get().getArrayValue();
 
-        // Validate parameter values
-        if (NC <= 0) {
-            throw new IllegalArgumentException("Population size NC must be greater than 0.");
+        if (NC <= 0.0) {
+            throw new IllegalArgumentException("NC must be > 0.");
         }
-        if (NA >= NC) {
-            throw new IllegalArgumentException("Ancestral population size NA must be less than initial population size NC.");
+        if (r <= 0.0) {
+            throw new IllegalArgumentException("r must be > 0.");
         }
-        if (r <= 0) {
-            throw new IllegalArgumentException("Growth rate r must be greater than 0.");
+
+        // Check I_na validity
+        final int iNaVal = getI_naValue();
+        if (iNaVal != 0 && iNaVal != 1) {
+            throw new IllegalArgumentException("I_na must be 0 or 1.");
+        }
+
+        // If I_na=1, then NA>0 must hold, and typically NA < NC in an expansion scenario
+        if (iNaVal == 1) {
+            if (NA <= 0.0) {
+                throw new IllegalArgumentException("NA must be > 0 when I_na=1.");
+            }
+            if (NA >= NC) {
+                throw new IllegalArgumentException("NA must be < NC if I_na=1.");
+            }
         }
     }
 
+    /**
+     * Returns the integer value of I_na, defaulting to 0 if not provided.
+     */
+    private int getI_naValue() {
+        if (I_naInput.get() == null) {
+            return 0; // default to not using NA
+        }
+        return I_naInput.get().getValue();
+    }
+
+    /**
+     * Piecewise population size function:
+     *   For t <= x: N(t)=NC
+     *   For t > x :
+     *     if I_na=0 or NA<=0 => N(t)=NC * exp(-r*(t - x))
+     *     if I_na=1 and NA>0 => N(t)=(NC - NA)*exp(-r*(t - x)) + NA
+     */
+    @Override
+    public double getPopSize(double t) {
+        if (t < 0.0) {
+            throw new IllegalArgumentException("Time t cannot be negative.");
+        }
+
+        final double NA = NAInput.get().getArrayValue();
+        final double r  = rInput.get().getArrayValue();
+        final double NC = NCInput.get().getArrayValue();
+        final double x  = xInput.get().getArrayValue();
+        final int iNa   = getI_naValue();
+
+        if (t <= x) {
+            return NC;
+        } else {
+            if (iNa == 1 && NA > 0.0) {
+                // Use ancestral size
+                return (NC - NA) * Math.exp(-r * (t - x)) + NA;
+            } else {
+                // Ignore NA => standard exponential
+                return NC * Math.exp(-r * (t - x));
+            }
+        }
+    }
+
+    /**
+     * Intensity(t) = ∫ from 0 to t of 1/N(u) du
+     * If t <= x => integral = t/NC
+     * If t > x :
+     *   1) from 0->x => x/NC
+     *   2) from x->t => depends on whether NA is used
+     *      if I_na=0 => closed form
+     *      if I_na=1 => no closed form => numeric integration
+     */
+    @Override
+    public double getIntensity(double t) {
+        if (t < 0.0) {
+            return 0.0;
+        }
+
+        final double NA = NAInput.get().getArrayValue();
+        final double r  = rInput.get().getArrayValue();
+        final double NC = NCInput.get().getArrayValue();
+        final double x  = xInput.get().getArrayValue();
+        final int iNa   = getI_naValue();
+
+        if (t <= x) {
+            return t / NC;
+        } else {
+            double firstPart = x / NC; // integral from 0->x
+
+            if (iNa == 1 && NA > 0.0) {
+                // Numeric integration from x->t: 1 / [(NC-NA)*exp(-r*(u-x)) + NA]
+                UnivariateFunction integrand = timePoint -> 1.0 / ((NC - NA) * Math.exp(-r * (timePoint - x)) + NA);
+                IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(
+                        5, 1.0e-12, 1.0e-8, 2, 10000);
+                double secondPart;
+                try {
+                    secondPart = integrator.integrate(Integer.MAX_VALUE, integrand, x, t);
+                } catch (Exception e) {
+                    throw new RuntimeException("Numerical integration failed from x=" + x + " to t=" + t, e);
+                }
+                return firstPart + secondPart;
+            } else {
+                // I_na=0 or NA<=0 => closed form: ∫ 1/[NC e^-r(u-x)] = (exp(r*(u-x)))/(r*NC)
+                double secondPart = (Math.exp(r * (t - x)) - 1.0) / (r * NC);
+                return firstPart + secondPart;
+            }
+        }
+    }
+
+    @Override
+    public double getInverseIntensity(double x) {
+        // Not implemented
+        return 0.0;
+    }
+
+    @Override
+    public void init(PrintStream printStream) {
+        // No initialization needed
+    }
+
+    @Override
+    public void log(long step, PrintStream printStream) {
+        // No logging logic
+    }
+
+    @Override
+    public void close(PrintStream printStream) {
+        // No resources to close
+    }
 
     @Override
     public List<String> getParameterIds() {
@@ -59,72 +214,9 @@ public class ExpansionGrowth extends PopulationFunction.Abstract implements Logg
         if (xInput.get() instanceof BEASTInterface) {
             ids.add(((BEASTInterface) xInput.get()).getID());
         }
+        if (I_naInput.get() instanceof BEASTInterface) {
+            ids.add(((BEASTInterface) I_naInput.get()).getID());
+        }
         return ids;
-    }
-
-    @Override
-    public double getPopSize(double t) {
-        double NA = NAInput.get().getArrayValue();
-        double r = rInput.get().getArrayValue();
-        double NC = NCInput.get().getArrayValue();
-        double x = xInput.get().getArrayValue();
-
-        if (t < 0) {
-            throw new IllegalArgumentException("Time t cannot be negative.");
-        }
-
-        if (t <= x) {
-            return NC;
-        } else {
-            return (NC - NA) * Math.exp(-r * (t - x)) + NA;
-        }
-    }
-
-    @Override
-    public double getIntensity(double t) {
-        double NA = NAInput.get().getArrayValue();
-        double r = rInput.get().getArrayValue();
-        double NC = NCInput.get().getArrayValue();
-        double x = xInput.get().getArrayValue();
-
-        if (t < 0) return 0.0;
-
-        if (t <= x) {
-            return t / NC;
-        } else {
-            // Integral from 0 to x: ∫(1 / NC) dt = t / NC
-            double firstIntegral = x / NC;
-
-            // Integral from x to t: ∫(1 / [(NC - NA)e^{-r(t' - x)} + NA] ) dt
-            // No closed-form solution; use numerical integration
-
-            UnivariateFunction integrand = timePoint -> 1.0 / ((NC - NA) * Math.exp(-r * (timePoint - x)) + NA);
-            IterativeLegendreGaussIntegrator integrator = new IterativeLegendreGaussIntegrator(
-                    5, 1.0e-12, 1.0e-8, 2, 10000);
-            double secondIntegral = integrator.integrate(Integer.MAX_VALUE, integrand, x, t);
-
-            return firstIntegral + secondIntegral;
-        }
-    }
-
-    @Override
-    public double getInverseIntensity(double x) {
-        // This method implementation can be provided based on model requirements.
-        return 0.0;
-    }
-
-    @Override
-    public void init(PrintStream printStream) {
-
-    }
-
-    @Override
-    public void log(long l, PrintStream printStream) {
-
-    }
-
-    @Override
-    public void close(PrintStream printStream) {
-
     }
 }

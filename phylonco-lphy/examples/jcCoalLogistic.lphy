@@ -2,19 +2,20 @@ data {
  L = 1000;
 }
 model {
-t50 ~ LogNormal(meanlog=0.7, sdlog=0.3);
-b ~ LogNormal(meanlog=2.0, sdlog=0.3);
+t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
+b ~ LogNormal(meanlog=2.0, sdlog=0.5);
 nCarryingCapacity ~ LogNormal(meanlog=5, sdlog=0.3);
-logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
+I_na ~ UniformDiscrete(lower=0, upper=1);
+NA ~ LogNormal(meanlog=3, sdlog=0.3);
+logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b, NA=NA, I_na=I_na);
+
+
 tree ~CoalescentPopFunc(n=40, popFunc=logisticPopFunc);
-
-//NA ~ LogNormal(meanlog=2.0, sdlog=0.5);
-//logisticPopFuncWithNA = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b, NA=NA);
-//tree ~ CoalescentPopFunc(n=40, popFunc=logisticPopFuncWithNA);
-
 
 D ~ PhyloCTMC(L=L, Q=jukesCantor(),mu=0.01, tree=tree);
 height = tree.rootAge();
 length = tree.treeLength();
 
 }
+
+

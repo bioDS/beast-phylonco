@@ -12,10 +12,13 @@ Q = gt16(rates=rates, freq=π);
 t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
 b ~ LogNormal(meanlog=2, sdlog=0.5);
 nCarryingCapacity ~ LogNormal(meanlog=5, sdlog=0.3);
+I_na ~ UniformDiscrete(lower=0, upper=1);
+NA ~ LogNormal(meanlog=3, sdlog=0.3);
+logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b, NA=NA, I_na=I_na);
 
 
 
-logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b);
+
 ψ ~ CoalescentPopFunc(n=40, popFunc=logisticPopFunc);
 A ~ PhyloCTMC(L=2000, Q=Q, dataType=phasedGenotype(), mu=0.01, tree=ψ);
 epsilon ~ Beta(alpha=2, beta=999);

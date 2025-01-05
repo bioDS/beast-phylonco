@@ -1,10 +1,10 @@
 model {
-  x ~ Normal(mean=40, sd=4);
+  x ~ LogNormal(meanlog=3.7, sdlog=0.1);
   NC ~ LogNormal(meanlog=8.0, sdlog=0.7);
-  r ~ Normal(mean=0.2, sd=0.1);
-  tau ~ Normal(mean=70, sd=10);
-  //N0 ~ LogNormal(meanlog=5.15, sdlog=0.7);
-  //x = tau + (log(NC / N0)) / -r;
+  r ~ LogNormal(meanlog=-1.72, sdlog=0.5);
+  tau ~ LogNormal(meanlog=4.2, sdlog=0.1);
+
+
 
 Cons_Exp_ConsPopFunc = Cons_Exp_ConsPopFunc(tau=tau, NC=NC, r=r, x=x);
 tree ~CoalescentPopFunc(n=40, popFunc=Cons_Exp_ConsPopFunc);
