@@ -44,8 +44,8 @@ public class LikelihoodReadCountModel extends Distribution {
     private double variance2;
     private double negp1;
     private double negp2;
-    private int negr1;
-    private int negr2;
+    private double negr1;
+    private double negr2;
     private Double[][] propensities;
 
 
@@ -117,8 +117,8 @@ public class LikelihoodReadCountModel extends Distribution {
             this.variance2 = mean2 + Math.pow(this.alpha2, 2) * vv * Math.pow(sv, 2);
             this.negp1 = this.mean1 / this.variance1;
             this.negp2 = this.mean2 / this.variance2;
-            this.negr1 = Math.round((float) (Math.pow(this.mean1, 2) / (this.variance1 - this.mean1)));
-            this.negr2 = Math.round((float) (Math.pow(this.mean2, 2) / (this.variance2 - this.mean2)));
+            this.negr1 = Math.pow(this.mean1, 2) / (this.variance1 - this.mean1);
+            this.negr2 = Math.pow(this.mean2, 2) / (this.variance2 - this.mean2);
             for (int j = 0; j < alignmentInput.get().getSiteCount(); j++) {///？
                 // dirichlet multinomial pmf
                 int patternIndex = alignmentInput.get().getPatternIndex(j);
@@ -209,7 +209,7 @@ public class LikelihoodReadCountModel extends Distribution {
         return logLikelihood;
     }
     //calculate the probability at each site given read count(coverage)(negative-binomial distribution)
-    public double logCoverageLikelihood(int[] readCountNumbers, double p, int r) {
+    public double logCoverageLikelihood(int[] readCountNumbers, double p, double r) {
         // negative binomial pmf
         double logCoverageLikelihood;
         int c = 0;
