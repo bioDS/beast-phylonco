@@ -3,6 +3,7 @@
     <depends on='BEAST.base' atleast='2.7.6'/>
     <depends on='BEAST.app' atleast='2.7.6'/>
     <depends on='BEASTLabs' atleast='2.0.2'/>
+    <depends on='MutableAlignment' atleast='0.0.1'/>
 
     <!-- add BEAST2 service below  -->
     <service type="beast.base.evolution.datatype.DataType">
