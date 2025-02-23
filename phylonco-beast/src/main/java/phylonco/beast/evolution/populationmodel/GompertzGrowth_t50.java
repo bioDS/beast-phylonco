@@ -1,7 +1,11 @@
 package phylonco.beast.evolution.populationmodel;
 
 import beast.base.core.*;
+import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
+import beast.base.evolution.tree.Tree;
 import beast.base.evolution.tree.coalescent.PopulationFunction;
+import beast.base.inference.operator.UpDownOperator;
+import beast.base.inference.operator.kernel.Transform;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import org.apache.commons.math3.analysis.UnivariateFunction;
@@ -30,7 +34,7 @@ import java.util.List;
  * </p>
  */
 @Description("Coalescent intervals for a Gompertz (t50) model with an optional NA, dynamically using I_na in getPopSize.")
-public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements Loggable {
+public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements Loggable,PopFuncWithUpOp, PopFuncWithAVMNOp {
 
     // -----------------------------------------------------------------------
     // Inputs
@@ -266,4 +270,54 @@ public class GompertzGrowth_t50 extends PopulationFunction.Abstract implements L
         }
         return ids;
     }
+
+    @Override
+    public UpDownOperator getUpOperator(Tree tree) {
+        UpDownOperator upDownOperator = new UpDownOperator();
+        String idStr = getID() + "Up" + tree.getID() + "DownOperator";
+        upDownOperator.setID(idStr);
+        upDownOperator.setInputValue("scaleFactor", 0.75);
+        upDownOperator.setInputValue("weight", 3.0);
+        upDownOperator.setInputValue("up", t50Input.get());
+        upDownOperator.setInputValue("up", bInput.get());
+        upDownOperator.setInputValue("up", tree);
+        upDownOperator.initAndValidate();
+        return upDownOperator;
+    }
+
+    @Override
+    public AdaptableVarianceMultivariateNormalOperator getAVMNOperator(Tree tree) {
+
+        AdaptableVarianceMultivariateNormalOperator avmnOp = new AdaptableVarianceMultivariateNormalOperator();
+        String opID = getID() + "AVMNOperator";
+        avmnOp.setID(opID);
+
+        avmnOp.setInputValue("beta", 0.05);
+        avmnOp.setInputValue("burnin", 400);
+        avmnOp.setInputValue("initial", 800);
+        avmnOp.setInputValue("weight", 2.0);
+
+        Transform.NoTransform t50Transform = new Transform.NoTransform();
+        t50Transform.setID("t50Transform");
+        t50Transform.setInputValue("f", t50Input.get());
+
+        t50Transform.initAndValidate();
+
+        Transform.LogTransform bTransform = new Transform.LogTransform();
+        bTransform.setID("bTransform");
+        bTransform.setInputValue("f", bInput.get());
+
+        bTransform.initAndValidate();
+
+        List<Transform> transforms = new ArrayList<>();
+        transforms.add(t50Transform);
+        transforms.add(bTransform);
+
+        avmnOp.setInputValue("transformations", transforms);
+
+        avmnOp.initAndValidate();
+
+        return avmnOp;
+    }
+
 }

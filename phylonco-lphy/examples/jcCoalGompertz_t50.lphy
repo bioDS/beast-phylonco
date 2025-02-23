@@ -2,11 +2,11 @@ data {
   L = 1000;
 }
 model {
-  t50 ~ LogNormal(meanlog=2.3, sdlog=0.3);
-  b ~ LogNormal(meanlog=-1.5, sdlog=0.2);
-  NInfinity ~ LogNormal(meanlog=6.5, sdlog=0.5);
-  NA ~ LogNormal(meanlog=2.21, sdlog=0.1);
-  I_na ~ UniformDiscrete(lower=0, upper=1);
+  t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
+  b ~ LogNormal(meanlog=0.9, sdlog=0.3);
+  NInfinity ~ LogNormal(meanlog=4.5, sdlog=0.5);
+  NA ~ LogNormal(meanlog=2.2, sdlog=0.3);
+  I_na =1;
 
 
   gompertzPopFunc = gompertzPopFunc_t50(NInfinity=NInfinity,t50=t50, b=b, NA=NA,I_na = I_na);

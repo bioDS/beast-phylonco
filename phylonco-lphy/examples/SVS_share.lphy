@@ -1,13 +1,10 @@
-
-
 N_max ~ LogNormal(meanlog=9.16, sdlog=2.0);
 t50 ~ LogNormal(meanlog=3.9, sdlog=0.64);
 b ~ LogNormal(meanlog=-2.2, sdlog=1.0);
-tau ~ LogNormal(meanlog=4.1, sdlog=1);
-x ~ Uniform(lower=10, upper=100);
+tau ~ LogNormal(meanlog=4.6, sdlog=0.3);
+x ~ Uniform(lower=10, upper=60);
 NA ~ LogNormal(meanlog=5.0, sdlog=2.0);
 I_na ~ UniformDiscrete(lower=0, upper=1);
-
 
 
 exponentialPopFunc = exponentialPopFunc(GrowthRate=b, N0=N_max, NA=NA, I_na=I_na);
@@ -16,7 +13,7 @@ gompertzPopFunc = gompertzPopFunc_t50(NInfinity=N_max,t50=t50, b=b, NA=NA, I_na=
 Cons_Exp_ConsPopFunc = Cons_Exp_ConsPopFunc(tau=tau, NC=N_max, r=b, x=x);
 expansionPopFunc = ExpansionPopFunc(NA=NA,  x=x, r=b, NC=N_max,I_na=I_na);
 
-models = [exponentialPopFunc,logisticPopFunc, gompertzPopFunc, expansionPopFunc, Cons_Exp_ConsPopFunc];
+models = [exponentialPopFunc,logisticPopFunc, gompertzPopFunc,expansionPopFunc, Cons_Exp_ConsPopFunc];
 I ~ UniformDiscrete(lower=0, upper=length(models)-1);
 SVSmodel = stochasticVariableSelection(indicator=I, models=models);
 tree ~CoalescentPopFunc(n=40, popFunc=SVSmodel);

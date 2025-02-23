@@ -5,7 +5,7 @@ model {
 t50 ~ LogNormal(meanlog=0.3, sdlog=0.1);
 b ~ LogNormal(meanlog=2.0, sdlog=0.5);
 nCarryingCapacity ~ LogNormal(meanlog=5, sdlog=0.3);
-I_na ~ UniformDiscrete(lower=0, upper=1);
+I_na =1;
 NA ~ LogNormal(meanlog=3, sdlog=0.3);
 logisticPopFunc = logisticPopFunc(t50=t50, nCarryingCapacity=nCarryingCapacity, b=b, NA=NA, I_na=I_na);
 
