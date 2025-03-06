@@ -9,6 +9,7 @@ import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
+import phylonco.lphy.evolution.readcountmodel.MutableAlignmentModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
@@ -38,7 +39,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 HomozygousAlignmentDistribution.class,
                 ReadCountModel.class,
                 PloidyModel.class,
-                CoverageModel.class);
+                CoverageModel.class,
+                MutableAlignmentModel.class);
     }
 
     @Override
