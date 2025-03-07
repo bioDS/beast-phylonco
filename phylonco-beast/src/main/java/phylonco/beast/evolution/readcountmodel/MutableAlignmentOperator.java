@@ -33,7 +33,7 @@ public class MutableAlignmentOperator extends Operator {
         site = random.nextInt(mutableAlignment.getSiteCount());
         oldState = mutableAlignment.getSiteValue(taxa, site);
         do {
-            newState = mutableAlignment.getSiteValue(taxa, site);
+            newState = random.nextInt(mutableAlignment.getDataType().getStateCount());
         } while (newState == oldState);
         mutableAlignment.setSiteValue(taxa, site, newState);
         return 0;
