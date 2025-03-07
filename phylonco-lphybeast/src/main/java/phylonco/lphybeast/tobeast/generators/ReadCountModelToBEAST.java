@@ -33,6 +33,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         String wParamName = "w";
         String alignmentParamName = "D";
 
+        //get values from LPhy
         Value epsilonValue = generator.getParams().get(epsilonParamName);
         Value alphaValue = generator.getParams().get(alphaParamName);
         Value deltaValue = (Value) alphaValue.getGenerator().getParams().get(deltaParamName);
@@ -43,7 +44,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         Value wValue = generator.getParams().get(wParamName);
         Value alignmentValue = generator.getParams().get(alignmentParamName);
 
-
+        //convert LPhy values to Beast objects
         RealParameter epsilonParam = context.getAsRealParameter(epsilonValue);
         RealParameter deltaParam = context.getAsRealParameter(deltaValue);
         RealParameter tParam = context.getAsRealParameter(tValue);
@@ -55,6 +56,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
             alignmentParam = context.getBEASTObject(alignmentValue.getId());
         }
 
+        //set input of likelihood model
         likelihoodReadCountModel.setInputValue("epsilon", epsilonParam);
         likelihoodReadCountModel.setInputValue("delta", deltaParam);
         likelihoodReadCountModel.setInputValue("t", tParam);
@@ -62,7 +64,6 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         likelihoodReadCountModel.setInputValue("s", sParam);
         likelihoodReadCountModel.setInputValue("w", wParam);
         likelihoodReadCountModel.setInputValue("alignment", alignmentParam);
-
         // beast readcount readCountData
         if (value instanceof ReadCount readCountData) {
             likelihoodReadCountModel.setInputValue("readCount", readCountData);
@@ -71,35 +72,23 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         }
 
         likelihoodReadCountModel.initAndValidate();
+
         List<Transform> transforms = new ArrayList<>();
-        //List<Function> logitFunctions = new ArrayList<>();
         List<Function> logFunctions = new ArrayList<>();
-        //logitFunctions.add(deltaParam);
-        //logitFunctions.add(epsilonParam);
-        //logFunctions.add(sParam);
         logFunctions.add(tParam);
         logFunctions.add(vParam);
-        //logFunctions.add(wParam);
-
-        //transforms.add(addLogitTransform(logitFunctions));
         transforms.add(addLogTransform(logFunctions));
-
         addAVMNOperator(context, transforms);
 
         List<StateNode> upStates = new ArrayList<>();
-        //upStates.add(sParam);
         List<StateNode> downStates = new ArrayList<>();
         downStates.add(tParam);
         downStates.add(vParam);
         addUpDownOperator(context, upStates, downStates);
-        //addMutableAlignmentOperator(context, alignmentParam);
 
-        //context.addSkipOperator(sParam);
-//        context.addSkipOperator(vParam);
-//        context.addSkipOperator(tParam);
-//        context.addSkipOperator(wParam);
-//        context.addSkipOperator(deltaParam);
-//        context.addSkipOperator(epsilonParam);
+        context.addSkipOperator(sParam);
+        context.addSkipLoggable(sParam);
+
 
         return likelihoodReadCountModel;
     }
