@@ -169,13 +169,6 @@ public class LikelihoodReadCountModel extends Distribution {
             }else {
                 logLikelihood = part1 + Math.log(1 + Math.exp(part0 - part1));
             }
-//            logLikelihood = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav)
-//                    + Math.log(1 + Math.exp(logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav)
-//                    - logLikelihoodDirichletMDDiploid - logCoverageLikelihoodDiploid - Math.log(1 - deltav)));
-//            System.out.println("logLikelihoodDirichletMDDiploid: " + logLikelihoodDirichletMDDiploid +
-//                    ", logLikelihoodDirichletMDHaploid0: " + logLikelihoodDirichletMDHaploid0 +
-//                    ", logCoverageLikelihoodDiploid: " + logCoverageLikelihoodDiploid +
-//                    ", logCoverageLikelihoodHaploid: " + logCoverageLikelihoodHaploid);
         } else {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(w, coverage, propensities[indices[0]], readCountNumbers);
             logCoverageLikelihoodDiploid = logCoverageLikelihood(readCountNumbers, negp2, negr2);
@@ -193,19 +186,7 @@ public class LikelihoodReadCountModel extends Distribution {
             }else {
                 logLikelihood = part2 + Math.log(1 + Math.exp(part0 - part2)) + Math.log(1 + Math.exp(part1 - part2));
             }
-//            logLikelihood = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav)
-//                    + Math.log(1 + Math.exp(Math.log(0.5) + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav)
-//                    - logLikelihoodDirichletMDDiploid - logCoverageLikelihoodDiploid - Math.log(1 - deltav)))
-//                    + Math.log(1 + Math.exp(Math.log(0.5) + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + Math.log(deltav)
-//                    - logLikelihoodDirichletMDDiploid - logCoverageLikelihoodDiploid - Math.log(1 - deltav)));
-//            System.out.println("logLikelihoodDirichletMDDiploid: " + logLikelihoodDirichletMDDiploid +
-//                    ", logLikelihoodDirichletMDHaploid0: " + logLikelihoodDirichletMDHaploid0 +
-//                    ", logLikelihoodDirichletMDHaploid1: " + logLikelihoodDirichletMDHaploid1 +
-//                    ", logCoverageLikelihoodDiploid: " + logCoverageLikelihoodDiploid +
-//                    ", logCoverageLikelihoodHaploid: " + logCoverageLikelihoodHaploid);
         }
-
-//        System.out.println("logLikelihood: " + logLikelihood);
         return logLikelihood;
     }
     //calculate the probability at each site given read count(coverage)(negative-binomial distribution)
