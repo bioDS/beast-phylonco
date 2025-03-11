@@ -56,17 +56,17 @@ public class NestedBD implements GenerativeDistribution<TaxaCharacterMatrix<Inte
 
         double tEnd = node.getAge();
         double tStart = node.getParent().getAge();
-        int parentIndex = node.getParent().getParent().getIndex(); //Not sure why we need to getParent() twice?
+        int parentIndex = node.getParent().getIndex(); //Not sure why we need to getParent() twice?
         int currentIndex = node.getIndex();  // Get current node's index
 
         // Special case for root node
-        //if (node.isRoot()) {
+        if (node.isRoot()) {
             // Root already has 2 copies initialised in the constructor
             // Just traverse its children
-        //    traverse(node.getLeft());
-        //     traverse(node.getRight());
-        //    return;
-        //}
+            traverse(node.getLeft());
+            traverse(node.getRight());
+            return;
+        }
 
         if (node.isLeaf()) {
             // simulate down branch parent to leaf
@@ -128,40 +128,36 @@ public class NestedBD implements GenerativeDistribution<TaxaCharacterMatrix<Inte
             this.data[binIdx][nodeIndex] = m;
         }
 
-        }
-
-
-
-
-
-
-        @Override
-        public RandomVariable<TaxaCharacterMatrix<Integer>> sample () {
-            // sample your data bins x cells matrix
-            // Get parameter values
-            int numBins = nBins.value();
-            int numCells = nCells.value();
-            double lambdaVal = lambda.value();
-            double muVal = mu.value();
-
-
-            // Need a random number generator
-            double randomDouble = Math.random();
-
-            //Tree topology
-            TimeTree treeValue = tree.value();
-            TimeTreeNode root = treeValue.getRoot();
-            // traverse tree by breadth first search
-
-            // example doing first bin
-            int binIndex = 0;
-            traverse(root);
-
-            return null;
-        }
-
-        @Override
-        public Map<String, Value> getParams () {
-            return Map.of();
-        }
     }
+
+
+    @Override
+    public RandomVariable<TaxaCharacterMatrix<Integer>> sample() {
+        // sample your data bins x cells matrix
+        // Get parameter values
+        int numBins = nBins.value();
+        int numCells = nCells.value();
+        double lambdaVal = lambda.value();
+        double muVal = mu.value();
+
+
+        // Need a random number generator
+        double randomDouble = Math.random();
+
+        //Tree topology
+        TimeTree treeValue = tree.value();
+        TimeTreeNode root = treeValue.getRoot();
+        // traverse tree by breadth first search
+
+        // example doing first bin
+        int binIndex = 0;
+        traverse(root);
+
+        return null;
+    }
+
+    @Override
+    public Map<String, Value> getParams() {
+        return Map.of();
+    }
+}
