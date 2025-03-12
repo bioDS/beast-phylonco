@@ -59,4 +59,10 @@ public class MutableAlignmentModel implements GenerativeDistribution<Alignment> 
             alignment = value;
         }
         else throw new RuntimeException("Unrecognised parameter name: " + paramName);
-    }}
+    }
+
+    public Value<Alignment> getInputAlignment() {
+        return getParams().get(simpleAlignmetParamName);
+    }
+
+}
