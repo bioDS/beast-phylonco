@@ -8,7 +8,6 @@ import beast.base.evolution.datatype.UserDataType;
 import beast.base.evolution.tree.TraitSet;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.evolution.alignment.AlignmentUtils;
-import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.base.evolution.datatype.Standard;
 import lphy.core.logger.LoggerUtils;
 import lphy.core.model.Value;
@@ -144,7 +143,7 @@ public class MutableAlignmentToBEAST implements ValueToBEAST<MutableAlignment, m
     }
 
     // taxa names = traits, ...
-    private String createTraitString(SimpleAlignment alignment) {
+    private String createTraitString(MutableAlignment alignment) {
         StringBuilder builder = new StringBuilder();
         for (int i = 0; i < alignment.ntaxa(); i++) {
             if (i > 0) builder.append(", ");
