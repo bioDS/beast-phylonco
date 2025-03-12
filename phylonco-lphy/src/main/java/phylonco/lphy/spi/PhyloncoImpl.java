@@ -3,10 +3,7 @@ package phylonco.lphy.spi;
 import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
-import phylonco.lphy.evolution.alignment.GT16ErrorModel;
-import phylonco.lphy.evolution.alignment.HaploidAlignment;
-import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
-import phylonco.lphy.evolution.alignment.UnphaseGenotypeAlignment;
+import phylonco.lphy.evolution.alignment.*;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.MutableAlignmentModel;
@@ -37,6 +34,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
         return Arrays.asList(
                 GT16ErrorModel.class,
                 HomozygousAlignmentDistribution.class,
+                HeterozygousMutateAlignment.class,
                 ReadCountModel.class,
                 PloidyModel.class,
                 CoverageModel.class,
