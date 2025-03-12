@@ -1,0 +1,6 @@
+data{
+    A = readFasta(file = "data/test_alignment.fasta", sequenceType=phasedGenotype());
+}
+model{
+  D ~ Heterozygous(alignment=A, n=1);
+}
