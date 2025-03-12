@@ -51,7 +51,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 SVSPopulationFunctionToBEAST.class,
                 Cons_Exp_ConsToBEAST.class,
                 ExpansionToBEAST.class,
-                ReadCountToBEAST.class
+                ReadCountToBEAST.class,
+                MutableAlignmentToBEAST.class
         );
     }
 
@@ -59,7 +60,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList( GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class
+                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class, MutableAlignmentModelToBEAST.class
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
         );
