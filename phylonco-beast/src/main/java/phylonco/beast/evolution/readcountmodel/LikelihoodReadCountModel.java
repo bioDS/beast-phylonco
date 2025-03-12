@@ -35,6 +35,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private RealParameter v;
     private RealParameter s;
     private RealParameter w;
+    private Alignment alignment;
 
     private double alpha1;
     private double alpha2;
@@ -76,8 +77,10 @@ public class LikelihoodReadCountModel extends Distribution {
         this.v = vInput.get();
         this.s = sInput.get();
         this.w = wInput.get();
+        this.alignment = alignmentInput.get();
         this.alpha1 = 1;
         this.alpha2 = 2;
+
 
 
 
@@ -109,7 +112,7 @@ public class LikelihoodReadCountModel extends Distribution {
                 {(eps/3), (eps/3), (eps/3), (1 - eps)},             // TT or T_ 9
         };
         this.logP = 0;
-        for (int i = 0; i < alignmentInput.get().getTaxonCount(); i++) {
+        for (int i = 0; i < alignment.getTaxonCount(); i++) {
             Double sv = this.s.getValues()[i];
             this.mean1 = alpha1 * tv * sv;
             this.mean2 = alpha2 * tv * sv;
@@ -119,10 +122,10 @@ public class LikelihoodReadCountModel extends Distribution {
             this.negp2 = this.mean2 / this.variance2;
             this.negr1 = Math.pow(this.mean1, 2) / (this.variance1 - this.mean1);
             this.negr2 = Math.pow(this.mean2, 2) / (this.variance2 - this.mean2);
-            for (int j = 0; j < alignmentInput.get().getSiteCount(); j++) {///？
+            for (int j = 0; j < alignment.getSiteCount(); j++) {///？
                 // dirichlet multinomial pmf
-                int patternIndex = alignmentInput.get().getPatternIndex(j);
-                int genotypeState = alignmentInput.get().getPattern(i, patternIndex);
+                int patternIndex = alignment.getPatternIndex(j);
+                int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
                 this.logP += logLiklihoodRC(genotypeState, readCountNumbers, wv);
             }
