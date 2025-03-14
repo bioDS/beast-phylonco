@@ -10,6 +10,7 @@ import phylonco.lphy.evolution.readcountmodel.MutableAlignmentModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
+import phylonco.lphy.evolution.copynumbermodel.NestedBD;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,7 +39,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 ReadCountModel.class,
                 PloidyModel.class,
                 CoverageModel.class,
-                MutableAlignmentModel.class);
+                MutableAlignmentModel.class,
+                NestedBD.class);
     }
 
     @Override
