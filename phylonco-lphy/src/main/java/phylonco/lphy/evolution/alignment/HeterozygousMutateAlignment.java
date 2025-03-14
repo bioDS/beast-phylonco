@@ -4,6 +4,7 @@ import jebl.evolution.sequences.Nucleotides;
 import lphy.base.distribution.ParametricDistribution;
 import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.Taxa;
+import lphy.base.evolution.VCFSite;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.base.function.io.ReaderConst;
@@ -20,7 +21,7 @@ import java.util.*;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getNucleotideIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
-public class HeterozygousMutateAlignment extends ParametricDistribution<Alignment> implements TextFileFormatted {
+public class HeterozygousMutateAlignment extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignment;
     private Value<Integer> n;
     private Value<Integer[]> positions;
@@ -29,7 +30,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
 
     int altIndex;
     int refIndex;
-    List<varSites> sites = new ArrayList<>();
+//    List<VCFSite> sites = new ArrayList<>();
 
     public HeterozygousMutateAlignment(
             @ParameterInfo(name = ReaderConst.ALIGNMENT, description = "the input alignment") Value<Alignment> alignment,
@@ -93,12 +94,12 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                 // get the nucleotide index of each site
                 int inputIndex = alignment.getState(i, j);
 
-                int outputIndex = -1;
+                int outputIndex;
                 // check whether the site is in positionSet
                 // if not in the positionSet
                 if (! positionSet. contains(j)){
                     // convert to homozygous if its nucleotide
-                    if (alignment.getSequenceTypeStr() == Nucleotides.NAME){
+                    if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
                         outputIndex = getPhasedGenotypeIndex(inputIndex, inputIndex);
                     } else {
                         outputIndex = inputIndex;
@@ -107,7 +108,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                 } else{
                     // if haploid
                     // consider the state as ref and sample an alt
-                    if (alignment.getSequenceTypeStr() == Nucleotides.NAME){
+                    if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
                         refIndex = inputIndex;
                         altIndex = getRandomCanonicalState(new int[]{inputIndex});
                     } else {
@@ -127,8 +128,8 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
 
                 // map the new alignment states
                 outAlignment.setState(i, j, outputIndex);
-                varSites varSites = new varSites(taxaNames[i], j, refIndex, altIndex);
-                sites.add(varSites);
+//                VCFSite varSite = new VCFSite(taxaNames[i], j, refIndex, altIndex, "0/1");
+//                sites.add(varSite);
             }
         }
         return new RandomVariable<>(null, outAlignment, this);
@@ -163,24 +164,6 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         return positionSet;
     }
 
-    class varSites{
-        private String taxaName;
-        private int position;
-        private int ref;
-        private int alt;
-
-        public varSites(String taxaName, int position, int ref, int alt) {
-            this.taxaName = taxaName;
-            this.position = position;
-            this.ref = ref;
-            this.alt = alt;
-        }
-
-        public String toVCFLines(){
-            return taxaName + "\t" + position + "\t.\t" + ref + "\t" + alt + "\t.\tPASS\t.";
-        }
-    }
-
     @Override
     public Map<String, Value> getParams() {
         Map<String, Value> params = new TreeMap<>();
@@ -206,26 +189,5 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
 
     public Value<Integer[]> getPositions(){
         return getParams().get(positionName);
-    }
-
-    @Override
-    public List<String> getTextForFile() {
-        List<String> lines = new ArrayList<>();
-
-        // add info lines
-        lines.add("##fileformat=VCFv4.2\n");
-        lines.add("#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n");
-
-        // add each site line
-        for (varSites site : sites) {
-            lines.add(site.toVCFLines());
-        }
-
-        return lines;
-    }
-
-    @Override
-    public String getFileType() {
-        return ".vcf";
     }
 }
