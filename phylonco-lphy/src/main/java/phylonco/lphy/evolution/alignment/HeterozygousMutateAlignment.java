@@ -30,7 +30,6 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
 
     int altIndex;
     int refIndex;
-//    List<VCFSite> sites = new ArrayList<>();
 
     public HeterozygousMutateAlignment(
             @ParameterInfo(name = ReaderConst.ALIGNMENT, description = "the input alignment") Value<Alignment> alignment,
@@ -81,15 +80,15 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         Alignment outAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
                 alignment.nchar(), PhasedGenotype.INSTANCE);
 
-        // construct positions to convert
-        List<Integer> positionSet  = new ArrayList<>();
-        if (n != positions.length) {
-            int extraNumber = n - positions.length;
-            positionSet = samplePositions(positions, extraNumber, length);
-        }
-
         // set the alignment
         for (int i = 0; i < outAlignment.ntaxa(); i++) {
+            // construct positions to convert
+            List<Integer> positionSet  = new ArrayList<>();
+            if (n != positions.length) {
+                int extraNumber = n - positions.length;
+                positionSet = samplePositions(positions, extraNumber, length);
+            }
+
             for (int j = 0; j < outAlignment.nchar(); j++) {
                 // get the nucleotide index of each site
                 int inputIndex = alignment.getState(i, j);
