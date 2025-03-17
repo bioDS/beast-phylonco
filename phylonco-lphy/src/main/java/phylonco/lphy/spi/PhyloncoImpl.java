@@ -12,7 +12,6 @@ import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 import phylonco.lphy.function.writeHeterozygousSites;
 
-
 import java.util.Arrays;
 import java.util.List;
 

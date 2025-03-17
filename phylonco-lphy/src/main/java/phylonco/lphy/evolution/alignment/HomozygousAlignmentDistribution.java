@@ -78,7 +78,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
      * @param stateIndex state index of the nucleotide
      * @return the certain homozygous phased genotype state index
      */
-    public int getAmbiguousStateIndex(int stateIndex) {
+    public static int getAmbiguousStateIndex(int stateIndex) {
         if (stateIndex >= 4) {
             // get the array for the states
             int[] ambiguousState = ambiguousState(stateIndex);
@@ -102,7 +102,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
      * all four possible states)
      */
 
-    private int[] ambiguousState(int stateIndex) {
+    private static int[] ambiguousState(int stateIndex) {
         // switch the ambiguous states into canonical states (0=A, 1=C, 2=G, 3=T)
         switch (stateIndex) {
             case 4:

@@ -4,11 +4,9 @@ import jebl.evolution.sequences.Nucleotides;
 import lphy.base.distribution.ParametricDistribution;
 import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.Taxa;
-import lphy.base.evolution.VCFSite;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.base.function.io.ReaderConst;
-import lphy.core.logger.TextFileFormatted;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
@@ -18,6 +16,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.*;
 
+import static phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution.getAmbiguousStateIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getNucleotideIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
@@ -98,26 +97,28 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                 if (! positionSet. contains(j)){
                     // convert to homozygous if its nucleotide
                     if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
+                        inputIndex = getAmbiguousStateIndex(inputIndex);
                         outputIndex = getPhasedGenotypeIndex(inputIndex, inputIndex);
                     } else {
+                        inputIndex = getGT16AmbiguousStateIndex(inputIndex);
                         outputIndex = inputIndex;
                     }
                     outAlignment.setState(i, j, outputIndex);
-                    System.out.println("outAlignment" + outAlignment.getState(i,j));
                     // if in the positionSet
                 } else{
                     // if haploid
                     // consider the state as ref and sample an alt
                     if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
+                        inputIndex = getAmbiguousStateIndex(inputIndex);
                         refIndex = inputIndex;
                         altIndex = getRandomCanonicalState(new int[]{inputIndex});
                     } else {
+                        inputIndex = getGT16AmbiguousStateIndex(inputIndex);
                         int[] parentIndices = getNucleotideIndex(inputIndex);
                         // if homozygous
                         if (parentIndices[0] == parentIndices[1]) {
                             refIndex = parentIndices[0];
                             altIndex = getRandomCanonicalState(new int[]{parentIndices[0]});
-                            System.out.println("get alt" + altIndex);
                         } else {
                             // if heterozygous
                             refIndex = parentIndices[sampleRandomNumber(0, parentIndices.length - 1)];
@@ -126,11 +127,18 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                     }
                     outputIndex = getPhasedGenotypeIndex(refIndex, altIndex);
                     outAlignment.setState(i, j, outputIndex);
-                    System.out.println("outAlignment" + outAlignment.getState(i,j));
                 }
             }
         }
         return new RandomVariable<>(null, outAlignment, this);
+    }
+
+    private int getGT16AmbiguousStateIndex(int inputIndex) {
+        if (inputIndex>=0 && inputIndex<=15){
+            return inputIndex;
+        } else {
+            return sampleRandomNumber(0,15);
+        }
     }
 
     private static int sampleRandomNumber(int min, int max) {
@@ -162,7 +170,6 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
             positionSet.add(newPosition);
         }
         Collections.sort(positionSet);
-        System.out.println("the position set"+positionSet.toString());
         return positionSet;
     }
 

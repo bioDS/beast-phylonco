@@ -1,7 +1,6 @@
 package phylonco.lphy.function;
 
-import lphy.base.evolution.VCFLines;
-import lphy.base.evolution.VCFSite;
+import lphy.base.evolution.Variant;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.function.io.ReaderConst;
 import lphy.core.model.DeterministicFunction;
@@ -15,7 +14,7 @@ import java.util.List;
 
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getNucleotideIndex;
 
-public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
+public class writeHeterozygousSites extends DeterministicFunction<Variant[]> {
     public writeHeterozygousSites(@ParameterInfo(name = ReaderConst.ALIGNMENT, description = "the diploid alignment to identify heterozygous sites from") Value<Alignment> alignment) {
         setParam(ReaderConst.ALIGNMENT, alignment);
         if (alignment == null){
@@ -28,7 +27,7 @@ public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
     @GeneratorInfo(name = "heterozygotes", examples = {"heterozygousConvert.lphy"},
             description = "write heterozygous sites in the diploid alignment in a vcf file")
     @Override
-    public Value<VCFLines> apply() {
+    public Value<Variant[]> apply() {
         Alignment alignment = getAlignment().value();
 
         // get taxa names
@@ -37,8 +36,7 @@ public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
             taxa.add(alignment.getTaxonName(s));
         }
         String[] taxaNames = taxa.toArray(new String[0]);
-
-        List<VCFSite> sites = new ArrayList<>();
+        List<Variant> variants = new ArrayList<>();
 
         for (int i = 0; i < alignment.ntaxa(); i++) {
             for (int j = 0; j < alignment.nchar(); j++) {
@@ -49,16 +47,14 @@ public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
                     int ref = getNucleotideIndex(stateIndex)[0];
                     int alt = getNucleotideIndex(stateIndex)[1];
                     String genotype = getGenotype(ref, alt);
-                    VCFSite site = new VCFSite(taxaNames[i], j, ref, alt, genotype);
+                    Variant site = new Variant(taxaNames[i], j, ref, alt, genotype);
 
-                    sites.add(site);
+                    variants.add(site);
                 }
             }
         }
 
-        VCFLines vcfLines = new VCFLines(sites);
-
-        return new Value<>(null, vcfLines, this);
+        return new Value<>(null, variants.toArray(new Variant[variants.size()]), this);
     }
 
     private String getGenotype(int ref, int alt) {
