@@ -83,7 +83,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         // set the alignment
         for (int i = 0; i < outAlignment.ntaxa(); i++) {
             // construct positions to convert
-            List<Integer> positionSet  = new ArrayList<>();
+            List<Integer> positionSet  = List.of(positions);
             if (n != positions.length) {
                 int extraNumber = n - positions.length;
                 positionSet = samplePositions(positions, extraNumber, length);
@@ -92,7 +92,6 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
             for (int j = 0; j < outAlignment.nchar(); j++) {
                 // get the nucleotide index of each site
                 int inputIndex = alignment.getState(i, j);
-
                 int outputIndex;
                 // check whether the site is in positionSet
                 // if not in the positionSet
@@ -103,6 +102,8 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                     } else {
                         outputIndex = inputIndex;
                     }
+                    outAlignment.setState(i, j, outputIndex);
+                    System.out.println("outAlignment" + outAlignment.getState(i,j));
                     // if in the positionSet
                 } else{
                     // if haploid
@@ -116,6 +117,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                         if (parentIndices[0] == parentIndices[1]) {
                             refIndex = parentIndices[0];
                             altIndex = getRandomCanonicalState(new int[]{parentIndices[0]});
+                            System.out.println("get alt" + altIndex);
                         } else {
                             // if heterozygous
                             refIndex = parentIndices[sampleRandomNumber(0, parentIndices.length - 1)];
@@ -123,12 +125,9 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
                         }
                     }
                     outputIndex = getPhasedGenotypeIndex(refIndex, altIndex);
+                    outAlignment.setState(i, j, outputIndex);
+                    System.out.println("outAlignment" + outAlignment.getState(i,j));
                 }
-
-                // map the new alignment states
-                outAlignment.setState(i, j, outputIndex);
-//                VCFSite varSite = new VCFSite(taxaNames[i], j, refIndex, altIndex, "0/1");
-//                sites.add(varSite);
             }
         }
         return new RandomVariable<>(null, outAlignment, this);
@@ -143,14 +142,17 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         return num.value();
     }
 
-    private int getRandomCanonicalState(int[] refIndex) {
+    public static int getRandomCanonicalState(int[] refIndex) {
         List<Integer> stateIndices = new ArrayList<>(Arrays.asList(0, 1, 2, 3));
-        stateIndices.remove(refIndex);
+        for (int index : refIndex) {
+            stateIndices.remove(Integer.valueOf(index));
+        }
+
         int randomIndex = sampleRandomNumber(0, stateIndices.size() - 1);
         return stateIndices.get(randomIndex);
     }
 
-    private static List<Integer> samplePositions(Integer[] positions, int extraNumber, int alignmentLength) {
+    public static List<Integer> samplePositions(Integer[] positions, int extraNumber, int alignmentLength) {
         List<Integer> positionSet = new ArrayList<>(List.of(positions));
         for (int i = 0; i < extraNumber; i++){
             int newPosition = sampleRandomNumber(0, alignmentLength - 1);
@@ -160,6 +162,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
             positionSet.add(newPosition);
         }
         Collections.sort(positionSet);
+        System.out.println("the position set"+positionSet.toString());
         return positionSet;
     }
 
