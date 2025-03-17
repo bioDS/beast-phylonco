@@ -25,7 +25,8 @@ public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
             throw new IllegalArgumentException("Must be phased genotype alignment!");
     }
 
-    @GeneratorInfo(name = "heterozygotes", description = "write heterozygous sites in the diploid alignment in a vcf file")
+    @GeneratorInfo(name = "heterozygotes", examples = {"heterozygousConvert.lphy"},
+            description = "write heterozygous sites in the diploid alignment in a vcf file")
     @Override
     public Value<VCFLines> apply() {
         Alignment alignment = getAlignment().value();
