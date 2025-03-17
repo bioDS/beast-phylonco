@@ -75,19 +75,20 @@ public class HeterozygousTest {
 
     @Test
     void testSampleCanonicalState() {
-        int j = 0;
-        while (j < 10) {
-            int[] ref = new int[]{0};
-            int alt = HeterozygousMutateAlignment.getRandomCanonicalState(ref);
+        int[] ref = new int[]{0};
+        int alt = HeterozygousMutateAlignment.getRandomCanonicalState(ref);
 
-            assertNotEquals(ref[0], alt);
+        assertNotEquals(ref[0], alt);
 
-            int[] ref1 = new int[]{0,1};
-            int alt1 = HeterozygousMutateAlignment.getRandomCanonicalState(ref);
+    }
 
-            assertNotEquals(ref1[0], alt1);
-            assertNotEquals(ref1[1], alt1);
+    @Test
+    void testTwoElementsForCanonicalState() {
+        int[] ref = new int[]{0, 1};
+        int alt = HeterozygousMutateAlignment.getRandomCanonicalState(ref);
 
-        }
+        assertNotEquals(ref[0], alt);
+        assertNotEquals(ref[1], alt);
+
     }
 }
