@@ -45,6 +45,7 @@ public class HeterozygousTest {
 
     }
 
+    // test diploid
     @Test
     void testPhasedGenotypes() {
         PhasedGenotype dataType = PhasedGenotype.INSTANCE;
@@ -90,5 +91,43 @@ public class HeterozygousTest {
         assertNotEquals(ref[0], alt);
         assertNotEquals(ref[1], alt);
 
+    }
+
+    // test with positions
+    @Test
+    void positionTest() {
+        PhasedGenotype dataType = PhasedGenotype.INSTANCE;
+        Alignment alignment = new SimpleAlignment(Taxa.createTaxa(1), 6, dataType);
+        Value<Alignment> alignmentValue = new Value<>("alignment", alignment);
+        Value<Integer> nValue = new Value<>("id", 4);
+        Integer[] positions = new Integer[2];
+        positions[0] = 0;
+        positions[1] = 3;
+        Value<Integer[]> positionValue = new Value<>("id", positions);
+        HeterozygousMutateAlignment instance = new HeterozygousMutateAlignment(alignmentValue, nValue, null);
+
+        Alignment instanceAlignment = instance.sample().value();
+        // check length
+        assertEquals(alignment.getSequence(0).length(), instanceAlignment.getSequence(0).length());
+
+        // check genotype
+        int diff = 0;
+        for (int i = 0; i < alignment.nchar(); i++) {
+            int originalGenotype = alignment.getState(0, i);
+            int newGenotype = instanceAlignment.getState(0, i);
+            if (originalGenotype == newGenotype) {
+                continue;
+            } else {
+                diff++;
+            }
+
+            if (i == 0){
+                assertNotEquals(originalGenotype, newGenotype);
+            } else if (i == 3){
+                assertNotEquals(originalGenotype, newGenotype);
+            }
+        }
+
+        assertEquals(4, diff);
     }
 }
