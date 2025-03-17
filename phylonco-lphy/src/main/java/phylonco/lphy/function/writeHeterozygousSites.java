@@ -42,12 +42,16 @@ public class writeHeterozygousSites extends DeterministicFunction<VCFLines> {
         for (int i = 0; i < alignment.ntaxa(); i++) {
             for (int j = 0; j < alignment.nchar(); j++) {
                 int stateIndex = alignment.getState(i,j);
-                int ref = getNucleotideIndex(stateIndex)[0];
-                int alt = getNucleotideIndex(stateIndex)[1];
-                String genotype = getGenotype(ref,alt);
-                VCFSite site = new VCFSite(taxaNames[i], j, ref, alt, genotype);
+                if (stateIndex == 0 || stateIndex == 5 || stateIndex == 10 || stateIndex == 15) {
+                    continue;
+                } else {
+                    int ref = getNucleotideIndex(stateIndex)[0];
+                    int alt = getNucleotideIndex(stateIndex)[1];
+                    String genotype = getGenotype(ref, alt);
+                    VCFSite site = new VCFSite(taxaNames[i], j, ref, alt, genotype);
 
-                sites.add(site);
+                    sites.add(site);
+                }
             }
         }
 
