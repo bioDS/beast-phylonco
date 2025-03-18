@@ -1,6 +1,6 @@
 package phylonco.lphy.function;
 
-import lphy.base.evolution.Variant;
+import lphy.base.evolution.datatype.Variant;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.function.io.ReaderConst;
 import lphy.core.model.DeterministicFunction;
