@@ -1,7 +1,6 @@
 package phylonco.lphy.evolution.alignment;
 
 import lphy.base.distribution.ParametricDistribution;
-import lphy.base.distribution.UniformDiscrete;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
@@ -18,6 +17,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import static lphy.base.evolution.SNPSampler.getAmbiguousStateIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
@@ -70,79 +70,6 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
             }
         }
         return new RandomVariable<>(null, genotypeAlignment, this);
-    }
-
-    // for unit test use
-
-    /**
-     * @param stateIndex state index of the nucleotide
-     * @return the certain homozygous phased genotype state index
-     */
-    public static int getAmbiguousStateIndex(int stateIndex) {
-        if (stateIndex >= 4) {
-            // get the array for the states
-            int[] ambiguousState = ambiguousState(stateIndex);
-            // get the Value<Integer> for the lower and upper boundary
-            Value<Integer> lower = new Value<>("id", 0);
-            Value<Integer> upper = new Value<>("id", ambiguousState.length - 1);
-
-            // get the random index for the integer in the array
-            UniformDiscrete uniformDiscrete = new UniformDiscrete(lower, upper);
-            RandomVariable<Integer> randomNumber = uniformDiscrete.sample();
-
-            // give the stateIndex its certain state
-            stateIndex = ambiguousState[randomNumber.value()];
-        }
-        return stateIndex;
-    }
-
-    /**
-     * @param stateIndex the state index of nucleotide
-     * @return the array of all possible states indices of the ambiguous nucleotide states (unkown and gap states have
-     * all four possible states)
-     */
-
-    private static int[] ambiguousState(int stateIndex) {
-        // switch the ambiguous states into canonical states (0=A, 1=C, 2=G, 3=T)
-        switch (stateIndex) {
-            case 4:
-                // 4 = A/G
-                return new int[]{0, 2};
-            case 5:
-                // 5 = C/T
-                return new int[]{1, 3};
-            case 6:
-                // 6 = A/C
-                return new int[]{0, 1};
-            case 7:
-                // 7 = A/T
-                return new int[]{0, 3};
-            case 8:
-                // 8 = C/G
-                return new int[]{1, 2};
-            case 9:
-                // 9 = G/T
-                return new int[]{2, 3};
-            case 10:
-                // 10 = C/G/T
-                return new int[]{1, 2, 3};
-            case 11:
-                // 11 = A/G/T
-                return new int[]{0, 2, 3};
-            case 12:
-                // 12 = A/C/T
-                return new int[]{0, 1, 3};
-            case 13:
-                // 13 = A/C/G
-                return new int[]{0, 1, 2};
-            case 14, 16, 15:
-                // 14 = unkown base (N) = A/C/G/T
-                // 15 = unkown base (?) = A/C/G/T
-                // 16 = gap (-) = A/C/G/T
-                return new int[]{0, 1, 2, 3};
-            default:
-                throw new IllegalArgumentException("Unexpected state: " + stateIndex);
-        }
     }
 
     @Override

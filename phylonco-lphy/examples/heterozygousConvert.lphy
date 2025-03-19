@@ -1,7 +1,7 @@
 data{
-    A = readFasta(file = "data/test_alignment.fasta", sequenceType=phasedGenotype());
+    A = readFasta(file = "data/human-ref-100s.fna");
 }
 model{
-    D ~ Heterozygous(alignment=A, n=2);
-    H = heterozygotes(alignment=D);
+    snp ~ SNPSampler(alignment=A, p=1);
+    D = injectSNP(alignment=A, snp=snp);
 }

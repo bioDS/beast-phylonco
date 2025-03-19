@@ -2,7 +2,7 @@ package phylonco.lphy.evolution.alignment;
 
 import jebl.evolution.sequences.Nucleotides;
 import lphy.base.distribution.ParametricDistribution;
-import lphy.base.distribution.UniformDiscrete;
+import lphy.base.evolution.SNPSampler;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
@@ -16,7 +16,8 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 
 import java.util.*;
 
-import static phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution.getAmbiguousStateIndex;
+import static lphy.base.evolution.SNPSampler.getAmbiguousStateIndex;
+import static lphy.base.evolution.SNPSampler.sampleRandomNumber;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getNucleotideIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
@@ -43,6 +44,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         if (positions != null && positions.value().length > n.value()){
             throw new IllegalArgumentException("Number of sites (n) should be equal or greater than the number of positions (positions)!");
         }
+        //TODO: handle  length < 1000
         this.alignment = alignment;
         this.n = n;
         this.positions = positions;
@@ -139,15 +141,6 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
         } else {
             return sampleRandomNumber(0,15);
         }
-    }
-
-    private static int sampleRandomNumber(int min, int max) {
-        Value<Integer> lower = new Value<>("low", min);
-        Value<Integer> upper = new Value<>("high",max);
-        UniformDiscrete uniformDiscrete = new UniformDiscrete(lower, upper);
-        RandomVariable<Integer> num = uniformDiscrete.sample();
-
-        return num.value();
     }
 
     public static int getRandomCanonicalState(int[] refIndex) {

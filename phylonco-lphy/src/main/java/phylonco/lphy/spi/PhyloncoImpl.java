@@ -10,7 +10,6 @@ import phylonco.lphy.evolution.readcountmodel.MutableAlignmentModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
-import phylonco.lphy.function.writeHeterozygousSites;
 
 import java.util.Arrays;
 import java.util.List;
@@ -47,8 +46,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
         return Arrays.asList(
                 GT16.class,
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
-                HaploidAlignment.class,
-                writeHeterozygousSites.class
+                HaploidAlignment.class, SNPInjector.class
         );
     }
 
