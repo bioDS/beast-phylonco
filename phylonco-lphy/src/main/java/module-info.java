@@ -5,7 +5,6 @@ module phylonco.lphy {
     requires transitive lphy.base;
     requires jdk.jfr;
 
-    exports phylonco.lphy.function;
     exports phylonco.lphy.evolution.alignment;
     exports phylonco.lphy.evolution.datatype;
     exports phylonco.lphy.evolution.substitutionmodel;
