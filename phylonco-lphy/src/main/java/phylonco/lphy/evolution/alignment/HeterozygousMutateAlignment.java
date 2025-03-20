@@ -55,8 +55,7 @@ public class HeterozygousMutateAlignment extends ParametricDistribution<Alignmen
 
     }
 
-    @GeneratorInfo(name = "Heterozygous", examples = {"heterozygousConvert.lphy"},
-            description = "Sample n sites in the given alignment and convert the sites to heterozygous ref/alt. If the site is homozygous, take any allele as ref then randomly sample an alt." +
+    @GeneratorInfo(name = "Heterozygous", description = "Sample n sites in the given alignment and convert the sites to heterozygous ref/alt. If the site is homozygous, take any allele as ref then randomly sample an alt." +
             "If the site is heterozygous, take any allele as ref and randomly sample an alt. If alignment is haploid, then convert the sites to heterozygoues and others to homozygous. ")
     @Override
     public RandomVariable<Alignment> sample() {

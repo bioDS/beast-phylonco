@@ -1,7 +1,6 @@
 package phylonco.lphy.evolution.alignment;
 
 import jebl.evolution.sequences.Nucleotides;
-import lphy.base.evolution.SNPSampler;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
@@ -30,13 +29,14 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
         setParam(SNPName, snps);
     }
 
-    @GeneratorInfo(name = "injectSNP", examples = {"injectSNP.lphy"},
+    @GeneratorInfo(name = "injectSNP", examples = {"SNPInjection.lphy"},
         description = "Add given SNPs in given alignment. If input alignment is haploid, then automatically convert non-SNP sites homozygous.")
     @Override
     public Value<Alignment> apply() {
+        System.out.println("start the function");
         // get aprameters
         Alignment alignment = getAlignment().value();
-        Variant[] snps = getSnps().value();
+        Variant[] snps = getSNPs().value();
 
         // initialise the output alignmet
         Alignment outAlignment = new SimpleAlignment(Taxa.createTaxa(alignment.getTaxaNames()),
@@ -63,7 +63,7 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
             }
             outAlignment.setState(0, i, newIndex);
         }
-        return null;
+        return new Value<>("A", outAlignment, this);
     }
 
     private int getSNPState(Variant snp) {
@@ -83,7 +83,7 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
         return getParams().get(ReaderConst.ALIGNMENT);
     }
 
-    public Value<Variant[]> getSnps(){
+    public Value<Variant[]> getSNPs(){
         return getParams().get(SNPName);
     }
 
