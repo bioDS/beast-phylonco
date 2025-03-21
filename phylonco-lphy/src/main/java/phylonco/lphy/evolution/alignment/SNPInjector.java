@@ -38,7 +38,7 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
         Alignment alignment = getAlignment().value();
         Variant[] snps = getSNPs().value();
 
-        // initialise the output alignmet
+        // initialise the output alignment
         Alignment outAlignment = new SimpleAlignment(Taxa.createTaxa(alignment.getTaxaNames()),
                 alignment.nchar(), PhasedGenotype.INSTANCE);
 
@@ -75,6 +75,8 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
             state = getPhasedGenotypeIndex(ref,ref);
         } else if (genotype == "0|1") {
             state = getPhasedGenotypeIndex(ref,alt);
+        } else if (genotype == "1|1") {
+            state = getPhasedGenotypeIndex(alt,alt);
         }
         return state;
     }

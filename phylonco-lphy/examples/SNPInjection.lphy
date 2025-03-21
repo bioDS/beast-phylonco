@@ -2,6 +2,6 @@ data{
     A = readFasta(file = "data/human-ref-100s.fna");
 }
 model{
-    snp ~ SNPSampler(alignment=A, p=1);
+    snp ~ SNPSampler(alignment=A, p=1, r=1);
     D = injectSNP(alignment=A, snp=snp);
 }
