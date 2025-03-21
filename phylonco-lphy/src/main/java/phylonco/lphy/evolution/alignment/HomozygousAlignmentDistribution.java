@@ -56,20 +56,25 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
         // set the alignment
         for (int i = 0; i < genotypeAlignment.ntaxa(); i++) {
             for (int j = 0; j < genotypeAlignment.nchar(); j++) {
-                // get the nucleotide index of each site
-                int originalStateIndex = originalAlignment.getState(i, j);
-
-                // get the certain nucleotide index for each site
-                int stateIndex = getAmbiguousStateIndex(originalStateIndex);
-
-                // convert the nucleotide states into phased genotypes
-                int index = getPhasedGenotypeIndex(stateIndex, stateIndex);
+                int index = getHomozygousState(originalAlignment, i, j);
 
                 // map the new alignment states
                 genotypeAlignment.setState(i, j, index);
             }
         }
         return new RandomVariable<>(null, genotypeAlignment, this);
+    }
+
+    public static int getHomozygousState(Alignment originalAlignment, int i, int j) {
+        // get the nucleotide index of each site
+        int originalStateIndex = originalAlignment.getState(i, j);
+
+        // get the certain nucleotide index for each site
+        int stateIndex = getAmbiguousStateIndex(originalStateIndex);
+
+        // convert the nucleotide states into phased genotypes
+        int index = getPhasedGenotypeIndex(stateIndex, stateIndex);
+        return index;
     }
 
     @Override

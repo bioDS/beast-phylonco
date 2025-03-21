@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static lphy.base.evolution.SNPSampler.getAmbiguousStateIndex;
+import static phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution.getHomozygousState;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
 public class SNPInjector extends DeterministicFunction<Alignment> {
@@ -33,7 +34,6 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
         description = "Add given SNPs in given alignment. If input alignment is haploid, then automatically convert non-SNP sites homozygous.")
     @Override
     public Value<Alignment> apply() {
-        System.out.println("start the function");
         // get aprameters
         Alignment alignment = getAlignment().value();
         Variant[] snps = getSNPs().value();
@@ -53,16 +53,17 @@ public class SNPInjector extends DeterministicFunction<Alignment> {
 
         // fill other positions
         int newIndex = -1;
-        for (Integer i: snp_positions) {
-            if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
-                int inputIndex = alignment.getState(0,i);
-                inputIndex = getAmbiguousStateIndex(inputIndex);
-                newIndex = getPhasedGenotypeIndex(inputIndex, inputIndex);
-            } else {
-                newIndex = i;
+        for (int i = 0; i < alignment.nchar(); i++){
+            if (! snp_positions.contains(i)) {
+                if (alignment.getSequenceTypeStr().equals(Nucleotides.NAME)){
+                    newIndex = getHomozygousState(alignment, 0 ,i);
+                } else {
+                    newIndex = i;
+                }
+                outAlignment.setState(0, i, newIndex);
             }
-            outAlignment.setState(0, i, newIndex);
         }
+
         return new Value<>("A", outAlignment, this);
     }
 
