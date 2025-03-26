@@ -20,9 +20,8 @@ model {
 ψ ~ Coalescent(n=n, theta=Θ);
 π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
-Q = gt16(freq=π, rates=rates); // construct the GT16 instantaneous rate matrix
+Q = gt16(freq=π, rates=rates);
 A ~ PhyloCTMC(L=l, Q=Q, tree=ψ, dataType=phasedGenotype());
-M ~ MutableAlignmentModel(A = A);
 w ~ LogNormal(meanlog= meanW, sdlog= sdW);
 epsilon ~ Beta(alpha= alphaEpsilon, beta= betaEpsilon);
 delta ~ Beta(alpha= alphaDelta, beta= betaDelta);
@@ -31,5 +30,5 @@ v ~ LogNormal(meanlog= meanV, sdlog= sdV);
 s ~ LogNormal(meanlog= meanS, sdlog= sdS, replicates=n);
 alpha ~ Ploidy(l= l, n= n, delta= delta);
 cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
-r ~ ReadCountModel(D=M, epsilon=epsilon, alpha=alpha, coverage=cov, w=w);
+r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w=w);
 }
