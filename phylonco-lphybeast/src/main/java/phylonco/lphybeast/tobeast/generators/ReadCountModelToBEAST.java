@@ -12,7 +12,7 @@ import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
-import phylonco.beast.evolution.readcountmodel.MutableAlignmentOperator;
+import mutablealignment.MutableAlignmentOperator;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 
 import java.util.ArrayList;

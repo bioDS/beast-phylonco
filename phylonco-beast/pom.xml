@@ -46,13 +46,7 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/BEASTlabs.v2.0.2.jar</systemPath>
         </dependency>
-        <dependency>
-            <groupId>beast2</groupId>
-            <artifactId>mutable-alignment</artifactId>
-            <version>0.0.1</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/MutableAlignment-0.0.1.jar</systemPath>
-        </dependency>
+
 
         <dependency>
             <groupId>java1.8</groupId>
