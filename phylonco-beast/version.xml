@@ -39,7 +39,6 @@
         <provider classname="phylonco.beast.evolution.populationmodel.ExpansionGrowth"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel"/>
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
-        <provider classname="phylonco.beast.evolution.readcountmodel.MutableAlignmentOperator"/>
     </service>
 
 </package>
