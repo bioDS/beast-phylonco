@@ -4,4 +4,13 @@ data{
 model{
     snp ~ SNPSampler(alignment=A, p=1, r=1);
     D = injectSNP(alignment=A, snp=snp);
+
+    tree ~ Yule(lambda=lambda, n=50, rootAge=tumourAge);
+
+    // gt16 model
+    π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
+    rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+    Q = gt16(freq=π, rates=rates);
+
+    A ~ SparsePhyloCTMC(L=L, Q=Q, tree=tree, dataType=phasedGenotype(), mu=cladeRate, root=D);
 }

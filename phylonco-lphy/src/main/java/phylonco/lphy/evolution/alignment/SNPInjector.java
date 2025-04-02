@@ -15,7 +15,6 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import java.util.ArrayList;
 import java.util.List;
 
-import static lphy.base.evolution.SNPSampler.getAmbiguousStateIndex;
 import static phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution.getHomozygousState;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
 
