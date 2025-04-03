@@ -16,6 +16,7 @@ import lphybeast.spi.LPhyBEASTExt;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
+import phylonco.lphy.evolution.alignment.SNPInjector;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
@@ -78,7 +79,7 @@ public class LBPhylonco implements LPhyBEASTExt {
         return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
-                MRCA.class,
+                MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 PopulationFunctionCoalescent.class,
                 SVSPopulationFunction.class,
