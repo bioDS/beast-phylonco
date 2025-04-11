@@ -4,6 +4,8 @@ import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
 import phylonco.lphy.evolution.alignment.*;
+import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
+import phylonco.lphy.evolution.copynumbermodel.PhyloDiscrete;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
@@ -34,17 +36,22 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 GT16ErrorModel.class,
                 HomozygousAlignmentDistribution.class,
                 HeterozygousMutateAlignment.class,
+                // read count model
                 ReadCountModel.class,
                 PloidyModel.class,
-                CoverageModel.class);
-    }
+                CoverageModel.class,
+                // copy number model
+                PhyloDiscrete.class
+        );
+                  }
 
     @Override
     public List<Class<? extends BasicFunction>> declareFunctions() {
         return Arrays.asList(
                 GT16.class,
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
-                HaploidAlignment.class, SNPInjector.class
+                HaploidAlignment.class, SNPInjector.class,
+                CopyNumberBD.class
         );
     }
 

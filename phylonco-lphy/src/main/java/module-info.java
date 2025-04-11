@@ -9,7 +9,8 @@ module phylonco.lphy {
     exports phylonco.lphy.evolution.datatype;
     exports phylonco.lphy.evolution.substitutionmodel;
     exports phylonco.lphy.evolution.readcountmodel;
-
+    //copy number model
+    exports phylonco.lphy.evolution.copynumbermodel;
 
     // declare what service interface the provider intends to use
     uses lphy.core.spi.Extension;
