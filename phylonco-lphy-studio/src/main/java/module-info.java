@@ -1,7 +1,8 @@
+import copynumbermodel.lphystudio.viewer.TaxaCharacterMatrixViewer;
 import readcountmodel.lphystudio.viewer.Integer2DMatrixViewer;
 import readcountmodel.lphystudio.viewer.ReadCountModelViewer;
 
-module popsizefunc.lphy.studio {
+module phylonco.lphy.studio {
 
     requires transitive lphystudio;
     requires phylonco.lphy;
@@ -9,7 +10,7 @@ module popsizefunc.lphy.studio {
     // Viewer SPI
     uses lphystudio.app.graphicalmodelpanel.viewer.Viewer;
     // declare what service interface the provider intends to use
-    provides lphystudio.app.graphicalmodelpanel.viewer.Viewer with ReadCountModelViewer, Integer2DMatrixViewer;
+    provides lphystudio.app.graphicalmodelpanel.viewer.Viewer with ReadCountModelViewer, Integer2DMatrixViewer, TaxaCharacterMatrixViewer;
 
     // Note: to adapt with the system not using Java module but using class path,
     // they need to be declared inside META-INF/services/lphystudio.app.graphicalmodelpanel.viewer.Viewer as well.

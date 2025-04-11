@@ -3,5 +3,5 @@
 # META-INF/services must be under src for Intellij
 # Class requires a public no-args constructor
 
-# popsizefunc.lphystudio.spi.PopSizeFuncViewerImpl
 readcountmodel.lphystudio.viewer.ReadCountModelViewer
+copynumbermodel.lphystudio.viewer.TaxaCharacterMatrixViewer
