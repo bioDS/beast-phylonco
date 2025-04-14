@@ -11,8 +11,8 @@ import java.util.Map;
 
 public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
     private Value<Integer2DMatrix> alpha;
-    private Value<Double> t;
-    private Value<Double> v;
+    private Value<Number> t;
+    private Value<Number> v;
     private Value<Double[]> s;
 
 
@@ -27,8 +27,8 @@ public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
 
     public CoverageModel(
             @ParameterInfo(name = alphaParamName, description = "alpha, allelic dropout events for each cell at each site.") Value<Integer2DMatrix> alpha,
-            @ParameterInfo(name = tParamName, description = "t, mean of allelic coverage.") Value<Double> t,
-            @ParameterInfo(name = vParamName, description = "v, variance of allelic coverage.") Value<Double> v,
+            @ParameterInfo(name = tParamName, description = "t, mean of allelic coverage.") Value<Number> t,
+            @ParameterInfo(name = vParamName, description = "v, variance of allelic coverage.") Value<Number> v,
             @ParameterInfo(name = sParamName, description = "s, size factor of cell.") Value<Double[]> s
 
             ) {
@@ -57,8 +57,8 @@ public class CoverageModel implements GenerativeDistribution<Integer2DMatrix> {
 
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < l; j++) {
-                Double mean = (this.alpha.value().getState(i,j) * this.t.value() * this.s.value()[i]);
-                Double variance = mean + (Math.pow((double) alpha.value().getState(i,j), 2.0) * v.value() * Math.pow(this.s.value()[i], 2.0));
+                Double mean = (this.alpha.value().getState(i,j) * this.t.value().doubleValue() * this.s.value()[i]);
+                Double variance = mean + (Math.pow((double) alpha.value().getState(i,j), 2.0) * v.value().doubleValue() * Math.pow(this.s.value()[i], 2.0));
                 double pValue = mean / variance;
                 double rValue = Math.pow(mean, 2) / (variance - mean);
                 r = new Value<>("r", rValue);
