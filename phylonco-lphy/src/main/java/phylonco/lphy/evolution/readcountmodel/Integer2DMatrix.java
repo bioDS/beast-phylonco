@@ -31,16 +31,18 @@ public class Integer2DMatrix {
 
     public String toString () {
         StringBuilder sb = new StringBuilder();
+        sb.append("\"");
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 sb.append(matrix[i][j]);
-                if (j!=matrix[i].length-1) {
+                if (j!=matrix[i].length - 1) {
                     sb.append(",");
-                } else {
-                    sb.append(";");
+                } else if (i != matrix.length - 1){
+                    sb.append("\n");
                 }
             }
         }
+        sb.append("\"");
         return sb.toString();
     }
 
