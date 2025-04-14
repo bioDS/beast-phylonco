@@ -30,14 +30,18 @@ public class Integer2DMatrix {
     public Integer nchar () {return matrix[0].length;}
 
     public String toString () {
-        String string = "\n";
+        StringBuilder sb = new StringBuilder();
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                string += String.format("%d ", matrix[i][j]);
+                sb.append(matrix[i][j]);
+                if (j!=matrix[i].length-1) {
+                    sb.append(",");
+                } else {
+                    sb.append(";");
+                }
             }
-            string += "\n";
         }
-        return string;
+        return sb.toString();
     }
 
 }

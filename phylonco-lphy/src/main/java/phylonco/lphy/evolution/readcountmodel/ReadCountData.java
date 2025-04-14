@@ -62,8 +62,8 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     @Override
     public String toString() {
-        String string = "\n";
-        int n = getTaxa().getDimension();;
+        StringBuilder sb = new StringBuilder();
+        int n = getTaxa().getDimension();
         int l = nchar();
         for (int i = 0; i < n; i++) {
             // n taxa
@@ -73,10 +73,14 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
                 int countC = readCountDataMatrix[i][j].getCount("C");
                 int countG = readCountDataMatrix[i][j].getCount("G");
                 int countT = readCountDataMatrix[i][j].getCount("T");
-                string += String.format("A: %d, C: %d, G: %d, T: %d; \t", countA, countC, countG, countT);
+                sb.append(String.format(countA + ":" + countC + ":" + countG + ":" + countT ));
+                if (j == l-1){
+                    sb.append(";");
+                } else {
+                    sb.append(",");
+                }
             }
-            string += "\n";
         }
-        return string;
+        return sb.toString();
     }
 }
