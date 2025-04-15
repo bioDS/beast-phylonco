@@ -107,11 +107,12 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                 if (genotypeState.getIndex() > 21) {
                     // if the state is unknown or gap, then sample one
                     genotypeState = PhasedGenotype.getCanonicalState(sampleGenotype());
-                } else if (genotypeState.getIndex() > 15 && genotypeState.getIndex() < 22) {
-                    dirichletMultinomial.setParam("w", w2);
-                } else {
-                    // use w1 when 0/0, 0/-, 1/1, 1/-
+                    // use w1 when homozygous
+                } else if (genotypeState.getIndex() == 0 || genotypeState.getIndex() == 5 || genotypeState.getIndex() == 10 || genotypeState.getIndex() == 15) {
                     dirichletMultinomial.setParam("w", w1);
+                } else {
+                    // else heterozygous, then set w2
+                    dirichletMultinomial.setParam("w", w2);
                 }
 //                Integer cov_ij = coverage.value()[i][j];
                 Integer cov_ij = coverage.value().getState(i,j);
