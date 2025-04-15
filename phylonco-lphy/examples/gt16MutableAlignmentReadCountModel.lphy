@@ -1,8 +1,10 @@
 data {
 n = 20;
 l = 20;
-meanW = 2.2;
-sdW = 1.25;
+meanW1 = 100;
+sdW1 = 1.25;
+meanW2 = 2.5;
+sdW2 = 1.25;
 alphaEpsilon = 1;
 betaEpsilon = 30;
 alphaDelta = 3;
@@ -30,5 +32,5 @@ v ~ LogNormal(meanlog= meanV, sdlog= sdV);
 s ~ LogNormal(meanlog= meanS, sdlog= sdS, replicates=n);
 alpha ~ Ploidy(l= l, n= n, delta= delta);
 cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
-r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w=w);
+r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w1=w1, w2=w2);
 }
