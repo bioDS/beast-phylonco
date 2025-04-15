@@ -30,7 +30,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         String tParamName = "t";
         String vParamName = "v";
         String sParamName = "s";
-        String wParamName = "w";
+        String w1ParamName = "w1";
+        String w2ParamName = "w2";
         String alignmentParamName = "D";
 
         //get values from LPhy
@@ -41,7 +42,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         Value tValue = (Value) coverageValue.getGenerator().getParams().get(tParamName);
         Value vValue = (Value) coverageValue.getGenerator().getParams().get(vParamName);
         Value sValue = (Value) coverageValue.getGenerator().getParams().get(sParamName);
-        Value wValue = generator.getParams().get(wParamName);
+        Value w1Value = generator.getParams().get(w1ParamName);
+        Value w2Value = generator.getParams().get(w2ParamName);
         Value alignmentValue = generator.getParams().get(alignmentParamName);
 
         //convert LPhy values to Beast objects
@@ -50,7 +52,9 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         RealParameter tParam = context.getAsRealParameter(tValue);
         RealParameter vParam = context.getAsRealParameter(vValue);
         RealParameter sParam = context.getAsRealParameter(sValue);
-        RealParameter wParam = context.getAsRealParameter(wValue);
+        RealParameter w1Param = context.getAsRealParameter(w1Value);
+        RealParameter w2Param = context.getAsRealParameter(w2Value);
+
         BEASTInterface alignmentParam = context.getBEASTObject(alignmentValue);
         if (alignmentParam == null) {
             alignmentParam = context.getBEASTObject(alignmentValue.getId());
@@ -62,7 +66,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         likelihoodReadCountModel.setInputValue("t", tParam);
         likelihoodReadCountModel.setInputValue("v", vParam);
         likelihoodReadCountModel.setInputValue("s", sParam);
-        likelihoodReadCountModel.setInputValue("w", wParam);
+        likelihoodReadCountModel.setInputValue("w1", w1Param);
+        likelihoodReadCountModel.setInputValue("w2", w2Param);
         likelihoodReadCountModel.setInputValue("alignment", alignmentParam);
         // beast readcount readCountData
         if (value instanceof ReadCount readCountData) {

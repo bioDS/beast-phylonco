@@ -25,7 +25,8 @@ public class LikelihoodReadCountModel extends Distribution {
     public Input<RealParameter> tInput = new Input<>("t", "mean of allelic coverage");
     public Input<RealParameter> vInput = new Input<>("v", "variance of allelic coverage");
     public Input<RealParameter> sInput = new Input<>("s", "size factor of cell");
-    public Input<RealParameter> wInput = new Input<>("w", "overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealParameter> w1Input = new Input<>("w1", "wildtype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealParameter> w2Input = new Input<>("w2", "alternative overdispersion parameter of Dirichlet multinomial distribution");
 
     // other parameters of read count model
 
@@ -34,7 +35,8 @@ public class LikelihoodReadCountModel extends Distribution {
     private RealParameter t;
     private RealParameter v;
     private RealParameter s;
-    private RealParameter w;
+    private RealParameter w1;
+    private RealParameter w2;
     private Alignment alignment;
 
     private double alpha1;
@@ -76,7 +78,8 @@ public class LikelihoodReadCountModel extends Distribution {
         this.t = tInput.get();
         this.v = vInput.get();
         this.s = sInput.get();
-        this.w = wInput.get();
+        this.w1 = w1Input.get();
+        this.w2 = w2Input.get();
         this.alignment = alignmentInput.get();
         this.alpha1 = 1;
         this.alpha2 = 2;
@@ -98,7 +101,8 @@ public class LikelihoodReadCountModel extends Distribution {
         Double eps = epsilon.getValue();
         Double tv = this.t.getValue();
         Double vv = this.v.getValue();
-        Double wv = this.w.getValue();
+        Double w1v = this.w1.getValue();
+        Double w2v = this.w2.getValue();
         this.propensities = new Double[][]{
                 {(1 - eps), (eps/3), (eps/3), (eps/3)},             // AA or A_ 0
                 {(0.5 - eps/6), (0.5 - eps/6), (eps/6), (eps/6)},   // AC or CA 1
@@ -127,7 +131,12 @@ public class LikelihoodReadCountModel extends Distribution {
                 int patternIndex = alignment.getPatternIndex(j);
                 int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
-                this.logP += logLiklihoodRC(genotypeState, readCountNumbers, wv);
+                if (genotypeState == 0 || genotypeState == 5 || genotypeState == 10 || genotypeState == 15){
+                    this.logP += logLiklihoodRC(genotypeState, readCountNumbers, w1v);
+                } else {
+                    this.logP += logLiklihoodRC(genotypeState, readCountNumbers, w2v);
+                }
+
             }
         }
         //System.out.println("logLikelihood = " + logP + "; t = " + this.t + "; v = " + this.v + "; s = " + this.s + "; w = " + this.w);
