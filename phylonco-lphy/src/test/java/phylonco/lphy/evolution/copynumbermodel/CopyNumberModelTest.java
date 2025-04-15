@@ -6,9 +6,14 @@ import lphy.core.model.Value;
 
 import static org.junit.Assert.assertTrue;
 
-public class NestedBDTest {
+public class CopyNumberModelTest {
     /**
+     * Tests for the copy number birth-death model in {@link phylonco.lphy.evolution.copynumbermodel.CopyNumberBD}.
      *
+     * Validates that simulateCopiesOnBranchBin produces statistically correct results by comparing
+     * observed means from simulations against theoretical means (within confidence intervals) for both:
+     * - Birth-death processes (conditional and unconditional on non-extinction)
+     * - Pure birth processes
      */
 
 //For Birth-Death process
@@ -112,7 +117,6 @@ public class NestedBDTest {
             }
         }
     }
-
     // Debugging
     @Test
     public void testBirthAndDeathMulti() {
@@ -128,7 +132,6 @@ public class NestedBDTest {
         // Run unconditional analysis
         simulateCopiesOnBranchBinTest(true, true,1000,1000);
     }
-
     // Test
     @Test
     public void testBirthAndDeathSingle() {
