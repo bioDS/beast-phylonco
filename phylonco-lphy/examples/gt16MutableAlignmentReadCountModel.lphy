@@ -24,7 +24,8 @@ model {
 rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
 Q = gt16(freq=π, rates=rates);
 A ~ PhyloCTMC(L=l, Q=Q, tree=ψ, dataType=phasedGenotype());
-w ~ LogNormal(meanlog= meanW, sdlog= sdW);
+w1 ~ LogNormal(meanlog= meanW1, sdlog= sdW1);
+w2 ~ LogNormal(meanlog= meanW2, sdlog= sdW2);
 epsilon ~ Beta(alpha= alphaEpsilon, beta= betaEpsilon);
 delta ~ Beta(alpha= alphaDelta, beta= betaDelta);
 t ~ LogNormal(meanlog= meanT, sdlog= sdT);
