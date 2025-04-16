@@ -83,12 +83,6 @@ public class LikelihoodReadCountModel extends Distribution {
         this.alignment = alignmentInput.get();
         this.alpha1 = 1;
         this.alpha2 = 2;
-
-
-
-
-
-        calculateLogP();
     }
 
     public void calculateLogPLeaf(Node node, int[] states) {
@@ -131,16 +125,18 @@ public class LikelihoodReadCountModel extends Distribution {
                 int patternIndex = alignment.getPatternIndex(j);
                 int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
-                if (genotypeState == 0 || genotypeState == 5 || genotypeState == 10 || genotypeState == 15){
+                if (homozygous(genotypeState)){
+                    //System.out.println("logLiklihood: "+logLiklihoodRC(genotypeState, readCountNumbers, w1v));
                     this.logP += logLiklihoodRC(genotypeState, readCountNumbers, w1v);
                 } else {
+                    //System.out.println("logLiklihood: "+logLiklihoodRC(genotypeState, readCountNumbers, w2v));
                     this.logP += logLiklihoodRC(genotypeState, readCountNumbers, w2v);
                 }
 
             }
         }
         //System.out.println("logLikelihood = " + logP + "; t = " + this.t + "; v = " + this.v + "; s = " + this.s + "; w = " + this.w);
-        //System.out.println("this.logP: " + this.logP);
+        System.out.println("this.logP: " + this.logP);
         return this.logP;
     }
 
@@ -176,6 +172,8 @@ public class LikelihoodReadCountModel extends Distribution {
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
             part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
             max = Math.max(part0, part1);
+            System.out.println("logCoverageLikelihoodHaploid: " + logCoverageLikelihoodHaploid);
+
             if (part0 == max){
                 logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0));
             }else {
@@ -191,6 +189,7 @@ public class LikelihoodReadCountModel extends Distribution {
             part1 = Math.log(0.5) + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
             part2 = Math.log(0.5) + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + Math.log(deltav);
             max = Math.max(part0, Math.max(part1, part2));
+            System.out.println("logCoverageLikelihoodHaploid: " + logCoverageLikelihoodHaploid);
             if (part0 == max){
                 logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0)) + Math.log(1 + Math.exp(part2 - part0));
             }else if (part1 == max){

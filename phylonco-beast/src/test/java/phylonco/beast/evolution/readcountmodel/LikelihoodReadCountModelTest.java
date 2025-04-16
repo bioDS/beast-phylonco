@@ -23,7 +23,7 @@ import static org.junit.Assert.assertEquals;
 
 public class LikelihoodReadCountModelTest {
 
-    final double DELTA = 1e-4;
+    final double DELTA = 1e-5;
 
     @BeforeEach
     public void setUp() {
@@ -82,10 +82,10 @@ public class LikelihoodReadCountModelTest {
         likelihoodReadCountModel.initAndValidate();
 
         double observedLogP = likelihoodReadCountModel.calculateLogP();
-        //TODO: change the expectedLogP and test
-        //double expectedLogP = -35.6331962985386;
+        //System.out.println(observedLogP);
+        double expectedLogP = -47.1349957401387;
 
-        //assertEquals(expectedLogP, observedLogP, DELTA);
+        assertEquals(expectedLogP, observedLogP, DELTA);
 
 //        public Input<Alignment> alignmentInput = new Input<>("alignment", "alignment");
 //        public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");

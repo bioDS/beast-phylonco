@@ -9,7 +9,7 @@ begin characters;
 	dimensions nchar=2;
 	format datatype=nucleotideDiploid16;
 	matrix 
-		0 26
+		0 25
 		1 22;
 
 end;
