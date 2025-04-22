@@ -1,0 +1,21 @@
+<package name='BD' version='1.9.6'>
+	<depends on='BEAST.base' atleast='2.7.0'/>
+    <description>NestedBD model</description>
+    
+<service type="beast.base.core.BEASTInterface">
+        <!-- Likelihood classes -->
+        <provider classname="BD.evolution.likelihood.DiploidOriginLikelihood"/>
+        <provider classname="BD.evolution.likelihood.DiploidOriginLikelihoodWithError"/>
+        <provider classname="BD.evolution.likelihood.TreeLikelihoodWithError"/>
+        
+        <!-- Error model classes -->
+        <provider classname="BD.evolution.errormodel.ErrorModel"/>
+        <provider classname="BD.evolution.errormodel.ErrorModelBase"/>
+        <provider classname="BD.evolution.errormodel.NormalErrorModel"/>
+        <provider classname="BD.evolution.errormodel.poissonErrorModel"/>
+        <provider classname="BD.evolution.errormodel.readcountErrorModel"/>
+        
+        <!-- Substitution model -->
+        <provider classname="BD.evolution.substitutionmodel.BD"/>
+    </service>
+</package>
