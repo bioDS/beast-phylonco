@@ -46,7 +46,13 @@
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/BEASTlabs.v2.0.2.jar</systemPath>
         </dependency>
-
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>nested-bd</artifactId>
+            <version>1.9.6</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/BD.v1.9.6.jar</systemPath>
+        </dependency>
 
         <dependency>
             <groupId>java1.8</groupId>
