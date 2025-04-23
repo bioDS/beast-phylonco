@@ -51,7 +51,7 @@
             <artifactId>nested-bd</artifactId>
             <version>1.9.6</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/BD.v1.9.6.jar</systemPath>
+            <systemPath>${project.basedir}/lib/NestedBD.v1.9.6.jar</systemPath>
         </dependency>
 
         <dependency>

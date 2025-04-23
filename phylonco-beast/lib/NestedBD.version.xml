@@ -1,0 +1,21 @@
+<package name='NestedBD' version='1.9.6'>
+	<depends on='BEAST.base' atleast='2.7.0'/>
+    <description>Nested birth-death model</description>
+    
+<service type="beast.base.core.BEASTInterface">
+        <!-- Likelihood classes -->
+        <provider classname="NestedBD.evolution.likelihood.DiploidOriginLikelihood"/>
+        <provider classname="NestedBD.evolution.likelihood.DiploidOriginLikelihoodWithError"/>
+        <provider classname="NestedBD.evolution.likelihood.TreeLikelihoodWithError"/>
+        
+        <!-- Error model classes -->
+        <provider classname="NestedBD.evolution.errormodel.ErrorModel"/>
+        <provider classname="NestedBD.evolution.errormodel.ErrorModelBase"/>
+        <provider classname="NestedBD.evolution.errormodel.NormalErrorModel"/>
+        <provider classname="NestedBD.evolution.errormodel.poissonErrorModel"/>
+        <provider classname="NestedBD.evolution.errormodel.readcountErrorModel"/>
+        
+        <!-- Substitution model -->
+        <provider classname="NestedBD.evolution.substitutionmodel.BD"/>
+    </service>
+</package>
