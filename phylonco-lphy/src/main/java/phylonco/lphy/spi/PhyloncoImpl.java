@@ -51,6 +51,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 GT16.class,
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
+//                CopyNumberBD.class
                 CopyNumberBD.class
         );
     }
