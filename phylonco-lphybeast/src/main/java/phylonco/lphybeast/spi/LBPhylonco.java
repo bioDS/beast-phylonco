@@ -17,6 +17,7 @@ import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.SNPInjector;
+import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
@@ -35,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * which include a list of {@link lphybeast.ValueToBEAST},
  * {@link lphybeast.GeneratorToBEAST}, and {@link DataType}
  * to extend.
+ *
  * @author Walter Xie
  */
 public class LBPhylonco implements LPhyBEASTExt {
@@ -43,27 +45,31 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
                 //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class ,
+                Gompertz_f0ToBEAST.class,
                 ExponentialToBEAST.class,
                 LogisticToBEAST.class,
                 Gompertz_t50ToBEAST.class,
                 ConstantToBEAST.class,
-             //   SVSToBEAST.class,
+                //   SVSToBEAST.class,
                 SVSPopulationFunctionToBEAST.class,
                 Cons_Exp_ConsToBEAST.class,
                 ExpansionToBEAST.class,
-                ReadCountToBEAST.class
-
+                ReadCountToBEAST.class,
+                //copy number model
+                IntegerCharacterMatrixToBEAST.class,
+                CopyNumberBDToBEAST.class
         );
     }
 
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
-        return Arrays.asList( GT16ErrorModelToBEAST.class,
+        return Arrays.asList(GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class
+                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
+                // copy number model
+                PhyloDiscreteToBEAST.class
         );
     }
 
@@ -90,14 +96,17 @@ public class LBPhylonco implements LPhyBEASTExt {
                 Cons_Exp_ConsPopulationFunction.class,
                 ExpansionPopulationFunction.class,
                 ConstantPopulationFunction.class,
-                UniformDiscrete.class);
+                UniformDiscrete.class,
+                CopyNumberBD.class
+        );
     }
 
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
                 SVSPopulation.class,
-                Integer2DMatrix.class);
+                Integer2DMatrix.class
+        );
     }
 
 }
