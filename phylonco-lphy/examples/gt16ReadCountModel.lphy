@@ -15,7 +15,7 @@ meanV = 0.8; // variance coverage = lognormal(meanV, sdV)
 sdV = 0.475;
 meanS = 0.2; // cell-specific scaling
 sdS = 0.72;
-A = readNexus(file="data/gt16ReadCountModel_A.nexus"); //Users/yxia415/WorkSpace/beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
+A = readNexus(file="data/gt16ReadCountModel_A.nexus"); //beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
 }
 
 model {
