@@ -62,6 +62,14 @@
             <systemPath>${project.basedir}/lib/nashorn.jar</systemPath>
         </dependency>
 
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>MutableAlignment</artifactId>
+            <version>0.0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/MutableAlignment-0.0.2.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
