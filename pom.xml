@@ -6,7 +6,7 @@
         <groupId>io.github.linguaphylo</groupId>
         <artifactId>lphybeast-root</artifactId>
         <!--  lphybeast version here    -->
-        <version>1.2.1</version>
+        <version>1.2.1-beastManual</version>
     </parent>
 
 <!--    <groupId>io.github.linguaphylo</groupId>-->
@@ -19,7 +19,7 @@
 
     <properties>
         <lphy.vision>1.6.1</lphy.vision>
-        <lphybeast.vision>1.2.1</lphybeast.vision>
+        <lphybeast.vision>1.2.1-beastManual</lphybeast.vision>
 <!--  include lphybeast  -->
         <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
         <!-- phylonco pom version https://maven.apache.org/maven-ci-friendly.html -->
