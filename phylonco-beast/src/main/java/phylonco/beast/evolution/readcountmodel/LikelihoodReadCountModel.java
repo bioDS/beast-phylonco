@@ -3,7 +3,6 @@ package phylonco.beast.evolution.readcountmodel;
 
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
-import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.tree.Node;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
