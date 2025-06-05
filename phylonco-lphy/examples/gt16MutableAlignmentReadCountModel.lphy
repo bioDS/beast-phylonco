@@ -1,10 +1,10 @@
 data {
 n = 20;
 l = 20;
-meanW1 = 100;
-sdW1 = 1.25;
-meanW2 = 2.5;
-sdW2 = 1.25;
+meanW1 = 3.96;
+sdW1 = 0.33;
+meanW2 = 0.93;
+sdW2 = 0.33;
 alphaEpsilon = 1;
 betaEpsilon = 30;
 alphaDelta = 3;
