@@ -12,7 +12,7 @@ public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount>
     public ReadCount valueToBEAST(Value<ReadCountData> value, BEASTContext context) {
 //        ReadCount readCount = new ReadCount(value.value().getTaxa().getDimension(), value.value().nchar());
         ReadCount readCount = new ReadCount();
-        String readC = "\n";
+        String readC = new String();
         int n = value.value().getTaxa().getDimension();
         int l = value.value().nchar();
         for (int i = 0; i < n; i++) {
@@ -23,9 +23,13 @@ public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount>
                 int countC = value.value().getState(i,j).getCount("C");
                 int countG = value.value().getState(i,j).getCount("G");
                 int countT = value.value().getState(i,j).getCount("T");
-                readC += String.format("%d,%d,%d,%d; ", countA, countC, countG, countT);
+                readC += String.format("%d:%d:%d:%d", countA, countC, countG, countT);
+                if (j < l - 1) {
+                    readC += ",";
+                }
+                // read count per site
             }
-            readC += "\n";
+            readC += "\n"; // new line character per taxa
         }
 
 //        for (int i = 0; i < value.value().getTaxa().getDimension(); i++) {

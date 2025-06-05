@@ -12,8 +12,8 @@ public class ReadCount extends BEASTObject {
     int data[][][];
 
     String newline = "\n";
-    String semicolon = ";";
-    String comma = ",";
+    String semicolon = ",";
+    String comma = ":";
 
     public Input<String> readCountStrInput = new Input<>("value", "A string record read counts", Input.Validate.REQUIRED);
 
@@ -66,8 +66,8 @@ public class ReadCount extends BEASTObject {
         String readCountStr = readCountStrInput.get();
         // data format A,C,G,T; A,C,G,T;
         /**
-         * 0,7,11,0; 0,9,0,0;
-         * 1,0,5,0; 11,1,0,0;
+         * 1:0:0:11,0:17:0:12
+         * 7:0:0:26,0:12:0:8
          */
         ArrayList<String> cellArray;
         ArrayList<String> siteArray;
