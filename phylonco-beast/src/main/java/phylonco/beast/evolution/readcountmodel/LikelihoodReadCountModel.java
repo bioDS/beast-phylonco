@@ -25,8 +25,8 @@ public class LikelihoodReadCountModel extends Distribution {
     public Input<RealParameter> tInput = new Input<>("t", "mean of allelic coverage");
     public Input<RealParameter> vInput = new Input<>("v", "variance of allelic coverage");
     public Input<RealParameter> sInput = new Input<>("s", "size factor of cell");
-    public Input<RealParameter> w1Input = new Input<>("w1", "wildtype overdispersion parameter of Dirichlet multinomial distribution");
-    public Input<RealParameter> w2Input = new Input<>("w2", "alternative overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealParameter> w1Input = new Input<>("w1", "homozygous genotype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealParameter> w2Input = new Input<>("w2", "heterogeneous genotype overdispersion parameter of Dirichlet multinomial distribution");
 
     // other parameters of read count model
 
