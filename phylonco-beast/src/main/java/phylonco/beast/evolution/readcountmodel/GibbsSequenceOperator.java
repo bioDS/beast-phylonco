@@ -11,7 +11,7 @@ import java.util.List;
 
 
 
-public class GibbsAlignmentOperator extends Operator {
+public class GibbsSequenceOperator extends Operator {
 
     public Input<MutableAlignment> mutableAlignmentInput = new Input<>("mutableAlignment", "mutable alignment");
     public Input<MATreeLikelihood> maTreeLikelihoodInput  = new Input<>("maTreeLikelihood", "likelihood of mutable alignment tree");
@@ -54,7 +54,7 @@ public class GibbsAlignmentOperator extends Operator {
         double[][] stateLogProbabilities = new double[numStates][numSites];
         double[][] readCountLogLikelihoods = new double[numStates][numSites];
         int[] newSeq = new int[numSites];
-        double[] stateProbabilities = new double[numStates];
+        double[] stateProbabilities;
 
         for(int i = 0; i < numStates; i++){
             stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(taxon, statesSequences.get(i));
@@ -87,7 +87,7 @@ public class GibbsAlignmentOperator extends Operator {
         throw new RuntimeException("Should never get here");
     }
 
-    public static double[] normalizeLogProbs(double[] logProbs) {
+    private double[] normalizeLogProbs(double[] logProbs) {
         // Find the maximum log probability for numerical stability
         double maxLogProb = Double.NEGATIVE_INFINITY;
         for (double logP : logProbs) {
