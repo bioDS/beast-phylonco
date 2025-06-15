@@ -16,6 +16,7 @@ public class ReadCount extends BEASTObject {
     String comma = ":";
 
     public Input<String> readCountStrInput = new Input<>("value", "A string record read counts", Input.Validate.REQUIRED);
+    public Input<String[]> taxaNames = new Input<>("taxaNames", "Taxa names of the data", Input.Validate.REQUIRED);
 
     public ReadCount() {
         // do we need to fill this in?

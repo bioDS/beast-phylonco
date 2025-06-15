@@ -13,6 +13,7 @@ public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount>
 //        ReadCount readCount = new ReadCount(value.value().getTaxa().getDimension(), value.value().nchar());
         ReadCount readCount = new ReadCount();
         String readC = new String();
+        String[] taxaNames = value.value().getTaxaNames();
         int n = value.value().getTaxa().getDimension();
         int l = value.value().nchar();
         for (int i = 0; i < n; i++) {
@@ -38,6 +39,7 @@ public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount>
 //            }
 //        }
         readCount.setInputValue("value", readC);
+        readCount.setInputValue("taxaNames", taxaNames);
         readCount.initAndValidate();
         return readCount;
     }

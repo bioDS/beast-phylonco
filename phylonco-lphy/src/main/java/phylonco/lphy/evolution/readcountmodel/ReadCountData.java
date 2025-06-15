@@ -85,4 +85,8 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
         sb.append("\"");
         return sb.toString();
     }
+
+    public String[] getTaxaNames() {
+        return taxa.getTaxaNames();
+    }
 }
