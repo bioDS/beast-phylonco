@@ -15,6 +15,7 @@ import mutablealignment.MATreeLikelihood;
 import mutablealignment.MutableAlignment;
 import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator;
+import phylonco.beast.evolution.readcountmodel.GibbsSequenceOperator;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import mutablealignment.MutableAlignmentOperator;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
@@ -101,7 +102,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         PhyloCTMC lphyTreeLikelihood = (PhyloCTMC) alignmentValue.getGenerator();
         MATreeLikelihood maTreeLikelihood = (MATreeLikelihood) context.getBEASTObject(lphyTreeLikelihood);
 
-        addGibbsAlignmentOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel);
+        //addGibbsAlignmentOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel);
+        addGibbsSequenceOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel) ;
         context.addSkipOperator((StateNode) alignmentParam);
 
         return likelihoodReadCountModel;
@@ -176,13 +178,25 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         context.addExtraOperator(operator);
     }
 
+    private void addGibbsSequenceOperator(BEASTContext context, BEASTInterface alignment, MATreeLikelihood maTreeLikelihood, LikelihoodReadCountModel likelihoodReadCountModel) {
+        GibbsSequenceOperator operator = new GibbsSequenceOperator();
+        MutableAlignment mutableAlignment = (MutableAlignment) alignment;
+        operator.setInputValue("mutableAlignment", alignment);
+        operator.setInputValue("maTreeLikelihood", maTreeLikelihood);
+        operator.setInputValue("likelihoodReadCountModel", likelihoodReadCountModel);
+        operator.setInputValue("weight", Math.pow(mutableAlignment.getTaxonCount(), 0.5));
+        operator.initAndValidate();
+        operator.setID("gibbsSequenceOperator");
+        context.addExtraOperator(operator);
+    }
+
     private void addGibbsAlignmentOperator(BEASTContext context, BEASTInterface alignment, MATreeLikelihood maTreeLikelihood, LikelihoodReadCountModel likelihoodReadCountModel) {
         GibbsAlignmentOperator operator = new GibbsAlignmentOperator();
         MutableAlignment mutableAlignment = (MutableAlignment) alignment;
         operator.setInputValue("mutableAlignment", alignment);
         operator.setInputValue("maTreeLikelihood", maTreeLikelihood);
         operator.setInputValue("likelihoodReadCountModel", likelihoodReadCountModel);
-        operator.setInputValue("weight", Math.pow(mutableAlignment.getTaxonCount()* mutableAlignment.getSiteCount()-1, 0.5));
+        operator.setInputValue("weight", Math.pow(1, 0.5));
         operator.initAndValidate();
         operator.setID("gibbsAlignmentOperator");
         context.addExtraOperator(operator);
