@@ -53,13 +53,11 @@ public class GibbsAlignmentOperator extends Operator {
         double[][] stateLogProbabilities = new double[numStates][numSites];
         double[][] readCountLogLikelihoods = new double[numStates][numSites];
         int[] newSeq = new int[numSites];
-        int[][] newAlignment = new int[numTaxa][numSites];
         double[] stateProbabilities;
         int[] randomTaxaOrder = generateRandomOrder(numTaxa);
         for (int k = 0; k < numTaxa; k++) {
             for (int i = 0; i < numStates; i++) {
                 stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(randomTaxaOrder[k], statesSequences.get(i));
-
                 // get new read count likelihood for taxon
                 readCountLogLikelihoods[i] = likelihoodReadCountModel.sequenceLogLikelihood(randomTaxaOrder[k], statesSequences.get(i));
             }
