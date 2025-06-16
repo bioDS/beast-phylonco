@@ -56,10 +56,11 @@ public class GibbsAlignmentOperator extends Operator {
         double[] stateProbabilities;
         int[] randomTaxaOrder = generateRandomOrder(numTaxa);
         for (int k = 0; k < numTaxa; k++) {
+            int taxon = randomTaxaOrder[k];
             for (int i = 0; i < numStates; i++) {
-                stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(randomTaxaOrder[k], statesSequences.get(i));
+                stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(taxon, statesSequences.get(i));
                 // get new read count likelihood for taxon
-                readCountLogLikelihoods[i] = likelihoodReadCountModel.sequenceLogLikelihood(randomTaxaOrder[k], statesSequences.get(i));
+                readCountLogLikelihoods[i] = likelihoodReadCountModel.sequenceLogLikelihood(taxon, statesSequences.get(i));
             }
 
             for (int i = 0; i < numSites; i++) {
@@ -72,7 +73,12 @@ public class GibbsAlignmentOperator extends Operator {
                 stateProbabilities = normalizeLogProbs(logProbs);
                 newSeq[i] = sampleFromProbabilities(stateProbabilities);
             }
-            mutableAlignment.setSiteValuesByTaxon(randomTaxaOrder[k], newSeq);
+
+
+            mutableAlignment.setSiteValuesByTaxon(taxon, newSeq);
+            // needed to update partial log likelihoods based on newly sampled sequence before
+            // moving to next taxa. Don't need to use the result
+            maTreeLikelihood.getLogProbsForStateSequence(taxon, newSeq);
         }
         return Double.POSITIVE_INFINITY;
     }
