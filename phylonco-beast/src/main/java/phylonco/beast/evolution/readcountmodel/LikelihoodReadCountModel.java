@@ -45,6 +45,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[] negr2;
     private double[] w;
     private Double[][] propensities;
+    private int[][] coverages;
 
 
 
@@ -105,9 +106,7 @@ public class LikelihoodReadCountModel extends Distribution {
             negr1[i] = Math.pow(mean1, 2) / (variance1 - mean1);
             negr2[i] = Math.pow(mean2, 2) / (variance2 - mean2);
         }
-        w = new double[2];
-        w[0] = w1.getValue();
-        w[1] = w2.getValue();
+        w = new double[]{w1.getValue(), w2.getValue()};
         propensities = new Double[][]{
                 {(1 - eps), (eps/3), (eps/3), (eps/3)},             // AA or A_ 0
                 {(0.5 - eps/6), (0.5 - eps/6), (eps/6), (eps/6)},   // AC or CA 1
@@ -120,6 +119,14 @@ public class LikelihoodReadCountModel extends Distribution {
                 {(eps/6), (eps/6), (0.5 - eps/6), (0.5 - eps/6)},   // GT or TG 8
                 {(eps/3), (eps/3), (eps/3), (1 - eps)},             // TT or T_ 9
         };
+        coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
+        for (int i = 0; i < alignment.getTaxonCount(); i++) {
+            for (int j = 0; j < alignment.getSiteCount(); j++) {
+                for (int k = 0; k < 4; k++) {
+                    coverages[i][j] += readCount.getReadCounts(i,j)[k];
+                }
+            }
+        }
     }
 
     public void calculateLogPLeaf(Node node, int[] states) {
@@ -136,7 +143,7 @@ public class LikelihoodReadCountModel extends Distribution {
                 int patternIndex = alignment.getPatternIndex(j);
                 int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCount.getReadCounts(i, j);
-                logP += logLiklihoodRC(genotypeState, readCountNumbers, i);
+                logP += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
             }
         }
         return logP;
@@ -151,7 +158,7 @@ public class LikelihoodReadCountModel extends Distribution {
             // dirichlet multinomial pmf
             int genotypeState = genotypeSequence[j];
             int[] readCountNumbers = readCount.getReadCounts(taxonIndex, j);
-            taxonLogP[j] = logLiklihoodRC(genotypeState, readCountNumbers, taxonIndex);
+            taxonLogP[j] = logLiklihoodRC(genotypeState, readCountNumbers, coverages[taxonIndex][j], taxonIndex);
             }
         return taxonLogP;
     }
@@ -159,11 +166,7 @@ public class LikelihoodReadCountModel extends Distribution {
 
     // calculate probability of read counts given genotype
     // genotypeState represents genotype alignment
-    public double logLiklihoodRC(int genotypeState, int[] readCountNumbers, int taxonIndex) {
-        int coverage = 0;
-        for (int i = 0; i < readCountNumbers.length; i++) {
-            coverage = coverage + readCountNumbers[i];
-        }
+    public double logLiklihoodRC(int genotypeState, int[] readCountNumbers, int coverage, int taxonIndex) {
         double deltav = delta.getValue();
 
         int[] indices = getGenotypeIndices(genotypeState);
