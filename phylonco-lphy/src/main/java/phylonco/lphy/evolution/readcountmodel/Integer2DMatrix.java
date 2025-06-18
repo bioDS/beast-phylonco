@@ -31,7 +31,7 @@ public class Integer2DMatrix {
 
     public String toString () {
         StringBuilder sb = new StringBuilder();
-        sb.append("\"");
+        sb.append("\n");
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
                 sb.append(matrix[i][j]);
@@ -42,7 +42,6 @@ public class Integer2DMatrix {
                 }
             }
         }
-        sb.append("\"");
         return sb.toString();
     }
 
