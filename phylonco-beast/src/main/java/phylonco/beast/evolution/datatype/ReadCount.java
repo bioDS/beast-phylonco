@@ -10,13 +10,15 @@ public class ReadCount extends BEASTObject {
     int ntaxa;
     int nchar;
     int data[][][];
+    String[] taxaNames;
 
     String newline = "\n";
     String semicolon = ",";
     String comma = ":";
+    String space = " ";
 
     public Input<String> readCountStrInput = new Input<>("value", "A string record read counts", Input.Validate.REQUIRED);
-    public Input<String[]> taxaNames = new Input<>("taxaNames", "Taxa names of the data", Input.Validate.REQUIRED);
+    public Input<String> taxaNamesInput = new Input<>("taxaNames", "Taxa names of the data", Input.Validate.OPTIONAL);
 
     public ReadCount() {
         // do we need to fill this in?
@@ -43,6 +45,8 @@ public class ReadCount extends BEASTObject {
             data[taxa][site][i] = counts[i];
         }
     }
+
+    public String getTaxonName(int taxa) {return taxaNames[taxa];}
 
 
     public String getTypeDescription() {
@@ -98,6 +102,16 @@ public class ReadCount extends BEASTObject {
                 siteIndex++;
             }
             taxaIndex++;
+        }
+
+        if (taxaNamesInput.get() == null) {
+            taxaNames = new String[taxaIndex];
+            for (int i = 0; i < taxaIndex; i++) {
+                taxaNames[i] = String.format("%d", i);
+            }
+        } else {
+            String taxaNamesStr = taxaNamesInput.get();
+            taxaNames = taxaNamesStr.split(space);
         }
     }
 }

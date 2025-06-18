@@ -65,24 +65,27 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
         StringBuilder sb = new StringBuilder();
         int n = getTaxa().getDimension();
         int l = nchar();
-        sb.append("\"");
+        sb.append("\n");
+        //sb.append("\"");
         for (int i = 0; i < n; i++) {
             // n taxa
+            sb.append(getTaxaNames()[i]);
+            sb.append("\t");
             for (int j = 0; j < l; j++) {
                 // n sites
                 int countA = readCountDataMatrix[i][j].getCount("A");
                 int countC = readCountDataMatrix[i][j].getCount("C");
                 int countG = readCountDataMatrix[i][j].getCount("G");
                 int countT = readCountDataMatrix[i][j].getCount("T");
-                sb.append(String.format(countA + ":" + countC + ":" + countG + ":" + countT ));
+                sb.append(String.format(countA + ":" + countC + ":" + countG + ":" + countT )).append("\t");
                 if (j == l-1 && i != n-1){
                     sb.append("\n");
                 } else if (j != l-1) {
-                    sb.append(",");
+                    //sb.append(",");
                 }
             }
         }
-        sb.append("\"");
+        //sb.append("\"");
         return sb.toString();
     }
 
