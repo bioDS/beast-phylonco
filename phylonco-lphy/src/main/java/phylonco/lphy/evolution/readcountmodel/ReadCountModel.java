@@ -238,7 +238,12 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
 
             }
         }
-        readCountData = new RandomVariable<>("readCountData", new ReadCountData(taxa, readCountMatrix), this);
+        int[] sitesIndex = new int[l];
+        for (int i = 0; i < l; i++) {
+            sitesIndex[i] = i;
+        }
+
+        readCountData = new RandomVariable<>("readCountData", new ReadCountData(taxa, readCountMatrix, sitesIndex), this);
         return readCountData;
     }
 

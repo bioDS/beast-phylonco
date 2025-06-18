@@ -9,11 +9,23 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     ReadCount[][] readCountDataMatrix; // taxa, position
     Taxa taxa;
+    int[] sitesIndex;
 
     public ReadCountData(Taxa taxa, ReadCount[][] readCountDataMatrix) {
         this.taxa = taxa;
         this.readCountDataMatrix = readCountDataMatrix;
     }
+
+    public ReadCountData(Taxa taxa, ReadCount[][] readCountDataMatrix, int[] sitesIndex) {
+        this.taxa = taxa;
+        this.readCountDataMatrix = readCountDataMatrix;
+        this.sitesIndex = sitesIndex;
+    }
+
+    public void setSitesIndex(int[] sitesIndex) {
+        this.sitesIndex = sitesIndex;
+    }
+
 
     @Override
     public ReadCount getState(String taxon, int column) {
@@ -91,5 +103,9 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     public String[] getTaxaNames() {
         return taxa.getTaxaNames();
+    }
+
+    public int[] getSitesIndex() {
+        return sitesIndex;
     }
 }
