@@ -1,6 +1,12 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-public class Integer2DMatrix {
+import lphy.core.logger.TextFileFormatted;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.List;
+
+public class Integer2DMatrix implements TextFileFormatted{
     private Integer[][] matrix;
 
     public Integer2DMatrix() {}
@@ -29,20 +35,50 @@ public class Integer2DMatrix {
 
     public Integer nchar () {return matrix[0].length;}
 
-    public String toString () {
-        StringBuilder sb = new StringBuilder();
-        sb.append("\"");
+    // not use old version at this moment, log new file instead
+//    public String toString () {
+//        StringBuilder sb = new StringBuilder();
+//        sb.append("\"");
+//        for (int i = 0; i < matrix.length; i++) {
+//            for (int j = 0; j < matrix[i].length; j++) {
+//                sb.append(matrix[i][j]);
+//                if (j!=matrix[i].length - 1) {
+//                    sb.append(",");
+//                } else if (i != matrix.length - 1){
+//                    sb.append("\"");
+//                }
+//            }
+//        }
+//        return sb.toString();
+//    }
+
+    @Override
+    public List<String> getTextForFile() {
+        // not using this at the moment
+        return List.of();
+    }
+
+    @Override
+    public void writeToFile(BufferedWriter writer) {
         for (int i = 0; i < matrix.length; i++) {
             for (int j = 0; j < matrix[i].length; j++) {
-                sb.append(matrix[i][j]);
-                if (j!=matrix[i].length - 1) {
-                    sb.append(",");
-                } else if (i != matrix.length - 1){
-                    sb.append("\"");
+                String line = String.valueOf(matrix[i][j]);
+                if (j != matrix[i].length - 1) {
+                    line = line + ",";
+                } else if (i != matrix.length - 1) {
+                    line = line + "\n";
+                }
+                try {
+                    writer.write(line);
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
                 }
             }
         }
-        return sb.toString();
     }
 
+    @Override
+    public String getFileType() {
+        return "_matrix.log";
+    }
 }
