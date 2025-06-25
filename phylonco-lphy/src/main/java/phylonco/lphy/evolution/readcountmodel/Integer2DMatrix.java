@@ -71,7 +71,7 @@ public class Integer2DMatrix implements TextFileFormatted{
                 try {
                     writer.write(line);
                 } catch (IOException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
                 }
             }
         }
