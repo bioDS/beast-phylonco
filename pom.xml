@@ -18,7 +18,7 @@
     <name>beast-phylonco</name>
 
     <properties>
-        <lphy.vision>1.6.1</lphy.vision>
+        <lphy.vision>1.7.0</lphy.vision>
         <lphybeast.vision>1.2.1</lphybeast.vision>
 <!--  include lphybeast  -->
         <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
