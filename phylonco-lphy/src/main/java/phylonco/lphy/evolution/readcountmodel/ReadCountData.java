@@ -2,10 +2,14 @@ package phylonco.lphy.evolution.readcountmodel;
 
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.TaxaCharacterMatrix;
+import lphy.core.logger.TextFileFormatted;
+
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.util.List;
 
 
-
-public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
+public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFormatted {
 
     ReadCount[][] readCountDataMatrix; // taxa, position
     Taxa taxa;
@@ -107,5 +111,45 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount> {
 
     public int[] getSitesIndex() {
         return sitesIndex;
+    }
+
+    @Override
+    public List<String> getTextForFile() {
+        // TODO: not using this at the moment
+        return List.of();
+    }
+
+    @Override
+    public String getFileType() {
+        return "_readcount.log";
+    }
+
+    public void writeToFile(BufferedWriter writer) {
+        try {
+            int n = getTaxa().getDimension();
+            int l = nchar();
+            for (int i = 0; i < n; i++) {
+                // n taxa
+                for (int j = 0; j < l; j++) {
+                    // n sites
+                    int countA = readCountDataMatrix[i][j].getCount("A");
+                    int countC = readCountDataMatrix[i][j].getCount("C");
+                    int countG = readCountDataMatrix[i][j].getCount("G");
+                    int countT = readCountDataMatrix[i][j].getCount("T");
+                    String readCountForSiteForCell = countA + ":" + countC + ":" + countG + ":" + countT;
+                    if (j == l-1 && i != n-1){
+                        readCountForSiteForCell += "\n";
+                    } else if (j != l-1) {
+                        readCountForSiteForCell += ",";
+                    }
+                    // write out read count for site and cell
+                    writer.write(readCountForSiteForCell);
+                }
+            }
+
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
