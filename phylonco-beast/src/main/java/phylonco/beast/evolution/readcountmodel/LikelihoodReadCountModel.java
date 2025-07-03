@@ -108,9 +108,6 @@ public class LikelihoodReadCountModel extends Distribution {
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
     // and params of negative binomial distribution(coverage model)
     private void initialize() {
-        count1 = 0;
-        count2 = 0;
-
         double mean1;
         double mean2;
         double variance1;
@@ -169,7 +166,9 @@ public class LikelihoodReadCountModel extends Distribution {
             }
         }
         count2++;
-        if (count2%10000 == 0) {System.out.println("Count2="+count2);}
+        if (count2%10000 == 0) {
+            System.out.println("Count2="+count2);
+        }
 
         return logP;
     }
@@ -322,46 +321,46 @@ public class LikelihoodReadCountModel extends Distribution {
         } else return 0.0;
     }
 
-    @Override
-    public void store() {
-        super.store();
-        /**
-         * make a copy of current LogP's for each sequence
-         * so that when the proposal is rejected it can be reversed
-         **/
-        System.arraycopy(currentLogPi, 0, storedLogPi, 0, storedLogPi.length);
-    }
-
-    @Override
-    public void restore() {
-        super.restore();
-
-        /**
-         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
-         */
-        double [] tmp = storedLogPi;
-        storedLogPi = currentLogPi;
-        currentLogPi = tmp;
-    }
-
-    @Override
-    public boolean requiresRecalculation() {
-        try {
-            for (BEASTInterface beastObject : listActivePlugins()) {
-                if (beastObject instanceof StateNode && ((StateNode)beastObject).somethingIsDirty()) {
-                    return true;
-                }
-
-                if (beastObject instanceof CalculationNode && ((CalculationNode)beastObject).isDirtyCalculation()) {
-                    return true;
-                }
-            }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return false;
-    }
+//    @Override
+//    public void store() {
+//        super.store();
+//        /**
+//         * make a copy of current LogP's for each sequence
+//         * so that when the proposal is rejected it can be reversed
+//         **/
+//        System.arraycopy(currentLogPi, 0, storedLogPi, 0, storedLogPi.length);
+//    }
+//
+//    @Override
+//    public void restore() {
+//        super.restore();
+//
+//        /**
+//         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
+//         */
+//        double [] tmp = storedLogPi;
+//        storedLogPi = currentLogPi;
+//        currentLogPi = tmp;
+//    }
+//
+//    @Override
+//    public boolean requiresRecalculation() {
+//        try {
+//            for (BEASTInterface beastObject : listActivePlugins()) {
+//                if (beastObject instanceof StateNode && ((StateNode)beastObject).somethingIsDirty()) {
+//                    return true;
+//                }
+//
+//                if (beastObject instanceof CalculationNode && ((CalculationNode)beastObject).isDirtyCalculation()) {
+//                    return true;
+//                }
+//            }
+//        } catch (IllegalAccessException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return false;
+//    }
 
 
 }
