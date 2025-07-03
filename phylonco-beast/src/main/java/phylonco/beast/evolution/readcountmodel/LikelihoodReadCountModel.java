@@ -1,12 +1,17 @@
 package phylonco.beast.evolution.readcountmodel;
 
 
+import beast.base.core.BEASTInterface;
+import beast.base.core.BEASTObject;
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.tree.Node;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
+import beast.base.inference.StateNode;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.inference.CalculationNode;
+import mutablealignment.MutableAlignment;
 import org.apache.commons.math3.special.Gamma;
 import phylonco.beast.evolution.datatype.ReadCount;
 
@@ -46,6 +51,11 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[] w;
     private Double[][] propensities;
     private int[][] coverages;
+    private final double[] alpha = new double[]{1.0, 2.0};
+
+    private double [] currentLogPi, storedLogPi;
+
+    private int count1, count2;
 
 
 
@@ -77,13 +87,30 @@ public class LikelihoodReadCountModel extends Distribution {
         w2 = w2Input.get();
         alignment = alignmentInput.get();
         readCount = readCountInput.get();
-        initialize();
+        negp1 = new double[s.getDimension()];
+        negp2 = new double[s.getDimension()];
+        negr1 = new double[s.getDimension()];
+        negr2 = new double[s.getDimension()];
+        coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
+        for (int i = 0; i < alignment.getTaxonCount(); i++) {
+            for (int j = 0; j < alignment.getSiteCount(); j++) {
+                for (int k = 0; k < 4; k++) {
+                    coverages[i][j] += readCount.getReadCounts(i,j)[k];
+                }
+            }
+        }
+
+
+        currentLogPi = new double[alignment.getTaxonCount()];
+        storedLogPi =  new double[alignment.getTaxonCount()];
     }
 
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
     // and params of negative binomial distribution(coverage model)
     private void initialize() {
-        double alpha[] = new double[]{1.0, 2.0};
+        count1 = 0;
+        count2 = 0;
+
         double mean1;
         double mean2;
         double variance1;
@@ -92,10 +119,7 @@ public class LikelihoodReadCountModel extends Distribution {
         Double tv = t.getValue();
         Double vv = v.getValue();
         Double[] sv = s.getValues();
-        negp1 = new double[s.getDimension()];
-        negp2 = new double[s.getDimension()];
-        negr1 = new double[s.getDimension()];
-        negr2 = new double[s.getDimension()];
+
         for (int i = 0; i < s.getDimension(); i++) {
             mean1 = alpha[0] * tv * sv[i];
             mean2 = alpha[1] * tv * sv[i];
@@ -119,14 +143,7 @@ public class LikelihoodReadCountModel extends Distribution {
                 {(eps/6), (eps/6), (0.5 - eps/6), (0.5 - eps/6)},   // GT or TG 8
                 {(eps/3), (eps/3), (eps/3), (1 - eps)},             // TT or T_ 9
         };
-        coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
-        for (int i = 0; i < alignment.getTaxonCount(); i++) {
-            for (int j = 0; j < alignment.getSiteCount(); j++) {
-                for (int k = 0; k < 4; k++) {
-                    coverages[i][j] += readCount.getReadCounts(i,j)[k];
-                }
-            }
-        }
+
     }
 
     public void calculateLogPLeaf(Node node, int[] states) {
@@ -136,6 +153,11 @@ public class LikelihoodReadCountModel extends Distribution {
     //Calculate the log likelihood of read count model by summarizing the log likelihood at each site
     @Override
     public double calculateLogP() {
+        initialize();
+//        if (alignment instanceof MutableAlignment a) {
+//            return calculateLogP(a);
+//        }
+
         logP = 0;
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
             for (int j = 0; j < alignment.getSiteCount(); j++) {///？
@@ -146,6 +168,33 @@ public class LikelihoodReadCountModel extends Distribution {
                 logP += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
             }
         }
+        count2++;
+        if (count2%10000 == 0) {System.out.println("Count2="+count2);}
+
+        return logP;
+    }
+
+    private double calculateLogP(MutableAlignment mutableAlignment) {
+        /** update currentLogPi only for sequences that changed **/
+        for (int i : mutableAlignment.getDirtySequenceIndices()) {
+            double logPi = 0;
+            for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {///？
+                // dirichlet multinomial pmf
+                int patternIndex = mutableAlignment.getPatternIndex(j);
+                int genotypeState = mutableAlignment.getPattern(i, patternIndex);
+                int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
+                logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+            }
+            currentLogPi[i] = logPi;
+        }
+
+        /** sum over all sequence contributions **/
+        logP = 0;
+        for (double d : currentLogPi) {
+            logP += d;
+        }
+        count1++;
+        if (count1%10000 == 0) {System.out.println("Count1="+count1);}
         return logP;
     }
 
@@ -159,7 +208,7 @@ public class LikelihoodReadCountModel extends Distribution {
             int genotypeState = genotypeSequence[j];
             int[] readCountNumbers = readCount.getReadCounts(taxonIndex, j);
             taxonLogP[j] = logLiklihoodRC(genotypeState, readCountNumbers, coverages[taxonIndex][j], taxonIndex);
-            }
+        }
         return taxonLogP;
     }
 
@@ -185,9 +234,9 @@ public class LikelihoodReadCountModel extends Distribution {
 
         if (homozygous(genotypeState)) {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[0]], readCountNumbers);
-            logCoverageLikelihoodDiploid = logCoverageLikelihood(readCountNumbers, coverage,negp2[taxonIndex], negr2[taxonIndex]);
+            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage,negp2[taxonIndex], negr2[taxonIndex]);
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[1]], readCountNumbers);
-            logCoverageLikelihoodHaploid = logCoverageLikelihood(readCountNumbers, coverage,negp1[taxonIndex], negr1[taxonIndex]);
+            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage,negp1[taxonIndex], negr1[taxonIndex]);
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
             part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
             max = Math.max(part0, part1);
@@ -198,9 +247,9 @@ public class LikelihoodReadCountModel extends Distribution {
             }
         } else {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[0]], readCountNumbers);
-            logCoverageLikelihoodDiploid = logCoverageLikelihood(readCountNumbers, coverage, negp2[taxonIndex], negr2[taxonIndex]);
+            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negp2[taxonIndex], negr2[taxonIndex]);
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[1]], readCountNumbers);
-            logCoverageLikelihoodHaploid = logCoverageLikelihood(readCountNumbers, coverage, negp1[taxonIndex], negr1[taxonIndex]);
+            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negp1[taxonIndex], negr1[taxonIndex]);
             logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[2]], readCountNumbers);
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
             part1 = Math.log(0.5) + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
@@ -217,7 +266,7 @@ public class LikelihoodReadCountModel extends Distribution {
         return logLikelihood;
     }
     //calculate the probability at each site given read count(coverage)(negative-binomial distribution)
-    public double logCoverageLikelihood(int[] readCountNumbers, int c, double p, double r) {
+    public double logCoverageLikelihood(int c, double p, double r) {
         // negative binomial pmf
         double logCoverageLikelihood;
         logCoverageLikelihood = Gamma.logGamma(c + r) - Gamma.logGamma(r) - Gamma.logGamma(c + 1) + r * Math.log(p) + c * Math.log(1 - p);
@@ -271,6 +320,47 @@ public class LikelihoodReadCountModel extends Distribution {
             result = Math.log(coverage) + Gamma.logGamma(w) + Gamma.logGamma(coverage) - Gamma.logGamma(w + coverage);
             return result;
         } else return 0.0;
+    }
+
+    @Override
+    public void store() {
+        super.store();
+        /**
+         * make a copy of current LogP's for each sequence
+         * so that when the proposal is rejected it can be reversed
+         **/
+        System.arraycopy(currentLogPi, 0, storedLogPi, 0, storedLogPi.length);
+    }
+
+    @Override
+    public void restore() {
+        super.restore();
+
+        /**
+         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
+         */
+        double [] tmp = storedLogPi;
+        storedLogPi = currentLogPi;
+        currentLogPi = tmp;
+    }
+
+    @Override
+    public boolean requiresRecalculation() {
+        try {
+            for (BEASTInterface beastObject : listActivePlugins()) {
+                if (beastObject instanceof StateNode && ((StateNode)beastObject).somethingIsDirty()) {
+                    return true;
+                }
+
+                if (beastObject instanceof CalculationNode && ((CalculationNode)beastObject).isDirtyCalculation()) {
+                    return true;
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+
+        return false;
     }
 
 
