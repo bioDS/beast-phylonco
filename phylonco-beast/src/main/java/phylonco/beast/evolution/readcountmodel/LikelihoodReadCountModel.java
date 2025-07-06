@@ -1,20 +1,18 @@
 package phylonco.beast.evolution.readcountmodel;
 
 
-import beast.base.core.BEASTInterface;
-import beast.base.core.BEASTObject;
+
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.tree.Node;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
-import beast.base.inference.StateNode;
 import beast.base.inference.parameter.RealParameter;
-import beast.base.inference.CalculationNode;
 import mutablealignment.MutableAlignment;
 import org.apache.commons.math3.special.Gamma;
 import phylonco.beast.evolution.datatype.ReadCount;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -44,18 +42,17 @@ public class LikelihoodReadCountModel extends Distribution {
     private RealParameter w2;
     private Alignment alignment;
     private ReadCount readCount;
-    private double[] negp1;
-    private double[] negp2;
-    private double[] negr1;
-    private double[] negr2;
+    private double[] negp1, negp2, negr1, negr2;
     private double[] w;
     private Double[][] propensities;
     private int[][] coverages;
     private final double[] alpha = new double[]{1.0, 2.0};
-
     private double [] currentLogPi, storedLogPi;
-
-    private int count1, count2;
+    private HashMap<Integer, Double> logGammaCache;
+    private HashMap<Integer, Double> logCache;
+    private double pLog;
+    private double p1Log;
+    private double[] wLogGamma = new double[2];
 
 
 
@@ -103,6 +100,8 @@ public class LikelihoodReadCountModel extends Distribution {
 
         currentLogPi = new double[alignment.getTaxonCount()];
         storedLogPi =  new double[alignment.getTaxonCount()];
+        logGammaCache = new HashMap<>();
+        logCache = new HashMap<>();
     }
 
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
@@ -151,50 +150,68 @@ public class LikelihoodReadCountModel extends Distribution {
     @Override
     public double calculateLogP() {
         initialize();
-//        if (alignment instanceof MutableAlignment a) {
-//            return calculateLogP(a);
-//        }
-
-        logP = 0;
+        if (alignment instanceof MutableAlignment a) {
+            return calculateLogP(a);
+        }
+        //logP = 0;
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
+            double logPi = 0;
             for (int j = 0; j < alignment.getSiteCount(); j++) {///？
                 // dirichlet multinomial pmf
                 int patternIndex = alignment.getPatternIndex(j);
                 int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCount.getReadCounts(i, j);
-                logP += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
             }
+            currentLogPi[i] = logPi;
         }
-        count2++;
-        if (count2%10000 == 0) {
-            System.out.println("Count2="+count2);
+        logP = 0;
+        for (double d : currentLogPi) {
+            logP += d;
         }
-
         return logP;
     }
 
     private double calculateLogP(MutableAlignment mutableAlignment) {
         /** update currentLogPi only for sequences that changed **/
-        for (int i : mutableAlignment.getDirtySequenceIndices()) {
-            double logPi = 0;
-            for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {///？
-                // dirichlet multinomial pmf
-                int patternIndex = mutableAlignment.getPatternIndex(j);
-                int genotypeState = mutableAlignment.getPattern(i, patternIndex);
-                int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
-                logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+        if (mutableAlignment.getDirtySequenceIndices().length != 0) {
+            for (int i : mutableAlignment.getDirtySequenceIndices()) {
+                double logPi = 0;
+                for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {///？
+                    // dirichlet multinomial pmf
+                    int patternIndex = mutableAlignment.getPatternIndex(j);
+                    int genotypeState = mutableAlignment.getPattern(i, patternIndex);
+                    int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
+                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                }
+                currentLogPi[i] = logPi;
             }
-            currentLogPi[i] = logPi;
+
+            /** sum over all sequence contributions **/
+            logP = 0;
+            for (double d : currentLogPi) {
+                logP += d;
+            }
+            return logP;
+        } else {
+            for (int i = 0; i < alignment.getTaxonCount(); i++) {
+                double logPi = 0;
+                for (int j = 0; j < alignment.getSiteCount(); j++) {///？
+                    // dirichlet multinomial pmf
+                    int patternIndex = alignment.getPatternIndex(j);
+                    int genotypeState = alignment.getPattern(i, patternIndex);
+                    int[] readCountNumbers = readCount.getReadCounts(i, j);
+                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                }
+                currentLogPi[i] = logPi;
+            }
+            logP = 0;
+            for (double d : currentLogPi) {
+                logP += d;
+            }
+            return logP;
         }
 
-        /** sum over all sequence contributions **/
-        logP = 0;
-        for (double d : currentLogPi) {
-            logP += d;
-        }
-        count1++;
-        if (count1%10000 == 0) {System.out.println("Count1="+count1);}
-        return logP;
     }
 
     public double[] sequenceLogLikelihood(int taxonIndex, int[] genotypeSequence) {
@@ -268,7 +285,7 @@ public class LikelihoodReadCountModel extends Distribution {
     public double logCoverageLikelihood(int c, double p, double r) {
         // negative binomial pmf
         double logCoverageLikelihood;
-        logCoverageLikelihood = Gamma.logGamma(c + r) - Gamma.logGamma(r) - Gamma.logGamma(c + 1) + r * Math.log(p) + c * Math.log(1 - p);
+        logCoverageLikelihood = Gamma.logGamma(c + r) - Gamma.logGamma(r) - intLogGamma(c + 1) + r * Math.log(p) + c * Math.log(1 - p);
         return logCoverageLikelihood;
     }
     //get indices from propensities matrix by given genotype
@@ -316,51 +333,41 @@ public class LikelihoodReadCountModel extends Distribution {
     public double logFFunction(int coverage, double w){
         double result;
         if (coverage > 0){
-            result = Math.log(coverage) + Gamma.logGamma(w) + Gamma.logGamma(coverage) - Gamma.logGamma(w + coverage);
+            result = intLog(coverage) + Gamma.logGamma(w) + intLogGamma(coverage) - Gamma.logGamma(w + coverage);
             return result;
         } else return 0.0;
     }
 
-//    @Override
-//    public void store() {
-//        super.store();
-//        /**
-//         * make a copy of current LogP's for each sequence
-//         * so that when the proposal is rejected it can be reversed
-//         **/
-//        System.arraycopy(currentLogPi, 0, storedLogPi, 0, storedLogPi.length);
-//    }
-//
-//    @Override
-//    public void restore() {
-//        super.restore();
-//
-//        /**
-//         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
-//         */
-//        double [] tmp = storedLogPi;
-//        storedLogPi = currentLogPi;
-//        currentLogPi = tmp;
-//    }
-//
-//    @Override
-//    public boolean requiresRecalculation() {
-//        try {
-//            for (BEASTInterface beastObject : listActivePlugins()) {
-//                if (beastObject instanceof StateNode && ((StateNode)beastObject).somethingIsDirty()) {
-//                    return true;
-//                }
-//
-//                if (beastObject instanceof CalculationNode && ((CalculationNode)beastObject).isDirtyCalculation()) {
-//                    return true;
-//                }
-//            }
-//        } catch (IllegalAccessException e) {
-//            e.printStackTrace();
-//        }
-//
-//        return false;
-//    }
+    private double intLogGamma(int value){
+        return logGammaCache.computeIfAbsent(value, Gamma::logGamma);
+    }
+
+    private double intLog(int value){
+        return logCache.computeIfAbsent(value, Math::log);
+    }
+
+
+    @Override
+    public void store() {
+        super.store();
+        /**
+         * make a copy of current LogP's for each sequence
+         * so that when the proposal is rejected it can be reversed
+         **/
+        System.arraycopy(currentLogPi, 0, storedLogPi, 0, storedLogPi.length);
+    }
+
+    @Override
+    public void restore() {
+        super.restore();
+
+        /**
+         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
+         */
+        double[] tmp = storedLogPi;
+        storedLogPi = currentLogPi;
+        currentLogPi = tmp;
+    }
 
 
 }
