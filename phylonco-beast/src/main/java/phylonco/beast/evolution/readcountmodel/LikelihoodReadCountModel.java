@@ -53,6 +53,8 @@ public class LikelihoodReadCountModel extends Distribution {
     private double pLog;
     private double p1Log;
     private double[] wLogGamma = new double[2];
+    private double[] deltaLog = new double[2];
+    private final double log0_5 = Math.log(0.5);
 
 
 
@@ -139,6 +141,11 @@ public class LikelihoodReadCountModel extends Distribution {
                 {(eps/6), (eps/6), (0.5 - eps/6), (0.5 - eps/6)},   // GT or TG 8
                 {(eps/3), (eps/3), (eps/3), (1 - eps)},             // TT or T_ 9
         };
+
+        wLogGamma[0] = Gamma.logGamma(w[0]);
+        wLogGamma[1] = Gamma.logGamma(w[1]);
+        deltaLog[0] = Math.log(delta.getValue());
+        deltaLog[1] = Math.log(1-delta.getValue());
 
     }
 
@@ -232,7 +239,6 @@ public class LikelihoodReadCountModel extends Distribution {
     // calculate probability of read counts given genotype
     // genotypeState represents genotype alignment
     public double logLiklihoodRC(int genotypeState, int[] readCountNumbers, int coverage, int taxonIndex) {
-        double deltav = delta.getValue();
 
         int[] indices = getGenotypeIndices(genotypeState);
 
@@ -253,8 +259,8 @@ public class LikelihoodReadCountModel extends Distribution {
             logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage,negp2[taxonIndex], negr2[taxonIndex]);
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[1]], readCountNumbers);
             logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage,negp1[taxonIndex], negr1[taxonIndex]);
-            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
-            part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
+            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
+            part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
             max = Math.max(part0, part1);
             if (part0 == max){
                 logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0));
@@ -267,9 +273,9 @@ public class LikelihoodReadCountModel extends Distribution {
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[1]], readCountNumbers);
             logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negp1[taxonIndex], negr1[taxonIndex]);
             logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[2]], readCountNumbers);
-            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
-            part1 = Math.log(0.5) + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
-            part2 = Math.log(0.5) + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + Math.log(deltav);
+            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
+            part1 = log0_5 + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
+            part2 = log0_5 + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + deltaLog[0];
             max = Math.max(part0, Math.max(part1, part2));
             if (part0 == max){
                 logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0)) + Math.log(1 + Math.exp(part2 - part0));
