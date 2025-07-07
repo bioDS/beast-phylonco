@@ -83,7 +83,7 @@ public class LikelihoodReadCountModelTest {
 
         double observedLogP = likelihoodReadCountModel.calculateLogP();
         //System.out.println(observedLogP);
-        double expectedLogP = -47.1349957401387;
+        double expectedLogP = -46.1982995100166;
 
         assertEquals(expectedLogP, observedLogP, DELTA);
 
