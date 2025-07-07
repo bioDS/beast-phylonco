@@ -107,12 +107,6 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                 if (genotypeState.getIndex() > 21) {
                     // if the state is unknown or gap, then sample one
                     genotypeState = PhasedGenotype.getCanonicalState(sampleGenotype());
-                    // use w1 when homozygous
-                } else if (genotypeState.getIndex() == 0 || genotypeState.getIndex() == 5 || genotypeState.getIndex() == 10 || genotypeState.getIndex() == 15) {
-                    dirichletMultinomial.setParam("w", w1);
-                } else {
-                    // else heterozygous, then set w2
-                    dirichletMultinomial.setParam("w", w2);
                 }
 //                Integer cov_ij = coverage.value()[i][j];
                 Integer cov_ij = coverage.value().getState(i,j);
@@ -120,11 +114,13 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                 Value<Integer> cover = new Value<>("cover", cov_ij);
                 dirichletMultinomial.setParam("n", cover);
                 if (genotype.equals("AA")){
+                    dirichletMultinomial.setParam("w", w1);
                     prob = propensities[0];
                     readC[i][j] = DirichletMultinomialSample(prob);
 
                 } else if (genotype.equals("AC") || genotype.equals("CA")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[0];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -133,6 +129,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[1];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
@@ -140,6 +137,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
 
                 } else if (genotype.equals("AG") || genotype.equals("GA")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[0];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -148,6 +146,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[2];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
@@ -155,6 +154,7 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
 
                 } else if (genotype.equals("AT") || genotype.equals("TA")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[0];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -163,17 +163,20 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[3];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
 
                 } else if (genotype.equals("CC")){
+                    dirichletMultinomial.setParam("w", w1);
                     prob = propensities[4];
                     readC[i][j] = DirichletMultinomialSample(prob);
 
                 } else if (genotype.equals("CG") || genotype.equals("GC")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[4];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -182,12 +185,14 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     } else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[5];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
                 } else if (genotype.equals("CT") || genotype.equals("TC")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[4];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -196,16 +201,19 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     } else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[6];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
                 } else if (genotype.equals("GG")){
+                    dirichletMultinomial.setParam("w", w1);
                     prob = propensities[7];
                     readC[i][j] = DirichletMultinomialSample(prob);
 
                 } else if (genotype.equals("GT") || genotype.equals("TG")){
                     if (alpha.value().getState(i,j) == 1){
+                        dirichletMultinomial.setParam("w", w1);
                         if (Math.random() < 0.5){
                             prob = propensities[7];
                             readC[i][j] = DirichletMultinomialSample(prob);
@@ -214,11 +222,13 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
                             readC[i][j] = DirichletMultinomialSample(prob);
                         }
                     }else {
+                        dirichletMultinomial.setParam("w", w2);
                         prob = propensities[8];
                         readC[i][j] = DirichletMultinomialSample(prob);
                     }
 
                 } else if (genotype.equals("TT")){
+                    dirichletMultinomial.setParam("w", w1);
                     prob = propensities[9];
                     readC[i][j] = DirichletMultinomialSample(prob);
                 }
