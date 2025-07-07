@@ -264,9 +264,9 @@ public class LikelihoodReadCountModel extends Distribution {
         } else {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[0]], readCountNumbers);
             logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negp2[taxonIndex], negr2[taxonIndex]);
-            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[1]], readCountNumbers);
+            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[1]], readCountNumbers);
             logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negp1[taxonIndex], negr1[taxonIndex]);
-            logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(w[1], coverage, propensities[indices[2]], readCountNumbers);
+            logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(w[0], coverage, propensities[indices[2]], readCountNumbers);
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + Math.log(1 - deltav);
             part1 = Math.log(0.5) + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + Math.log(deltav);
             part2 = Math.log(0.5) + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + Math.log(deltav);
