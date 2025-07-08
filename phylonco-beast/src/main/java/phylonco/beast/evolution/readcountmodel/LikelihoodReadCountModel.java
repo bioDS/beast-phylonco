@@ -43,7 +43,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private ReadCount readCount;
     private double[] negp1, negp2, negr1, negr2;
     private double[] w;
-    private double[][][] propensities = new double[2][10][4];;
+    private double[][] propensities = new double[10][4];;
     private double[][][] wPropensitiesLogGamma = new double[2][10][4];
     private int[][] coverages;
     private final double[] alpha = new double[]{1.0, 2.0};
@@ -61,6 +61,24 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[][][] c_rLogGamma;
     private double[][][][] rc_wPropLogGamma;
     private double[][] c_wLogGamma;
+    private static final int[][] indexTable = {
+            {0,0},      //AA (AA and A_)
+            {1,0,4},    //AC (AC, A_ and C_)
+            {2,0,7},    //AG (AG, A_ and G_)
+            {3,0,9},    //AT (AT, A_ and T_)
+            {1,4,0},    //CA (CA, A_ and C_)
+            {4,4},      //CC (CC and C_)
+            {5,4,7},    //CG (CG, C_ and G_)
+            {6,4,9},    //CT (CT, C_ and T_)
+            {2,7,0},    //GA (GA, G_ and A_)
+            {5,7,4},    //GC (GC, G_ and C_)
+            {7,7},      //GG (GG and G_)
+            {8,7,9},    //GT (GT, G_ and T_)
+            {3,9,0},    //TA (TA, T_ and A_)
+            {6,9,4},    //TC (TC, T_ and C_)
+            {8,9,7},    //TG (TG, T_ and G_)
+            {9,9},      //TT (TT and T_)
+    };
 
 
 
@@ -139,6 +157,7 @@ public class LikelihoodReadCountModel extends Distribution {
         Double tv = t.getValue();
         Double vv = v.getValue();
         Double[] sv = s.getValues();
+        w = new double[]{w1.getValue(), w2.getValue()};
 
         for (int i = 0; i < s.getDimension(); i++) {
             mean1 = alpha[0] * tv * sv[i];
@@ -159,100 +178,60 @@ public class LikelihoodReadCountModel extends Distribution {
                 c_rLogGamma[0][i][j] = Gamma.logGamma(j + negr1[i]);
                 c_rLogGamma[1][i][j] = Gamma.logGamma(j + negr2[i]);
             }
-
-
         }
-        w = new double[]{w1.getValue(), w2.getValue()};
-        double x0 = Gamma.logGamma((1 -eps)*w[0]);
-        double x1 = Gamma.logGamma((eps/3)*w[0]);
-        double x2 = Gamma.logGamma((0.5 - eps/6)*w[0]);
-        double x3 = Gamma.logGamma((eps/6)*w[0]);
 
-        wPropensitiesLogGamma[0] = new double[][]{
-                {x0, x1, x1, x1},   // AA or A_ 0
-                {x2, x2, x3, x3},   // AC or CA 1
-                {x2, x3, x2, x3},   // AG or GA 2
-                {x2, x3, x3, x2},   // AT or TA 3
-                {x1, x0, x1, x1},   // CC or C_ 4
-                {x3, x2, x2, x3},   // CG or GC 5
-                {x3, x2, x3, x2},   // CT or TC 6
-                {x1, x1, x0, x1},   // GG or G_ 7
-                {x3, x3, x2, x2},   // GT or TG 8
-                {x1, x1, x1, x0},   // TT or T_ 9
-        };
-        double y0 = Gamma.logGamma((1 -eps)*w[1]);
-        double y1 = Gamma.logGamma((eps/3)*w[1]);
-        double y2 = Gamma.logGamma((0.5 - eps/6)*w[1]);
-        double y3 = Gamma.logGamma((eps/6)*w[1]);
-        wPropensitiesLogGamma[1] = new double[][]{
-                {y0, y1, y1, y1},   // AA or A_ 0
-                {y2, y2, y3, y3},   // AC or CA 1
-                {y2, y3, y2, y3},   // AG or GA 2
-                {y2, y3, y3, y2},   // AT or TA 3
-                {y1, y0, y1, y1},   // CC or C_ 4
-                {y3, y2, y2, y3},   // CG or GC 5
-                {y3, y2, y3, y2},   // CT or TC 6
-                {y1, y1, y0, y1},   // GG or G_ 7
-                {y3, y3, y2, y2},   // GT or TG 8
-                {y1, y1, y1, y0},   // TT or T_ 9
-        };
+        double x0, x1, x2, x3;
+        for (int i =0; i < wPropensitiesLogGamma.length; i++) {
+            x0 = Gamma.logGamma((1 -eps)*w[i]);
+            x1 = Gamma.logGamma((eps/3)*w[i]);
+            x2 = Gamma.logGamma((0.5 - eps/6)*w[i]);
+            x3 = Gamma.logGamma((eps/6)*w[i]);
+            wPropensitiesLogGamma[i] = new double[][]{
+                    {x0, x1, x1, x1},   // AA or A_ 0
+                    {x2, x2, x3, x3},   // AC or CA 1
+                    {x2, x3, x2, x3},   // AG or GA 2
+                    {x2, x3, x3, x2},   // AT or TA 3
+                    {x1, x0, x1, x1},   // CC or C_ 4
+                    {x3, x2, x2, x3},   // CG or GC 5
+                    {x3, x2, x3, x2},   // CT or TC 6
+                    {x1, x1, x0, x1},   // GG or G_ 7
+                    {x3, x3, x2, x2},   // GT or TG 8
+                    {x1, x1, x1, x0},   // TT or T_ 9
+            };
+        }
 
-
-        double z00 = (1 -eps)*w[0];
-        double z01 = eps/3*w[0];
-        double z02 = (0.5 - eps/6)*w[0];
-        double z03 = eps/6*w[0];
-        propensities[0] = new double[][]{
-                {z00, z01, z01, z01},   // AA or A_ 0
-                {z02, z02, z03, z03},   // AC or CA 1
-                {z02, z03, z02, z03},   // AG or GA 2
-                {z02, z03, z03, z02},   // AT or TA 3
-                {z01, z00, z01, z01},   // CC or C_ 4
-                {z03, z02, z02, z03},   // CG or GC 5
-                {z03, z02, z03, z02},   // CT or TC 6
-                {z01, z01, z00, z01},   // GG or G_ 7
-                {z03, z03, z02, z02},   // GT or TG 8
-                {z01, z01, z01, z00},   // TT or T_ 9
-        };
-
-        double z10 = (1 -eps)*w[1];
-        double z11 = eps/3*w[1];
-        double z12 = (0.5 - eps/6)*w[1];
-        double z13 = eps/6*w[1];
-        propensities[1] = new double[][]{
-                {z10, z11, z11, z11},   // AA or A_ 0
-                {z12, z12, z13, z13},   // AC or CA 1
-                {z12, z13, z12, z13},   // AG or GA 2
-                {z12, z13, z13, z12},   // AT or TA 3
-                {z11, z10, z11, z11},   // CC or C_ 4
-                {z13, z12, z12, z13},   // CG or GC 5
-                {z13, z12, z13, z12},   // CT or TC 6
-                {z11, z11, z10, z11},   // GG or G_ 7
-                {z13, z13, z12, z12},   // GT or TG 8
-                {z11, z11, z11, z10},   // TT or T_ 9
-        };
+        double y0, y1, y2, y3;
+        for (int i = 0; i < rc_wPropLogGamma.length; i++) {
+            y0 = (1 -eps)*w[i];
+            y1 = eps/3*w[i];
+            y2 = (0.5 - eps/6)*w[i];
+            y3 = eps/6*w[i];
+            propensities = new double[][]{
+                    {y0, y1, y1, y1},   // AA or A_ 0
+                    {y2, y2, y3, y3},   // AC or CA 1
+                    {y2, y3, y2, y3},   // AG or GA 2
+                    {y2, y3, y3, y2},   // AT or TA 3
+                    {y1, y0, y1, y1},   // CC or C_ 4
+                    {y3, y2, y2, y3},   // CG or GC 5
+                    {y3, y2, y3, y2},   // CT or TC 6
+                    {y1, y1, y0, y1},   // GG or G_ 7
+                    {y3, y3, y2, y2},   // GT or TG 8
+                    {y1, y1, y1, y0},   // TT or T_ 9
+            };
+            for (int j = 1; j < rc_wPropLogGamma[i].length; j++) {
+                for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
+                    for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
+                        rc_wPropLogGamma[i][j][k][l] = Gamma.logGamma(propensities[k][l] + j);
+                    }
+                }
+            }
+        }
 
         for (int i = 0; i < c_wLogGamma.length; i++) {
             for (int j = 1; j < c_wLogGamma[i].length; j++) {
                 c_wLogGamma[i][j] = Gamma.logGamma(w[i] + j);
             }
         }
-
-        for (int i = 0; i < rc_wPropLogGamma.length; i++) {
-            for (int j = 1; j < rc_wPropLogGamma[i].length; j++) {
-                for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
-                    for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
-                        rc_wPropLogGamma[i][j][k][l] = Gamma.logGamma(propensities[i][k][l] + j);
-                    }
-                }
-            }
-        }
-
-
-
-
-
-
 
         wLogGamma[0] = Gamma.logGamma(w[0]);
         wLogGamma[1] = Gamma.logGamma(w[1]);
@@ -408,25 +387,6 @@ public class LikelihoodReadCountModel extends Distribution {
     }
     //get indices from propensities matrix by given genotype
     private static int[] getGenotypeIndices(int genotypeState) {
-        int[][] indexTable = {
-                {0,0},      //AA (AA and A_)
-                {1,0,4},    //AC (AC, A_ and C_)
-                {2,0,7},    //AG (AG, A_ and G_)
-                {3,0,9},    //AT (AT, A_ and T_)
-                {1,4,0},    //CA (CA, A_ and C_)
-                {4,4},      //CC (CC and C_)
-                {5,4,7},    //CG (CG, C_ and G_)
-                {6,4,9},    //CT (CT, C_ and T_)
-                {2,7,0},    //GA (GA, G_ and A_)
-                {5,7,4},    //GC (GC, G_ and C_)
-                {7,7},      //GG (GG and G_)
-                {8,7,9},    //GT (GT, G_ and T_)
-                {3,9,0},    //TA (TA, T_ and A_)
-                {6,9,4},    //TC (TC, T_ and C_)
-                {8,9,7},    //TG (TG, T_ and G_)
-                {9,9},      //TT (TT and T_)
-        };
-
         int[] indices = indexTable[genotypeState];
         return indices;
     }
