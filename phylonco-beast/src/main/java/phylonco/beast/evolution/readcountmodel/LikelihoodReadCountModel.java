@@ -12,7 +12,6 @@ import mutablealignment.MutableAlignment;
 import org.apache.commons.math3.special.Gamma;
 import phylonco.beast.evolution.datatype.ReadCount;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -56,8 +55,12 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[][] rGammaLog;
     private final double log0_5 = Math.log(0.5);
     private int maxReadDepth = 0;
+    private int maxReadCount = 0;
     private double[] readDepthLog;
     private double[] readDepthLogGamma;
+    private double[][][] c_rLogGamma;
+    private double[][][][] rc_wPropLogGamma;
+    private double[][] c_wLogGamma;
 
 
 
@@ -98,6 +101,9 @@ public class LikelihoodReadCountModel extends Distribution {
             for (int j = 0; j < alignment.getSiteCount(); j++) {
                 for (int k = 0; k < 4; k++) {
                     coverages[i][j] += readCount.getReadCounts(i,j)[k];
+                    if (readCount.getReadCounts(i,j)[k] > maxReadCount) {
+                        maxReadCount = readCount.getReadCounts(i,j)[k];
+                    }
                 }
                 if (coverages[i][j] > maxReadDepth) {
                     maxReadDepth = coverages[i][j];
@@ -117,6 +123,9 @@ public class LikelihoodReadCountModel extends Distribution {
         rGammaLog = new double[2][s.getDimension()];
         p1Log = new double[2][s.getDimension()];
         p2Log = new double[2][s.getDimension()];
+        c_rLogGamma = new double[2][s.getDimension()][maxReadDepth+1];
+        c_wLogGamma = new double[2][maxReadDepth+1];
+        rc_wPropLogGamma = new double[2][maxReadCount+1][10][4];
     }
 
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
@@ -146,6 +155,11 @@ public class LikelihoodReadCountModel extends Distribution {
             p1Log[1][i] = Math.log(1-negp1[i]);
             p2Log[0][i] = Math.log(negp2[i]);
             p2Log[1][i] = Math.log(1-negp2[i]);
+            for (int j =1; j < maxReadDepth+1; j++) {
+                c_rLogGamma[0][i][j] = Gamma.logGamma(j + negr1[i]);
+                c_rLogGamma[1][i][j] = Gamma.logGamma(j + negr2[i]);
+            }
+
 
         }
         w = new double[]{w1.getValue(), w2.getValue()};
@@ -217,6 +231,28 @@ public class LikelihoodReadCountModel extends Distribution {
                 {z13, z13, z12, z12},   // GT or TG 8
                 {z11, z11, z11, z10},   // TT or T_ 9
         };
+
+        for (int i = 0; i < c_wLogGamma.length; i++) {
+            for (int j = 1; j < c_wLogGamma[i].length; j++) {
+                c_wLogGamma[i][j] = Gamma.logGamma(w[i] + j);
+            }
+        }
+
+        for (int i = 0; i < rc_wPropLogGamma.length; i++) {
+            for (int j = 1; j < rc_wPropLogGamma[i].length; j++) {
+                for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
+                    for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
+                        rc_wPropLogGamma[i][j][k][l] = Gamma.logGamma(propensities[i][k][l] + j);
+                    }
+                }
+            }
+        }
+
+
+
+
+
+
 
         wLogGamma[0] = Gamma.logGamma(w[0]);
         wLogGamma[1] = Gamma.logGamma(w[1]);
@@ -331,10 +367,10 @@ public class LikelihoodReadCountModel extends Distribution {
 
 
         if (homozygous(genotypeState)) {
-            logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(0, coverage, propensities[0][indices[0]], readCountNumbers, wPropensitiesLogGamma[0][indices[0]]);
-            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage,negp2[taxonIndex], negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex]);
-            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, propensities[0][indices[1]], readCountNumbers, wPropensitiesLogGamma[0][indices[1]]);
-            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage,negp1[taxonIndex], negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex]);
+            logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[0]], indices[0]);
+            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage,negp2[taxonIndex], negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
+            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[1]], indices[1]);
+            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage,negp1[taxonIndex], negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]);
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
             part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
             max = Math.max(part0, part1);
@@ -344,11 +380,11 @@ public class LikelihoodReadCountModel extends Distribution {
                 logLikelihood = part1 + Math.log(1 + Math.exp(part0 - part1));
             }
         } else {
-            logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(1, coverage, propensities[1][indices[0]], readCountNumbers, wPropensitiesLogGamma[1][indices[0]]);
-            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negp2[taxonIndex], negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex]);
-            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, propensities[0][indices[1]], readCountNumbers, wPropensitiesLogGamma[0][indices[1]]);
-            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negp1[taxonIndex], negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex]);
-            logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(0, coverage, propensities[0][indices[2]], readCountNumbers, wPropensitiesLogGamma[0][indices[2]]);
+            logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(1, coverage, readCountNumbers, wPropensitiesLogGamma[1][indices[0]], indices[0]);
+            logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negp2[taxonIndex], negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
+            logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[1]], indices[1]);
+            logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negp1[taxonIndex], negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]);
+            logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[2]], indices[2]);
             part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
             part1 = log0_5 + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
             part2 = log0_5 + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + deltaLog[0];
@@ -364,10 +400,10 @@ public class LikelihoodReadCountModel extends Distribution {
         return logLikelihood;
     }
     //calculate the probability at each site given read count(coverage)(negative-binomial distribution)
-    public double logCoverageLikelihood(int c, double p, double r, double rGammaLog, double pLog0, double pLog1) {
+    public double logCoverageLikelihood(int c, double p, double r, double rGammaLog, double pLog0, double pLog1, double c_rLogGamma) {
         // negative binomial pmf
         double logCoverageLikelihood;
-        logCoverageLikelihood = Gamma.logGamma(c + r) - rGammaLog - readDepthLogGamma[c+1] + r * pLog0 + c * pLog1;
+        logCoverageLikelihood = c_rLogGamma - rGammaLog - readDepthLogGamma[c+1] + r * pLog0 + c * pLog1;
         return logCoverageLikelihood;
     }
     //get indices from propensities matrix by given genotype
@@ -404,10 +440,10 @@ public class LikelihoodReadCountModel extends Distribution {
     }
 
     //calculate the likelihood given read count (multinomial distribution)
-    public double logLikelihoodDirichletMD( int wIndex, int coverage, double[] propensities, int[] readCountNumbers, double[] wPropensitiesLogGamma){
+    public double logLikelihoodDirichletMD( int wIndex, int coverage, int[] readCountNumbers, double[] wPropensitiesLogGamma, int index){
         double logLikelihood = logFFunctionCov(coverage, wIndex);
         for (int i = 0; i < readCountNumbers.length; i++) {
-            logLikelihood = logLikelihood - logFFunctionRC(readCountNumbers[i], propensities[i], wPropensitiesLogGamma[i]);
+            logLikelihood = logLikelihood - logFFunctionRC(readCountNumbers[i], wPropensitiesLogGamma[i], rc_wPropLogGamma[wIndex][readCountNumbers[i]][index][i]);
         }
         return logLikelihood;
     }
@@ -415,15 +451,15 @@ public class LikelihoodReadCountModel extends Distribution {
     public double logFFunctionCov(int coverage, int wIndex){
         double result;
         if (coverage > 0){
-            result = readDepthLog[coverage] + wLogGamma[wIndex] + readDepthLogGamma[coverage] - Gamma.logGamma(w[wIndex] + coverage);
+            result = readDepthLog[coverage] + wLogGamma[wIndex] + readDepthLogGamma[coverage] - c_wLogGamma[wIndex][coverage];
             return result;
         } else return 0.0;
     }
 
-    public double logFFunctionRC(int rc, double wPropensities, double wPropensitiesLogGamma){
+    public double logFFunctionRC(int rc, double wPropensitiesLogGamma, double rc_wPropLogGamma){
         double result;
         if (rc > 0){
-            result = readDepthLog[rc] + wPropensitiesLogGamma + readDepthLogGamma[rc] - Gamma.logGamma(wPropensities + rc);
+            result = readDepthLog[rc] + wPropensitiesLogGamma + readDepthLogGamma[rc] - rc_wPropLogGamma;
             return result;
         } else return 0.0;
     }
