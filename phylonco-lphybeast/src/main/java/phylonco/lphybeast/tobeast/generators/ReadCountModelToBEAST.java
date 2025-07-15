@@ -96,8 +96,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
         downStates.add(vParam);
         addUpDownOperator(context, upStates, downStates);
 
-        context.addSkipOperator(sParam);
-        context.addSkipLoggable(sParam);
+        //context.addSkipOperator(sParam);
+        //context.addSkipLoggable(sParam);
 
         PhyloCTMC lphyTreeLikelihood = (PhyloCTMC) alignmentValue.getGenerator();
         MATreeLikelihood maTreeLikelihood = (MATreeLikelihood) context.getBEASTObject(lphyTreeLikelihood);
