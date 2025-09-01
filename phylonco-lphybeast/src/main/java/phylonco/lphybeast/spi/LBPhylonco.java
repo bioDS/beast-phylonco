@@ -18,6 +18,7 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.SNPInjector;
 import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
+import phylonco.lphy.evolution.copynumbermodel.ReadCopyProfile;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
@@ -69,7 +70,10 @@ public class LBPhylonco implements LPhyBEASTExt {
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
                 // copy number model
-                PhyloDiscreteToBEAST.class
+                PhyloDiscreteToBEAST.class,
+                SimpleSymmetricMatrixToBEAST.class,
+                SimpleSingleStepMatrixToBEAST.class,
+                SimpleBDMatrixToBEAST.class
         );
     }
 
@@ -97,7 +101,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 ExpansionPopulationFunction.class,
                 ConstantPopulationFunction.class,
                 UniformDiscrete.class,
-                CopyNumberBD.class
+                CopyNumberBD.class,
+                ReadCopyProfile.class
         );
     }
 

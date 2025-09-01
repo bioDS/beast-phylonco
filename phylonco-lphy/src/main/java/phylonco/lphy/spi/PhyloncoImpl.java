@@ -4,8 +4,7 @@ import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
 import phylonco.lphy.evolution.alignment.*;
-import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
-import phylonco.lphy.evolution.copynumbermodel.PhyloDiscrete;
+import phylonco.lphy.evolution.copynumbermodel.*;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
@@ -52,7 +51,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
 //                CopyNumberBD.class
-                CopyNumberBD.class
+                CopyNumberBD.class,
+                ReadCopyProfile.class
         );
     }
 
