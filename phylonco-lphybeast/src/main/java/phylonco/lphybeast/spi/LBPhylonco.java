@@ -70,10 +70,7 @@ public class LBPhylonco implements LPhyBEASTExt {
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
                 // copy number model
-                PhyloDiscreteToBEAST.class,
-                SimpleSymmetricMatrixToBEAST.class,
-                SimpleSingleStepMatrixToBEAST.class,
-                SimpleBDMatrixToBEAST.class
+                PhyloDiscreteToBEAST.class
         );
     }
 
