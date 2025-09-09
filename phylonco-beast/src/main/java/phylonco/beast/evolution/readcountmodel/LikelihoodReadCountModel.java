@@ -4,7 +4,6 @@ package phylonco.beast.evolution.readcountmodel;
 
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
-import beast.base.evolution.tree.Node;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
@@ -78,6 +77,7 @@ public class LikelihoodReadCountModel extends Distribution {
             {8,9,7},    //TG (TG, T_ and G_)
             {9,9},      //TT (TT and T_)
     };
+    //private double[] sv;
 
 
 
@@ -152,10 +152,10 @@ public class LikelihoodReadCountModel extends Distribution {
         double mean2;
         double variance1;
         double variance2;
-        Double eps = epsilon.getValue();
-        Double del = delta.getValue();
-        Double tv = t.getValue();
-        Double vv = v.getValue();
+        double eps = epsilon.getValue();
+        double del = delta.getValue();
+        double tv = t.getValue();
+        double vv = v.getValue();
         Double[] sv = s.getValues();
         wv = new double[]{w1.getValue(), w2.getValue()};
         double[][] propensities;
@@ -337,9 +337,9 @@ public class LikelihoodReadCountModel extends Distribution {
         double logLikelihoodDirichletMDHaploid1;
         double logCoverageLikelihoodDiploid;
         double logCoverageLikelihoodHaploid;
-        double part0;
-        double part1;
-        double part2;
+        double logPart0;
+        double logPart1;
+        double logPart2;
         double max;
 
 
@@ -348,31 +348,25 @@ public class LikelihoodReadCountModel extends Distribution {
             logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[1]], indices[1]);
             logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]);
-            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
-            part1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
-            max = Math.max(part0, part1);
-            if (part0 == max){
-                logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0));
-            }else {
-                logLikelihood = part1 + Math.log(1 + Math.exp(part0 - part1));
-            }
+            logPart0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
+            logPart1 = logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
+            max = Math.max(logPart0, logPart1);
+            logLikelihood = max + Math.log(
+                    Math.exp(logPart0 - max) + Math.exp(logPart1 - max)
+            );
         } else {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(1, coverage, readCountNumbers, wPropensitiesLogGamma[1][indices[0]], indices[0]);
             logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
             logLikelihoodDirichletMDHaploid0 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[1]], indices[1]);
             logCoverageLikelihoodHaploid = logCoverageLikelihood(coverage, negr1[taxonIndex], rGammaLog[0][taxonIndex], p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]);
             logLikelihoodDirichletMDHaploid1 = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[2]], indices[2]);
-            part0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
-            part1 = log0_5 + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
-            part2 = log0_5 + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + deltaLog[0];
-            max = Math.max(part0, Math.max(part1, part2));
-            if (part0 == max){
-                logLikelihood = part0 + Math.log(1 + Math.exp(part1 - part0)) + Math.log(1 + Math.exp(part2 - part0));
-            }else if (part1 == max){
-                logLikelihood = part1 + Math.log(1 + Math.exp(part0 - part1)) + Math.log(1 + Math.exp(part2 - part1));
-            }else {
-                logLikelihood = part2 + Math.log(1 + Math.exp(part0 - part2)) + Math.log(1 + Math.exp(part1 - part2));
-            }
+            logPart0 = logLikelihoodDirichletMDDiploid + logCoverageLikelihoodDiploid + deltaLog[1];
+            logPart1 = log0_5 + logLikelihoodDirichletMDHaploid0 + logCoverageLikelihoodHaploid + deltaLog[0];
+            logPart2 = log0_5 + logLikelihoodDirichletMDHaploid1 + logCoverageLikelihoodHaploid + deltaLog[0];
+            max = Math.max(logPart0, Math.max(logPart1, logPart2));
+            logLikelihood = max + Math.log(
+                    Math.exp(logPart0 - max) + Math.exp(logPart1 - max) + Math.exp(logPart2 - max)
+            );
         }
         return logLikelihood;
     }
