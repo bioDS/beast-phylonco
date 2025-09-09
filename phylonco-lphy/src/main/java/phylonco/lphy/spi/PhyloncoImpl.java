@@ -10,6 +10,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
+import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
 import java.util.Arrays;
@@ -52,7 +53,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
 //                CopyNumberBD.class
-                CopyNumberBD.class
+                CopyNumberBD.class,
+                ReadTaxaReadCountMatrix.class
         );
     }
 
