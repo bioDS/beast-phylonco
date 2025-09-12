@@ -120,7 +120,7 @@ public class ReadCopyProfile extends DeterministicFunction<IntegerCharacterMatri
         if (cellNames.isEmpty()) {
             throw new IllegalArgumentException("No cell names found in file");
         }
-        System.out.println("Found " + cellNames.size() + " cells: " + cellNames); //Test
+        // System.out.println("Found " + cellNames.size() + " cells: " + cellNames); //Test
 
         // Create Taxa object
         String[] cellArray = cellNames.toArray(new String[0]);
@@ -168,7 +168,7 @@ public class ReadCopyProfile extends DeterministicFunction<IntegerCharacterMatri
                 }
             }
         }
-        System.out.println("Successfully parsed GINKGO format"); //Test
+        // System.out.println("Successfully parsed GINKGO format"); //Test
         return matrix;
 
     }
