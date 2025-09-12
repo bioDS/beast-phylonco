@@ -2,6 +2,8 @@ package phylonco.lphy.evolution.copynumbermodel;
 
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.TaxaCharacterMatrix;
+import lphy.core.model.annotation.GeneratorCategory;
+import lphy.core.model.annotation.MethodInfo;
 
 public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
 
@@ -10,6 +12,7 @@ public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
     private Taxa taxa;
     private int[][] data;
 
+
     public IntegerCharacterMatrix(Taxa t, int nBins) {
         this.taxa = t;
 
@@ -17,6 +20,13 @@ public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
         this.nBins = nBins;
         this.ntaxa = t.ntaxa();
         this.data = new int[ntaxa][nBins];
+    }
+
+    @MethodInfo(description = "the taxa of the copy number matrix.", narrativeName = "list of taxa",
+            category = GeneratorCategory.TAXA_ALIGNMENT,
+            examples = {"copynumber.lphy"}) //needs to check
+    public Taxa taxa() {
+        return getTaxa();
     }
 
     @Override
