@@ -27,6 +27,7 @@
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.GT16"/>
+        <provider classname="phylonco.beast.evolution.substitutionmodel.GT10"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.MethylationHKY"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit2"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit3"/>

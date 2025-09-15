@@ -55,7 +55,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GTUnphaseToBEAST.class,
+                GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
                  ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class

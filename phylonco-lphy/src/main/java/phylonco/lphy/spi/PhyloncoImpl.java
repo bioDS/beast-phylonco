@@ -11,6 +11,7 @@ import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
+import phylonco.lphy.evolution.substitutionmodel.GT10;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
 import java.util.Arrays;
@@ -49,7 +50,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
     @Override
     public List<Class<? extends BasicFunction>> declareFunctions() {
         return Arrays.asList(
-                GT16.class,
+                GT16.class, GT10.class,
                 PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
 //                CopyNumberBD.class
