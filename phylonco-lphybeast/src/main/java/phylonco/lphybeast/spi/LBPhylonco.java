@@ -44,16 +44,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
-                //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class,
-                ExponentialToBEAST.class,
-                LogisticToBEAST.class,
-                Gompertz_t50ToBEAST.class,
-                ConstantToBEAST.class,
-                //   SVSToBEAST.class,
-                SVSPopulationFunctionToBEAST.class,
-                Cons_Exp_ConsToBEAST.class,
-                ExpansionToBEAST.class,
+
                 ReadCountToBEAST.class,
                 //copy number model
                 IntegerCharacterMatrixToBEAST.class,
@@ -65,7 +56,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class,
+                 ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
                 // copy number model
@@ -87,15 +78,6 @@ public class LBPhylonco implements LPhyBEASTExt {
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
-                PopulationFunctionCoalescent.class,
-                SVSPopulationFunction.class,
-                GompertzPopulationFunction_f0.class,
-                GompertzPopulationFunction_t50.class,
-                ExponentialPopulationFunction.class,
-                LogisticPopulationFunction.class,
-                Cons_Exp_ConsPopulationFunction.class,
-                ExpansionPopulationFunction.class,
-                ConstantPopulationFunction.class,
                 UniformDiscrete.class,
                 CopyNumberBD.class
         );
@@ -104,7 +86,6 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
-                SVSPopulation.class,
                 Integer2DMatrix.class
         );
     }

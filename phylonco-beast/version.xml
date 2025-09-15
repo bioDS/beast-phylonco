@@ -30,14 +30,6 @@
         <provider classname="phylonco.beast.evolution.substitutionmodel.MethylationHKY"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit2"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit3"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_f0"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ExponentialGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.LogisticGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.GompertzGrowth_t50"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ConstantGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.StochasticVariableSelection"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.Cons_Exp_ConsGrowth"/>
-        <provider classname="phylonco.beast.evolution.populationmodel.ExpansionGrowth"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsSequenceOperator"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator"/>
