@@ -7,6 +7,7 @@ import phylonco.lphy.evolution.alignment.*;
 import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
 import phylonco.lphy.evolution.copynumbermodel.PhyloDiscrete;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
+import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
@@ -51,7 +52,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
     public List<Class<? extends BasicFunction>> declareFunctions() {
         return Arrays.asList(
                 GT16.class, GT10.class,
-                PhasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
+                PhasedGenotypeFunction.class, UnphasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
 //                CopyNumberBD.class
                 CopyNumberBD.class,
