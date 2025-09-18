@@ -23,7 +23,7 @@ public class SequenceTypePhyloncoImpl extends SequenceTypeBaseImpl { //implement
     public Map<String, ? extends SequenceType> declareSequenceTypes() {
         Map<String, SequenceType> dataTypeMap = new ConcurrentHashMap<>();
         dataTypeMap.put(SequenceTypeBaseImpl.sanitise(PhasedGenotype.NAME), PhasedGenotype.INSTANCE);
-        dataTypeMap.put(SequenceTypeBaseImpl.sanitise(UnphasedGenotype.NAME), PhasedGenotype.INSTANCE);
+        dataTypeMap.put(SequenceTypeBaseImpl.sanitise(UnphasedGenotype.NAME), UnphasedGenotype.INSTANCE);
         return dataTypeMap;
     }
 //
