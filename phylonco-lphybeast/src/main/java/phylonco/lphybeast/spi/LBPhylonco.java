@@ -13,6 +13,7 @@ import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
+import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
@@ -20,6 +21,8 @@ import phylonco.lphy.evolution.alignment.SNPInjector;
 import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
+import phylonco.lphy.evolution.datatype.UnphasedGenotype;
+import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
@@ -56,7 +59,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
-                 ReadCountModelToBEAST.class,
+                ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
                 // copy number model
@@ -68,12 +71,13 @@ public class LBPhylonco implements LPhyBEASTExt {
     public Map<SequenceType, DataType> getDataTypeMap() {
         Map<SequenceType, DataType> dataTypeMap = new ConcurrentHashMap<>();
         dataTypeMap.put(PhasedGenotype.INSTANCE, new NucleotideDiploid16());
+        dataTypeMap.put(UnphasedGenotype.INSTANCE, new NucleotideDiploid10());
         return dataTypeMap;
     }
 
     @Override
     public List<Class<? extends Generator>> getExcludedGenerator() {
-        return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
+        return Arrays.asList(PhasedGenotypeFunction.class, UnphasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 MRCA.class, SNPInjector.class,
