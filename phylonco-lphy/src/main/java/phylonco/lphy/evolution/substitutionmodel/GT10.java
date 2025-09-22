@@ -77,14 +77,14 @@ public class GT10 extends RateMatrix {
 
                 if (fromParent1State == toParent1State || fromParent2State == toParent2State || fromParent1State == toParent2State || fromParent2State == toParent1State) {
 
-                    if (fromParent1State != toParent1State) {
+                    if (fromParent1State == toParent1State) {
+                        rateIndex = getRateIndex(fromParent2State, toParent2State);
+                    } else if (fromParent2State == toParent2State) {
                         rateIndex = getRateIndex(fromParent1State, toParent1State);
-                    } else if (fromParent1State != toParent2State) {
-                        rateIndex = getRateIndex(fromParent1State, toParent2State);
-                    } else if (fromParent2State != toParent1State) {
+                    } else if (fromParent1State == toParent2State) {
                         rateIndex = getRateIndex(fromParent2State, toParent1State);
                     } else {
-                        rateIndex = getRateIndex(fromParent2State, toParent2State);
+                        rateIndex = getRateIndex(fromParent1State, toParent2State);
                     }
 
                     Q[i][j] = rates[rateIndex] * freqs[j];

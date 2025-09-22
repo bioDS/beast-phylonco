@@ -15,7 +15,7 @@ import java.util.List;
  */
 public class UnphasedGenotype extends DataType {
 
-    public static final String NAME = "nucleotideDiploidUnphased";
+    public static final String NAME = "nucleotideDiploid10";
     public static final int CANONICAL_STATE_COUNT = 10;
     public static final int STATE_COUNT = 12;
 
@@ -26,13 +26,15 @@ public class UnphasedGenotype extends DataType {
 
     static {
         CANONICAL_STATES = new UnphasedGenotypeState[CANONICAL_STATE_COUNT];
+        String codeString = "AMRWCSYGKT";
 
         int x = 0;
         char code;
         for(int i = 0; i < 4; i++) {
-            for(int j = i+1; j < 4; j++) {
+            for(int j = i; j < 4; j++) {
                 String name = "" + DataType.NUCL_CHAR[i] + DataType.NUCL_CHAR[j];
-                code = (char) (x + '0');
+                //code = (char) (x + '0');
+                code = codeString.charAt(x);
                 CANONICAL_STATES[x] = new UnphasedGenotypeState(name, Character.toString(code), x);
                 x++;
             }
@@ -41,8 +43,8 @@ public class UnphasedGenotype extends DataType {
 
         // no ambiguous states
 
-        UNKNOWN_STATE = new UnphasedGenotypeState("unknown genotype", "?", 11, CANONICAL_STATES);
-        GAP_STATE = new UnphasedGenotypeState("gap", "-", 12, CANONICAL_STATES);
+        UNKNOWN_STATE = new UnphasedGenotypeState("unknown genotype", "?", 10, CANONICAL_STATES);
+        GAP_STATE = new UnphasedGenotypeState("gap", "-", 11, CANONICAL_STATES);
         STATES = new UnphasedGenotypeState[STATE_COUNT];
 
         int i;
@@ -50,8 +52,8 @@ public class UnphasedGenotype extends DataType {
             STATES[i] = CANONICAL_STATES[i];
         }
 
-        STATES[11] = UNKNOWN_STATE;
-        STATES[12] = GAP_STATE;
+        STATES[10] = UNKNOWN_STATE;
+        STATES[11] = GAP_STATE;
 
     }
 
