@@ -1,6 +1,7 @@
 package phylonco.lphy.evolution.copynumbermodel;
 
 import lphy.base.evolution.Taxa;
+import lphy.base.evolution.likelihood.PhyloLikelihood;
 import lphy.base.evolution.tree.TimeTree;
 import lphy.base.evolution.tree.TimeTreeNode;
 import lphy.core.logger.LoggerUtils;
@@ -14,15 +15,17 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMatrix> {
-
-    private Value<MarkovTraitEvolution<Integer>> model;
-    private Value<TimeTree> tree;
-    private Value<Integer> L;
-    private int[][] data;
-    private Value<Number> clockRate;
-    private Value<Double[]> branchRates;
-    private Value<IntegerCharacterMatrix> realData;
+/**
+ * Generative distribution for discrete trait evolution along phylogenetic trees.
+ * <p>
+ * Models the evolution of integer-valued traits (e.g., copy numbers)
+ * using continuous-time Markov processes with discrete state spaces.
+ * <p>
+ * Unlike PhyloCTMC which uses substitution rate matrices (Q matrices) for
+ * molecular evolution, this model uses specialized birth-death processes
+ * that directly model trait gain/loss events.
+ */
+public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMatrix>, PhyloLikelihood {
 
     // Parameter names
     public static final String modelParam = "evolutionModel";
@@ -31,6 +34,13 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
     public static final String muParam = "mu";
     public static final String branchRatesParam = "branchRates";
     public static final String realDataParam = "realData";
+    private Value<MarkovTraitEvolution<Integer>> model;
+    private Value<TimeTree> tree;
+    private Value<Integer> L;
+    private int[][] data;
+    private Value<Number> clockRate;
+    private Value<Double[]> branchRates;
+    private Value<IntegerCharacterMatrix> realData;
 
     public PhyloDiscrete(
             @ParameterInfo(name = modelParam, description = "The trait evolution model", optional = true) Value<MarkovTraitEvolution<Integer>> evolutionModel,
