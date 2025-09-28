@@ -19,6 +19,7 @@ import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.SNPInjector;
 import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
+import phylonco.lphy.evolution.copynumbermodel.ReadCopyProfile;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotype;
@@ -83,7 +84,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 UniformDiscrete.class,
-                CopyNumberBD.class
+                CopyNumberBD.class,
+                ReadCopyProfile.class
         );
     }
 
