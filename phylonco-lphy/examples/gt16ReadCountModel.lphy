@@ -1,31 +1,17 @@
 data {
 n = 10;
-l = 500;
-meanW1 = 100;
-sdW1 = 1.25;
-meanW2 = 2.5;
-sdW2 = 1.25;
-alphaEpsilon = 1;
-betaEpsilon = 30;
-alphaDelta = 3;
-betaDelta = 40;
-meanT = 1.702; // average coverage = lognormal(meanT, sdT)
-sdT = 0.8671;
-meanV = 0.8; // variance coverage = lognormal(meanV, sdV)
-sdV = 0.475;
-meanS = 0.2; // cell-specific scaling
-sdS = 0.72;
+l = 50;
 A = readNexus(file="data/gt16ReadCountModel_A.nexus"); //beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
 }
 
 model {
-w1 ~ LogNormal(meanlog= meanW1, sdlog= sdW1);
-w2 ~ LogNormal(meanlog= meanW2, sdlog= sdW2);
-epsilon ~ Beta(alpha= alphaEpsilon, beta= betaEpsilon);
-delta ~ Beta(alpha= alphaDelta, beta= betaDelta);
-t ~ LogNormal(meanlog= meanT, sdlog= sdT);
-v ~ LogNormal(meanlog= meanV, sdlog= sdV);
-s ~ LogNormal(meanlog= meanS, sdlog= sdS, replicates=n);
+w1 ~ LogNormal(meanlog= 100, sdlog= 1.25);
+w2 ~ LogNormal(meanlog= 2.5, sdlog= 1.25);
+epsilon ~ Beta(alpha= 1, beta= 30);
+delta ~ Beta(alpha= 3, beta= 40);
+t ~ LogNormal(meanlog= 1.702, sdlog= 0.8671);
+v ~ LogNormal(meanlog= 0.8, sdlog= 0.475);
+s ~ LogNormal(meanlog= 0.2, sdlog= 0.72, replicates=n);
 alpha ~ Ploidy(l= l, n= n, delta= delta);
 cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
 r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w1=w1, w2=w2);

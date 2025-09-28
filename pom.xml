@@ -6,7 +6,8 @@
         <groupId>io.github.linguaphylo</groupId>
         <artifactId>lphybeast-root</artifactId>
         <!--  lphybeast version here    -->
-        <version>1.2.1</version>
+        <!-- TODO use global variable for lphybeast version -->
+        <version>1.3.0</version>
     </parent>
 
 <!--    <groupId>io.github.linguaphylo</groupId>-->
@@ -18,10 +19,10 @@
     <name>beast-phylonco</name>
 
     <properties>
-        <lphy.vision>1.7.0</lphy.vision>
-        <lphybeast.vision>1.2.1</lphybeast.vision>
-<!--  include lphybeast  -->
-        <lphybeast.flc.vision>0.0.1-SNAPSHOT</lphybeast.flc.vision>
+        <lphy.version>1.7.0</lphy.version>
+        <lphybeast.version>1.2.1</lphybeast.version>
+        <!--  include lphybeast  -->
+        <lphybeast.flc.version>0.0.1-SNAPSHOT</lphybeast.flc.version>
         <!-- phylonco pom version https://maven.apache.org/maven-ci-friendly.html -->
         <!-- change version in phylonco-beast or phylonco-lphybeast pom, not here  -->
         <revision>1.2.1</revision>

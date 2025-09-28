@@ -14,7 +14,7 @@
         <dependency>
             <groupId>io.github.linguaphylo</groupId>
             <artifactId>lphy-base</artifactId>
-            <version>${lphy.vision}</version>
+            <version>${lphy.version}</version>
         </dependency>
     </dependencies>
 

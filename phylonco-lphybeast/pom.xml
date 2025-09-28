@@ -11,15 +11,10 @@
     <version>1.2.1</version>
 
     <dependencies>
-<!--        <dependency>-->
-<!--            <groupId>io.github.linguaphylo</groupId>-->
-<!--            <artifactId>lphybeast</artifactId>-->
-<!--            <version>${lphybeast.vision}</version>-->
-<!--        </dependency>-->
         <dependency>
             <groupId>io.github.linguaphylo</groupId>
             <artifactId>lphybeast-flc</artifactId>
-            <version>${lphybeast.flc.vision}</version>
+            <version>${lphybeast.flc.version}</version>
         </dependency>
 
         <dependency>

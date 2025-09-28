@@ -13,6 +13,7 @@ import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
 import lphybeast.spi.LPhyBEASTExt;
+import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
@@ -21,6 +22,8 @@ import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
 import phylonco.lphy.evolution.copynumbermodel.ReadCopyProfile;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
+import phylonco.lphy.evolution.datatype.UnphasedGenotype;
+import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
@@ -45,16 +48,7 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
-                //PopulationFunctionToBEAST.class // TODO
-                Gompertz_f0ToBEAST.class,
-                ExponentialToBEAST.class,
-                LogisticToBEAST.class,
-                Gompertz_t50ToBEAST.class,
-                ConstantToBEAST.class,
-                //   SVSToBEAST.class,
-                SVSPopulationFunctionToBEAST.class,
-                Cons_Exp_ConsToBEAST.class,
-                ExpansionToBEAST.class,
+
                 ReadCountToBEAST.class,
                 //copy number model
                 IntegerCharacterMatrixToBEAST.class,
@@ -65,8 +59,8 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GTUnphaseToBEAST.class,
-                PopFuncCoalescentToBEAST.class, ReadCountModelToBEAST.class,
+                GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
+                ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//, GompertzToBEAST.class
 //                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
                 // copy number model
@@ -78,25 +72,17 @@ public class LBPhylonco implements LPhyBEASTExt {
     public Map<SequenceType, DataType> getDataTypeMap() {
         Map<SequenceType, DataType> dataTypeMap = new ConcurrentHashMap<>();
         dataTypeMap.put(PhasedGenotype.INSTANCE, new NucleotideDiploid16());
+        dataTypeMap.put(UnphasedGenotype.INSTANCE, new NucleotideDiploid10());
         return dataTypeMap;
     }
 
     @Override
     public List<Class<? extends Generator>> getExcludedGenerator() {
-        return Arrays.asList(PhasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
+        return Arrays.asList(PhasedGenotypeFunction.class, UnphasedGenotypeFunction.class, HomozygousAlignmentDistribution.class,
                 HaploidAlignment.class, Difference.class, Union.class, ReadTrees.class,
                 SampleBranch.class, SubstituteClade.class, SubsampledTree.class, LabelClade.class,
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
-                PopulationFunctionCoalescent.class,
-                SVSPopulationFunction.class,
-                GompertzPopulationFunction_f0.class,
-                GompertzPopulationFunction_t50.class,
-                ExponentialPopulationFunction.class,
-                LogisticPopulationFunction.class,
-                Cons_Exp_ConsPopulationFunction.class,
-                ExpansionPopulationFunction.class,
-                ConstantPopulationFunction.class,
                 UniformDiscrete.class,
                 CopyNumberBD.class,
                 ReadCopyProfile.class
@@ -106,7 +92,6 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
-                SVSPopulation.class,
                 Integer2DMatrix.class
         );
     }
