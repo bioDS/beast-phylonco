@@ -1,7 +1,6 @@
 package phylonco.lphy.evolution.copynumbermodel;
 
 import lphy.base.evolution.Taxa;
-import lphy.base.evolution.alignment.MetaDataAlignment;
 import lphy.base.function.io.ReaderConst;
 import lphy.core.io.UserDir;
 import lphy.core.model.DeterministicFunction;
@@ -18,12 +17,8 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.*;
 
-// import static jdk.internal.org.jline.utils.InfoCmp.Capability.lines;
-
-// this class should read in copy number matrix data from txt files
 /**
- * D = readCopyProfile(file="realData.txt");
- * @see
+ * D = readCopyProfile(file="realCNVData.txt");
  */
 @IOFunction(
         role = IOFunction.Role.dataInput,
@@ -49,8 +44,6 @@ public class ReadCopyProfile extends DeterministicFunction<IntegerCharacterMatri
         String filePath = ((Value<String>) getParams().get(ReaderConst.FILE)).value();
         Path readPath = UserDir.getUserPath(filePath);
 
-        // note: bufferedreader may throw an exception
-        // hint: add a try and catch block here to fail elegantly
         try {
             BufferedReader reader = new BufferedReader(new FileReader(readPath.toFile()));
             IntegerCharacterMatrix data = getData(reader);
@@ -168,7 +161,7 @@ public class ReadCopyProfile extends DeterministicFunction<IntegerCharacterMatri
                 }
             }
         }
-        // System.out.println("Successfully parsed GINKGO format"); //Test
+        System.out.println("Successfully parsed GINKGO format"); //Test
         return matrix;
 
     }
