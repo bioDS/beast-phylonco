@@ -3,8 +3,7 @@ package phylonco.lphybeast.spi;
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.distribution.UniformDiscrete;
-import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
-import lphy.base.evolution.coalescent.populationmodel.*;
+
 import lphy.base.evolution.tree.*;
 import lphy.base.function.Difference;
 import lphy.base.function.Union;
@@ -61,8 +60,7 @@ public class LBPhylonco implements LPhyBEASTExt {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
                 ReadCountModelToBEAST.class,
-//                LocalClockToBeast.class//, GompertzToBEAST.class
-//                , LogisticToBEAST.class, PopulationFunctionCoalescentToBEAST.class
+//                LocalClockToBeast.class//
                 // copy number model
                 PhyloDiscreteToBEAST.class
         );
