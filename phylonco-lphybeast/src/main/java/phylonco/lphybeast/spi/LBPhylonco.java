@@ -26,6 +26,7 @@ import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
+import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
 import phylonco.lphybeast.tobeast.generators.*;
 import phylonco.lphybeast.tobeast.values.*;
 
@@ -83,7 +84,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 UniformDiscrete.class,
-                CopyNumberBD.class
+                CopyNumberBD.class,
+                ReadTaxaReadCountMatrix.class
         );
     }
 
