@@ -4,6 +4,7 @@ package phylonco.beast.evolution.readcountmodel;
 
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
+import beast.base.evolution.datatype.DataType;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
@@ -59,7 +60,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[][][] c_rLogGamma;
     private double[][][][] rc_wPropLogGamma;
     private double[][] c_wLogGamma;
-    private static final int[][] indexTable = {
+    private static final int[][] gt16IndexTable = {
             {0,0},      //AA (AA and A_)
             {1,0,4},    //AC (AC, A_ and C_)
             {2,0,7},    //AG (AG, A_ and G_)
@@ -77,6 +78,20 @@ public class LikelihoodReadCountModel extends Distribution {
             {8,9,7},    //TG (TG, T_ and G_)
             {9,9},      //TT (TT and T_)
     };
+
+    private static final int[][] gt10IndexTable = {
+            {0,0},      //AA (AA and A_)
+            {1,0,4},    //AC (AC, A_ and C_)
+            {2,0,7},    //AG (AG, A_ and G_)
+            {3,0,9},    //AT (AT, A_ and T_)
+            {4,4},      //CC (CC and C_)
+            {5,4,7},    //CG (CG, C_ and G_)
+            {6,4,9},    //CT (CT, C_ and T_)
+            {7,7},      //GG (GG and G_)
+            {8,7,9},    //GT (GT, G_ and T_)
+            {9,9},      //TT (TT and T_)
+    };
+    private String genotype;
     //private double[] sv;
 
 
@@ -108,6 +123,7 @@ public class LikelihoodReadCountModel extends Distribution {
         w1 = w1Input.get();
         w2 = w2Input.get();
         alignment = alignmentInput.get();
+        genotype = alignment.getDataType().getTypeDescription();
         readCount = readCountInput.get();
         negp1 = new double[s.getDimension()];
         negp2 = new double[s.getDimension()];
@@ -378,16 +394,29 @@ public class LikelihoodReadCountModel extends Distribution {
         return logCoverageLikelihood;
     }
     //get indices from propensities matrix by given genotype
-    private static int[] getGenotypeIndices(int genotypeState) {
-        return indexTable[genotypeState];
+    private int[] getGenotypeIndices(int genotypeState) {
+        if (genotype.equals("nucleotideDiploid16")) {return gt16IndexTable[genotypeState];}
+        else if (genotype.equals("nucleotideDiploid10")) {return gt10IndexTable[genotypeState];}
+        else {
+            throw new IllegalArgumentException("Unsupported genotype: " + genotype);
+        }
     }
 
     //Determining whether a genotype is homozygous or not
     private boolean homozygous(int genotype){
+        if (this.genotype.equals("nucleotideDiploid16")) {
         return switch (genotype){
             case 0, 5, 10, 15 -> true;
             default -> false;
         };
+        } else if (this.genotype.equals("nucleotideDiploid10")) {
+            return switch (genotype){
+                case 0, 4, 7, 9 -> true;
+                default -> false;
+            };
+        }else {
+            throw new IllegalArgumentException("Unsupported genotype: " + this.genotype);
+        }
     }
 
     //calculate the likelihood given read count (multinomial distribution)
