@@ -3,7 +3,8 @@ package phylonco.lphybeast.spi;
 import beast.base.evolution.datatype.DataType;
 import jebl.evolution.sequences.SequenceType;
 import lphy.base.distribution.UniformDiscrete;
-
+import lphy.base.evolution.coalescent.PopulationFunctionCoalescent;
+import lphy.base.evolution.coalescent.populationmodel.*;
 import lphy.base.evolution.tree.*;
 import lphy.base.function.Difference;
 import lphy.base.function.Union;
@@ -26,6 +27,7 @@ import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.CoverageModel;
 import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
 import phylonco.lphy.evolution.readcountmodel.PloidyModel;
+import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
 import phylonco.lphybeast.tobeast.generators.*;
 import phylonco.lphybeast.tobeast.values.*;
 
@@ -82,6 +84,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 UniformDiscrete.class,
+                CopyNumberBD.class,
+                ReadTaxaReadCountMatrix.class,
                 CopyNumberBD.class,
                 ReadCopyProfile.class
         );

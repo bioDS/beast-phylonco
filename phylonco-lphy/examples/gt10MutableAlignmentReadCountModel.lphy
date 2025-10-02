@@ -1,0 +1,23 @@
+data {
+n = 20;
+l = 1000;
+}
+
+model {
+Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
+ψ ~ Coalescent(n=n, theta=Θ);
+π ~ Dirichlet(conc=[3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0,3.0]);
+rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+Q = gt10(freq=π, rates=rates);
+A ~ PhyloCTMC(L=l, Q=Q, tree=ψ, dataType=unphasedGenotype());
+w1 ~ LogNormal(meanlog= 3.96, sdlog= 0.33);
+w2 ~ LogNormal(meanlog= 0.93, sdlog= 0.33);
+epsilon ~ Beta(alpha= 1.5, beta= 1000);
+delta ~ Beta(alpha= 15, beta= 85);
+t ~ LogNormal(meanlog = 1.70, sdlog = 0.05); //coverage 5-6
+v ~ LogNormal(meanlog = 2.96, sdlog = 0.13); // variance 15-25
+s ~ LogNormal(meanlog= 0.2, sdlog= 0.72, replicates=n);
+alpha ~ Ploidy(l= l, n= n, delta= delta);
+cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
+r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w1=w1, w2=w2);
+}
