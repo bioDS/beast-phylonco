@@ -22,24 +22,24 @@ public class ReadCopyProfileTest {
 
     @Test
     void testParseGinkgoFormat_WithRealData() {
-        String realFilePath = "/Users/ming/Desktop/Aug22/CRC09-GINKGO_24cells.CN.txt";
+        String filePath = "examples/data/copyNumberSim_ginkgo.txt";
 
         try {
-            List<String> sampleLines = readFirstLines(realFilePath, 31);
+            List<String> sampleLines = readFirstLines(filePath, 31);
             if (sampleLines.size() < 2) {
-                System.out.println("Real data file too small or not found, skipping test");
+                System.out.println("GINKGO data file not found or too small, skipping test");
                 return;
             }
 
             List<String> cellNames = extractGinkgoCellNames(sampleLines.get(0));
             if (cellNames.isEmpty()) {
-                System.out.println("File doesn't appear to be GINKGO format, skipping test");
+                System.out.println("GINKGO data file has no valid cell names, skipping test");
                 return;
             }
 
             Taxa taxa = Taxa.createTaxa(cellNames.toArray(new String[0]));
 
-            System.out.println("=== Testing parseGinkgoFormat with Real Data ===");
+            System.out.println("=== Testing parseGinkgoFormat ===");
             System.out.println("Total lines used: " + sampleLines.size() + " (header + " + (sampleLines.size() - 1) + " data rows)");
 
             // Test the parsing method
@@ -50,38 +50,38 @@ public class ReadCopyProfileTest {
             assertEquals(sampleLines.size() - 1, result.nchar().intValue(), "Bin count should match data lines");
 
         } catch (Exception e) {
-            System.err.println("Real GINKGO data parsing test failed: " + e.getMessage());
+            System.err.println("GINKGO data parsing test failed: " + e.getMessage());
             // Don't fail test if file issues
         }
     }
 
     @Test
     void testParseSconce2Format_WithRealData() {
-        String realFilePath = "/Users/ming/Desktop/Aug22/CRC09-SCONCE2.CN.txt";
+        String filePath = "examples/data/copyNumberSim_sconce2.txt";
 
         try {
-            List<String> cellNames = extractSconce2CellNames(realFilePath);
+            List<String> cellNames = extractSconce2CellNames(filePath);
             if (cellNames.isEmpty()) {
-                System.out.println("Real SCONCE2 data file not found, skipping test");
+                System.out.println("SCONCE2 data file not found or has no valid cell names, skipping test");
                 return;
             }
 
-            List<String> sampleLines = readSconce2DataForFirstBins(realFilePath, 30);
+            List<String> sampleLines = readSconce2DataForFirstBins(filePath, 30);
             if (sampleLines.size() < 2) {
-                System.out.println("Not enough SCONCE2 data found, skipping test");
+                System.out.println("SCONCE2 data file too small, skipping test");
                 return;
             }
 
             Taxa taxa = Taxa.createTaxa(cellNames.toArray(new String[0]));
 
-            System.out.println("=== Testing parseSconce2Format with Real Data ===");
+            System.out.println("=== Testing parseSconce2Format ===");
             System.out.println("Total lines used: " + sampleLines.size() + " (header + " + (sampleLines.size() - 1) + " data rows)");
 
             // Test the parsing method
             IntegerCharacterMatrix result = reader.parseSconce2Format(sampleLines, taxa, cellNames);
 
         } catch (Exception e) {
-            System.err.println("Real SCONCE2 data parsing test failed: " + e.getMessage());
+            System.err.println("SCONCE2 data parsing test failed: " + e.getMessage());
         }
     }
 
@@ -102,6 +102,7 @@ public class ReadCopyProfileTest {
     }
 
     private List<String> extractGinkgoCellNames(String headerLine) {
+        // System.out.println("DEBUG: Raw header = '" + headerLine + "'");
         String[] headers = headerLine.split("\t");
         List<String> cellNames = new ArrayList<>();
 
