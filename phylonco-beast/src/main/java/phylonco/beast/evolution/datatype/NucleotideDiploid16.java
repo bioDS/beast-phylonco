@@ -4,7 +4,7 @@ import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType;
 
 @Description("Phased diploid nucleotide data type")
-public class NucleotideDiploid16 extends DataType.Base {
+public class NucleotideDiploid16 extends DataType.Base implements DiploidDataType {
     int[][] x = {
             {0}, // AA - 0
             {1}, // AC - 1
@@ -44,4 +44,55 @@ public class NucleotideDiploid16 extends DataType.Base {
         return "nucleotideDiploid16";
     }
 
+    @Override
+    public int getIndex(String genotype) {
+        switch (genotype) {
+            case "AA":
+                return 0;
+            case "A_":
+                return getIndex("AA");
+            case "_A":
+                return getIndex("AA");
+            case "AC":
+                return 1;
+            case "AG":
+                return 2;
+            case "AT":
+                return 3;
+            case "CC":
+                return 4;
+            case "C_":
+                return getIndex("CC");
+            case "_C":
+                return getIndex("CC");
+            case "CG":
+                return 5;
+            case "CT":
+                return 6;
+            case "GG":
+                return 7;
+            case "G_":
+                return getIndex("GG");
+            case "_G":
+                return getIndex("GG");
+            case "GT":
+                return 8;
+            case "TT":
+                return 9;
+            case "T_":
+                return getIndex("TT");
+            case "_T":
+                return getIndex("TT");
+        }
+        throw new IllegalArgumentException("Unknown genotype: " + genotype);
+    }
+
+    @Override
+    public int[] getIndices(String[] genotypes) {
+        int[] indices = new int[genotypes.length];
+        for (int i = 0; i < genotypes.length; i++) {
+            indices[i] = getIndex(genotypes[i]);
+        }
+        return indices;
+    }
 }
