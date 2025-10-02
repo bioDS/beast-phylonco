@@ -3,6 +3,7 @@ package phylonco.lphy.evolution.readcountmodel;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.TaxaCharacterMatrix;
 import lphy.core.logger.TextFileFormatted;
+import lphy.core.model.annotation.MethodInfo;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -66,7 +67,7 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
         return taxa;
     }
 
-    @Override
+    @MethodInfo(description="The number of characters/sites.", narrativeName = "number of characters")
     public Integer nchar() {
         return readCountDataMatrix[0].length;
     }

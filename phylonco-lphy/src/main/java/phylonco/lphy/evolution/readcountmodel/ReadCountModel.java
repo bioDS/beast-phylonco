@@ -56,8 +56,8 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
             @ParameterInfo(name = covParamName, description = "coverage.") Value<Integer2DMatrix> coverage,
             @ParameterInfo(name = alphaParamName, description = "allelic dropout events for each cell at each site.") Value<Integer2DMatrix> alpha,
             @ParameterInfo(name = epsilonParamName, description = "sequencing and amplification error probability.") Value<Double> epsilon,
-            @ParameterInfo(name = w1ParamName, description = "wildtype overdispersion parameter of Dirichlet multinomial distribution.") Value<Number> w1,
-            @ParameterInfo(name = w2ParamName, description = "alternative overdispersion parameter for Dirichlet multinomial distribution") Value<Number> w2
+            @ParameterInfo(name = w1ParamName, description = "homozygous overdispersion parameter of Dirichlet multinomial distribution.") Value<Number> w1,
+            @ParameterInfo(name = w2ParamName, description = "heterogeneous overdispersion parameter for Dirichlet multinomial distribution") Value<Number> w2
             ) {
         super();
         this.data = data;
