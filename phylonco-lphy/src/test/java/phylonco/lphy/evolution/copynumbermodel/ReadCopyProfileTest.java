@@ -21,21 +21,18 @@ public class ReadCopyProfileTest {
     }
 
     @Test
-    void testParseGinkgoFormat_WithRealData() {
+    void testParseGinkgoFormat() {
         String filePath = "examples/data/copyNumberSim_ginkgo.txt";
 
         try {
             List<String> sampleLines = readFirstLines(filePath, 31);
-            if (sampleLines.size() < 2) {
-                System.out.println("GINKGO data file not found or too small, skipping test");
-                return;
-            }
+            assertTrue(sampleLines.size() >= 2,
+                    "GINKGO files require a minimum of 2 lines (header + data)");
 
             List<String> cellNames = extractGinkgoCellNames(sampleLines.get(0));
-            if (cellNames.isEmpty()) {
-                System.out.println("GINKGO data file has no valid cell names, skipping test");
-                return;
-            }
+
+            assertFalse(cellNames.isEmpty(),
+                    "GINKGO data file must have valid cell names");
 
             Taxa taxa = Taxa.createTaxa(cellNames.toArray(new String[0]));
 
@@ -49,28 +46,25 @@ public class ReadCopyProfileTest {
             assertEquals(cellNames.size(), result.getTaxa().ntaxa(), "Cell count should match");
             assertEquals(sampleLines.size() - 1, result.nchar().intValue(), "Bin count should match data lines");
 
-        } catch (Exception e) {
-            System.err.println("GINKGO data parsing test failed: " + e.getMessage());
-            // Don't fail test if file issues
+        } catch (IOException e) {
+            fail("IOException for file: " + filePath + " - " + e.getMessage());
         }
     }
 
     @Test
-    void testParseSconce2Format_WithRealData() {
+    void testParseSconce2Format() {
         String filePath = "examples/data/copyNumberSim_sconce2.txt";
 
         try {
             List<String> cellNames = extractSconce2CellNames(filePath);
-            if (cellNames.isEmpty()) {
-                System.out.println("SCONCE2 data file not found or has no valid cell names, skipping test");
-                return;
-            }
+
+            assertFalse(cellNames.isEmpty(),
+                    "SCONCE2 data file must have valid cell names");
 
             List<String> sampleLines = readSconce2DataForFirstBins(filePath, 30);
-            if (sampleLines.size() < 2) {
-                System.out.println("SCONCE2 data file too small, skipping test");
-                return;
-            }
+
+            assertTrue(sampleLines.size() >= 2,
+                    "SCONCE2 files require a minimum of 2 lines (header + data)");
 
             Taxa taxa = Taxa.createTaxa(cellNames.toArray(new String[0]));
 
@@ -80,8 +74,10 @@ public class ReadCopyProfileTest {
             // Test the parsing method
             IntegerCharacterMatrix result = reader.parseSconce2Format(sampleLines, taxa, cellNames);
 
-        } catch (Exception e) {
-            System.err.println("SCONCE2 data parsing test failed: " + e.getMessage());
+            assertEquals(cellNames.size(), result.getTaxa().ntaxa(), "Cell count should match");
+
+        } catch (IOException e) {
+            fail("IOException for file: " + filePath + " - " + e.getMessage());
         }
     }
 
