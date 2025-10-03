@@ -7,6 +7,8 @@ import java.util.List;
 
 /**
  * Compresses CNV data by merging consecutive rows with identical copy number patterns
+ * Example input file: {@code examples/data/copyNumberSim.txt}
+ * Example output file: {@code examples/data/copyNumberSim_compressed.txt}
  */
 
 public class CopyNumberCompressor {
@@ -236,8 +238,8 @@ public class CopyNumberCompressor {
      */
     public static void main(String[] args) {
         //file path
-        String inputFile = "/Users/ming/Desktop/Aug22/CNV/2nd/CRC01-SegCopy_filtered_onlyPM.txt";
-        String outputFile = "/Users/ming/Desktop/Aug22/CNV/2nd/CRC01-SegCopy_compressed.txt";
+        String inputFile = "phylonco-lphy/examples/data/copyNumberSim.txt";
+        String outputFile = "phylonco-lphy/examples/data/copyNumberSim_compressed.txt";
 
         // Allow command line arguments to override default paths
         if (args.length >= 1) {
