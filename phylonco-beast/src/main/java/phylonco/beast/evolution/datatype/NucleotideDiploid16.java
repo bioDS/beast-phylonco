@@ -59,6 +59,8 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
                 return 2;
             case "AT":
                 return 3;
+            case "CA":
+                return getIndex("AC");
             case "CC":
                 return 4;
             case "C_":
@@ -69,6 +71,10 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
                 return 5;
             case "CT":
                 return 6;
+            case "GA":
+                return getIndex("AG");
+            case "GC":
+                return getIndex("CG");
             case "GG":
                 return 7;
             case "G_":
@@ -77,6 +83,12 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
                 return getIndex("GG");
             case "GT":
                 return 8;
+            case "TA":
+                return getIndex("AT");
+            case "TC":
+                return getIndex("CT");
+            case "TG":
+                return getIndex("GT");
             case "TT":
                 return 9;
             case "T_":
