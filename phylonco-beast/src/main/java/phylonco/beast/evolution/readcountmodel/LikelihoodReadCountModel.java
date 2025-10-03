@@ -66,8 +66,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private int[][] gt16IndexTable;
     private int[][] gt10IndexTable;
 
-    private String genotype;
-    //private double[] sv;
+    DataType datatype;    //private double[] sv;
 
     @Override
     public List<String> getArguments() {
@@ -125,30 +124,30 @@ public class LikelihoodReadCountModel extends Distribution {
         NucleotideDiploid16 datatype = new NucleotideDiploid16();
         // get genotype indices from data type NucleotideDiploid16
         gt16IndexTable = new int[16][];
-        gt10IndexTable[0] = datatype.getIndices(new String[]{"AA", "A_"});
-        gt10IndexTable[1] = datatype.getIndices(new String[]{"AC", "A_", "C_"});
-        gt10IndexTable[2] = datatype.getIndices(new String[]{"AG", "A_", "G_"});
-        gt10IndexTable[3] = datatype.getIndices(new String[]{"AT", "A_", "T_"});
-        gt10IndexTable[4] = datatype.getIndices(new String[]{"CA", "C_", "A_"});
-        gt10IndexTable[5] = datatype.getIndices(new String[]{"CC", "C_"});
-        gt10IndexTable[6] = datatype.getIndices(new String[]{"CG", "C_", "G_"});
-        gt10IndexTable[7] = datatype.getIndices(new String[]{"CT", "C_", "T_"});
-        gt10IndexTable[8] = datatype.getIndices(new String[]{"GA", "G_", "A_"});
-        gt10IndexTable[9] = datatype.getIndices(new String[]{"GC", "G_", "C_"});
-        gt10IndexTable[10] = datatype.getIndices(new String[]{"GG", "G_"});
-        gt10IndexTable[11] = datatype.getIndices(new String[]{"GT", "G_", "T_"});
-        gt10IndexTable[12] = datatype.getIndices(new String[]{"TA", "T_", "A_"});
-        gt10IndexTable[13] = datatype.getIndices(new String[]{"TC", "T_", "C_"});
-        gt10IndexTable[14] = datatype.getIndices(new String[]{"TG", "T_", "G_"});
-        gt10IndexTable[15] = datatype.getIndices(new String[]{"TT", "T_"});
+        gt16IndexTable[0] = datatype.getIndices(new String[]{"AA", "A_"});
+        gt16IndexTable[1] = datatype.getIndices(new String[]{"AC", "A_", "C_"});
+        gt16IndexTable[2] = datatype.getIndices(new String[]{"AG", "A_", "G_"});
+        gt16IndexTable[3] = datatype.getIndices(new String[]{"AT", "A_", "T_"});
+        gt16IndexTable[4] = datatype.getIndices(new String[]{"CA", "C_", "A_"});
+        gt16IndexTable[5] = datatype.getIndices(new String[]{"CC", "C_"});
+        gt16IndexTable[6] = datatype.getIndices(new String[]{"CG", "C_", "G_"});
+        gt16IndexTable[7] = datatype.getIndices(new String[]{"CT", "C_", "T_"});
+        gt16IndexTable[8] = datatype.getIndices(new String[]{"GA", "G_", "A_"});
+        gt16IndexTable[9] = datatype.getIndices(new String[]{"GC", "G_", "C_"});
+        gt16IndexTable[10] = datatype.getIndices(new String[]{"GG", "G_"});
+        gt16IndexTable[11] = datatype.getIndices(new String[]{"GT", "G_", "T_"});
+        gt16IndexTable[12] = datatype.getIndices(new String[]{"TA", "T_", "A_"});
+        gt16IndexTable[13] = datatype.getIndices(new String[]{"TC", "T_", "C_"});
+        gt16IndexTable[14] = datatype.getIndices(new String[]{"TG", "T_", "G_"});
+        gt16IndexTable[15] = datatype.getIndices(new String[]{"TT", "T_"});
     }
 
 
     @Override
     public void initAndValidate() {
         // fill genotype index table
-        DataType datatype = alignmentInput.get().getDataType();
         // check data type is supported
+        datatype = alignmentInput.get().getDataType();
         if (datatype instanceof NucleotideDiploid10) {
             initGt10IndexTable();
         } else if (datatype instanceof NucleotideDiploid16) {
@@ -164,7 +163,6 @@ public class LikelihoodReadCountModel extends Distribution {
         w1 = w1Input.get();
         w2 = w2Input.get();
         alignment = alignmentInput.get();
-        genotype = alignment.getDataType().getTypeDescription();
         readCount = readCountInput.get();
         negp1 = new double[s.getDimension()];
         negp2 = new double[s.getDimension()];
@@ -436,29 +434,29 @@ public class LikelihoodReadCountModel extends Distribution {
     }
     //get indices from propensities matrix by given genotype
     private int[] getGenotypeIndices(int genotypeState) {
-        if (genotype.equals("nucleotideDiploid16")) {
+        if (datatype instanceof NucleotideDiploid16) {
             return gt16IndexTable[genotypeState];
-        } else if (genotype.equals("nucleotideDiploid10")) {
+        } else if (datatype instanceof NucleotideDiploid10) {
             return gt10IndexTable[genotypeState];
         } else {
-            throw new IllegalArgumentException("Unsupported genotype: " + genotype);
+            throw new IllegalArgumentException("Unsupported genotype: " + datatype.getTypeDescription());
         }
     }
 
     //Determining whether a genotype is homozygous or not
     private boolean homozygous(int genotype){
-        if (this.genotype.equals("nucleotideDiploid16")) {
+        if (datatype instanceof NucleotideDiploid16) {
         return switch (genotype){
             case 0, 5, 10, 15 -> true;
             default -> false;
         };
-        } else if (this.genotype.equals("nucleotideDiploid10")) {
+        } else if (datatype instanceof NucleotideDiploid10) {
             return switch (genotype){
                 case 0, 4, 7, 9 -> true;
                 default -> false;
             };
         }else {
-            throw new IllegalArgumentException("Unsupported genotype: " + this.genotype);
+            throw new IllegalArgumentException("Unsupported genotype: " + datatype.getTypeDescription());
         }
     }
 
