@@ -1,0 +1,18 @@
+data {
+n = 10;
+l = 50;
+A = readNexus(file="data/gt10ReadCountModel_A.nexus"); //beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
+}
+
+model {
+w1 ~ LogNormal(meanlog= 3.96, sdlog= 0.33);
+w2 ~ LogNormal(meanlog= 0.93, sdlog= 1.25);
+epsilon ~ Beta(alpha= 1.5, beta= 1000);
+delta ~ Beta(alpha= 15, beta= 85);
+t ~ LogNormal(meanlog= 1.7, sdlog= 0.05);
+v ~ LogNormal(meanlog= 2.96, sdlog= 0.13);
+s ~ LogNormal(meanlog= 0.2, sdlog= 0.72, replicates=n);
+alpha ~ Ploidy(l= l, n= n, delta= delta);
+cov ~ CoverageModel(alpha= alpha, t= t, v= v, s= s);
+r ~ ReadCountModel(D=A, epsilon=epsilon, alpha=alpha, coverage=cov, w1=w1, w2=w2);
+}
