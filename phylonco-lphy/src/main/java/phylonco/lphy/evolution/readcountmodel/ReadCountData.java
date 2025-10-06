@@ -12,9 +12,10 @@ import java.util.List;
 
 public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFormatted {
 
-    ReadCount[][] readCountDataMatrix; // taxa, position
-    Taxa taxa;
-    int[] sitesIndex;
+    private ReadCount[][] readCountDataMatrix; // taxa, position
+    private Taxa taxa;
+    private int[] sitesIndex;
+    private int[] refIndex;
 
     public ReadCountData(Taxa taxa, ReadCount[][] readCountDataMatrix) {
         this.taxa = taxa;
@@ -29,6 +30,14 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
 
     public void setSitesIndex(int[] sitesIndex) {
         this.sitesIndex = sitesIndex;
+    }
+
+    public void setRefIndex(int[] refIndex) {
+        this.refIndex = refIndex;
+    }
+
+    public int[] getRefIndex() {
+        return refIndex;
     }
 
 
@@ -57,6 +66,15 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
         return TaxaCharacterMatrix.super.getCharacterSequence(taxon);
     }
 
+
+    public ReadCount[] getReadCountsBySite(int siteIndex) {
+        ReadCount[] readCounts = new ReadCount[taxa.ntaxa()];
+        for (int i = 0; i < taxa.ntaxa(); i++) {
+            readCounts[i] = readCountDataMatrix[i][siteIndex];
+        }
+        return readCounts;
+    }
+
     @Override
     public String toJSON() {
         return "";
@@ -65,6 +83,10 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
     @Override
     public Taxa getTaxa() {
         return taxa;
+    }
+
+    public ReadCount[][] getReadCountDataMatrix() {
+        return readCountDataMatrix;
     }
 
     @MethodInfo(description="The number of characters/sites.", narrativeName = "number of characters")
