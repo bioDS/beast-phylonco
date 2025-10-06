@@ -84,7 +84,7 @@ public class GibbsSequenceOperator extends Operator {
             cumulative += probabilities[i];
             if (rand < cumulative) return i;
         }
-        throw new RuntimeException("Should never get here");
+        return sampleFromProbabilities(probabilities);
     }
 
     private double[] normalizeLogProbs(double[] logProbs) {
