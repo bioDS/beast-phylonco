@@ -34,10 +34,12 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
     public ReadTaxaReadCountMatrix(@ParameterInfo(name = ReaderConst.FILE, description = "the name of read count matrix file including path, which contains an alignment.") Value<String> filePath,
                                    @ParameterInfo(name = "ref", description = "the optional param(true or false), whether to read reference nucleotide from .rc file. By default, ref is false", optional = true) Value<Boolean> ref
                                    ) {
-        if (filePath == null) throw new IllegalArgumentException("The file name can't be null!");
+        if (filePath == null) {
+            throw new IllegalArgumentException("The file name can't be null!");
+        }
         setParam(ReaderConst.FILE, filePath);
         if (ref != null) {
-                this.ref =ref;
+                this.ref = ref;
         }
 
     }
@@ -45,13 +47,14 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
             category = GeneratorCategory.TAXA_ALIGNMENT,
             description = "A function that parses an read count matrix from a rc file.")
     public Value<ReadCountData> apply() {
-        ifReadReference = ifReadRef();
+        ifReadReference = useRef();
         String filePath = ((Value<String>) getParams().get(ReaderConst.FILE)).value();
         Path nexPath = UserDir.getUserPath(filePath);
 
         try {
             BufferedReader reader = getReader(nexPath.toString());
             ReadCountData data = getReadCountData(reader);
+            reader.close();
             return new Value<>(null, data, this);
         } catch (IOException e) {
             throw new RuntimeException("Cannot read file: " + filePath, e);
@@ -161,10 +164,12 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
         return reader;
     }
 
-    private boolean ifReadRef(){
+    private boolean useRef(){
         if (ref != null) {
             return ref.value();
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
 }
