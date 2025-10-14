@@ -11,7 +11,8 @@ import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
-import phylonco.lphy.evolution.datatype.PhasedGenotypeState;
+import jebl.evolution.sequences.State;
+import phylonco.lphy.evolution.datatype.UnphasedGenotype;
 
 import java.util.Map;
 // lphy script
@@ -99,8 +100,17 @@ public class ReadCountModel implements GenerativeDistribution<ReadCountData> {
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < l; j++) {
                 int stateIndex = data.value().getState(i, j);
-                PhasedGenotypeState genotypeState = PhasedGenotype.getCanonicalState(stateIndex);
-                String genotype = genotypeState.getFullName();//get genotype
+                State genotypeState;
+                String genotype;
+                String seqTypeName = data.value().getSequenceType().getName();
+                if ("nucleotideDiploid16".equals(seqTypeName)) {
+                    genotypeState = PhasedGenotype.getCanonicalState(stateIndex);
+                } else if ("nucleotideDiploid10".equals(seqTypeName)) {
+                    genotypeState = UnphasedGenotype.getCanonicalState(stateIndex);
+                } else {
+                    throw new IllegalArgumentException("Unsupported genotype type: " + seqTypeName);
+                }
+                genotype = genotypeState.getFullName();
 
                 // map w
                 // if 0/1 or 1/1', use w2

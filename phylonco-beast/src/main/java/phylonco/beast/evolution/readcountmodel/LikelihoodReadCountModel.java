@@ -99,31 +99,10 @@ public class LikelihoodReadCountModel extends Distribution {
         gt10IndexTable[9] = datatype.getIndices(new String[]{"TT", "T_"});
     }
 
-
-    /*
-
-            {0,0},      //AA (AA and A_)
-            {1,0,4},    //AC (AC, A_ and C_)
-            {2,0,7},    //AG (AG, A_ and G_)
-            {3,0,9},    //AT (AT, A_ and T_)
-            {1,4,0},    //CA (CA, A_ and C_)
-            {4,4},      //CC (CC and C_)
-            {5,4,7},    //CG (CG, C_ and G_)
-            {6,4,9},    //CT (CT, C_ and T_)
-            {2,7,0},    //GA (GA, G_ and A_)
-            {5,7,4},    //GC (GC, G_ and C_)
-            {7,7},      //GG (GG and G_)
-            {8,7,9},    //GT (GT, G_ and T_)
-            {3,9,0},    //TA (TA, T_ and A_)
-            {6,9,4},    //TC (TC, T_ and C_)
-            {8,9,7},    //TG (TG, T_ and G_)
-            {9,9},      //TT (TT and T_)
-     */
-
     private void initGt16IndexTable() {
         NucleotideDiploid16 datatype = new NucleotideDiploid16();
         // get genotype indices from data type NucleotideDiploid16
-        gt16IndexTable = new int[16][];
+        gt16IndexTable = new int[22][];
         gt16IndexTable[0] = datatype.getIndices(new String[]{"AA", "A_"});
         gt16IndexTable[1] = datatype.getIndices(new String[]{"AC", "A_", "C_"});
         gt16IndexTable[2] = datatype.getIndices(new String[]{"AG", "A_", "G_"});
@@ -140,6 +119,12 @@ public class LikelihoodReadCountModel extends Distribution {
         gt16IndexTable[13] = datatype.getIndices(new String[]{"TC", "T_", "C_"});
         gt16IndexTable[14] = datatype.getIndices(new String[]{"TG", "T_", "G_"});
         gt16IndexTable[15] = datatype.getIndices(new String[]{"TT", "T_"});
+        gt16IndexTable[16] = datatype.getIndices(new String[]{"AC", "A_", "C_"});  // AC or CA - M
+        gt16IndexTable[17] = datatype.getIndices(new String[]{"AG", "A_", "G_"});  // AG or GA - R
+        gt16IndexTable[18] = datatype.getIndices(new String[]{"AT", "A_", "T_"});  // AT or TA - W
+        gt16IndexTable[19] = datatype.getIndices(new String[]{"CG", "C_", "G_"});  // CG or GC - S
+        gt16IndexTable[20] = datatype.getIndices(new String[]{"CT", "C_", "T_"});  // CT or TC - Y
+        gt16IndexTable[21] = datatype.getIndices(new String[]{"GT", "G_", "T_"});  // GT or TG - K
     }
 
 

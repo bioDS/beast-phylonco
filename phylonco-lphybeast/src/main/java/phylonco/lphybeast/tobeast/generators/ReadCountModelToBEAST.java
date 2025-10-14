@@ -98,13 +98,17 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, L
 
         //context.addSkipOperator(sParam);
         //context.addSkipLoggable(sParam);
+        try {
+            PhyloCTMC lphyTreeLikelihood = (PhyloCTMC) alignmentValue.getGenerator();
+            MATreeLikelihood maTreeLikelihood = (MATreeLikelihood) context.getBEASTObject(lphyTreeLikelihood);
 
-        PhyloCTMC lphyTreeLikelihood = (PhyloCTMC) alignmentValue.getGenerator();
-        MATreeLikelihood maTreeLikelihood = (MATreeLikelihood) context.getBEASTObject(lphyTreeLikelihood);
+            //addGibbsAlignmentOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel);
+            addGibbsSequenceOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel) ;
+            context.addSkipOperator((StateNode) alignmentParam);
+        } catch (ClassCastException e) {
+            System.err.println("Could not cast "+ alignmentValue.getGenerator().getInfo().name() +" to PhyloCTMC");
+        }
 
-        //addGibbsAlignmentOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel);
-        addGibbsSequenceOperator(context, alignmentParam, maTreeLikelihood, likelihoodReadCountModel) ;
-        context.addSkipOperator((StateNode) alignmentParam);
 
         return likelihoodReadCountModel;
     }
