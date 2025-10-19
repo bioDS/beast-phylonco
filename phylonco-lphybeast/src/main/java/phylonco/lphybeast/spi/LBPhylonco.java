@@ -24,10 +24,7 @@ import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotype;
 import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
-import phylonco.lphy.evolution.readcountmodel.CoverageModel;
-import phylonco.lphy.evolution.readcountmodel.Integer2DMatrix;
-import phylonco.lphy.evolution.readcountmodel.PloidyModel;
-import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
+import phylonco.lphy.evolution.readcountmodel.*;
 import phylonco.lphybeast.tobeast.generators.*;
 import phylonco.lphybeast.tobeast.values.*;
 
@@ -87,7 +84,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 CopyNumberBD.class,
                 ReadTaxaReadCountMatrix.class,
                 CopyNumberBD.class,
-                ReadCopyProfile.class
+                ReadCopyProfile.class,
+                ReadCountDataFilter.class
         );
     }
 
