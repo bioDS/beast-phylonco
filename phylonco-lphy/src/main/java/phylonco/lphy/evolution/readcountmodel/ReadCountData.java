@@ -14,8 +14,8 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
 
     private ReadCount[][] readCountDataMatrix; // taxa, position
     private Taxa taxa;
-    private int[] sitesIndex;
-    private int[] refIndex;
+    private int[] sitesIndex;  //Storing the sites of read count data
+    private int[] refIndex;     //Storing the reference nucleotides index(A-0, C-1, G-2, T-3)
 
     public ReadCountData(Taxa taxa, ReadCount[][] readCountDataMatrix) {
         this.taxa = taxa;
@@ -89,7 +89,7 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
         return readCountDataMatrix;
     }
 
-    @MethodInfo(description="The number of characters/sites.", narrativeName = "number of characters")
+    @MethodInfo(description="The number of sites.", narrativeName = "number of sites")
     public Integer nchar() {
         return readCountDataMatrix[0].length;
     }
