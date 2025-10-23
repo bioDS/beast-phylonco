@@ -7,10 +7,7 @@ import phylonco.lphy.evolution.alignment.*;
 import phylonco.lphy.evolution.copynumbermodel.*;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
-import phylonco.lphy.evolution.readcountmodel.CoverageModel;
-import phylonco.lphy.evolution.readcountmodel.PloidyModel;
-import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
-import phylonco.lphy.evolution.readcountmodel.ReadTaxaReadCountMatrix;
+import phylonco.lphy.evolution.readcountmodel.*;
 import phylonco.lphy.evolution.substitutionmodel.GT10;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
 
@@ -56,7 +53,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
 //                CopyNumberBD.class
                 CopyNumberBD.class,
                 ReadCopyProfile.class,
-                ReadTaxaReadCountMatrix.class
+                ReadTaxaReadCountMatrix.class,
+                ReadCountDataFilter.class
         );
     }
 

@@ -128,4 +128,13 @@ public class UnphasedGenotype extends DataType {
     public String toString() {
         return "GT10"; // trimmed in studio if too long
     }
+
+    /**
+     *
+     * @param index index of state
+     * @return canonical state at index
+     */
+    public static UnphasedGenotypeState getCanonicalState(int index) {
+        return CANONICAL_STATES[index];
+    }
 }

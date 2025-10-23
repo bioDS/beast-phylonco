@@ -26,6 +26,14 @@ public class ReadCount {
         }
     }
 
+    public int getDepth() {
+        int depth = 0;
+        for (int i = 0; i < NUM_NUCLEOTIDES; i++) {
+            depth += readCounts[i];
+        }
+        return depth;
+    }
+
     public int getNumStates() {
         return NUM_NUCLEOTIDES;
     }

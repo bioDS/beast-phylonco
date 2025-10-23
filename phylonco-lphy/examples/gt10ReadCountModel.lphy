@@ -1,7 +1,7 @@
 data {
 n = 10;
 l = 50;
-A = readNexus(file="data/gt16ReadCountModel_A.nexus"); //beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
+A = readNexus(file="data/gt10ReadCountModel_A.nexus"); //beast-phylonco/phylonco-lphy/examples/data/gt16ReadCountModel_A.nexus
 }
 
 model {
