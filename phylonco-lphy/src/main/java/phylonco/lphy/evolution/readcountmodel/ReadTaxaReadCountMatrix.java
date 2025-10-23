@@ -28,7 +28,7 @@ import java.util.List;
 public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData> {
 
     private Value<Boolean> ref;
-    private boolean ifReadReference;
+    private boolean useRef;
     private int[] refIndex;
 
     public ReadTaxaReadCountMatrix(@ParameterInfo(name = ReaderConst.FILE, description = "the name of read count matrix file including path, which contains an alignment.") Value<String> filePath,
@@ -47,7 +47,7 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
             category = GeneratorCategory.TAXA_ALIGNMENT,
             description = "A function that parses an read count matrix from a rc file.")
     public Value<ReadCountData> apply() {
-        ifReadReference = useRef();
+        useRef = getRefBoolean();
         String filePath = ((Value<String>) getParams().get(ReaderConst.FILE)).value();
         Path nexPath = UserDir.getUserPath(filePath);
 
@@ -79,7 +79,7 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
         int n;
         int l;
 
-        if (ifReadReference) {
+        if (useRef) {
             n = allLines.size()-1;
             l = allLines.get(0).split("\t").length-1;
             cellNames = new String[n];
@@ -138,7 +138,7 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
             sitesIndex[i] = i;
         }
         ReadCountData readCountData = new ReadCountData(taxa, readCountMatrix, sitesIndex);
-        if (ifReadReference) {
+        if (useRef) {
             readCountData.setRefIndex(refIndex);
         }
         return readCountData;
@@ -164,7 +164,7 @@ public class ReadTaxaReadCountMatrix extends DeterministicFunction<ReadCountData
         return reader;
     }
 
-    private boolean useRef(){
+    private boolean getRefBoolean(){
         if (ref != null) {
             return ref.value();
         } else {
