@@ -1,32 +1,38 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-
+import lphy.base.evolution.CellPosition;
+import lphy.base.evolution.Mpileup;
+import lphy.base.evolution.PileupSite;
 import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import org.apache.commons.math3.special.Gamma;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
-public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
+import static lphy.base.evolution.PileupSite.translateRead;
+
+public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
     private double fw;
     private double fa;
     private  double ww;
     private double wa;
     private double lambda;
     private double threshold;
-    private Value<ReadCountData> readCountData; ;
+    private Value<List<Mpileup>> mpileups; ;
+
     public ReadCountDataFilter(
-            @ParameterInfo(name = "rc", narrativeName = "read count data", description = "read count data which used to filter variable sites.") Value<ReadCountData> readCountData,
+            @ParameterInfo(name = "mpileup", narrativeName = "mpileup input", description = "mpileup input which used to filter candidate sites.") Value<List<Mpileup>> mpileupData,
             @ParameterInfo(name = "fw", narrativeName = "expected frequence of alternative nucleotide", description = "the expected frequence of alternative nucleotide in beta-binomial distribution, by default is 0.001", optional = true) Value<Double> fw,
             @ParameterInfo(name = "ww", narrativeName = "shape parameter of homozygous genotype(wild type)", description = "shape parameter of homozygous genotype in beta-binomial distribution, by default is 1.0", optional = true) Value<Double> ww,
             @ParameterInfo(name = "wa", narrativeName = "shape parameter of heterozygous genotype(mutant type)", description = "shape parameter of heterozygous genotype in beta-binomial distribution, by default is 2.0", optional = true) Value<Double> wa,
             @ParameterInfo(name = "lambda", narrativeName = "prior probability of mutation", description = "prior probability of a mutation occurring at a locus, by default is 0.001", optional = true) Value<Double> lambda,
             @ParameterInfo(name = "threshold", narrativeName = "threshold", description = "threshold for determining candidate status, by default is 0.95", optional = true) Value<Double> threshold) {
-        this.readCountData = readCountData;
+        if (mpileupData == null) {
+            throw new NullPointerException("mpileup data is null");
+        }
+        this.mpileups = mpileupData;
         if (fw != null) {
             this.fw = fw.value();
         } else {
@@ -59,42 +65,78 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
 
         this.fa = 0.5 - this.fw*2/3;
     }
+
+
     @GeneratorInfo(name="readCountDataFilter",
             narrativeName = "read count data filter",
             description = "A filter that identify candidate sites from a read counts dataset.")
-
-
-
     @Override
-    public Value<ReadCountData> apply() {
-        ReadCountData rc = readCountData.value();
-        int[] refIndex = rc.getRefIndex();
+    public Value<CellPosition[]> apply() {
+        List<Mpileup> mpileupData = getMpileups().value();
+
+        Map<Integer, List<ReadCount>> positionToReadCounts = new LinkedHashMap<>();
+        Map<Integer, List<CellPosition>> positionToCellPositions = new LinkedHashMap<>();
+        Map<Integer, Integer> positionToRef = new LinkedHashMap<>();
+
+        for (Mpileup mp : mpileupData) {
+            int pos = mp.getPosition();
+            int ref = mp.getRef();
+            String chromName = mp.getChromName();
+
+            positionToRef.put(pos, ref);
+
+            List<ReadCount> rcList = positionToReadCounts.computeIfAbsent(pos, k -> new ArrayList<>());
+            List<CellPosition> cpList = positionToCellPositions.computeIfAbsent(pos, k -> new ArrayList<>());
+
+            for (Map.Entry<String, PileupSite.CellPileupData> entry : mp.getPileupData().entrySet()) {
+                String cellName = entry.getKey();
+                PileupSite.CellPileupData pileup = entry.getValue();
+
+                ReadCount rc = translateReads(ref, pileup);
+                rcList.add(rc);
+
+                CellPosition cp = new CellPosition(chromName, cellName, pos);
+                cpList.add(cp);
+            }
+        }
+
         List<Integer> siteIndex = new ArrayList<>();
-        for (int i = 0; i < rc.nchar().intValue(); i++) {
-            ReadCount[] readCounts = rc.getReadCountsBySite(i);
-            int ref = refIndex[i];
-            double[] logLikelihoods = logLikelihood(readCounts, ref);
+        for (int pos : positionToReadCounts.keySet()) {
+            List<ReadCount> reads = positionToReadCounts.get(pos);
+            int ref = positionToRef.get(pos);
+            double[] logLikelihoods = logLikelihood(reads, ref);
             double[] logProb = logProb(logLikelihoods);
             double[] prob = normalizeLogProbs(logProb);
             if (prob[0] <= threshold) {
-                siteIndex.add(i);
+                siteIndex.add(pos);
             }
         }
 
-        int[] site = new int[siteIndex.size()];
-        ReadCount[][] readCountDataMatrix = new ReadCount[rc.getTaxa().ntaxa()][siteIndex.size()];
-        for (int i = 0; i < rc.getTaxa().ntaxa(); i++) {
-            for (int j = 0; j < siteIndex.size(); j++) {
-                readCountDataMatrix[i][j] = rc.getReadCountDataMatrix()[i][siteIndex.get(j)];
-            }
-            site[i] = i;
+        List<CellPosition> cellPositions = new ArrayList<>();
+        for (Integer site : siteIndex) {
+            cellPositions.addAll(positionToCellPositions.get(site));
         }
-        ReadCountData filtedRc = new ReadCountData(rc.getTaxa(), readCountDataMatrix, site);
 
-
-        return new Value<>(null, filtedRc, this);
+        return new Value<>("", cellPositions.toArray(new CellPosition[0]), this);
     }
 
+    public Value<List<Mpileup>> getMpileups() {
+        return getParams().get(mpileups);
+    }
+
+
+    private ReadCount translateReads(int ref, PileupSite.CellPileupData data) {
+        String read = translateRead(ref, data.reads());
+
+        String[] parts = read.split(":");
+        int[] counts = new int[4];
+        for (int i = 0; i < counts.length; i++) {
+            counts[i] = Integer.parseInt(parts[i].substring(1));
+        }
+        ReadCount rc = new ReadCount(counts);
+
+        return rc;
+    }
 
     public double logProbOfBetaBinomial(int s, int c, double f, double w) {
         double alpha = f * w;
@@ -121,14 +163,14 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
         return max + Math.log(Math.exp(a - max) + Math.exp(b - max));
     }
 
-    public double[] logLikelihood(ReadCount[] readCounts, int ref) {
-        int m = readCounts.length;
+    public double[] logLikelihood(List<ReadCount> readCounts, int ref) {
+        int m = readCounts.size();
         double[] logLikelihood = new double[m+1];
-        double[] logPwt = new double[readCounts.length];
-        double[] logPa = new double[readCounts.length];
-        for (int i = 0; i < readCounts.length; i++) {
-            int c = readCounts[i].getDepth();
-            int r = readCounts[i].getReadCounts()[ref];
+        double[] logPwt = new double[readCounts.size()];
+        double[] logPa = new double[readCounts.size()];
+        for (int i = 0; i < readCounts.size(); i++) {
+            int c = readCounts.get(i).getDepth();
+            int r = readCounts.get(i).getReadCounts()[ref];
             int s = c-r;
             logPwt[i] = logProbOfBetaBinomial(s, c, fw, ww);
             logPa[i] = logProbOfBetaBinomial(s, c, fa, wa);
