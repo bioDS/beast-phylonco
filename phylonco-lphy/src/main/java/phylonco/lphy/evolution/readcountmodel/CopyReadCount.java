@@ -26,7 +26,8 @@ public class CopyReadCount extends DeterministicFunction<ReadCountData> {
         setParam(readCountName, readCount);
     }
 
-    @GeneratorInfo(name = "copyReadCount", description = "copy given sites from a read count data")
+    @GeneratorInfo(name = "copyReadCount", examples = {"mpileupToReadCount.lphy"},
+            description = "copy given sites from a read count data")
     @Override
     public Value<ReadCountData> apply() {
         // get params from constructor

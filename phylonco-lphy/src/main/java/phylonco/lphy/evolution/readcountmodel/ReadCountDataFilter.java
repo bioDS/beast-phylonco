@@ -20,7 +20,7 @@ public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
     private double wa;
     private double lambda;
     private double threshold;
-    private Value<List<Mpileup>> mpileups; ;
+    private Value<List<Mpileup>> mpileups;
 
     public ReadCountDataFilter(
             @ParameterInfo(name = "mpileup", narrativeName = "mpileup input", description = "mpileup input which used to filter candidate sites.") Value<List<Mpileup>> mpileupData,
@@ -68,7 +68,7 @@ public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
 
 
     @GeneratorInfo(name="readCountDataFilter",
-            narrativeName = "read count data filter",
+            narrativeName = "read count data filter", examples = {"mpileupToReadCount.lphy"},
             description = "A filter that identify candidate sites from a read counts dataset.")
     @Override
     public Value<CellPosition[]> apply() {

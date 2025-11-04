@@ -13,7 +13,8 @@ public class ReadCountToNexus extends DeterministicFunction<ReadCountNexus> {
         setParam("rc", rc);
     }
 
-    @GeneratorInfo(name = "toNexus", description = "covert the read count data to nexus file")
+    @GeneratorInfo(name = "toNexus", examples = {"mpileupToReadCount.lphy"},
+            description = "covert the read count data to nexus file")
     @Override
     public Value<ReadCountNexus> apply() {
         ReadCountData rc = getReadCountData().value();
