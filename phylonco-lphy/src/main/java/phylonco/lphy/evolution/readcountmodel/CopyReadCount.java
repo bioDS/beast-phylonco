@@ -4,11 +4,10 @@ import lphy.base.evolution.CellPosition;
 import lphy.base.evolution.Taxa;
 import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
+import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CopyReadCount extends DeterministicFunction<ReadCountData> {
     public final String sitesName = "sites";
@@ -27,6 +26,7 @@ public class CopyReadCount extends DeterministicFunction<ReadCountData> {
         setParam(readCountName, readCount);
     }
 
+    @GeneratorInfo(name = "copyReadCount", description = "copy given sites from a read count data")
     @Override
     public Value<ReadCountData> apply() {
         // get params from constructor
@@ -49,7 +49,7 @@ public class CopyReadCount extends DeterministicFunction<ReadCountData> {
         }
         Collections.sort(positions);
 
-        if (!taxaNames.equals(readCount.getTaxaNames())) {
+        if (!new HashSet<>(taxaNames).equals(new HashSet<>(Arrays.asList(readCount.getTaxaNames())))) {
             throw new IllegalArgumentException("Taxa names do not match read count data.");
         }
 

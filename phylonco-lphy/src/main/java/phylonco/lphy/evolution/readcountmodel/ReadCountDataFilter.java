@@ -121,7 +121,7 @@ public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
     }
 
     public Value<List<Mpileup>> getMpileups() {
-        return getParams().get(mpileups);
+        return getParams().get("mpileup");
     }
 
 
