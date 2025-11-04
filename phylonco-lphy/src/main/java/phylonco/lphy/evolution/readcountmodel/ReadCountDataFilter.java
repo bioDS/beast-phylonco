@@ -3,6 +3,7 @@ package phylonco.lphy.evolution.readcountmodel;
 import lphy.base.evolution.CellPosition;
 import lphy.base.evolution.Mpileup;
 import lphy.base.evolution.PileupSite;
+import lphy.core.logger.LoggerUtils;
 import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
@@ -115,6 +116,14 @@ public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
         List<CellPosition> cellPositions = new ArrayList<>();
         for (Integer site : siteIndex) {
             cellPositions.addAll(positionToCellPositions.get(site));
+        }
+
+        if (siteIndex.size() == 0) {
+            LoggerUtils.log.info("Extract 0 candidate sites");
+        } else if (siteIndex.size() == 1){
+            LoggerUtils.log.info("Extract " + siteIndex.size() + " candidate sites, the position is " + siteIndex.get(0));
+        } else if (siteIndex.size() > 1) {
+            LoggerUtils.log.info("Extract " + siteIndex.size() + " candidate sites, the positions are " + siteIndex);
         }
 
         return new Value<>("", cellPositions.toArray(new CellPosition[0]), this);
