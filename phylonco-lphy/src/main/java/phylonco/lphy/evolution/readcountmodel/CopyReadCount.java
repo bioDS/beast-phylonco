@@ -54,11 +54,24 @@ public class CopyReadCount extends DeterministicFunction<ReadCountData> {
             throw new IllegalArgumentException("Taxa names do not match read count data.");
         }
 
+        // get column number from pos
+        int[] sites = readCount.getSitesIndex();
+
+        Map<Integer, Integer> siteToCol = new HashMap<>();
+        for (int j = 0; j < sites.length; j++) {
+            siteToCol.put(sites[j], j);
+        }
+
+        int[] columns = new int[positions.size()];
+        for (int i = 0; i < positions.size(); i++) {
+            columns[i] = siteToCol.getOrDefault(positions.get(i), -1);
+        }
+
         // initialise a new read count matrix
         ReadCount[][] matrix = new ReadCount[taxaNames.size()][positions.size()];
         for (int i = 0; i < taxaNames.size(); i++) {
-            for (int j = 0; j < positions.size(); j++) {
-                matrix[i][j] = readCount.getState(taxaNames.get(i), positions.get(j)-1); //change to 0-base index
+            for (int j = 0; j < columns.length; j++) {
+                matrix[i][j] = readCount.getState(taxaNames.get(i), columns[j]-1); //change to 0-base index
             }
         }
 

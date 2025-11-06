@@ -13,6 +13,7 @@ import org.apache.commons.math3.special.Gamma;
 import java.util.*;
 
 import static lphy.base.evolution.PileupSite.translateRead;
+import static phylonco.lphy.evolution.readcountmodel.MpileupToReadCount.translateReads;
 
 public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
     private double fw;
@@ -131,20 +132,6 @@ public class ReadCountDataFilter extends DeterministicFunction<CellPosition[]> {
 
     public Value<List<Mpileup>> getMpileups() {
         return getParams().get("mpileup");
-    }
-
-
-    private ReadCount translateReads(int ref, PileupSite.CellPileupData data) {
-        String read = translateRead(ref, data.reads());
-
-        String[] parts = read.split(":");
-        int[] counts = new int[4];
-        for (int i = 0; i < counts.length; i++) {
-            counts[i] = Integer.parseInt(parts[i].substring(1));
-        }
-        ReadCount rc = new ReadCount(counts);
-
-        return rc;
     }
 
     public double logProbOfBetaBinomial(int s, int c, double f, double w) {

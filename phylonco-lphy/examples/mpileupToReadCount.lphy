@@ -1,7 +1,8 @@
 data {
     mpileup=readMpileup(file="./data/mpileup.mpileup", cellNames="./data/cellName.txt");
     sites = readCountDataFilter(mpileup = mpileup);
-    r = readReadCountNexus(file="./data/example.nexus");
+    // r = readReadCountNexus(file="./data/example.nexus");
+    r = toReadCount(mpileup=mpileup);
     rc = copyReadCount(sites=sites, readCount=r);
     l= rc.nchar();
     n=40;
