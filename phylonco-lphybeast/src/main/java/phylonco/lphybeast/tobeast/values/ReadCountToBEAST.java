@@ -38,10 +38,10 @@ public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount>
             taxaString += taxaNames[i];
             taxaString += " ";
         }
-        int[] sitesIndex = value.value().getSitesIndex();
+        int[] sitesIndex = value.value().getPositions();
         String sitesString = new String();
         for (int i = 0; i < sitesIndex.length; i++) {
-            sitesString += sitesIndex[i];
+            sitesString += sitesIndex[i] - 1; //change to 0-based
             sitesString += " ";
         }
 
