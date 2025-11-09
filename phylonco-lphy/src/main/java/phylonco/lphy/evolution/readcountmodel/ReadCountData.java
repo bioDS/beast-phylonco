@@ -49,6 +49,14 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
         return refIndex;
     }
 
+    public String[] getChromNames() {
+        return chromNames;
+    }
+
+    public void setChromNames(String[] chromNames) {
+        this.chromNames = chromNames;
+    }
+
 
     @Override
     public ReadCount getState(String taxon, int column) {

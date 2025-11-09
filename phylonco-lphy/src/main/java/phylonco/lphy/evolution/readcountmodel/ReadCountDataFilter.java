@@ -67,6 +67,7 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
     @Override
     public Value<ReadCountData> apply() {
         ReadCountData rc = readCountData.value();
+        String[] chromArray = rc.getChromNames();
         int[] refIndex = rc.getRefIndex();
         int[] orginalIndices = rc.getSitesIndex(); // this is the incides from chrom
 
@@ -83,16 +84,21 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
         }
 
         int[] site = new int[siteIndex.size()];
+        int[] ref = new int[siteIndex.size()];
+        String[] chrom = new String[siteIndex.size()];
         ReadCount[][] readCountDataMatrix = new ReadCount[rc.getTaxa().ntaxa()][siteIndex.size()];
         for (int i = 0; i < rc.getTaxa().ntaxa(); i++) {
             for (int j = 0; j < siteIndex.size(); j++) {
                 readCountDataMatrix[i][j] = rc.getReadCountDataMatrix()[i][siteIndex.get(j)];
+                ref[j] = refIndex[siteIndex.get(j)];
+                chrom[j] = chromArray[siteIndex.get(j)];
                 if (j == 0){
                     site[j] = orginalIndices[j];
                 }
             }
         }
-        ReadCountData filtedRc = new ReadCountData(rc.getTaxa(), readCountDataMatrix, site);
+        ReadCountData filtedRc = new ReadCountData(chrom, ref,
+                rc.getTaxa(), readCountDataMatrix, site);
 
         // print out positions information
         List<Integer> positions = new ArrayList<>();
