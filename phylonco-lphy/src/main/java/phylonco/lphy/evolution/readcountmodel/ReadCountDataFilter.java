@@ -92,9 +92,7 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
                 readCountDataMatrix[i][j] = rc.getReadCountDataMatrix()[i][siteIndex.get(j)];
                 ref[j] = refIndex[siteIndex.get(j)];
                 chrom[j] = chromArray[siteIndex.get(j)];
-                if (j == 0){
-                    site[j] = orginalIndices[j];
-                }
+                site[j] = siteIndex.get(j);
             }
         }
         ReadCountData filtedRc = new ReadCountData(chrom, ref,
