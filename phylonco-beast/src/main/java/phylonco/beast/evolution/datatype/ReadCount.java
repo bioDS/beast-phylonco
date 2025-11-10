@@ -13,7 +13,7 @@ public class ReadCount extends BEASTObject {
     int nchar;
     int data[][][];
     String[] taxaNames;
-    String[] positions;
+    String[] sitesIndex;
     Map<String, Integer> taxaNamesMap = new HashMap<>();
     Map<String, Integer> sitesIndexMap = new HashMap<>();
 
@@ -73,9 +73,9 @@ public class ReadCount extends BEASTObject {
 
     public String[] getTaxaNames() {return taxaNames;}
 
-    public String getPosition(int pos) {return positions[pos];}
+    public String getSiteIndex(int site) {return sitesIndex[site];}
 
-    public String[] getPositions() {return positions;}
+    public String[] getSitesIndex() {return sitesIndex;}
 
 
     public String getTypeDescription() {
@@ -169,6 +169,5 @@ public class ReadCount extends BEASTObject {
         }
     }
 }
-
 
 
