@@ -1,6 +1,6 @@
 package phylonco.lphy.evolution.readcountmodel;
 
-
+import lphy.core.logger.LoggerUtils;
 import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
@@ -59,16 +59,18 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
 
         this.fa = 0.5 - this.fw*2/3;
     }
+
+
     @GeneratorInfo(name="readCountDataFilter",
             narrativeName = "read count data filter",
             description = "A filter that identify candidate sites from a read counts dataset.")
-
-
-
     @Override
     public Value<ReadCountData> apply() {
         ReadCountData rc = readCountData.value();
+        String[] chromArray = rc.getChromNames();
         int[] refIndex = rc.getRefIndex();
+        int[] orginalIndices = rc.getSitesIndex(); // this is the incides from chrom
+
         List<Integer> siteIndex = new ArrayList<>();
         for (int i = 0; i < rc.nchar().intValue(); i++) {
             ReadCount[] readCounts = rc.getReadCountsBySite(i);
@@ -82,15 +84,32 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
         }
 
         int[] site = new int[siteIndex.size()];
+        int[] ref = new int[siteIndex.size()];
+        String[] chrom = new String[siteIndex.size()];
         ReadCount[][] readCountDataMatrix = new ReadCount[rc.getTaxa().ntaxa()][siteIndex.size()];
         for (int i = 0; i < rc.getTaxa().ntaxa(); i++) {
             for (int j = 0; j < siteIndex.size(); j++) {
                 readCountDataMatrix[i][j] = rc.getReadCountDataMatrix()[i][siteIndex.get(j)];
+                ref[j] = refIndex[siteIndex.get(j)];
+                chrom[j] = chromArray[siteIndex.get(j)];
+                site[j] = siteIndex.get(j);
             }
-            site[i] = i;
         }
-        ReadCountData filtedRc = new ReadCountData(rc.getTaxa(), readCountDataMatrix, site);
+        ReadCountData filtedRc = new ReadCountData(chrom, ref,
+                rc.getTaxa(), readCountDataMatrix, site);
 
+        // print out positions information
+        List<Integer> positions = new ArrayList<>();
+        for (int i = 0; i < site.length; i++) {
+            positions.add(site[i] + 1);
+        }
+        if (positions.size() == 0) {
+            LoggerUtils.log.info("Extract 0 candidate sites");
+        } else if (positions.size() == 1){
+            LoggerUtils.log.info("Extract " + positions.size() + " candidate sites, the position is " + positions.get(0));
+        } else if (positions.size() > 1) {
+            LoggerUtils.log.info("Extract " + positions.size() + " candidate sites, the positions are " + positions);
+        }
 
         return new Value<>(null, filtedRc, this);
     }

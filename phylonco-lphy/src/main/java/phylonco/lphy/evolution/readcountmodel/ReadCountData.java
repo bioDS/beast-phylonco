@@ -12,6 +12,7 @@ import java.util.List;
 
 public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFormatted {
 
+    private String[] chromNames;
     private ReadCount[][] readCountDataMatrix; // taxa, position
     private Taxa taxa;
     private int[] sitesIndex;  //Storing the sites of read count data
@@ -28,6 +29,14 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
         this.sitesIndex = sitesIndex;
     }
 
+    public ReadCountData(String[] chromNames, int[] refIndex, Taxa taxa, ReadCount[][] readCountDataMatrix, int[] sitesIndex){
+        this.refIndex = refIndex;
+        this.taxa = taxa;
+        this.readCountDataMatrix = readCountDataMatrix;
+        this.sitesIndex = sitesIndex;
+        this.chromNames = chromNames;
+    }
+
     public void setSitesIndex(int[] sitesIndex) {
         this.sitesIndex = sitesIndex;
     }
@@ -38,6 +47,14 @@ public class ReadCountData implements TaxaCharacterMatrix<ReadCount>, TextFileFo
 
     public int[] getRefIndex() {
         return refIndex;
+    }
+
+    public String[] getChromNames() {
+        return chromNames;
+    }
+
+    public void setChromNames(String[] chromNames) {
+        this.chromNames = chromNames;
     }
 
 
