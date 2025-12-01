@@ -13,6 +13,7 @@
         <provider classname="NestedBD.evolution.errormodel.NormalErrorModel"/>
         <provider classname="NestedBD.evolution.errormodel.poissonErrorModel"/>
         <provider classname="NestedBD.evolution.errormodel.readcountErrorModel"/>
+        <provider classname="estedBD.evolution.errormodel.NegativeBinomialErrorModel"/>
         
         <!-- Substitution model -->
         <provider classname="NestedBD.evolution.substitutionmodel.BD"/>
