@@ -36,6 +36,8 @@
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator"/>
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
         <provider classname="NestedBD.evolution.substitutionmodel.BD"/>
+        <provider classname="NestedBD.evolution.errormodel.NegativeBinomialErrorModel"/>
+
     </service>
 
 </package>

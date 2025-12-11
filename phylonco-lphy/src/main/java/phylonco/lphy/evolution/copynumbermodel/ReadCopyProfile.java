@@ -38,7 +38,7 @@ public class ReadCopyProfile extends DeterministicFunction<IntegerCharacterMatri
     }
 
     @GeneratorInfo(name = "readCopyProfile", verbClause = "is read from", narrativeName = "Copy number profile file",
-            category = GeneratorCategory.TAXA_ALIGNMENT,
+            category = GeneratorCategory.TAXA_ALIGNMENT, examples = {"CopyNumber_Yule.lphy"},
             description = "A function that parses copy number profiles from txt files (GINKGO, SCONCE2 formats).")
     public Value<IntegerCharacterMatrix> apply() {
         String filePath = ((Value<String>) getParams().get(ReaderConst.FILE)).value();

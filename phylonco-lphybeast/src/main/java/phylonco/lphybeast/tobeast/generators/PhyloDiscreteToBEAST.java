@@ -3,14 +3,15 @@ package phylonco.lphybeast.tobeast.generators;
 import NestedBD.evolution.likelihood.DiploidOriginLikelihood;
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
+import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
+import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
 import phylonco.lphy.evolution.copynumbermodel.MarkovTraitEvolution;
 import phylonco.lphy.evolution.copynumbermodel.PhyloDiscrete;
-import phylonco.lphybeast.tobeast.values.CopyNumberBDToBEAST;
 
 /**
  * BEAST converter for PhyloDiscrete models.
@@ -27,28 +28,29 @@ public class PhyloDiscreteToBEAST implements GeneratorToBEAST<PhyloDiscrete, Dip
 
     @Override
     public DiploidOriginLikelihood generatorToBEAST(PhyloDiscrete generator, BEASTInterface value, BEASTContext context) {
-        // Create the DiploidOriginLikelihood
-        DiploidOriginLikelihood likelihood = new DiploidOriginLikelihood();
-
-        // Get the beast integer alignment
-        if (value instanceof beast.base.evolution.alignment.Alignment data) {
-            // TODO: check data is type integer alignment
-            likelihood.setInputValue("data", data); // Set alignment data
-        } else {
-            throw new IllegalArgumentException("Require alignment data");
+        // Check type first
+        if (!(value instanceof beast.base.evolution.alignment.Alignment alignment)) {
+            throw new IllegalArgumentException("Expected alignment data but got: " + value.getClass().getName());
         }
+
+        DiploidOriginLikelihood likelihood = new DiploidOriginLikelihood();
+        likelihood.setInputValue("data", alignment);
+
         // Creates tree and clock rate
         constructTreeAndBranchRate(generator, likelihood, context);
 
         // Set origin time
         likelihood.setInputValue("origtime", new RealParameter("0.0"));
 
-        // Use the default nstates
-        int nstates = CopyNumberBDToBEAST.DEFAULT_NSTATES;
-        likelihood.setInputValue("nstates", new RealParameter(String.valueOf(nstates)));
-
-        // Get the model
+        // Get the CopyNumberBD model from the generator
         Value<MarkovTraitEvolution<Integer>> modelValue = generator.getModel();
+        CopyNumberBD copyNumberBD = (CopyNumberBD) modelValue.value();
+
+        // Get nstates (will use default if not provided by user)
+        int nstates = copyNumberBD.getNstate().value();
+        likelihood.setInputValue("nstates", new IntegerParameter(String.valueOf(nstates)));
+
+        // Get the BEAST substitution model
         SubstitutionModel evolutionModel = (SubstitutionModel) context.getBEASTObject(modelValue);
 
         // Create a site model with the substitution model

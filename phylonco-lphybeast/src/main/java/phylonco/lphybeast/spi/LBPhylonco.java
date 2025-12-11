@@ -61,7 +61,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//
                 // copy number model
-                PhyloDiscreteToBEAST.class
+                PhyloDiscreteToBEAST.class,
+                NegativeBinomialErrorModelToBEAST.class
         );
     }
 

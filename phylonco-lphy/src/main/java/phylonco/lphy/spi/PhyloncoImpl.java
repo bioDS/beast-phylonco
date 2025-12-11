@@ -40,7 +40,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 PloidyModel.class,
                 CoverageModel.class,
                 // copy number model
-                PhyloDiscrete.class
+                PhyloDiscrete.class,
+                NegativeBinomialErrorModel.class
         );
                   }
 

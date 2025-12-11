@@ -17,13 +17,13 @@ import java.util.TreeMap;
 
 /**
  * Generative distribution for discrete trait evolution along phylogenetic trees.
- * <p>
- * Models the evolution of integer-valued traits (e.g., copy numbers)
- * using continuous-time Markov processes with discrete state spaces.
- * <p>
- * Unlike PhyloCTMC which uses substitution rate matrices (Q matrices) for
- * molecular evolution, this model uses specialized birth-death processes
- * that directly model trait gain/loss events.
+ *
+ * <p>Models the evolution of integer-valued traits (e.g., copy numbers)
+ * using continuous-time Markov processes with discrete state spaces.</p>
+ *
+ * <p>Unlike PhyloCTMC which uses instantaneous rate matrices (Q) for molecular
+ * evolution, PhyloDiscrete uses trait evolution models such as {@link CopyNumberBD}
+ * that directly simulate integer state changes over time.</p>
  */
 public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMatrix>, PhyloLikelihood {
 
@@ -33,7 +33,6 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
     public static final String lengthParam = "L";
     public static final String muParam = "mu";
     public static final String branchRatesParam = "branchRates";
-    public static final String realDataParam = "realData";
     private Value<MarkovTraitEvolution<Integer>> model;
     private Value<TimeTree> tree;
     private Value<Integer> L;
@@ -49,19 +48,15 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
             @ParameterInfo(name = muParam, narrativeName = "molecular clock rate", description = "the clock rate. Default value is 1.0.", optional = true)
             Value<Number> mu,
             @ParameterInfo(name = branchRatesParam, description = "a rate for each branch in the tree. Branch rates are assumed to be 1.0 otherwise.", optional = true)
-            Value<Double[]> branchRates,
-            @ParameterInfo(name = realDataParam, description = "Real CNV data matrix to use instead of simulation", optional = true) Value<IntegerCharacterMatrix> realData){
+            Value<Double[]> branchRates)
+    {
 
         super();
-        // Validation: either realData OR (evolutionModel + L) must be provided
-        if (realData == null && (evolutionModel == null || L == null)) {
-            throw new IllegalArgumentException("Either realData must be provided, or both evolutionModel and L must be provided for simulation");
-        }
+
         this.model = evolutionModel;
         this.tree = tree;
         this.L = L;
         this.clockRate = mu;
-        this.realData = realData;
 
         Double[] treeBranchRates = tree.value().getBranchRates();
 
@@ -74,12 +69,8 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
             }
         }
         this.branchRates = branchRates;
-
-        // Initialize data structure for simulation only
-        if (realData == null) {
-            int numNodes = tree.value().nodeCount();
-            this.data = new int[numNodes][L.value()];
-        }
+        int numNodes = tree.value().nodeCount();
+        this.data = new int[numNodes][L.value()];
     }
 
     // Initializes the root state.
@@ -109,7 +100,7 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
         for (int i = 0; i < L.value(); i++) {
             int parentState = data[parentIndex][i];
             int childState = model.value().evolveTraitOverTime(parentState, evolutionaryBranchLength);
-//            System.out.println("Bin " + i + ": Evolving from parent state " + parentState); //debug
+            //System.out.println("Bin " + i + ": Evolving from parent state " + parentState); //debug
 
             // Store result
             data[childIndex][i] = childState;
@@ -149,10 +140,6 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
 
     @Override
     public RandomVariable<IntegerCharacterMatrix> sample() {
-        // If real data is provided, use it directly
-        if (realData != null) {
-            return new RandomVariable<>("cnvMatrix", realData.value(), this);
-        }
 
         // Otherwise, Get simulated taxa from the tree
         Taxa taxa = tree.value().getTaxa();
@@ -176,7 +163,6 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
         map.put(lengthParam, L);
         if (clockRate != null) map.put(muParam, clockRate);
         if (branchRates != null) map.put(branchRatesParam, branchRates);
-        if (realData != null) map.put(realDataParam, realData);
         return map;
     }
 
@@ -192,8 +178,6 @@ public class PhyloDiscrete implements GenerativeDistribution<IntegerCharacterMat
             clockRate = value;
         } else if (paramName.equals(branchRatesParam)) {
             branchRates = value;
-        } else if (paramName.equals(realDataParam)) {
-            realData = value;
         } else {
             throw new RuntimeException("Unrecognised parameter name: " + paramName);
         }
