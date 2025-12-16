@@ -11,9 +11,14 @@ If you have any questions, please use the `beast-users` google group https://gro
 
 This package requires Java 17 and at least [BEAST v2.7](https://github.com/CompEvol/beast2)
 
-For version requirements and lphy / lphybeast setup instructions see the [latest release notes](https://github.com/bioDS/beast-phylonco/releases/latest)
+For dependencies and lphy / lphybeast setup instructions see the [latest release notes](https://github.com/bioDS/beast-phylonco/releases/latest)
 
 ## Features
+Phylonco versions v1.0.0 and above are able to use Beagle when calculating the tree likelihood with error models. 
+
+**Beagle usage**: See instructions in [#running-beast-on-command-line](https://github.com/bioDS/beast-phylonco?tab=readme-ov-file#running-beast-on-command-line) below. 
+
+* Using Beagle with GPU's can significantly improve computational speed by up to 10x compared to the standard Java version. This is important for larger datasets and models with larger matrices (e.g., GT16/GT10 models).  
 
 The current release has the following features.
 
