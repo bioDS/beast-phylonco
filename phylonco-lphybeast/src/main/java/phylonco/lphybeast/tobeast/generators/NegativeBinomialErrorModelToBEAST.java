@@ -119,7 +119,7 @@ public class NegativeBinomialErrorModelToBEAST
         likelihoodWithError.setInputValue("origtime", new RealParameter("0.0"));
 
         // Set nstate
-        likelihoodWithError.setInputValue("nstates", new IntegerParameter(String.valueOf(nstate)));
+        likelihoodWithError.setInputValue("nstates", new RealParameter(String.valueOf(nstate)));
 
         // Get the BD model and create site model
         Value<MarkovTraitEvolution<Integer>> modelValue = phyloDiscrete.getModel();
