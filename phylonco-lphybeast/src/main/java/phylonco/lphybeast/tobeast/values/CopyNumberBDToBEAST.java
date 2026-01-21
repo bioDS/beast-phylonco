@@ -19,7 +19,7 @@ public class CopyNumberBDToBEAST implements ValueToBEAST<CopyNumberBD, BD> {
 
         // Get nstates
         int nstates = copyNumberBD.getNstate().value();
-        RealParameter nstateParam = new RealParameter(String.valueOf(nstates));
+        IntegerParameter nstateParam = new IntegerParameter(String.valueOf(nstates));
 
         // Get bdRate from the LPhy model
         double bdRate = copyNumberBD.getBdRate().value();
