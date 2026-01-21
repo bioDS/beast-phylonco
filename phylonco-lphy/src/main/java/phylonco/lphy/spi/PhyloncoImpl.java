@@ -41,7 +41,8 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 CoverageModel.class,
                 // copy number model
                 PhyloDiscrete.class,
-                NegativeBinomialErrorModel.class
+                NegativeBinomialErrorModel.class,
+                DiscreteGaussianErrorModel.class
         );
                   }
 
