@@ -3,11 +3,13 @@ package phylonco.lphy.evolution.readcountmodel;
 import lphy.base.evolution.Mpileup;
 import lphy.base.evolution.PileupSite;
 import lphy.base.evolution.Taxa;
+import lphy.base.evolution.Taxon;
 import lphy.core.model.DeterministicFunction;
 import lphy.core.model.Value;
 import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 import static lphy.base.evolution.PileupSite.translateRead;
@@ -17,13 +19,13 @@ public class MpileupToReadCount extends DeterministicFunction<ReadCountData> {
     public MpileupToReadCount(
             @ParameterInfo(
                     name = "mpileup",
-                    description = "the mpileup converts to read count data, supports multiple chromosomes"
+                    description = "the mpileup data converts to read count data, supports multiple chromosomes"
             )
-            Value<List<Mpileup>> mpileups) {
-        if (mpileups == null) {
+            Value<Mpileup> mpileup) {
+        if (mpileup == null) {
             throw new IllegalArgumentException("Mpileups cannot be null");
         }
-        setParam("mpileup", mpileups);
+        setParam("mpileup", mpileup);
     }
 
     @GeneratorInfo(
@@ -34,96 +36,47 @@ public class MpileupToReadCount extends DeterministicFunction<ReadCountData> {
     @Override
     public Value<ReadCountData> apply() {
         // get param
-        List<Mpileup> mpileups = getMpileups().value();
-
-       // group mpileups by chom name
-        Map<String, List<Mpileup>> chromToMpileups = new LinkedHashMap<>();
-        for (Mpileup mp : mpileups) {
-            chromToMpileups.computeIfAbsent(mp.getChromName(), k -> new ArrayList<>()).add(mp);
-        }
+        Mpileup mpileup = getMpileups().value();
 
        // get all taxa names
         Set<String> taxaNamesSet = new LinkedHashSet<>();
-        for (Mpileup mp : mpileups) {
-            taxaNamesSet.addAll(mp.getPileupData().keySet());
+        taxaNamesSet.addAll(mpileup.getPileupData().get(0).keySet());
+        String[] taxaNames = taxaNamesSet.toArray(new String[0]);
+
+        //generate Taxa
+        Taxon[] taxonArray = new Taxon[Array.getLength(taxaNames)];
+        for (int i = 0; i < taxonArray.length; i++) {
+            String name = Array.get(taxaNames, i).toString();
+            String species = null;
+            double age = 0.0;
+            taxonArray[i] = new Taxon(name, species, age);
         }
 
-        List<String> taxaNames = new ArrayList<>(taxaNamesSet);
-        Collections.sort(taxaNames);
+        Taxa taxa = new Taxa.Simple(taxonArray);
+        ReadCount[][] readCountMatrix = new ReadCount[taxaNames.length][mpileup.getPileupData().size()];
 
-        List<Integer> allPositions = new ArrayList<>();
-        List<String> allChroms = new ArrayList<>();
-        List<Integer> allRefs = new ArrayList<>();
-        Map<Integer, Map<String, ReadCount>> posToCellReads = new LinkedHashMap<>();
+        String[] chroms = mpileup.getChromNames();
+        int[] positions = mpileup.getPositions();
+        int[] refs = mpileup.getRefs();
 
-        for (String chrom : chromToMpileups.keySet()) {
-            List<Mpileup> chromMpileups = chromToMpileups.get(chrom);
-
-            for (Mpileup mp : chromMpileups) {
-                int pos = mp.getPosition();
-                int ref = mp.getRef();
-                allPositions.add(pos);
-                allChroms.add(chrom);
-                allRefs.add(ref);
-
-                Map<String, ReadCount> cellMap = new LinkedHashMap<>();
-                for (Map.Entry<String, PileupSite.CellPileupData> entry : mp.getPileupData().entrySet()) {
-                    String cell = entry.getKey();
-                    PileupSite.CellPileupData data = entry.getValue();
-                    ReadCount rc = translateReads(ref, data);
-                    cellMap.put(cell, rc);
-                }
-                posToCellReads.put(pos, cellMap);
+        for (int i = 0; i < mpileup.getPileupData().size(); i++) {
+            Map<String, PileupSite.CellPileupData> currentMap = mpileup.getPileupData().get(i);
+            for (int j = 0; j < taxaNames.length; j++) {
+                String taxon = taxaNames[j];
+                PileupSite.CellPileupData cellData = currentMap.get(taxon);
+                readCountMatrix[j][i] = translateReads(refs[i], cellData);
             }
         }
-        // sort it by chrom and then pos
-        List<Integer> sortedIndices = new ArrayList<>();
-        for (int i = 0; i < allPositions.size(); i++) sortedIndices.add(i);
-        sortedIndices.sort(Comparator
-                .comparing((Integer i) -> allChroms.get(i))
-                .thenComparing(i -> allPositions.get(i)));
-
-        List<Integer> positions = new ArrayList<>();
-        List<String> chromArrayList = new ArrayList<>();
-        List<Integer> refArrayList = new ArrayList<>();
-        for (int i : sortedIndices) {
-            positions.add(allPositions.get(i));
-            chromArrayList.add(allChroms.get(i));
-            refArrayList.add(allRefs.get(i));
-        }
-
-        int nSites = positions.size();
-        int nTaxa = taxaNames.size();
-
-        ReadCount[][] matrix = new ReadCount[nTaxa][nSites];
-        for (int j = 0; j < nTaxa; j++) {
-            String cell = taxaNames.get(j);
-            for (int i = 0; i < nSites; i++) {
-                int pos = positions.get(i);
-                Map<String, ReadCount> siteMap = posToCellReads.get(pos);
-                ReadCount rc = (siteMap != null) ? siteMap.get(cell) : null;
-                if (rc == null) rc = new ReadCount(new int[]{0, 0, 0, 0});
-                matrix[j][i] = rc;
-            }
-        }
-
-        int[] siteIndex = new int[nSites];
-        for (int i = 0; i < nSites; i++) {
-            siteIndex[i] = positions.get(i) - 1; // change to 0-based
-        }
-        String[] chromArray = chromArrayList.toArray(new String[0]);
-        int[] refArray = refArrayList.stream().mapToInt(Integer::intValue).toArray();
-
         ReadCountData readCountData = new ReadCountData(
-                chromArray, refArray,
-                Taxa.createTaxa(taxaNames.toArray(new String[0])),
-                matrix, siteIndex
+                chroms, refs,
+                taxa,
+                readCountMatrix, positions
         );
 
         return new Value<>("", readCountData, this);
     }
 
-    public Value<List<Mpileup>> getMpileups() {
+    public Value<Mpileup> getMpileups() {
         return getParams().get("mpileup");
     }
 

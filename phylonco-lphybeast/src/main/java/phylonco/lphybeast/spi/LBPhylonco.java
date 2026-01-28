@@ -87,14 +87,17 @@ public class LBPhylonco implements LPhyBEASTExt {
                 ReadTaxaReadCountMatrix.class,
                 CopyNumberBD.class,
                 ReadCopyProfile.class,
-                ReadCountDataFilter.class
+                ReadCountDataFilter.class,
+                MpileupToReadCount.class,
+                ReadCountToNexus.class
         );
     }
 
     @Override
     public List<Class> getExcludedValueType() {
         return Arrays.asList(TimeTreeNode.class,
-                Integer2DMatrix.class
+                Integer2DMatrix.class,
+                ReadCountNexus.class
         );
     }
 

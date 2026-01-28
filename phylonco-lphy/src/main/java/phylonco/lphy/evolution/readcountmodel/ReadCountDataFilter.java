@@ -152,23 +152,31 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
             logPwt[i] = logProbOfBetaBinomial(s, c, fw, ww);
             logPa[i] = logProbOfBetaBinomial(s, c, fa, wa);
         }
-        for (int k = 0; k <= m; k++) {
-            double logP1 = -logCombinatorialNumber(m, k);
-            double[][] dp = new double[m + 1][k + 1];
-            for (int i = 0; i <= m; i++) {
-                Arrays.fill(dp[i], Double.NEGATIVE_INFINITY);
-            }
-            dp[0][0] = 0.0;
-            for (int i = 1; i <= m; i++) {
-                for (int j = 0; j <= Math.min(i, k); j++) {
-                    double logWild = dp[i - 1][j] + logPwt[i - 1];
-                    double logMutant = (j > 0) ? dp[i - 1][j - 1] + logPa[i - 1] : Double.NEGATIVE_INFINITY;
-                    dp[i][j] = logSumExp(logWild, logMutant);
+
+        double[] prev = new double[m + 1];
+        double[] curr = new double[m + 1];
+        Arrays.fill(prev, Double.NEGATIVE_INFINITY);
+        prev[0] = 0.0;
+        for (int i = 1; i <= m; i++) {
+            Arrays.fill(curr, Double.NEGATIVE_INFINITY);
+            for (int j = 0; j <= i; j++) {
+                if (j <= i - 1) {
+                    double logWild = prev[j] + logPwt[i - 1];
+                    curr[j] = logSumExp(curr[j], logWild);
+                }
+                if (j > 0) {
+                    double logMutant = prev[j - 1] + logPa[i - 1];
+                    curr[j] = logSumExp(curr[j], logMutant);
                 }
             }
-            logLikelihood[k] = logP1 + dp[m][k];
+            double[] temp = prev;
+            prev = curr;
+            curr = temp;
         }
-
+        for (int k = 0; k <= m; k++) {
+            double logBinomial = logCombinatorialNumber(m, k);
+            logLikelihood[k] = prev[k] - logBinomial;
+        }
         return logLikelihood;
     }
 
