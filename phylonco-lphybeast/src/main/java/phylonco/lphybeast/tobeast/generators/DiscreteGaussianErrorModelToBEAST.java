@@ -109,7 +109,7 @@ public class DiscreteGaussianErrorModelToBEAST
         beastErrorModel.setInputValue("sigma", sigmaParam);
 
         // Set nstate (number of copy number states)
-        beastErrorModel.setInputValue("nstate", new RealParameter(String.valueOf(nstate)));
+        beastErrorModel.setInputValue("nstate", new IntegerParameter(String.valueOf(nstate)));
 
         // Initialize the error model (builds error matrix)
         beastErrorModel.initAndValidate();
