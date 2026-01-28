@@ -35,7 +35,6 @@
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsSequenceOperator"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator"/>
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
-        <provider classname="NestedBD.evolution.substitutionmodel.BD"/>
     </service>
 
 </package>
