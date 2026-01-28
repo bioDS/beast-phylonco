@@ -5,7 +5,7 @@ import beast.base.evolution.alignment.Sequence;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
-import phylonco.lphy.evolution.copynumbermodel.IntegerCharacterMatrix;
+import phylonco.lphy.evolution.copynumbermodel.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,11 +20,25 @@ public class IntegerCharacterMatrixToBEAST implements ValueToBEAST<IntegerCharac
         Alignment alignment = new Alignment();
         // Initialize a list to store the sequence data for each taxon
         List<Sequence> sequences = new ArrayList<>();
+
+        // Calculate maximum copy number
+        int maxCopyNumber = 0;
+        for (int i = 0; i < matrix.getTaxa().ntaxa(); i++) {
+            String taxonName = String.valueOf(matrix.getTaxa().getTaxaNames()[i]);
+            for (int j = 0; j < matrix.nchar(); j++) {
+                int state = matrix.getState(taxonName, j);
+                if (state > maxCopyNumber) {
+                    maxCopyNumber = state;
+                }
+            }
+        }
+        int totalCount = maxCopyNumber + 1;
+
         // Iterate through each taxon in the matrix
         for (int i = 0; i < matrix.getTaxa().ntaxa(); i++) {
             String taxonName = String.valueOf(matrix.getTaxa().getTaxaNames()[i]);
             context.addTaxon(taxonName);
-            // Create a string builder for the sequence data
+
             StringBuilder sequenceData = new StringBuilder();
             for (int j = 0; j < matrix.nchar(); j++) {
                 // Add comma between values (but not before the first value)
@@ -39,6 +53,7 @@ public class IntegerCharacterMatrixToBEAST implements ValueToBEAST<IntegerCharac
             Sequence sequence = new Sequence();
             sequence.setInputValue("taxon", taxonName);
             sequence.setInputValue("value", sequenceData.toString());
+            sequence.setInputValue("totalcount", totalCount);
             sequence.initAndValidate();
             // Add the sequence to 'sequence' list
             sequences.add(sequence);
@@ -47,11 +62,6 @@ public class IntegerCharacterMatrixToBEAST implements ValueToBEAST<IntegerCharac
         alignment.setInputValue("sequence", sequences);
         // Set the data type to integer
         alignment.setInputValue("dataType", "integer");
-
-// Sets the same ID on the output BEAST Alignment object if input value has an ID
-//        if (!value.isAnonymous()) {
-//            alignment.setID(value.getCanonicalId());
-//        }
 
         // Initialize the alignment
         alignment.initAndValidate();

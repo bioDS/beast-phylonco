@@ -5,6 +5,14 @@ import lphy.base.evolution.alignment.TaxaCharacterMatrix;
 import lphy.core.model.annotation.GeneratorCategory;
 import lphy.core.model.annotation.MethodInfo;
 
+/**
+ * A character matrix for integer-valued traits across taxa.
+ *
+ * <p>Stores discrete integer states for multiple taxa across multiple sites or bins.</p>
+ *
+ * <p>This is analogous to {@link lphy.base.evolution.alignment.Alignment} for
+ * molecular sequences, but designed for integer-valued data.</p>
+ */
 public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
 
     private int ntaxa;
@@ -23,8 +31,7 @@ public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
     }
 
     @MethodInfo(description = "the taxa of the copy number matrix.", narrativeName = "list of taxa",
-            category = GeneratorCategory.TAXA_ALIGNMENT,
-            examples = {"copynumber.lphy"}) //needs to check
+            category = GeneratorCategory.TAXA_ALIGNMENT)
     public Taxa taxa() {
         return getTaxa();
     }
@@ -73,18 +80,18 @@ public class IntegerCharacterMatrix implements TaxaCharacterMatrix<Integer> {
         return 2;
     }
 
-@Override
-public String toString() {
-    StringBuilder res = new StringBuilder();
-    for (int i = 0; i < ntaxa; i++) {
-        for (int j = 0; j < nBins; j++) {
-            res.append(data[i][j]);
-            // Add separator between values
-            if (j < nBins-1) res.append(" ");
+    @Override
+    public String toString() {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < ntaxa; i++) {
+            for (int j = 0; j < nBins; j++) {
+                res.append(data[i][j]);
+                // Add separator between values
+                if (j < nBins - 1) res.append(" ");
+            }
+            // Add newline between taxa
+            res.append("\n");
         }
-        // Add newline between taxa
-        res.append("\n");
+        return res.toString();
     }
-    return res.toString();
-}
 }

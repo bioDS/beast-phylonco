@@ -1,0 +1,16 @@
+//data
+  D = readCopyProfile(file = "examples/data/copyNumberSim_ginkgo.txt");
+  nsites = nchar(D);
+  taxa_list = D.taxa();
+
+//tree prior (Yule)
+λ ~ LogNormal(meanlog=1.0, sdlog=1.5);
+ψ ~ Yule(lambda=λ, taxa = taxa_list);
+
+// Relaxed clock
+clockSD ~ LogNormal(meanlog=-1.5, sdlog=0.75);
+branchRates ~ LogNormal(meanlog=0.0, sdlog=clockSD, replicates=ψ.branchCount());
+
+//model
+cnvModel = CopyNumberBD(lambda=1.0, mu=1.0, rootState=2);
+D ~ PhyloDiscrete(evolutionModel=cnvModel, tree=ψ, L=nsites, branchRates=branchRates);
