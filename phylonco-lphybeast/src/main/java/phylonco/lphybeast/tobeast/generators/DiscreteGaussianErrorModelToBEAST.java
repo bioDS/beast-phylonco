@@ -5,6 +5,7 @@ import NestedBD.evolution.substitutionmodel.BD;
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.inference.operator.kernel.BactrianRandomWalkOperator;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
 import lphy.core.model.GraphicalModelNode;
@@ -107,6 +108,7 @@ public class DiscreteGaussianErrorModelToBEAST
         // Convert sigma parameter from LPhy to BEAST
         RealParameter sigmaParam = context.getAsRealParameter(generator.getSigma());
         beastErrorModel.setInputValue("sigma", sigmaParam);
+        modifyScaleFactor (sigmaParam, context);
 
         // Set nstate (number of copy number states)
         beastErrorModel.setInputValue("nstate", new IntegerParameter(String.valueOf(nstate)));
@@ -115,6 +117,19 @@ public class DiscreteGaussianErrorModelToBEAST
         beastErrorModel.initAndValidate();
 
         return beastErrorModel;
+    }
+
+    private void modifyScaleFactor (RealParameter parameter, BEASTContext context) {
+        BactrianRandomWalkOperator operator = new BactrianRandomWalkOperator();
+        operator.setInputValue("parameter", parameter);
+        operator.setInputValue("weight", context.getOperatorWeight(parameter.getDimension() - 1));
+        operator.setInputValue("scaleFactor",0.3);
+        operator.initAndValidate();
+        operator.setID(parameter.getID() + ".deltaExchange");
+        // add operator
+        context.addExtraOperator(operator);
+        // skip default operator schedule
+        context.addSkipOperator(parameter);
     }
 
     /**
