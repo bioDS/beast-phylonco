@@ -24,7 +24,7 @@ import java.util.Arrays;
  * then samples from root down using the computed partials.
  * Internal nodes are sampled transiently to condition the leaf sampling properly.
  *
- * <p>Example XML usage:</p>
+ * <p>Example XML usage (sample one random site per proposal):</p>
  * <pre>
  * &lt;operator id="GibbsSiteOperator" spec="phylonco.beast.evolution.readcountmodel.GibbsSiteOperator"
  *           weight="1.0"
@@ -32,8 +32,19 @@ import java.util.Arrays;
  *           tree="@psi"
  *           siteModel="@siteModel"
  *           readCountModel="@readCountLikelihood"
- *           readCount="@readCounts"
- *           branchRateModel="@clock"/&gt;
+ *           readCount="@readCounts"/&gt;
+ * </pre>
+ *
+ * <p>Example XML usage (sample all sites per proposal):</p>
+ * <pre>
+ * &lt;operator id="GibbsAlignmentSiteOperator" spec="phylonco.beast.evolution.readcountmodel.GibbsSiteOperator"
+ *           weight="1.0"
+ *           sampleAllSites="true"
+ *           mutableAlignment="@A"
+ *           tree="@psi"
+ *           siteModel="@siteModel"
+ *           readCountModel="@readCountLikelihood"
+ *           readCount="@readCounts"/&gt;
  * </pre>
  *
  * <p>Where:</p>
@@ -43,6 +54,7 @@ import java.util.Arrays;
  *   <li>siteModel: reference to the SiteModel (contains substitution model)</li>
  *   <li>readCountModel: reference to LikelihoodReadCountModel</li>
  *   <li>readCount: reference to ReadCount data</li>
+ *   <li>sampleAllSites: (optional) if true, sample all sites per proposal; default false</li>
  *   <li>branchRateModel: (optional) reference to BranchRateModel for relaxed clocks</li>
  * </ul>
  */
@@ -80,6 +92,11 @@ public class GibbsSiteOperator extends Operator {
             "read count data",
             Input.Validate.REQUIRED);
 
+    public Input<Boolean> sampleAllSitesInput = new Input<>(
+            "sampleAllSites",
+            "if true, sample all sites in one proposal; if false (default), sample one random site",
+            false);
+
     // Cached references
     private MutableAlignment alignment;
     private Tree tree;
@@ -88,6 +105,7 @@ public class GibbsSiteOperator extends Operator {
     private BranchRateModel.Base branchRateModel;
     private LikelihoodReadCountModel readCountModel;
     private ReadCount readCount;
+    private boolean sampleAllSites;
 
     // Dimensions
     private int numNodes;
@@ -116,6 +134,7 @@ public class GibbsSiteOperator extends Operator {
         branchRateModel = branchRateModelInput.get();
         readCountModel = readCountModelInput.get();
         readCount = readCountInput.get();
+        sampleAllSites = sampleAllSitesInput.get();
 
         numStates = alignment.getDataType().getStateCount();
         numSites = alignment.getSiteCount();
@@ -152,23 +171,36 @@ public class GibbsSiteOperator extends Operator {
 
     @Override
     public double proposal() {
-        // 1. Pick a random site
-        int siteIndex = Randomizer.nextInt(numSites);
-
-        // 2. Compute partials bottom-up (post-order traversal)
-        computePartials(tree.getRoot(), siteIndex);
-
-        // 3. Sample root state
-        sampleRootState();
-
-        // 4. Sample all descendant states (pre-order traversal)
-        sampleDescendantStates(tree.getRoot());
-
-        // 5. Update leaf states in alignment
-        updateLeafStates(siteIndex);
+        if (sampleAllSites) {
+            // Sample all sites
+            for (int siteIndex = 0; siteIndex < numSites; siteIndex++) {
+                sampleSite(siteIndex);
+            }
+        } else {
+            // Sample one random site
+            int siteIndex = Randomizer.nextInt(numSites);
+            sampleSite(siteIndex);
+        }
 
         // Gibbs operator: always accept
         return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Sample all leaf genotypes at a single site.
+     */
+    private void sampleSite(int siteIndex) {
+        // 1. Compute partials bottom-up (post-order traversal)
+        computePartials(tree.getRoot(), siteIndex);
+
+        // 2. Sample root state
+        sampleRootState();
+
+        // 3. Sample all descendant states (pre-order traversal)
+        sampleDescendantStates(tree.getRoot());
+
+        // 4. Update leaf states in alignment
+        updateLeafStates(siteIndex);
     }
 
     /**
