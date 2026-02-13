@@ -50,7 +50,7 @@ public class NegativeBinomialErrorModelToBEAST
         RealParameter varianceParam = context.getAsRealParameter(generator.getDispersion());
         beastErrorModel.setInputValue("dispersion", varianceParam);
 
-        beastErrorModel.setInputValue("nstate", new RealParameter(String.valueOf(nstate)));
+        beastErrorModel.setInputValue("nstate", new IntegerParameter(String.valueOf(nstate)));
         beastErrorModel.initAndValidate();
 
         // Step 6: Create DiploidOriginLikelihoodWithError
@@ -119,7 +119,7 @@ public class NegativeBinomialErrorModelToBEAST
         likelihoodWithError.setInputValue("origtime", new RealParameter("0.0"));
 
         // Set nstate
-        likelihoodWithError.setInputValue("nstates", new RealParameter(String.valueOf(nstate)));
+        likelihoodWithError.setInputValue("nstates", new IntegerParameter(String.valueOf(nstate)));
 
         // Get the BD model and create site model
         Value<MarkovTraitEvolution<Integer>> modelValue = phyloDiscrete.getModel();
