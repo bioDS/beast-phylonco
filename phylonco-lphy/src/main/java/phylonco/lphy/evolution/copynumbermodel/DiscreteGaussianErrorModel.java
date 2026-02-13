@@ -12,18 +12,18 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Discrete Gaussian error model for copy number data.
+ * Truncated discrete Gaussian error model for copy number data.
  *
- * <p> This model assumes:
+ * <p>Model assumptions:
  * <ul>
- *     <li> If the true copy number is 0, the observed copy number is deterministically 0. </li>
- *     <li> If the true copy number is μ > 0, the observed copy number X follows a discrete Gaussian: </li>
- *          P(X = x | μ, σ) = exp(-(x-μ)²/(2σ²)) / Z(μ, σ)
- *     <li> where Z(μ, σ) is the normalization constant summed over all possible states </li>
+ *     <li>If true CN = 0, observed CN is deterministically 0</li>
+ *     <li>If true CN = μ > 0, observed CN X follows a truncated discrete Gaussian
+ *         over [0, nstate-1]: P(X = x | μ, σ) = exp(-(x-μ)²/(2σ²)) / Z(μ, σ, nstate)</li>
+ *     <li>Z(μ, σ, nstate) is the normalization constant over x ∈ {0, 1, ..., nstate-1}</li>
+ *     <li>σ is the measurement error standard deviation</li>
+ *     <li>When σ → 0, all probability concentrates at the true value (no error).</li>
  * </ul>
- * <p> σ is the measurement error standard deviation.</p>
- * <p> When σ → 0, all probability concentrates at the true value (no error). </p>
- * <p> The maximum copy number state is automatically inferred from the input alignment. </p>
+ * <p> Truncation prevents sampling impossible copy numbers beyond nstate-1. </p>
  */
 public class DiscreteGaussianErrorModel implements GenerativeDistribution<IntegerCharacterMatrix> {
 
@@ -34,6 +34,7 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
     // Parameter names
     public final String alignmentParamName = "alignment";
     public final String sigmaParamName = "sigma";
+    private int nstate;
 
     public DiscreteGaussianErrorModel(
             @ParameterInfo(
@@ -52,6 +53,7 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
     ) {
         this.alignment = alignment;
         this.sigma = sigma;
+        this.nstate = extractNstate(alignment);
     }
 
     @Override
@@ -79,10 +81,27 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
             verbClause = "has",
             category = GeneratorCategory.TAXA_ALIGNMENT,
             description =
-                    "Applies a discrete Gaussian error model to copy-number data. " +
+                    "Applies a truncated discrete Gaussian error model to copy-number data. " +
                             "True CN = 0 is observed as 0; true CN = μ > 0 has " +
-                            "P(obs=x) ∝ exp(-(x-μ)²/(2σ²)). σ controls measurement error."
+                            "P(obs=x) ∝ exp(-(x-μ)²/(2σ²)) truncated to [0, nstate-1]. " +
+                            "σ controls measurement error; truncation prevents impossible values."
     )
+
+    /**
+     * Extract nstate from the CopyNumberBD model
+     */
+    private int extractNstate(Value<IntegerCharacterMatrix> alignment) {
+        if (alignment.getGenerator() instanceof PhyloDiscrete) {
+            PhyloDiscrete phyloDiscrete = (PhyloDiscrete) alignment.getGenerator();
+            Value<?> modelValue = phyloDiscrete.getModel();
+
+            if (modelValue.value() instanceof CopyNumberBD) {
+                CopyNumberBD cnvModel = (CopyNumberBD) modelValue.value();
+                return cnvModel.getNstate().value();
+            }
+        }
+        throw new IllegalStateException("Cannot extract nstate from alignment generator");
+    }
 
     @Override
     public RandomVariable<IntegerCharacterMatrix> sample() {
@@ -96,15 +115,12 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
             throw new IllegalArgumentException("sigma must be non-negative.");
         }
 
-        // Infer maximum copy number from the alignment data
-        int maxCN = inferMaxCopyNumber(original);
-
         for (int i = 0; i < original.getTaxa().ntaxa(); i++) {
             String taxon = original.getTaxa().getTaxaNames()[i];
 
             for (int j = 0; j < original.nchar(); j++) {
                 int trueState = original.getState(taxon, j);
-                int observedState = sampleWithError(trueState, sig, maxCN);
+                int observedState = sampleWithError(trueState, sig);
                 observed.setState(i, j, observedState);
             }
         }
@@ -113,36 +129,18 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
     }
 
     /**
-     * <p>Infer maximum copy number from the alignment.</p>
-     * Finds the maximum state value across all taxa and sites,
-     * then adds a buffer to allow for potential copy number gains during error sampling.
-     */
-    private int inferMaxCopyNumber(IntegerCharacterMatrix alignment) {
-        int maxObserved = 0;
-
-        for (int i = 0; i < alignment.getTaxa().ntaxa(); i++) {
-            String taxon = alignment.getTaxa().getTaxaNames()[i];
-            for (int j = 0; j < alignment.nchar(); j++) {
-                int state = alignment.getState(taxon, j);
-                if (state > maxObserved) {
-                    maxObserved = state;
-                }
-            }
-        }
-
-        // Add buffer: allow observations up to maxObserved + 10 or at least 20
-        // This ensures we have room for measurement error to push values higher
-        return Math.max(maxObserved + 10, 20);
-    }
-
-    /**
-     * Sampling rule:
+     * Sampling rule for truncated discrete Gaussian:
      * <ul>
-     *   <li>If true CN = 0 → return 0.</li>
-     *   <li>If true CN = μ > 0 → sample from discrete Gaussian centered at μ with SD σ.</li>
+     *   <li>If true CN = 0 → return 0 deterministically (no measurement error at zero).</li>
+     *   <li>If true CN = μ > 0 → sample from truncated discrete Gaussian over [0, nstate-1]
+     *       centered at μ with SD σ, renormalized to account for truncation.</li>
      * </ul>
+     *
+     * @param trueCN The true copy number (μ)
+     * @param sigma The measurement error standard deviation (σ)
+     * @return The observed copy number after applying measurement error
      */
-    private int sampleWithError(int trueCN, double sigma, int maxCN) {
+    private int sampleWithError(int trueCN, double sigma) {
 
         // True CN = 0 always observed as 0
         if (trueCN == 0) return 0;
@@ -150,11 +148,11 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
         // If sigma very small, return true value (no error)
         if (sigma < 1e-6) return trueCN;
 
-        // Compute probabilities for all possible observed values
-        double[] probs = new double[maxCN + 1];
+        // Compute probabilities for [0, nstate-1]
+        double[] probs = new double[nstate];
         double sum = 0.0;
 
-        for (int x = 0; x <= maxCN; x++) {
+        for (int x = 0; x < nstate; x++) {
             double diff = x - trueCN;
             // Unnormalized: exp(-(x-μ)²/(2σ²))
             probs[x] = Math.exp(-(diff * diff) / (2.0 * sigma * sigma));
@@ -162,22 +160,22 @@ public class DiscreteGaussianErrorModel implements GenerativeDistribution<Intege
         }
 
         // Normalize
-        for (int x = 0; x <= maxCN; x++) {
+        for (int x = 0; x < nstate; x++) {
             probs[x] /= sum;
         }
 
         // Sample from discrete distribution
         double u = RandomUtils.getRandom().nextDouble();
         double cumulative = 0.0;
-        for (int x = 0; x <= maxCN; x++) {
+        for (int x = 0; x < nstate; x++) {
             cumulative += probs[x];
             if (u <= cumulative) {
                 return x;
             }
         }
 
-        // Fallback (shouldn't reach here)
-        return trueCN;
+        // Fallback
+        return Math.min(trueCN, nstate - 1);
     }
 
     public Value<IntegerCharacterMatrix> getAlignment() {
