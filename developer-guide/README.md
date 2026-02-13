@@ -1,74 +1,68 @@
-# Developer guide for Phylonco - LPhy and LPhyBEAST extension
-
-## Read first
-
-- [LPhy developer guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
-- [LPhyBEAST developer guide](https://github.com/LinguaPhylo/LPhyBeast/blob/master/DEV_NOTE.md)
-
-## For Phylonco developers
+# Developer guide for Phylonco 
 
 ### Project structure
 
 Phylonco project contains 3 subprojects:
 
 1. phylonco-beast (BEAST package)
-2. phylonco-lphybeast (LPhyBEAST extension, also BEAST package)
+2. phylonco-lphybeast (LPhyBEAST extension, also a BEAST package)
 3. phylonco-lphy (LPhy extension)
 
-Please note 1 and 2 will release as one BEAST package, 3 will release as a LPhy extension.
+About releases:
+* (1) and (2) will are released as one BEAST package. 
+* (3) is released separately as a LPhy extension.
 
-### Gradle build
+### Quickstart guide for developers
 
-1. How to update dependencies in Intellij, especially SNAPSHOT version.
+Requirements: 
+* Java 17 or higher with Java FX (we recommend Zulu 17 with FX)
+* [Git](https://github.com/git-guides/install-git) or [Gitbash](https://git-scm.com/install/windows) for Windows
+* [IntelliJ](https://www.jetbrains.com/idea/download/)
 
-https://github.com/LinguaPhylo/LPhyBeast/blob/master/DEV_NOTE.md#update-dependencies-in-intellij
 
-Use this simple steps if LPhyBEAST's version is not changed.
+1. To autheticate with github, we will be using SSH keys. 
+Setup your SSH key with your github account following this guide
+https://docs.github.com/en/enterprise-cloud@latest/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
 
-2. How to update the LPhyBEAST dependency:
-
-<a href="./InstallLPhyBEAST.png"><img src="InstallLPhyBEAST.png" align="right" height="300" ></a>
-
-LPhyBEAST is released as a `.zip` file into the [Maven repository](https://central.sonatype.com/namespace/io.github.linguaphylo),
-because of the requirement of BEAST package framework.
-Therefore, its update is not straight forward as other dependencies. 
-When you want to upgrade LPhyBEAST to a newer version:
-
-   i. Refresh Gradle Dependencies.
-
-   ii. You need to run the task `installLPhyBEAST` inside the build of `phylonco-lphybeast` subproject __twice__.
-
-The first time it downloads the zip file and unzip it, at the second time it loads all jar files into the system.
-This process can be done either from command line below, or IntelliJ (screenshot on the right side).
-
-```bash
-./gradlew phylonco-lphybeast:installLPhyBEAST
+2. Next, clone the phylonco project using git ssh
+```
+git clone git@github.com:bioDS/beast-phylonco.git
 ```
 
-   iii. Rebuild the project.
-
-3. Run LPhyBEAST from Intellij for developers only:
-
-Create an "Application" in "Run/Debug Configurations". An example is shown in the screenshot.
-
-<a href="./RunLPhyBEAST.png"><img src="RunLPhyBEAST.png" height="300" ></a>
-
-   i. Make sure the working dir has your lphy script.
-
-   ii. Put the arguments like:
-
-```arg
--vf YOUR_PATH/beast-phylonco/phylonco-lphybeast/version.xml,YOUR_PATH/beast-phylonco/phylonco-lphybeast/build/lphybeast/version.xml
-ErrModel_Haploid.lphy
+3. Copy the idea projet settings 
+```
+cp -r ./IntelliJ/.idea/ .
 ```
 
-The 1st version.xml is for the LPhyBEAST extension (phylonco-lphybeast), the 2nd is from the LPhyBEAST core.
-Both are required by BEAST2 framework.
+4. Open IntelliJ and clear the [cache](https://www.jetbrains.com/help/idea/invalidate-caches.html)
 
-4. How to check if you have the correct version of dependencies installed in IntelliJ:
+5. Restart IntelliJ, select `Open` and choose the root directory
 
-Go to the "External Libraries", and expand the list, 
-you must have the correct version of lphy and lphybeast jars inside the red rectangles:
+6. To build the project in IntelliJ, from the menu go to `Build` and `Rebuild project`
 
-<a href="./external-libs.png"><img src="external-libs.png" height="300" ></a>
+The [project settings](https://www.jetbrains.com/help/idea/project-settings-and-structure.html) should show the `SDK: JDK 17` (or similar), and `Language level: 17`. 
 
+When new dependencies are added, you may also need to reload your Maven dependencies in IntelliJ, see [here](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#maven_reimport)
+
+
+### Building releases and jars
+1. In IntelliJ, go to the Maven tab on the right. 
+
+2. Under `Profiles` select `skipLPhyTests` 
+
+3. Click on `linguaphylo` then `clean`, `install`
+
+4. Click on `lphybeast.root` then `clean`, `install`
+
+5. Click on `phylonco` then `clean`, `install`
+
+The release (packaged) zip files, and jars will be in a target directory.
+
+### Additional Resources
+[LPhy setup guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
+
+[LPhy language guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE2.md)
+
+[Maven modules](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE1.md)
+
+[Maven projects](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE3.md)
