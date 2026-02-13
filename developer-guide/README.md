@@ -14,15 +14,13 @@ About releases:
 
 ### Quickstart guide for developers
 
-Requirements: 
+#### Requirements:
 * Java 17 or higher with Java FX (we recommend Zulu 17 with FX)
 * [Git](https://github.com/git-guides/install-git) or [Gitbash](https://git-scm.com/install/windows) for Windows
 * [IntelliJ](https://www.jetbrains.com/idea/download/)
 
-
-1. To autheticate with github, we will be using SSH keys. 
-Setup your SSH key with your github account following this guide
-https://docs.github.com/en/enterprise-cloud@latest/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent
+#### Setting up tools and your project
+1. To autheticate with github, we will be using SSH keys, see [here](https://docs.github.com/en/enterprise-cloud@latest/authentication/connecting-to-github-with-ssh/generating-a-new-ssh-key-and-adding-it-to-the-ssh-agent)
 
 2. Next, clone the phylonco project using git ssh
 ```
@@ -40,6 +38,7 @@ cp -r ./IntelliJ/.idea/ .
 
 6. To build the project in IntelliJ, from the menu go to `Build` and `Rebuild project`
 
+#### SDK and dependencies
 The [project settings](https://www.jetbrains.com/help/idea/project-settings-and-structure.html) should show the `SDK: JDK 17` (or similar), and `Language level: 17`. 
 
 When new dependencies are added, you may also need to reload your Maven dependencies in IntelliJ, see [here](https://www.jetbrains.com/help/idea/delegate-build-and-run-actions-to-maven.html#maven_reimport)
@@ -59,10 +58,7 @@ When new dependencies are added, you may also need to reload your Maven dependen
 The release (packaged) zip files, and jars will be in a target directory.
 
 ### Additional Resources
-[LPhy setup guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
-
-[LPhy language guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE2.md)
-
-[Maven modules](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE1.md)
-
-[Maven projects](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE3.md)
+* [LPhy setup guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
+* [LPhy language guide](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE2.md)
+* [Maven modules](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE1.md)
+* [Maven projects](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE3.md)
