@@ -187,7 +187,12 @@ public class LikelihoodReadCountModel extends Distribution {
 
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
     // and params of negative binomial distribution(coverage model)
-    private void initialize() {
+    /**
+     * Recompute cached values from current parameter values.
+     * Package-private so GibbsSiteOperator can ensure caches are fresh
+     * before sampling (they may be stale after a rejected parameter proposal).
+     */
+    void initialize() {
         double mean1;
         double mean2;
         double variance1;
@@ -484,6 +489,11 @@ public class LikelihoodReadCountModel extends Distribution {
     @Override
     public void restore() {
         super.restore();
+
+        // Recompute cached arrays (negr1, negp1, wPropensitiesLogGamma, etc.)
+        // from the now-restored parameter values. Without this, these caches
+        // retain values computed from the rejected proposal.
+        initialize();
 
         /**
          * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
