@@ -130,6 +130,8 @@ public class GibbsSiteOperator extends Operator {
 
     // Mapping from node number to taxon index
     private int[] nodeNrToTaxonIndex;
+    // Mapping from alignment taxon index to ReadCount taxon index
+    private int[] alignToRCIndex;
 
     @Override
     public void initAndValidate() {
@@ -148,6 +150,20 @@ public class GibbsSiteOperator extends Operator {
         numNodes = tree.getNodeCount();
         numCategories = siteModel.getCategoryCount();
 
+        // Build mapping from alignment taxon index to ReadCount taxon index
+        String[] rcTaxaNames = readCount.getTaxaNames();
+        alignToRCIndex = new int[numTaxa];
+        for (int i = 0; i < numTaxa; i++) {
+            String alignTaxonName = alignment.getTaxaNames().get(i);
+            alignToRCIndex[i] = i; // default: identity mapping
+            for (int j = 0; j < rcTaxaNames.length; j++) {
+                if (alignTaxonName.equals(rcTaxaNames[j].trim())) {
+                    alignToRCIndex[i] = j;
+                    break;
+                }
+            }
+        }
+
         // Pre-allocate arrays
         partials = new double[numCategories][numNodes][numStates];
         sampledStates = new int[numNodes];
@@ -156,11 +172,11 @@ public class GibbsSiteOperator extends Operator {
         logProbs = new double[numStates];
         categoryLogProbs = new double[numCategories];
 
-        // Precompute coverages for all taxa and sites
+        // Precompute coverages for all taxa and sites (indexed by alignment taxon order)
         coverages = new int[numTaxa][numSites];
         for (int i = 0; i < numTaxa; i++) {
             for (int j = 0; j < numSites; j++) {
-                int[] counts = readCount.getReadCounts(i, j);
+                int[] counts = readCount.getReadCounts(alignToRCIndex[i], j);
                 for (int k = 0; k < counts.length; k++) {
                     coverages[i][j] += counts[k];
                 }
@@ -227,11 +243,12 @@ public class GibbsSiteOperator extends Operator {
     private void computeLeafPartial(Node node, int siteIndex) {
         int nodeNr = node.getNr();
         int taxonIndex = nodeNrToTaxonIndex[nodeNr];
-        int[] counts = readCount.getReadCounts(taxonIndex, siteIndex);
+        int rcIndex = alignToRCIndex[taxonIndex];
+        int[] counts = readCount.getReadCounts(rcIndex, siteIndex);
         int coverage = coverages[taxonIndex][siteIndex];
 
         for (int g = 0; g < numStates; g++) {
-            double logP = readCountModel.logLiklihoodRC(g, counts, coverage, taxonIndex);
+            double logP = readCountModel.logLiklihoodRC(g, counts, coverage, rcIndex);
             double partial = Math.exp(logP);
             for (int cat = 0; cat < numCategories; cat++) {
                 partials[cat][nodeNr][g] = partial;
