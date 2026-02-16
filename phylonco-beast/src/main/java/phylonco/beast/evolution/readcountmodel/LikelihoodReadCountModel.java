@@ -63,6 +63,11 @@ public class LikelihoodReadCountModel extends Distribution {
     private double[][][][] rc_wPropLogGamma;
     private double[][] c_wLogGamma;
 
+    // Mapping from alignment taxon index to ReadCount taxon index.
+    // These may differ when alignment sequences and ReadCount data rows
+    // are in different orders (e.g. alignment order from XML vs alphabetical).
+    private int[] alignToRCIndex;
+
     private int[][] gt16IndexTable;
     private int[][] gt10IndexTable;
 
@@ -149,17 +154,34 @@ public class LikelihoodReadCountModel extends Distribution {
         w2 = w2Input.get();
         alignment = alignmentInput.get();
         readCount = readCountInput.get();
+
+        // Build mapping from alignment taxon index to ReadCount taxon index.
+        // The alignment and ReadCount may have taxa in different orders.
+        String[] rcTaxaNames = readCount.getTaxaNames();
+        alignToRCIndex = new int[alignment.getTaxonCount()];
+        for (int i = 0; i < alignment.getTaxonCount(); i++) {
+            String alignTaxonName = alignment.getTaxaNames().get(i);
+            alignToRCIndex[i] = i; // default: identity mapping
+            for (int j = 0; j < rcTaxaNames.length; j++) {
+                if (alignTaxonName.equals(rcTaxaNames[j].trim())) {
+                    alignToRCIndex[i] = j;
+                    break;
+                }
+            }
+        }
+
         negp1 = new double[s.getDimension()];
         negp2 = new double[s.getDimension()];
         negr1 = new double[s.getDimension()];
         negr2 = new double[s.getDimension()];
         coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
+            int rcIdx = alignToRCIndex[i];
             for (int j = 0; j < alignment.getSiteCount(); j++) {
                 for (int k = 0; k < 4; k++) {
-                    coverages[i][j] += readCount.getReadCounts(i,j)[k];
-                    if (readCount.getReadCounts(i,j)[k] > maxReadCount) {
-                        maxReadCount = readCount.getReadCounts(i,j)[k];
+                    coverages[i][j] += readCount.getReadCounts(rcIdx,j)[k];
+                    if (readCount.getReadCounts(rcIdx,j)[k] > maxReadCount) {
+                        maxReadCount = readCount.getReadCounts(rcIdx,j)[k];
                     }
                 }
                 if (coverages[i][j] > maxReadDepth) {
@@ -187,7 +209,12 @@ public class LikelihoodReadCountModel extends Distribution {
 
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
     // and params of negative binomial distribution(coverage model)
-    private void initialize() {
+    /**
+     * Recompute cached values from current parameter values.
+     * Package-private so GibbsSiteOperator can ensure caches are fresh
+     * before sampling (they may be stale after a rejected parameter proposal).
+     */
+    void initialize() {
         double mean1;
         double mean2;
         double variance1;
@@ -281,6 +308,10 @@ public class LikelihoodReadCountModel extends Distribution {
 
     }
 
+    /** Returns the mapping from alignment taxon index to ReadCount taxon index. */
+    public int[] getAlignToRCIndex() {
+        return alignToRCIndex;
+    }
 
     //Calculate the log likelihood of read count model by summarizing the log likelihood at each site
     @Override
@@ -292,12 +323,13 @@ public class LikelihoodReadCountModel extends Distribution {
         //logP = 0;
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
             double logPi = 0;
+            int rcIdx = alignToRCIndex[i];
             for (int j = 0; j < alignment.getSiteCount(); j++) {///？
                 // dirichlet multinomial pmf
                 int patternIndex = alignment.getPatternIndex(j);
                 int genotypeState = alignment.getPattern(i, patternIndex);
-                int[] readCountNumbers = readCount.getReadCounts(i, j);
-                logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                int[] readCountNumbers = readCount.getReadCounts(rcIdx, j);
+                logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
             }
             currentLogPi[i] = logPi;
         }
@@ -313,12 +345,13 @@ public class LikelihoodReadCountModel extends Distribution {
         if (mutableAlignment.getDirtySequenceIndices().length != 0) {
             for (int i : mutableAlignment.getDirtySequenceIndices()) {
                 double logPi = 0;
+                int rcIdx = alignToRCIndex[i];
                 for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {///？
                     // dirichlet multinomial pmf
                     int patternIndex = mutableAlignment.getPatternIndex(j);
                     int genotypeState = mutableAlignment.getPattern(i, patternIndex);
-                    int[] readCountNumbers = readCountInput.get().getReadCounts(i, j);
-                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                    int[] readCountNumbers = readCountInput.get().getReadCounts(rcIdx, j);
+                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
                 }
                 currentLogPi[i] = logPi;
             }
@@ -332,12 +365,13 @@ public class LikelihoodReadCountModel extends Distribution {
         } else {
             for (int i = 0; i < alignment.getTaxonCount(); i++) {
                 double logPi = 0;
+                int rcIdx = alignToRCIndex[i];
                 for (int j = 0; j < alignment.getSiteCount(); j++) {///？
                     // dirichlet multinomial pmf
                     int patternIndex = alignment.getPatternIndex(j);
                     int genotypeState = alignment.getPattern(i, patternIndex);
-                    int[] readCountNumbers = readCount.getReadCounts(i, j);
-                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], i);
+                    int[] readCountNumbers = readCount.getReadCounts(rcIdx, j);
+                    logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
                 }
                 currentLogPi[i] = logPi;
             }
@@ -355,11 +389,12 @@ public class LikelihoodReadCountModel extends Distribution {
         if (genotypeSequence.length != alignment.getSiteCount()) {
             throw new RuntimeException("genotypeSequence.length != alignment.getSiteCount()");
         }
+        int rcIdx = alignToRCIndex[taxonIndex];
         for (int j = 0; j < genotypeSequence.length; j++) {
             // dirichlet multinomial pmf
             int genotypeState = genotypeSequence[j];
-            int[] readCountNumbers = readCount.getReadCounts(taxonIndex, j);
-            taxonLogP[j] = logLiklihoodRC(genotypeState, readCountNumbers, coverages[taxonIndex][j], taxonIndex);
+            int[] readCountNumbers = readCount.getReadCounts(rcIdx, j);
+            taxonLogP[j] = logLiklihoodRC(genotypeState, readCountNumbers, coverages[taxonIndex][j], rcIdx);
         }
         return taxonLogP;
     }
@@ -484,6 +519,11 @@ public class LikelihoodReadCountModel extends Distribution {
     @Override
     public void restore() {
         super.restore();
+
+        // Recompute cached arrays (negr1, negp1, wPropensitiesLogGamma, etc.)
+        // from the now-restored parameter values. Without this, these caches
+        // retain values computed from the rejected proposal.
+        initialize();
 
         /**
          * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
