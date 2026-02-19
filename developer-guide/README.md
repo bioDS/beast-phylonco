@@ -9,7 +9,8 @@ Phylonco project contains 3 subprojects:
 3. phylonco-lphy (LPhy extension)
 
 About releases:
-* (1) and (2) will are released as one BEAST package. 
+* (1) is released as a BEAST package.
+* (2) is released as a BEAST package. 
 * (3) is released separately as a LPhy extension.
 
 ### Quickstart guide for developers
