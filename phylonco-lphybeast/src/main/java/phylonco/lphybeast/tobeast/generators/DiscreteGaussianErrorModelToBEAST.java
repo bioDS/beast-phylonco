@@ -122,10 +122,10 @@ public class DiscreteGaussianErrorModelToBEAST
     private void modifyScaleFactor (RealParameter parameter, BEASTContext context) {
         BactrianRandomWalkOperator operator = new BactrianRandomWalkOperator();
         operator.setInputValue("parameter", parameter);
-        operator.setInputValue("weight", context.getOperatorWeight(parameter.getDimension() - 1));
+        operator.setInputValue("weight", 1.0);
         operator.setInputValue("scaleFactor",0.3);
         operator.initAndValidate();
-        operator.setID(parameter.getID() + ".deltaExchange");
+        operator.setID(parameter.getID() + ".BactrianRandomWalk");
         // add operator
         context.addExtraOperator(operator);
         // skip default operator schedule
