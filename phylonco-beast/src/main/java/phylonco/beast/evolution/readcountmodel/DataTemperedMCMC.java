@@ -11,6 +11,36 @@ import beast.base.inference.Operator;
 import beast.base.util.Randomizer;
 import mutablealignment.MutableAlignment;
 
+/**
+ * MCMC that incrementally adds alignment sites during the run.
+ * Starts with a subset of sites (patternWeight=1), remaining sites have patternWeight=0.
+ * At scheduled intervals, a batch of new sites is activated and a Gibbs site sampler
+ * is called to initialise genotypes at all sites conditional on the current tree.
+ *
+ * <p>Example XML usage:</p>
+ * <pre>
+ * &lt;run id="mcmc" spec="phylonco.beast.evolution.readcountmodel.DataTemperedMCMC"
+ *      chainLength="2000000"
+ *      mutableAlignment="@A"
+ *      gibbsSiteOperator="@GibbsSiteOp"
+ *      initialSites="100"
+ *      sitesPerStep="100"
+ *      iterationsPerStep="50000"&gt;
+ *
+ *     &lt;operator id="GibbsSiteOp"
+ *              spec="phylonco.beast.evolution.readcountmodel.GibbsSiteOperator"
+ *              weight="1.0"
+ *              sampleAllSites="true"
+ *              mutableAlignment="@A"
+ *              tree="@psi"
+ *              siteModel="@siteModel"
+ *              readCountModel="@readCountLikelihood"
+ *              readCount="@readCounts"/&gt;
+ *
+ *     &lt;!-- other operators, state, posterior, loggers as usual --&gt;
+ * &lt;/run&gt;
+ * </pre>
+ */
 @Description("MCMC that incrementally adds alignment sites during the run. " +
         "Starts with a subset of sites (patternWeight=1), remaining sites have patternWeight=0. " +
         "At scheduled intervals, a batch of new sites is activated and a Gibbs site sampler " +
