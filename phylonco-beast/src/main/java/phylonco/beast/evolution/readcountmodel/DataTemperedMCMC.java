@@ -124,7 +124,8 @@ public class DataTemperedMCMC extends MCMC {
                         " — activated sites " + oldActive + " -> " + activeSites +
                         " / " + totalSites);
 
-                // Gibbs sample all sites to reconcile with current tree
+                // Update cached cumulative weights then Gibbs sample all active sites
+                gibbsOperator.updateCumulativeWeights();
                 gibbsOperator.proposal();
 
                 // Recalculate posterior with new sites

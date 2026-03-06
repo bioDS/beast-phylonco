@@ -133,6 +133,10 @@ public class GibbsSiteOperator extends Operator {
     // Mapping from alignment taxon index to ReadCount taxon index
     private int[] alignToRCIndex;
 
+    // Cached cumulative weights for weighted site sampling
+    private int[] cumulativeWeights;
+    private int totalWeight;
+
     @Override
     public void initAndValidate() {
         alignment = mutableAlignmentInput.get();
@@ -191,19 +195,45 @@ public class GibbsSiteOperator extends Operator {
             int taxonIndex = alignment.getTaxonIndex(taxonName);
             nodeNrToTaxonIndex[leaf.getNr()] = taxonIndex;
         }
+
+        // Build cumulative weights for weighted site sampling
+        cumulativeWeights = new int[numSites];
+        updateCumulativeWeights();
+    }
+
+    /**
+     * Rebuild cumulative weight array from current pattern weights.
+     * Call this after pattern weights change (e.g. after DataTemperedMCMC adds sites).
+     */
+    public void updateCumulativeWeights() {
+        int[] weights = alignment.getWeights();
+        totalWeight = 0;
+        for (int i = 0; i < numSites; i++) {
+            totalWeight += weights[i];
+            cumulativeWeights[i] = totalWeight;
+        }
     }
 
     @Override
     public double proposal() {
+        int[] weights = alignment.getWeights();
         if (sampleAllSites) {
-            // Sample all sites
+            // Sample all active sites (skip sites with weight 0)
             for (int siteIndex = 0; siteIndex < numSites; siteIndex++) {
-                sampleSite(siteIndex);
+                if (weights[siteIndex] > 0) {
+                    sampleSite(siteIndex);
+                }
             }
         } else {
-            // Sample one random site
-            int siteIndex = Randomizer.nextInt(numSites);
-            sampleSite(siteIndex);
+            // Sample one site with probability proportional to weight (binary search on cached cumulative weights)
+            if (totalWeight > 0) {
+                int r = Randomizer.nextInt(totalWeight);
+                int siteIndex = Arrays.binarySearch(cumulativeWeights, 0, numSites, r + 1);
+                if (siteIndex < 0) {
+                    siteIndex = -siteIndex - 1;
+                }
+                sampleSite(siteIndex);
+            }
         }
 
         // Gibbs operator: always accept
