@@ -321,12 +321,14 @@ public class LikelihoodReadCountModel extends Distribution {
             return calculateLogP(a);
         }
         //logP = 0;
+        int[] weights = alignment.getWeights();
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
             double logPi = 0;
             int rcIdx = alignToRCIndex[i];
-            for (int j = 0; j < alignment.getSiteCount(); j++) {///？
-                // dirichlet multinomial pmf
+            for (int j = 0; j < alignment.getSiteCount(); j++) {
                 int patternIndex = alignment.getPatternIndex(j);
+                if (weights[patternIndex] == 0) continue;
+                // dirichlet multinomial pmf
                 int genotypeState = alignment.getPattern(i, patternIndex);
                 int[] readCountNumbers = readCount.getReadCounts(rcIdx, j);
                 logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
@@ -341,14 +343,16 @@ public class LikelihoodReadCountModel extends Distribution {
     }
 
     private double calculateLogP(MutableAlignment mutableAlignment) {
+        int[] weights = mutableAlignment.getWeights();
         /** update currentLogPi only for sequences that changed **/
         if (mutableAlignment.getDirtySequenceIndices().length != 0) {
             for (int i : mutableAlignment.getDirtySequenceIndices()) {
                 double logPi = 0;
                 int rcIdx = alignToRCIndex[i];
-                for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {///？
-                    // dirichlet multinomial pmf
+                for (int j = 0; j < mutableAlignment.getSiteCount(); j++) {
                     int patternIndex = mutableAlignment.getPatternIndex(j);
+                    if (weights[patternIndex] == 0) continue;
+                    // dirichlet multinomial pmf
                     int genotypeState = mutableAlignment.getPattern(i, patternIndex);
                     int[] readCountNumbers = readCountInput.get().getReadCounts(rcIdx, j);
                     logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
@@ -366,9 +370,10 @@ public class LikelihoodReadCountModel extends Distribution {
             for (int i = 0; i < alignment.getTaxonCount(); i++) {
                 double logPi = 0;
                 int rcIdx = alignToRCIndex[i];
-                for (int j = 0; j < alignment.getSiteCount(); j++) {///？
-                    // dirichlet multinomial pmf
+                for (int j = 0; j < alignment.getSiteCount(); j++) {
                     int patternIndex = alignment.getPatternIndex(j);
+                    if (weights[patternIndex] == 0) continue;
+                    // dirichlet multinomial pmf
                     int genotypeState = alignment.getPattern(i, patternIndex);
                     int[] readCountNumbers = readCount.getReadCounts(rcIdx, j);
                     logPi += logLiklihoodRC(genotypeState, readCountNumbers, coverages[i][j], rcIdx);
