@@ -38,6 +38,7 @@
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsSiteOperator"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.DataTemperedMCMC"/>
+        <provider classname="phylonco.beast.evolution.readcountmodel.ExchangeGibbsOperator"/>
     </service>
 
 </package>
