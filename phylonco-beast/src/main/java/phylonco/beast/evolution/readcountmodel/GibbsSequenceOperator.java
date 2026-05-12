@@ -16,9 +16,11 @@ public class GibbsSequenceOperator extends Operator {
     public Input<MutableAlignment> mutableAlignmentInput = new Input<>("mutableAlignment", "mutable alignment");
     public Input<MATreeLikelihood> maTreeLikelihoodInput  = new Input<>("maTreeLikelihood", "likelihood of mutable alignment tree");
     public Input<LikelihoodReadCountModel> likelihoodReadCountModelInput = new Input<>("likelihoodReadCountModel", "ikelihood of Read Count Model");
+    public Input<Boolean> sampleAllSequencesInput = new Input<>("sampleAllSequences", "if true, sample all Sequences in one proposal; if false (default), sample one random sequence", false);
     private MATreeLikelihood maTreeLikelihood;
     private MutableAlignment mutableAlignment;
     public LikelihoodReadCountModel likelihoodReadCountModel;
+    private boolean sampleAllSequences;
     private int numStates;
     private int numSites;
     private int numTaxa;
@@ -32,6 +34,7 @@ public class GibbsSequenceOperator extends Operator {
         mutableAlignment = mutableAlignmentInput.get();
         maTreeLikelihood = maTreeLikelihoodInput.get();
         likelihoodReadCountModel = likelihoodReadCountModelInput.get();
+        sampleAllSequences = sampleAllSequencesInput.get();
         numStates = mutableAlignment.getDataType().getStateCount();
         numSites = mutableAlignment.getSiteCount();
         numTaxa = mutableAlignment.getTaxonCount();
@@ -50,7 +53,23 @@ public class GibbsSequenceOperator extends Operator {
 
     @Override
     public double proposal() {
-        int taxon = Randomizer.nextInt(numTaxa);
+        if(sampleAllSequences){
+            int[] randomTaxaOrder = generateRandomOrder(numTaxa);
+            for(int i = 0; i < numTaxa; i++){
+                int taxon  = randomTaxaOrder[i];
+                int[] newSeq = sampleSequence(taxon);
+                mutableAlignment.setSiteValuesByTaxon(taxon, newSeq);
+                maTreeLikelihood.getLogProbsForStateSequence(taxon, newSeq);
+            }
+        } else {
+            int taxon = Randomizer.nextInt(numTaxa);
+            int[] newSeq = sampleSequence(taxon);
+            mutableAlignment.setSiteValuesByTaxon(taxon, newSeq);
+        }
+        return Double.POSITIVE_INFINITY;
+    }
+
+    private int[] sampleSequence(int taxon) {
         double[][] stateLogProbabilities = new double[numStates][numSites];
         double[][] readCountLogLikelihoods = new double[numStates][numSites];
         int[] newSeq = new int[numSites];
@@ -71,20 +90,19 @@ public class GibbsSequenceOperator extends Operator {
                 logProbs[j] = stateLogProbabilities[j][i] + readCountLogLikelihoods[j][i];
             }
             stateProbabilities = normalizeLogProbs(logProbs);
-            newSeq[i] = sampleFromProbabilities(stateProbabilities);
+            newSeq[i] = sampleStateFromProbabilities(stateProbabilities);
         }
-        mutableAlignment.setSiteValuesByTaxon(taxon, newSeq);
-        return Double.POSITIVE_INFINITY;
+        return newSeq;
     }
 
-    private int sampleFromProbabilities(double[] probabilities) {
+    private int sampleStateFromProbabilities(double[] probabilities) {
         double rand = Randomizer.nextDouble();
         double cumulative = 0.0;
         for (int i = 0; i < probabilities.length; i++) {
             cumulative += probabilities[i];
             if (rand < cumulative) return i;
         }
-        return sampleFromProbabilities(probabilities);
+        return sampleStateFromProbabilities(probabilities);
     }
 
     private double[] normalizeLogProbs(double[] logProbs) {
@@ -106,5 +124,21 @@ public class GibbsSequenceOperator extends Operator {
             normalizedProbs[i] = expProbs[i] / sumExp;
         }
         return normalizedProbs;
+    }
+
+    public static int[] generateRandomOrder(int n) {
+        int[] result = new int[n];
+        for (int i = 0; i < n; i++) {
+            result[i] = i;
+        }
+
+        for (int i = n - 1; i > 0; i--) {
+            int j = Randomizer.nextInt(i+1);
+            int temp = result[i];
+            result[i] = result[j];
+            result[j] = temp;
+        }
+
+        return result;
     }
 }

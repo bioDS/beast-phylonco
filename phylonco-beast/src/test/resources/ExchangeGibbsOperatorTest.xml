@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+data {
+  n = 5;
+  l = 10;
+}
+model {
+  delta ~ Beta(alpha=15, beta=85);
+  alpha ~ Ploidy(delta=delta, n=n, l=l);
+  epsilon ~ Beta(alpha=1.5, beta=1000);
+  w1 ~ LogNormal(meanlog=3.96, sdlog=0.33);
+  w2 ~ LogNormal(meanlog=0.93, sdlog=0.33);
+  π ~ Dirichlet(conc=[3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0]);
+  rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+  Q = gt10(rates=rates, freq=π);
+  Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
+  ψ ~ Coalescent(n=n, theta=Θ);
+  A ~ PhyloCTMC(L=l, Q=Q, dataType=unphasedGenotype(), tree=ψ);
+  s ~ LogNormal(meanlog=0.2, sdlog=0.72, replicates=n);
+  t ~ LogNormal(meanlog=1.7, sdlog=0.05);
+  v ~ LogNormal(meanlog=2.96, sdlog=0.13);
+  cov ~ CoverageModel(s=s, t=t, alpha=alpha, v=v);
+  r ~ ReadCountModel(alpha=alpha, epsilon=epsilon, w1=w1, w2=w2, D=A, coverage=cov);
+}
+
+-->
+<beast namespace="beast.core:beast.evolution.alignment:beast.evolution.tree.coalescent:beast.core.util:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.base.evolution.alignment:beast.pkgmgmt:beast.base.core:beast.base.inference:beast.base.evolution.tree.coalescent:beast.pkgmgmt:beast.base.core:beast.base.inference.util:beast.evolution.nuc:beast.base.evolution.operator:beast.base.inference.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.likelihood" required="lphybeast v1.3.0:phylonco v1.2.1" version="2.7">
+
+    <run id="MCMC" spec="MCMC" chainLength="3000000" preBurnin="320">
+        <state id="State" spec="State">
+            <parameter id="delta" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">0.11207941482937733</parameter>
+            <parameter id="epsilon" spec="parameter.RealParameter" lower="0.0" name="stateNode" upper="1.0">9.813941686952889E-4</parameter>
+            <parameter id="w1" spec="parameter.RealParameter" lower="0.0" name="stateNode">55.94595514507727</parameter>
+            <parameter id="w2" spec="parameter.RealParameter" lower="0.0" name="stateNode">3.170926866268741</parameter>
+            <parameter id="pi" spec="parameter.RealParameter" dimension="10" keys="0 1 2 3 4 5 6 7 8 9" lower="0.0" name="stateNode" upper="1.0">0.10159326769192847 0.06273079638873497 0.012329668773184086 0.08980058556233553 0.14684640473195512 0.18648962695485094 0.1274995399639209 0.07290288106636438 0.15280159444478042 0.04700563442194522</parameter>
+            <parameter id="rates" spec="parameter.RealParameter" dimension="6" keys="AC AG AT CG CT GT" lower="0.0" name="stateNode" upper="1.0">0.15819808116937936 0.06028625862988167 0.29727211935569997 0.04936768518451427 0.1185240949335276 0.3163517607269973</parameter>
+            <parameter id="Theta" spec="parameter.RealParameter" lower="0.0" name="stateNode">0.041783393605582586</parameter>
+            <stateNode id="psi" spec="beast.base.evolution.tree.TreeParser" IsLabelledNewick="true" newick="(0:0.1030100951318221,(2:0.010700154684467857,(3:0.00960444205599159,(1:5.835771558325435E-4,4:5.835771558325435E-4):0.009020864900159046):0.001095712628476268):0.09230994044735424):0.0;">
+                <taxonset id="TaxonSet" spec="TaxonSet">
+                    <taxon id="0" spec="Taxon"/>
+                    <taxon id="1" spec="Taxon"/>
+                    <taxon id="2" spec="Taxon"/>
+                    <taxon id="3" spec="Taxon"/>
+                    <taxon id="4" spec="Taxon"/>
+                </taxonset>
+            </stateNode>
+            <stateNode id="A" spec="mutablealignment.MutableAlignment" dataType="nucleotideDiploid10">
+                <sequence id="Sequence" spec="Sequence" taxon="0" totalcount="10" value="MMKYKCSGSY"/>
+                <sequence id="Sequence1" spec="Sequence" taxon="1" totalcount="10" value="MMKYKCYGSY"/>
+                <sequence id="Sequence2" spec="Sequence" taxon="2" totalcount="10" value="MMKYKCYGSY"/>
+                <sequence id="Sequence3" spec="Sequence" taxon="3" totalcount="10" value="MMKYKCYGSY"/>
+                <sequence id="Sequence4" spec="Sequence" taxon="4" totalcount="10" value="MMKYKCYGSY"/>
+            </stateNode>
+            <parameter id="s" spec="parameter.RealParameter" dimension="5" name="stateNode">2.0558416945984423 1.0351530032039469 1.8862152554670342 3.1730391415984798 1.070142275577017</parameter>
+            <parameter id="t" spec="parameter.RealParameter" lower="0.0" name="stateNode">5.594747299846691</parameter>
+            <parameter id="v" spec="parameter.RealParameter" lower="0.0" name="stateNode">20.34101349084361</parameter>
+        </state>
+        <distribution id="posterior" spec="CompoundDistribution">
+            <distribution id="prior" spec="CompoundDistribution">
+                <distribution id="delta.prior" spec="distribution.Prior" x="@delta">
+                    <distr id="Beta" spec="distribution.Beta">
+                        <parameter id="RealParameter" spec="parameter.RealParameter" name="alpha">15.0</parameter>
+                        <parameter id="RealParameter1" spec="parameter.RealParameter" name="beta">85.0</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="pi.prior" spec="distribution.Prior" x="@pi">
+                    <distr id="Dirichlet" spec="distribution.Dirichlet">
+                        <parameter id="RealParameter2" spec="parameter.RealParameter" dimension="10" estimate="false" name="alpha">3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0 3.0</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="epsilon.prior" spec="distribution.Prior" x="@epsilon">
+                    <distr id="Beta1" spec="distribution.Beta">
+                        <parameter id="RealParameter3" spec="parameter.RealParameter" name="alpha">1.5</parameter>
+                        <parameter id="RealParameter4" spec="parameter.RealParameter" name="beta">1000.0</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="rates.prior" spec="distribution.Prior" x="@rates">
+                    <distr id="Dirichlet1" spec="distribution.Dirichlet">
+                        <parameter id="RealParameter5" spec="parameter.RealParameter" dimension="6" estimate="false" name="alpha">1.0 2.0 1.0 1.0 2.0 1.0</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="s.prior" spec="distribution.Prior" x="@s">
+                    <distr id="LogNormalDistributionModel" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter6" spec="parameter.RealParameter" name="M">0.2</parameter>
+                        <parameter id="RealParameter7" spec="parameter.RealParameter" name="S">0.72</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="A.treeLikelihood" spec="mutablealignment.MATreeLikelihood" data="@A" tree="@psi">
+                    <siteModel id="SiteModel" spec="SiteModel">
+                        <substModel id="GT10" spec="phylonco.beast.evolution.substitutionmodel.GT10" nucRates="@rates">
+                            <frequencies id="Frequencies" spec="Frequencies" frequencies="@pi"/>
+                        </substModel>
+                    </siteModel>
+                    <branchRateModel id="StrictClockModel" spec="beast.base.evolution.branchratemodel.StrictClockModel">
+                        <parameter id="RealParameter8" spec="parameter.RealParameter" name="clock.rate">1.0</parameter>
+                    </branchRateModel>
+                </distribution>
+                <distribution id="t.prior" spec="distribution.Prior" x="@t">
+                    <distr id="LogNormalDistributionModel1" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter9" spec="parameter.RealParameter" name="M">1.7</parameter>
+                        <parameter id="RealParameter10" spec="parameter.RealParameter" name="S">0.05</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="Coalescent" spec="Coalescent">
+                    <populationModel id="ConstantPopulation" spec="ConstantPopulation" popSize="@Theta"/>
+                    <treeIntervals id="TreeIntervals" spec="beast.base.evolution.tree.TreeIntervals" tree="@psi"/>
+                </distribution>
+                <distribution id="Theta.prior" spec="distribution.Prior" x="@Theta">
+                    <distr id="LogNormalDistributionModel2" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter11" spec="parameter.RealParameter" name="M">-2.0</parameter>
+                        <parameter id="RealParameter12" spec="parameter.RealParameter" name="S">1.0</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="w2.prior" spec="distribution.Prior" x="@w2">
+                    <distr id="LogNormalDistributionModel3" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter13" spec="parameter.RealParameter" name="M">0.93</parameter>
+                        <parameter id="RealParameter14" spec="parameter.RealParameter" name="S">0.33</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="w1.prior" spec="distribution.Prior" x="@w1">
+                    <distr id="LogNormalDistributionModel4" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter15" spec="parameter.RealParameter" name="M">3.96</parameter>
+                        <parameter id="RealParameter16" spec="parameter.RealParameter" name="S">0.33</parameter>
+                    </distr>
+                </distribution>
+                <distribution id="v.prior" spec="distribution.Prior" x="@v">
+                    <distr id="LogNormalDistributionModel5" spec="distribution.LogNormalDistributionModel">
+                        <parameter id="RealParameter17" spec="parameter.RealParameter" name="M">2.96</parameter>
+                        <parameter id="RealParameter18" spec="parameter.RealParameter" name="S">0.13</parameter>
+                    </distr>
+                </distribution>
+            </distribution>
+            <distribution id="likelihood" spec="CompoundDistribution">
+                <distribution id="LikelihoodReadCountModel" spec="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel" alignment="@A" delta="@delta" epsilon="@epsilon" s="@s" t="@t" v="@v" w1="@w1" w2="@w2">
+                    <readCount id="ReadCount" spec="phylonco.beast.evolution.datatype.ReadCount" sitesIndex="-1 0 1 2 3 4 5 6 7 8 " taxaNames="0 1 2 3 4 ">0:0:0:34,0:3:0:0,0:14:0:0,0:0:28:0,0:0:7:0,0:0:0:2,0:0:0:9,0:0:9:0,0:0:0:22,0:35:0:0
+
+0:0:0:29,0:22:0:0,0:6:0:0,0:0:36:0,0:0:84:0,0:0:0:9,0:0:0:10,0:0:27:1,0:0:0:17,0:62:0:0
+
+0:0:0:33,0:0:0:48,0:0:0:7,9:0:0:0,0:0:44:0,0:6:0:18,0:6:0:8,0:34:16:0,0:0:0:97,0:46:0:0
+
+0:0:0:18,0:10:0:0,0:5:0:0,0:0:9:0,0:0:32:0,0:0:0:34,0:0:0:11,0:0:0:8,0:0:0:15,0:16:0:0
+
+0:0:0:2,0:47:0:0,0:33:0:0,0:0:61:0,0:0:8:0,0:0:0:32,0:0:0:28,0:0:10:0,0:0:0:20,0:40:0:0</readCount>
+                </distribution>
+            </distribution>
+        </distribution>
+        <operator id="AVMNOperator" spec="kernel.AdaptableVarianceMultivariateNormalOperator" beta="0.05" burnin="100" initial="200" weight="15.0">
+            <transformations id="Transform$LogTransform" spec="operator.kernel.Transform$LogTransform">
+                <f idref="t"/>
+                <f idref="v"/>
+            </transformations>
+        </operator>
+        <operator id="Theta.scale" spec="kernel.BactrianScaleOperator" parameter="@Theta" upper="10.0" weight="1.0"/>
+        <operator id="delta.scale" spec="kernel.BactrianScaleOperator" parameter="@delta" upper="10.0" weight="1.0"/>
+        <operator id="epsilon.scale" spec="kernel.BactrianScaleOperator" parameter="@epsilon" upper="10.0" weight="1.0"/>
+        <operator id="exchangeGibbsOperator" spec="phylonco.beast.evolution.readcountmodel.ExchangeGibbsOperator" likelihoodReadCountModel="@LikelihoodReadCountModel" maTreeLikelihood="@A.treeLikelihood" mutableAlignment="@A" tree="@psi" weight="5.0"/>
+        <operator id="pi.AVMN" spec="kernel.AdaptableVarianceMultivariateNormalOperator" beta="0.05" burnin="100" initial="200" weight="13.966610165238237">
+            <transformations id="Transform$LogConstrainedSumTransform" spec="operator.kernel.Transform$LogConstrainedSumTransform">
+                <f idref="pi"/>
+            </transformations>
+        </operator>
+        <operator id="rates.AVMN" spec="kernel.AdaptableVarianceMultivariateNormalOperator" beta="0.05" burnin="100" initial="200" weight="9.255507940800143">
+            <transformations id="Transform$LogConstrainedSumTransform1" spec="operator.kernel.Transform$LogConstrainedSumTransform">
+                <f idref="rates"/>
+            </transformations>
+        </operator>
+        <operator id="s.scale" spec="kernel.BactrianScaleOperator" parameter="@s" upper="10.0" weight="3.0851693136000478"/>
+        <operator id="upDownOperator" spec="operator.UpDownOperator" scaleFactor="0.75" weight="10.0">
+            <up idref="s"/>
+            <down idref="t"/>
+            <down idref="v"/>
+        </operator>
+        <operator id="w1.scale" spec="kernel.BactrianScaleOperator" parameter="@w1" upper="10.0" weight="1.0"/>
+        <operator id="w2.scale" spec="kernel.BactrianScaleOperator" parameter="@w2" upper="10.0" weight="1.0"/>
+        <logger id="ScreenLogger" spec="Logger" logEvery="150000">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log idref="delta"/>
+            <log idref="epsilon"/>
+            <log idref="w1"/>
+            <log idref="w2"/>
+            <log idref="pi"/>
+            <log idref="rates"/>
+            <log idref="Theta"/>
+            <log idref="A"/>
+            <log idref="s"/>
+            <log idref="t"/>
+            <log idref="v"/>
+        </logger>
+        <logger id="Logger" spec="Logger" fileName="ExchangeGibbsOperatorTest.log" logEvery="1500">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="prior"/>
+            <log idref="delta"/>
+            <log idref="epsilon"/>
+            <log idref="w1"/>
+            <log idref="w2"/>
+            <log idref="pi"/>
+            <log idref="rates"/>
+            <log idref="Theta"/>
+            <log idref="A"/>
+            <log idref="s"/>
+            <log idref="t"/>
+            <log idref="v"/>
+            <log id="TreeStatLogger" spec="beast.base.evolution.tree.TreeStatLogger" tree="@psi"/>
+            <log idref="A.treeLikelihood"/>
+        </logger>
+        <logger id="psi.treeLogger" spec="Logger" fileName="ExchangeGibbsOperatorTest.trees" logEvery="1500" mode="tree">
+            <log idref="psi"/>
+        </logger>
+    </run>
+
+</beast>
+

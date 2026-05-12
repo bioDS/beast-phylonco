@@ -56,7 +56,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 CopyNumberBD.class,
                 ReadCopyProfile.class,
                 ReadTaxaReadCountMatrix.class,
-                ReadCountDataFilter.class,
+                ReadCountDataFilter.class,ReadCountDataSubset.class,
                 CopyReadCount.class, ReadCountToNexus.class, ReadReadCountNexus.class,
                 MpileupToReadCount.class
         );

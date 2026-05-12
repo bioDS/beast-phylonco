@@ -89,7 +89,8 @@ public class LBPhylonco implements LPhyBEASTExt {
                 ReadCopyProfile.class,
                 ReadCountDataFilter.class,
                 MpileupToReadCount.class,
-                ReadCountToNexus.class
+                ReadCountToNexus.class,
+                ReadCountDataSubset.class
         );
     }
 

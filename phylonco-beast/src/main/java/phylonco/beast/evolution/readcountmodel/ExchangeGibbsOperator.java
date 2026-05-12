@@ -176,7 +176,7 @@ public class ExchangeGibbsOperator extends TreeOperator {
         double[][] treeLogProb = new double[numStates][];
         double[][] rcLogLik = new double[numStates][];
         for (int g = 0; g < numStates; g++) {
-            treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g));
+            treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g)).clone();
             rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(k, allGSequences.get(g));
         }
 
@@ -207,7 +207,7 @@ public class ExchangeGibbsOperator extends TreeOperator {
         double[][] treeLogProb = new double[numStates][];
         double[][] rcLogLik = new double[numStates][];
         for (int g = 0; g < numStates; g++) {
-            treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g));
+            treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g)).clone();
             rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(k, allGSequences.get(g));
         }
 
