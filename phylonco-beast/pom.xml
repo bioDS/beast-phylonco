@@ -8,58 +8,87 @@
     </parent>
 
     <artifactId>phylonco-beast</artifactId>
-    <!-- phylonco-beast version, it must be consisting with version.xml   -->
-    <version>1.2.1</version>
+    <version>${revision}</version>
 
     <properties>
-        <!-- it must be consisting with version.xml, and the jar names in the lib folder -->
-        <beastVersion>2.7.8</beastVersion>
+        <!-- version names should be consistent with version.xml, and jars in lib  -->
+        <beast.version>2.8.0-beta5</beast.version>
+        <beast.module>beast.base</beast.module>
+        <beast.main>beast.base.minimal.BeastMain</beast.main>
+
+        <!-- apache commons -->
+        <commons-math4-legacy.version>4.0-beta1</commons-math4-legacy.version>
+        <commons-math4-core.version>4.0-beta1</commons-math4-core.version>
+        <commons-numbers.version>1.2</commons-numbers.version>
+        <commons-rng.version>1.6</commons-rng.version>
+        <commons-statistics.version>1.2</commons-statistics.version>
+
+        <beast.pkg.name>beast-phylonco</beast.pkg.name>
+        <beast.pkg.version>${revision}</beast.pkg.version>
     </properties>
 
     <dependencies>
+        <!-- BEAST 3 -->
         <dependency>
-            <groupId>beast2</groupId>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beast-pkgmgmt</artifactId>
+            <version>${beast.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.compevol</groupId>
             <artifactId>beast-base</artifactId>
-            <version>${beastVersion}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/BEAST.base-${beastVersion}.jar</systemPath>
+            <version>${beast.version}</version>
         </dependency>
         <dependency>
-            <groupId>beast2</groupId>
-            <artifactId>beast-app</artifactId>
-            <version>${beastVersion}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/BEAST.app-${beastVersion}.jar</systemPath>
+            <groupId>io.github.compevol</groupId>
+            <artifactId>beast-fx</artifactId>
+            <version>${beast.version}</version>
         </dependency>
+
+        <!-- Commons Math 4 -->
         <dependency>
-            <groupId>beast2</groupId>
-            <artifactId>beast-launcher</artifactId>
-            <version>${beastVersion}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/launcher-${beastVersion}.jar</systemPath>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-legacy</artifactId>
+            <version>${commons-math4-legacy.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>beast2</groupId>
-            <artifactId>beast-labs</artifactId>
-            <version>2.0.2</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/BEASTlabs.v2.0.2.jar</systemPath>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-math4-core</artifactId>
+            <version>${commons-math4-core.version}</version>
         </dependency>
+
+        <!-- Commons Statistics -->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-statistics-distribution</artifactId>
+            <version>${commons-statistics.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.13.2</version>
+<!--            <scope>test</scope>-->
+        </dependency>
+
+        <!-- TODO: update unit tests to Junit 5 in the future-->
+<!--        <dependency>-->
+<!--            <groupId>org.junit.jupiter</groupId>-->
+<!--            <artifactId>junit-jupiter</artifactId>-->
+<!--            <version>5.10.2</version>-->
+<!--            <scope>test</scope>-->
+<!--        </dependency>-->
+
+
+        <!-- local jars NestedBD and MutableAlignment  -->
+        <!-- TODO: release these on maven and import from maven -->
         <dependency>
             <groupId>beast2</groupId>
-            <artifactId>nested-bd</artifactId>
+            <artifactId>NestedBD</artifactId>
             <version>1.9.6</version>
             <scope>system</scope>
             <systemPath>${project.basedir}/lib/NestedBD.v1.9.6.jar</systemPath>
-        </dependency>
-
-        <dependency>
-            <groupId>java1.8</groupId>
-            <artifactId>nashorn</artifactId>
-            <version>1.8</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/nashorn.jar</systemPath>
         </dependency>
 
         <dependency>
@@ -74,6 +103,85 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.15.0</version>
+                <configuration>
+                    <release>25</release>
+                    <encoding>UTF-8</encoding>
+                    <!-- removed jmh here -->
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.1.2</version>
+            </plugin>
+            <!-- Copy version.xml to target/ (for ZIP assembly) and target/classes/
+                 (embeds it in the JAR and makes it visible to BEAST_PACKAGE_PATH) -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>copy-version-xml</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.directory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes><include>version.xml</include></includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>embed-version-xml-in-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals><goal>copy-resources</goal></goals>
+                        <configuration>
+                            <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}</directory>
+                                    <includes><include>version.xml</include></includes>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Run BEAST on the module path:
+                 mvn exec:exec -Dbeast.args="examples/b3test/cats_halfAlignment.xml"
+                 mvn exec:exec -Dbeast.module=beast.fx -Dbeast.main=beastfx.app.beauti.Beauti -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>exec-maven-plugin</artifactId>
+                <version>3.5.0</version>
+                <configuration>
+                    <executable>java</executable>
+                    <workingDirectory>${project.basedir}</workingDirectory>
+                    <commandlineArgs>--module-path %classpath -DBEAST_PACKAGE_PATH=${project.build.outputDirectory} -m ${beast.module}/${beast.main} ${beast.args}</commandlineArgs>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.1</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals><goal>jar-no-fork</goal></goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
@@ -92,17 +200,14 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.7.1</version>
                 <configuration>
-                    <descriptors>
-                        <descriptor>src/assembly/phylonco-beast-assembly.xml</descriptor>
-                    </descriptors>
                     <outputDirectory>${project.build.directory}</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
                     <finalName>${project.artifactId}-${project.version}</finalName>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id> <!-- this is used for inheritance merges -->
-                        <phase>package</phase> <!-- bind to the packaging phase -->
+                        <id>make-assembly</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
