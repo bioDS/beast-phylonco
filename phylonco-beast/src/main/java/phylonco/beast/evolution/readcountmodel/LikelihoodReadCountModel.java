@@ -10,10 +10,8 @@ import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
 import mutablealignment.MutableAlignment;
 
-//import org.apache.commons.statistics.distribution.GammaDistribution;
-
 import org.apache.commons.numbers.gamma.LogGamma;
-//import org.apache.commons.math3.special.Gamma;
+// replaces import org.apache.commons.math3.special.Gamma;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.datatype.ReadCount;

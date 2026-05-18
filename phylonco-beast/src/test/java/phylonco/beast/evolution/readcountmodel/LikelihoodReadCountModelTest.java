@@ -4,8 +4,10 @@ import beast.base.evolution.alignment.Alignment;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.parser.NexusParser;
 import beast.pkgmgmt.BEASTClassLoader;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.Before;
+import org.junit.Test;
+//import org.junit.jupiter.api.BeforeEach;
+//import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.datatype.ReadCount;
 
 import java.io.BufferedReader;
@@ -25,7 +27,7 @@ public class LikelihoodReadCountModelTest {
 
     final double DELTA = 1e-5;
 
-    @BeforeEach
+    @Before
     public void setUp() {
         String versionFile = "version.xml";
         BEASTClassLoader.addServices(versionFile);
