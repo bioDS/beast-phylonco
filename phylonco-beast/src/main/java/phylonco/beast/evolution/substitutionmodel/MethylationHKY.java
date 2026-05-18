@@ -7,9 +7,13 @@ import beast.base.evolution.substitutionmodel.ComplexColtEigenSystem;
 import beast.base.evolution.substitutionmodel.ComplexSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.inference.parameter.RealParameter;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.SingularValueDecomposition;
+
+import org.apache.commons.math4.legacy.linear.Array2DRowRealMatrix;
+import org.apache.commons.math4.legacy.linear.RealMatrix;
+import org.apache.commons.math4.legacy.linear.SingularValueDecomposition;
+//import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+//import org.apache.commons.math3.linear.RealMatrix;
+//import org.apache.commons.math3.linear.SingularValueDecomposition;
 import phylonco.beast.evolution.datatype.NucleotideMethylation;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
