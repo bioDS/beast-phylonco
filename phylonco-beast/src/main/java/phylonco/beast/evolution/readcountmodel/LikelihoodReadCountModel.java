@@ -9,7 +9,11 @@ import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
 import mutablealignment.MutableAlignment;
-import org.apache.commons.math3.special.Gamma;
+
+//import org.apache.commons.statistics.distribution.GammaDistribution;
+
+import org.apache.commons.numbers.gamma.LogGamma;
+//import org.apache.commons.math3.special.Gamma;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.datatype.ReadCount;
@@ -194,7 +198,7 @@ public class LikelihoodReadCountModel extends Distribution {
         readDepthLogGamma = new double[maxReadDepth+2];
         for (int i = 1; i < maxReadDepth+2; i++) {
             readDepthLog[i] = Math.log(i);
-            readDepthLogGamma[i] = Gamma.logGamma(i);
+            readDepthLogGamma[i] = LogGamma.value(i);
         }
 
         currentLogPi = new double[alignment.getTaxonCount()];
@@ -236,24 +240,24 @@ public class LikelihoodReadCountModel extends Distribution {
             negp2[i] = mean2 / variance2;
             negr1[i] = Math.pow(mean1, 2) / (variance1 - mean1);
             negr2[i] = Math.pow(mean2, 2) / (variance2 - mean2);
-            rGammaLog[0][i] = Gamma.logGamma(negr1[i]);
-            rGammaLog[1][i] = Gamma.logGamma(negr2[i]);
+            rGammaLog[0][i] = LogGamma.value(negr1[i]);
+            rGammaLog[1][i] = LogGamma.value(negr2[i]);
             p1Log[0][i] = Math.log(negp1[i]);
             p1Log[1][i] = Math.log(1-negp1[i]);
             p2Log[0][i] = Math.log(negp2[i]);
             p2Log[1][i] = Math.log(1-negp2[i]);
             for (int j =0; j < maxReadDepth+1; j++) {
-                c_rLogGamma[0][i][j] = Gamma.logGamma(j + negr1[i]);
-                c_rLogGamma[1][i][j] = Gamma.logGamma(j + negr2[i]);
+                c_rLogGamma[0][i][j] = LogGamma.value(j + negr1[i]);
+                c_rLogGamma[1][i][j] = LogGamma.value(j + negr2[i]);
             }
         }
 
         double x0, x1, x2, x3;
         for (int i =0; i < wPropensitiesLogGamma.length; i++) {
-            x0 = Gamma.logGamma((1 -eps)*wv[i]);
-            x1 = Gamma.logGamma((eps/3)*wv[i]);
-            x2 = Gamma.logGamma((0.5 - eps/6)*wv[i]);
-            x3 = Gamma.logGamma((eps/6)*wv[i]);
+            x0 = LogGamma.value((1 -eps)*wv[i]);
+            x1 = LogGamma.value((eps/3)*wv[i]);
+            x2 = LogGamma.value((0.5 - eps/6)*wv[i]);
+            x3 = LogGamma.value((eps/6)*wv[i]);
             wPropensitiesLogGamma[i] = new double[][]{
                     {x0, x1, x1, x1},   // AA or A_ 0
                     {x2, x2, x3, x3},   // AC or CA 1
@@ -289,7 +293,7 @@ public class LikelihoodReadCountModel extends Distribution {
             for (int j = 0; j < rc_wPropLogGamma[i].length; j++) {
                 for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
                     for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
-                        rc_wPropLogGamma[i][j][k][l] = Gamma.logGamma(propensities[k][l] + j);
+                        rc_wPropLogGamma[i][j][k][l] = LogGamma.value(propensities[k][l] + j);
                     }
                 }
             }
@@ -297,12 +301,12 @@ public class LikelihoodReadCountModel extends Distribution {
 
         for (int i = 0; i < c_wLogGamma.length; i++) {
             for (int j = 0; j < c_wLogGamma[i].length; j++) {
-                c_wLogGamma[i][j] = Gamma.logGamma(wv[i] + j);
+                c_wLogGamma[i][j] = LogGamma.value(wv[i] + j);
             }
         }
 
-        wLogGamma[0] = Gamma.logGamma(wv[0]);
-        wLogGamma[1] = Gamma.logGamma(wv[1]);
+        wLogGamma[0] = LogGamma.value(wv[0]);
+        wLogGamma[1] = LogGamma.value(wv[1]);
         deltaLog[0] = Math.log(del);
         deltaLog[1] = Math.log(1-del);
 
