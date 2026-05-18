@@ -10,6 +10,7 @@ module phylonco.beast {
 
     requires static beast.fx;
     requires static javafx.controls;
+    requires java.xml;
 
     requires jdk.jfr;
     requires MutableAlignment;

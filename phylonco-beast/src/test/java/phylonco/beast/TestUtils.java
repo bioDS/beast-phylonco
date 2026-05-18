@@ -42,7 +42,7 @@ public class TestUtils {
 
         // require jar files
         File versionF = new File(dir.getPath() + File.separator + "BEAST.base.version.xml");
-        File jarF = new File(dir.getPath() + File.separator + "BEAST.base-2.7.6.jar");
+        File jarF = new File(dir.getPath() + File.separator + "BEAST.base-2.7.8.jar");
         loadPackage(versionF, jarF);
         versionF = new File(dir.getPath() + File.separator + "BEASTlabs.version.xml");
         jarF = new File(dir.getPath() + File.separator + "BEASTlabs.v2.0.2.jar");
