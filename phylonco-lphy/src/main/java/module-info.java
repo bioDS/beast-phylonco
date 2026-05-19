@@ -2,7 +2,7 @@
  * @author Walter Xie
  */
 module phylonco.lphy {
-    requires transitive lphy.base;
+    requires lphy.base;
     requires jdk.jfr;
 
     exports phylonco.lphy.evolution.alignment;
