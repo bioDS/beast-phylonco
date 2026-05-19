@@ -1,8 +1,10 @@
 package phylonco.beast.evolution.readcountmodel;
 
 import beast.base.evolution.alignment.Alignment;
-import beast.base.inference.parameter.RealParameter;
+
 import beast.base.parser.NexusParser;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.pkgmgmt.BEASTClassLoader;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,7 +56,7 @@ public class LikelihoodReadCountModelTest {
         Double delta = 0.5;
         Double t = 9.996182050184155;
         Double v = 1.0670434040009762;
-        Double[] s = new Double[]{1.0399635911708527, 1.0419228814287969};
+        double[] s = new double[]{1.0399635911708527, 1.0419228814287969};
         Double w1 = 10.0;
         Double w2 = 2.0;
 
@@ -66,7 +68,7 @@ public class LikelihoodReadCountModelTest {
         ReadCount readCounts = getReadCounts(readCountFile);
 
         // real parameter array
-        RealParameter sParam = new RealParameter(s);
+        RealVectorParam sParam = new RealVectorParam(s, PositiveReal.INSTANCE);
 
         // init params
         likelihoodReadCountModel.setInputValue("alignment", alignment);

@@ -1,7 +1,9 @@
 package phylonco.beast.evolution.substitutionmodel;
 
-import beast.base.inference.parameter.RealParameter;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -19,15 +21,15 @@ public class GT16Test {
     private GT16 gt16;
     private int nrOfStates = 16;
 
-    public void setupModel(Double[] pi, Double[] rates) {
+    public void setupModel(double[] pi, double[] rates) {
         gt16 = new GT16();
 
-        RealParameter f = new RealParameter(pi);
+        RealVectorParam f = new RealVectorParam(pi, UnitInterval.INSTANCE);
 
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
 
-        RealParameter nucRates = new RealParameter(rates);
+        RealVectorParam nucRates = new RealVectorParam(rates, PositiveReal.INSTANCE);
         nucRates.setInputValue("keys", "AC AG AT CG CT GT");
         nucRates.initAndValidate();
 
@@ -92,11 +94,11 @@ public class GT16Test {
     public void testTransitionLong() {
         double t = 10;
 
-        Double[] pi = new Double[nrOfStates];
+        double[] pi = new double[nrOfStates];
         Arrays.fill(pi, 1.0 / nrOfStates);
 
         // rates AC, AG, AT, CG, CT, GT
-        Double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+        double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 
         setupModel(pi, rates);
 
@@ -173,11 +175,11 @@ public class GT16Test {
     public void testTransitionShort() {
         double t = 0.1;
 
-        Double[] pi = new Double[nrOfStates];
+        double[] pi = new double[nrOfStates];
         Arrays.fill(pi, 1.0 / nrOfStates);
 
         // rates AC, AG, AT, CG, CT, GT
-        Double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+        double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
 
         setupModel(pi, rates);
 

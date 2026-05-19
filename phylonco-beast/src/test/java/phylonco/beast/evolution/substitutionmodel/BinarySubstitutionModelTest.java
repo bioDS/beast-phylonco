@@ -1,7 +1,8 @@
 package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,7 +23,7 @@ public class BinarySubstitutionModelTest {
     public void setupModel(Double lambda) {
         model = new BinarySubstitutionModel();
         model.initByName(
-                "lambda", new RealParameter(lambda.toString())
+                "lambda", new RealScalarParam(lambda, PositiveReal.INSTANCE)
         );
         nrOfStates = model.getStateCount();
     }

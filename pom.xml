@@ -68,7 +68,7 @@
     </build>
 
 <!--    <dependencies>-->
-<!--        &lt;!&ndash; BEAST 3 &ndash;&gt;-->
+<!--         BEAST 3 -->
 <!--        <dependency>-->
 <!--            <groupId>io.github.compevol</groupId>-->
 <!--            <artifactId>beast-base</artifactId>-->

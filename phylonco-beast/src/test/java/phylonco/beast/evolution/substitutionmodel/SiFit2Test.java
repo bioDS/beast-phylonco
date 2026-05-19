@@ -1,7 +1,9 @@
 package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
-import beast.base.inference.parameter.RealParameter;
+
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -22,8 +24,8 @@ public class SiFit2Test {
     public void setupModel(Double lambdaD, Double lambdaL) {
         model = new SiFit2();
         model.initByName(
-                "lambdaD", new RealParameter(lambdaD.toString()),
-                "lambdaL", new RealParameter(lambdaL.toString())
+                "lambdaD", new RealScalarParam(lambdaD, PositiveReal.INSTANCE),
+                "lambdaL", new RealScalarParam(lambdaL, PositiveReal.INSTANCE)
         );
         nrOfStates = model.getStateCount();
     }

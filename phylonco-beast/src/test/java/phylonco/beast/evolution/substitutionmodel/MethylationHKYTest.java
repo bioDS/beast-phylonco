@@ -2,7 +2,9 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.inference.parameter.RealParameter;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Before;
@@ -51,18 +53,18 @@ public class MethylationHKYTest extends TestCase {
     }
 
     class testData {
-        RealParameter kappa;
-        RealParameter alpha;
-        RealParameter beta;
-        RealParameter gamma;
+        RealScalarParam kappa;
+        RealScalarParam alpha;
+        RealScalarParam beta;
+        RealScalarParam gamma;
         double[] result;
         double time;
 
         public testData(double[] input, double time, double[] result) {
-            this.kappa = new RealParameter(input[0] + "");
-            this.alpha = new RealParameter(input[1] + "");
-            this.beta = new RealParameter(input[2] + "");
-            this.gamma = new RealParameter(input[3] + "");
+            this.kappa = new RealScalarParam(input[0], PositiveReal.INSTANCE);
+            this.alpha = new RealScalarParam(input[1], PositiveReal.INSTANCE);
+            this.beta = new RealScalarParam(input[2], PositiveReal.INSTANCE);
+            this.gamma = new RealScalarParam(input[3], PositiveReal.INSTANCE);
             this.time = time;
             this.result = result;
         }

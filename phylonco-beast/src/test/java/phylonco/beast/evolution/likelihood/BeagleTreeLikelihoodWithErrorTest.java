@@ -7,12 +7,14 @@ import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.Nucleotide;
-import beast.base.evolution.sitemodel.SiteModel;
-import beast.base.evolution.substitutionmodel.Frequencies;
-import beast.base.evolution.substitutionmodel.JukesCantor;
+import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.evolution.sitemodel.SiteModel;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.TreeParser;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import phylonco.beast.TestUtils;
@@ -206,15 +208,15 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
         TreeParser tree = getTree(data);
 
-        Double[] pi = new Double[16];
+        double[] pi = new double[16];
         Arrays.fill(pi, 1.0 / 16);
-        RealParameter f = new RealParameter(pi);
+        RealVectorParam f = new RealVectorParam(pi, UnitInterval.INSTANCE);
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
         freqs.initAndValidate();
 
-        Double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-        RealParameter nucRates = new RealParameter(rates);
+        double[] rates = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+        RealVectorParam nucRates = new RealVectorParam(rates, PositiveReal.INSTANCE);
         nucRates.setInputValue("keys", "AC AG AT CG CT GT");
         nucRates.initAndValidate();
 
