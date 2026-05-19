@@ -11,6 +11,9 @@ tmp/
 **/target/**
 *.class
 
+# pom output
+**/**/*.flattened-pom.xml
+
 # idea directory
 /.idea/
 

@@ -255,6 +255,7 @@ public class MethylationHKYTest extends TestCase {
             Method method = MethylationHKY.class.getDeclaredMethod("setupRateMatrix");
             method.setAccessible(true);
             method.invoke(substitutionModel);
+            // TODO: unit test fails here
             Field privateField = GeneralSubstitutionModel.class.getDeclaredField("rateMatrix");
             privateField.setAccessible(true);
             double[][] rateMatrix = (double[][]) privateField.get(substitutionModel);

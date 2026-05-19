@@ -4,6 +4,7 @@ import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.domain.UnitInterval;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.SimplexParam;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -24,7 +25,7 @@ public class GT16Test {
     public void setupModel(double[] pi, double[] rates) {
         gt16 = new GT16();
 
-        RealVectorParam f = new RealVectorParam(pi, UnitInterval.INSTANCE);
+        SimplexParam f = new SimplexParam(pi);
 
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
