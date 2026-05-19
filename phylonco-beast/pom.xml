@@ -2,8 +2,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.linguaphylo</groupId>
-        <artifactId>beast-phylonco</artifactId>
+        <groupId>io.github.bioDS</groupId>
+        <artifactId>beast-phylonco-root</artifactId>
         <version>${revision}</version>
     </parent>
 

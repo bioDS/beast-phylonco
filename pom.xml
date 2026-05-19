@@ -10,8 +10,8 @@
     </parent>
 
     <!-- phylonco version   -->
-    <!--    <groupId>io.github.linguaphylo</groupId>-->
-    <artifactId>beast-phylonco</artifactId>
+    <groupId>io.github.bioDS</groupId>
+    <artifactId>beast-phylonco-root</artifactId>
     <version>${revision}</version>
     <packaging>pom</packaging>
 
