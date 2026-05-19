@@ -2,10 +2,10 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 /**
@@ -28,11 +28,11 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
  */
 @Description("SiFit binary substitution model")
 public class SiFit2 extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
 
-    private RealParameter lambdaD;
-    private RealParameter lambdaL;
+    private RealScalarParam lambdaD;
+    private RealScalarParam lambdaL;
 
     protected double[] frequencies;
 
@@ -61,7 +61,7 @@ public class SiFit2 extends GeneralSubstitutionModel implements SubstitutionMode
 
     @Override
     public void setupRateMatrix() {
-        setupRateMatrix(lambdaD.getValue(), lambdaL.getValue());
+        setupRateMatrix(lambdaD.get(), lambdaL.get());
     }
 
     // instantaneous matrix Q
@@ -89,7 +89,7 @@ public class SiFit2 extends GeneralSubstitutionModel implements SubstitutionMode
     }
 
     protected void setupFrequencies() {
-        setupFrequencies(lambdaD.getValue(), lambdaL.getValue());
+        setupFrequencies(lambdaD.get(), lambdaL.get());
     }
 
     private void setupFrequencies(double lambdaD, double lambdaL) {

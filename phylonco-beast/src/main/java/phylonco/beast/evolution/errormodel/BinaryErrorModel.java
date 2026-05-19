@@ -2,18 +2,18 @@ package phylonco.beast.evolution.errormodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
+import beast.base.spec.inference.parameter.RealScalarParam;
 
 @Description("Binary error model with parameters as false positive and false negative probabilities")
 public class BinaryErrorModel extends ErrorModel {
 	
-    final public Input<RealParameter> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);
-    final public Input<RealParameter> betaInput = new Input<>("beta", "the false negative probability",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> betaInput = new Input<>("beta", "the false negative probability",  Input.Validate.REQUIRED);
 
-    private RealParameter alpha;
-    private RealParameter beta;
+    private RealScalarParam alpha;
+    private RealScalarParam beta;
 
     @Override
     public void initAndValidate() {
@@ -44,8 +44,8 @@ public class BinaryErrorModel extends ErrorModel {
 
     @Override
     public double getProbability(int observedState, int trueState) {
-        double a = alpha.getValue();
-        double b = beta.getValue();
+        double a = alpha.get();
+        double b = beta.get();
         double prob;
         if (datatype.isAmbiguousCode(observedState)) {
             prob = getStatePartial(observedState, trueState);

@@ -18,20 +18,20 @@ public class TreeLikelihoodWithErrorFast extends TreeLikelihoodWithError {
     @Override
     protected boolean requiresRecalculation() {
         hasDirt = Tree.IS_CLEAN;
-        if (errorModel != null && errorModel.isDirtyCalculation()) {
+        if (errorModel != null && errorModel.somethingIsDirty()) {
             updateLeafPartials = true;
             hasDirt = Tree.IS_FILTHY;
             return true;
         }
-        if (dataInput.get().isDirtyCalculation()) {
+        if (dataInput.get().somethingIsDirty()) {
             hasDirt = Tree.IS_FILTHY;
             return true;
         }
-        if (m_siteModel.isDirtyCalculation()) {
+        if (m_siteModel.somethingIsDirty()) {
             hasDirt = Tree.IS_DIRTY;
             return true;
         }
-        if (branchRateModel != null && branchRateModel.isDirtyCalculation()) {
+        if (branchRateModel != null && branchRateModel.somethingIsDirty()) {
             return true;
         }
         return treeInput.get().somethingIsDirty();

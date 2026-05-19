@@ -2,15 +2,15 @@ package phylonco.beast.evolution.errormodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.evolution.datatype.DataType;
+import beast.base.spec.inference.parameter.RealScalarParam;
 
 @Description("Error model base implementation")
 public class ErrorModelBase extends ErrorModel {
 
-    final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);
 
-    private RealParameter epsilon;
+    private RealScalarParam epsilon;
 
     @Override
     public void initAndValidate() {
@@ -43,9 +43,9 @@ public class ErrorModelBase extends ErrorModel {
         if (datatype.isAmbiguousCode(observedState)) {
             prob = getStatePartial(observedState, trueState);
         } else if (observedState == trueState) {
-            prob =  1 - epsilon.getValue();
+            prob =  1 - epsilon.get();
         } else {
-            prob = epsilon.getValue() / (states - 1);
+            prob = epsilon.get() / (states - 1);
         }
         return prob;
     }

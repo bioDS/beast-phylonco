@@ -5,9 +5,9 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.core.Log;
 import beast.base.evolution.alignment.Alignment;
-import beast.base.evolution.branchratemodel.StrictClockModel;
-import beast.base.evolution.likelihood.TreeLikelihood;
-import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.spec.evolution.branchratemodel.StrictClockModel;
+import beast.base.spec.evolution.likelihood.TreeLikelihood;
+import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.EigenDecomposition;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -550,7 +550,7 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
     public boolean requiresRecalculation() {
         hasDirt = Tree.IS_CLEAN;
 
-        if (errorModel != null && errorModel.isDirtyCalculation()) {
+        if (errorModel != null && errorModel.somethingIsDirty()) {
             updateErrorModel = true;
             hasDirt = Tree.IS_DIRTY;
             return true;
@@ -576,18 +576,18 @@ public class BeagleTreeLikelihoodWithError extends TreeLikelihood {
         //updateSiteModel |= m_siteModel.isDirtyCalculation();
 
         if (substitutionModel instanceof CalculationNode) {
-            updateSubstitutionModel |= ((CalculationNode) substitutionModel).isDirtyCalculation();
+            updateSubstitutionModel |= ((CalculationNode) substitutionModel).somethingIsDirty();
         }
 
-        if (dataInput.get().isDirtyCalculation()) {
+        if (dataInput.get().somethingIsDirty()) {
             hasDirt = Tree.IS_FILTHY;
             return true;
         }
-        if (m_siteModel.isDirtyCalculation()) {
+        if (m_siteModel.somethingIsDirty()) {
             hasDirt = Tree.IS_DIRTY;
             return true;
         }
-        if (branchRateModel != null && branchRateModel.isDirtyCalculation()) {
+        if (branchRateModel != null && branchRateModel.somethingIsDirty()) {
             //m_nHasDirt = Tree.IS_FILTHY;
             return true;
         }

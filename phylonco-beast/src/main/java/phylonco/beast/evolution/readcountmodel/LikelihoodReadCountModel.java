@@ -7,7 +7,8 @@ import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.datatype.DataType;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import mutablealignment.MutableAlignment;
 
 import org.apache.commons.numbers.gamma.LogGamma;
@@ -26,23 +27,23 @@ public class LikelihoodReadCountModel extends Distribution {
     public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");
 
     // epsilon, allelic dropout, ... parameters
-    public Input<RealParameter> epsilonInput = new Input<>("epsilon", "sequencing error");
-    public Input<RealParameter> deltaInput = new Input<>("delta", "allelic dropout probability");
-    public Input<RealParameter> tInput = new Input<>("t", "mean of allelic coverage");
-    public Input<RealParameter> vInput = new Input<>("v", "variance of allelic coverage");
-    public Input<RealParameter> sInput = new Input<>("s", "size factor of cell");
-    public Input<RealParameter> w1Input = new Input<>("w1", "homozygous genotype overdispersion parameter of Dirichlet multinomial distribution");
-    public Input<RealParameter> w2Input = new Input<>("w2", "heterogeneous genotype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "sequencing error");
+    public Input<RealScalarParam> deltaInput = new Input<>("delta", "allelic dropout probability");
+    public Input<RealScalarParam> tInput = new Input<>("t", "mean of allelic coverage");
+    public Input<RealScalarParam> vInput = new Input<>("v", "variance of allelic coverage");
+    public Input<RealVectorParam> sInput = new Input<>("s", "size factor of cell");
+    public Input<RealScalarParam> w1Input = new Input<>("w1", "homozygous genotype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealScalarParam> w2Input = new Input<>("w2", "heterogeneous genotype overdispersion parameter of Dirichlet multinomial distribution");
 
     // other parameters of read count model
 
-    private RealParameter epsilon;
-    private RealParameter delta;
-    private RealParameter t;
-    private RealParameter v;
-    private RealParameter s;
-    private RealParameter w1;
-    private RealParameter w2;
+    private RealScalarParam epsilon;
+    private RealScalarParam delta;
+    private RealScalarParam t;
+    private RealScalarParam v;
+    private RealVectorParam s;
+    private RealScalarParam w1;
+    private RealScalarParam w2;
     private Alignment alignment;
     private ReadCount readCount;
     private double[] negp1, negp2, negr1, negr2;
@@ -172,10 +173,10 @@ public class LikelihoodReadCountModel extends Distribution {
             }
         }
 
-        negp1 = new double[s.getDimension()];
-        negp2 = new double[s.getDimension()];
-        negr1 = new double[s.getDimension()];
-        negr2 = new double[s.getDimension()];
+        negp1 = new double[s.size()];
+        negp2 = new double[s.size()];
+        negr1 = new double[s.size()];
+        negr2 = new double[s.size()];
         coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
         for (int i = 0; i < alignment.getTaxonCount(); i++) {
             int rcIdx = alignToRCIndex[i];
@@ -201,10 +202,10 @@ public class LikelihoodReadCountModel extends Distribution {
 
         currentLogPi = new double[alignment.getTaxonCount()];
         storedLogPi =  new double[alignment.getTaxonCount()];
-        rGammaLog = new double[2][s.getDimension()];
-        p1Log = new double[2][s.getDimension()];
-        p2Log = new double[2][s.getDimension()];
-        c_rLogGamma = new double[2][s.getDimension()][maxReadDepth+1];
+        rGammaLog = new double[2][s.size()];
+        p1Log = new double[2][s.size()];
+        p2Log = new double[2][s.size()];
+        c_rLogGamma = new double[2][s.size()][maxReadDepth+1];
         c_wLogGamma = new double[2][maxReadDepth+1];
         rc_wPropLogGamma = new double[2][maxReadCount+1][10][4];
     }
@@ -221,15 +222,15 @@ public class LikelihoodReadCountModel extends Distribution {
         double mean2;
         double variance1;
         double variance2;
-        double eps = epsilon.getValue();
-        double del = delta.getValue();
-        double tv = t.getValue();
-        double vv = v.getValue();
-        Double[] sv = s.getValues();
-        wv = new double[]{w1.getValue(), w2.getValue()};
+        double eps = epsilon.get();
+        double del = delta.get();
+        double tv = t.get();
+        double vv = v.get();
+        double[] sv = s.getValues();
+        wv = new double[]{w1.get(), w2.get()};
         double[][] propensities;
 
-        for (int i = 0; i < s.getDimension(); i++) {
+        for (int i = 0; i < s.size(); i++) {
             mean1 = alpha[0] * tv * sv[i];
             mean2 = alpha[1] * tv * sv[i];
             variance1 = mean1 + Math.pow(alpha[0], 2) * vv * Math.pow(sv[i], 2);

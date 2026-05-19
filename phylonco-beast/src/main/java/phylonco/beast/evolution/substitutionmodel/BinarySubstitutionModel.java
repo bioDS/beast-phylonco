@@ -2,10 +2,10 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 
 /**
@@ -13,9 +13,9 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
  */
 @Description("A binary substitution model with a single rate parameter")
 public class BinarySubstitutionModel extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealParameter> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
 
-    private RealParameter lambda;
+    private RealScalarParam lambda;
 
     protected double[] frequencies;
 
@@ -43,7 +43,7 @@ public class BinarySubstitutionModel extends GeneralSubstitutionModel implements
 
     @Override
     public void setupRateMatrix() {
-        setupRateMatrix(lambda.getValue());
+        setupRateMatrix(lambda.get());
     }
 
     // instantaneous matrix Q
@@ -70,7 +70,7 @@ public class BinarySubstitutionModel extends GeneralSubstitutionModel implements
     }
 
     protected void setupFrequencies() {
-        setupFrequencies(lambda.getValue());
+        setupFrequencies(lambda.get());
     }
 
     private void setupFrequencies(double lambda) {

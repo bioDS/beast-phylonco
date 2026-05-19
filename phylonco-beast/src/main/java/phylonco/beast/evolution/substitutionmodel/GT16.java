@@ -3,9 +3,9 @@ package phylonco.beast.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
 import java.util.Arrays;
@@ -21,9 +21,9 @@ import java.util.List;
 @Description("GT16 diploid substitution model from CellPhy paper")
 public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel {
 
-    final public Input<RealParameter> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
+    final public Input<RealVectorParam> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
 
-    private RealParameter rates;
+    private RealVectorParam rates;
 
     public GT16() {
         super.ratesInput.setRule(Input.Validate.OPTIONAL);
@@ -40,12 +40,12 @@ public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel 
 
         if (rates == null) {
             throw new IllegalArgumentException("nucRates attribute needs to be specified.");
-        } else if (rates.getDimension() != 6) {
+        } else if (rates.size() != 6) {
             throw new IllegalArgumentException("nucRates dimension not equal to 6.");
         } else {
             List<String> keys = Arrays.asList("AC", "AG", "AT", "CG", "CT", "GT");
             for (String k: keys) {
-                if (rates.getValue(k) == null)
+                if (rates.get(k) == null)
                     throw new IllegalArgumentException("nucRates key needs to be specified for " + k);
             }
         }
@@ -72,12 +72,12 @@ public class GT16 extends GeneralSubstitutionModel implements SubstitutionModel 
 
     @Override
     protected void setupRateMatrixUnnormalized() {
-        double rateAC = rates.getValue("AC");
-        double rateAG = rates.getValue("AG");
-        double rateAT = rates.getValue("AT");
-        double rateCG = rates.getValue("CG");
-        double rateCT = rates.getValue("CT");
-        double rateGT = rates.getValue("GT");
+        double rateAC = rates.get("AC");
+        double rateAG = rates.get("AG");
+        double rateAT = rates.get("AT");
+        double rateCG = rates.get("CG");
+        double rateCT = rates.get("CT");
+        double rateGT = rates.get("GT");
 
         setupRateMatrixUnnormalized(rateAC, rateAG, rateAT, rateCG, rateCT, rateGT);
     }

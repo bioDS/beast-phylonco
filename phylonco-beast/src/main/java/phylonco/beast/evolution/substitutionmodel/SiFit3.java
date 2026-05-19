@@ -3,9 +3,9 @@ package phylonco.beast.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.substitutionmodel.GeneralSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import phylonco.beast.evolution.datatype.Ternary;
 
 /**
@@ -50,12 +50,12 @@ import phylonco.beast.evolution.datatype.Ternary;
  */
 @Description("SiFit ternary substitution model")
 public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealParameter> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
-    final public Input<RealParameter> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<Boolean> mutationPathInput = new Input<>("mutationPath", "allow mutation paths from state 1 to 0 and state 1 to 2", false);
 
-    private RealParameter lambdaD;
-    private RealParameter lambdaL;
+    private RealScalarParam lambdaD;
+    private RealScalarParam lambdaL;
     private Boolean mutationPath;
 
     protected double[] frequencies;
@@ -87,9 +87,9 @@ public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionMode
     @Override
     public void setupRateMatrix() {
         if (mutationPath) {
-            setupRateMatrixWithMutation(lambdaD.getValue(), lambdaL.getValue());
+            setupRateMatrixWithMutation(lambdaD.get(), lambdaL.get());
         } else {
-            setupRateMatrix(lambdaD.getValue(), lambdaL.getValue());
+            setupRateMatrix(lambdaD.get(), lambdaL.get());
         }
     }
 
@@ -130,9 +130,9 @@ public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionMode
 
     protected void setupFrequencies() {
         if (mutationPath) {
-            setupFrequenciesWithMutation(lambdaD.getValue(), lambdaL.getValue());
+            setupFrequenciesWithMutation(lambdaD.get(), lambdaL.get());
         } else {
-            setupFrequencies(lambdaD.getValue(), lambdaL.getValue());
+            setupFrequencies(lambdaD.get(), lambdaL.get());
         }
     }
 

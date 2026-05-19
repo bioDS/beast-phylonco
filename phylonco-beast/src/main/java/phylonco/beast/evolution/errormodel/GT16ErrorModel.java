@@ -3,7 +3,7 @@ package phylonco.beast.evolution.errormodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
 import static beast.base.evolution.datatype.DataType.GAP_CHAR;
@@ -20,11 +20,11 @@ import static beast.base.evolution.datatype.DataType.MISSING_CHAR;
 @Description("GT16 diploid error model from CellPhy paper")
 public class GT16ErrorModel extends ErrorModel {
 
-    final public Input<RealParameter> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);
-    final public Input<RealParameter> epsilonInput = new Input<>("epsilon", "the sequencing error probability",  Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);
+    final public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "the sequencing error probability",  Input.Validate.REQUIRED);
 
-    private RealParameter delta;
-    private RealParameter epsilon;
+    private RealScalarParam delta;
+    private RealScalarParam epsilon;
 
     @Override
     public void initAndValidate() {
@@ -68,8 +68,8 @@ public class GT16ErrorModel extends ErrorModel {
     }
 
     private double getProbabilityUnambiguous(int observedState, int trueState) {
-        double d = delta.getValue();
-        double e = epsilon.getValue();
+        double d = delta.get();
+        double e = epsilon.get();
 
         int bases = 4;
 

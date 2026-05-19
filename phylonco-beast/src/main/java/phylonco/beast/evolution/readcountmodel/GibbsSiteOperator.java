@@ -3,7 +3,7 @@ package phylonco.beast.evolution.readcountmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.branchratemodel.BranchRateModel;
-import beast.base.evolution.sitemodel.SiteModel;
+import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;

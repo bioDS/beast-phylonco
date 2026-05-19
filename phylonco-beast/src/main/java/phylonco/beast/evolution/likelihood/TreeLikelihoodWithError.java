@@ -3,7 +3,7 @@ package phylonco.beast.evolution.likelihood;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
-import beast.base.evolution.likelihood.TreeLikelihood;
+import beast.base.spec.evolution.likelihood.TreeLikelihood;
 import beast.base.evolution.tree.Node;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 

@@ -4,9 +4,9 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.ComplexColtEigenSystem;
-import beast.base.evolution.substitutionmodel.ComplexSubstitutionModel;
+import beast.base.spec.evolution.substitutionmodel.ComplexSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
-import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealScalarParam;
 
 import org.apache.commons.math4.legacy.linear.Array2DRowRealMatrix;
 import org.apache.commons.math4.legacy.linear.RealMatrix;
@@ -18,20 +18,20 @@ import phylonco.beast.evolution.datatype.NucleotideMethylation;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
 public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {
-    public Input<RealParameter> kappaInput = new Input<RealParameter>(
+    public Input<RealScalarParam> kappaInput = new Input<RealScalarParam>(
             "kappa", "kappa parameter of the HKY model", Input.Validate.REQUIRED);
-    public Input<RealParameter> alphaInput = new Input<RealParameter>(
+    public Input<RealScalarParam> alphaInput = new Input<RealScalarParam>(
             "alpha", "rate of methylation (C->MetC)", Input.Validate.REQUIRED);
-    public Input<RealParameter> betaInput = new Input<RealParameter>(
+    public Input<RealScalarParam> betaInput = new Input<RealScalarParam>(
             "beta", "rate of demethylation (MetC->C)", Input.Validate.REQUIRED);
-    public Input<RealParameter> gammaInput = new Input<RealParameter>(
+    public Input<RealScalarParam> gammaInput = new Input<RealScalarParam>(
             "gamma", "rate of demethylation of MetC into Thymine", Input.Validate.REQUIRED);
 
 
-    private RealParameter kappaPar;
-    private RealParameter alphaPar;
-    private RealParameter betaPar;
-    private RealParameter gammaPar;
+    private RealScalarParam kappaPar;
+    private RealScalarParam alphaPar;
+    private RealScalarParam betaPar;
+    private RealScalarParam gammaPar;
 
     public MethylationHKY() {
         ratesInput.setRule(Input.Validate.OPTIONAL);
@@ -139,10 +139,10 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
      * @return stationary distribution pi
      */
     private double[] stationary_distribution(){
-        double kappa = kappaPar.getValue();
-        double alpha = alphaPar.getValue();
-        double beta = betaPar.getValue();
-        double gamma = gammaPar.getValue();
+        double kappa = kappaPar.get();
+        double alpha = alphaPar.get();
+        double beta = betaPar.get();
+        double gamma = gammaPar.get();
 
         double[] pi = new double[6];
         if(alpha == 0){
@@ -190,10 +190,10 @@ public class MethylationHKY extends ComplexSubstitutionModel implements Substitu
      */
     private double[][] setupUnnormalizedRateMatrix(){
         double[][] unnormalizedRateMatrix = new double[6][6];
-        double kappa = kappaPar.getValue(0);
-        double alpha = alphaPar.getValue(0);
-        double beta = betaPar.getValue(0);
-        double gamma = gammaPar.getValue(0);
+        double kappa = kappaPar.get(0);
+        double alpha = alphaPar.get(0);
+        double beta = betaPar.get(0);
+        double gamma = gammaPar.get(0);
 
         // set all states to 0, states should be always initialized as 0, so this shouldn't be required
         for(int i = 0; i < 6; i++){

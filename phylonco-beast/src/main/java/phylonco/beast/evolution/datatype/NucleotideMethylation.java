@@ -56,7 +56,7 @@ public class NucleotideMethylation extends DataType.Base {
 
 
     @Override
-    public char getChar(int state){
-        return codeMap.charAt(state);
+    public String getCharacter(int state){
+        return codeMap.charAt(state) + "";
     }
 }
