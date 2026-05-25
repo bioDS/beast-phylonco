@@ -1,12 +1,9 @@
 package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.Binary;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
-
-import java.net.MalformedURLException;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -14,19 +11,14 @@ public class BinaryErrorModelTest {
 
     private static double DELTA = 1e-10;
 
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
-    }
-
     @Test
     public void testBinaryErrorModelSumsToOne() {
         Binary datatype = new Binary();
 
         BinaryErrorModel errorModel = new BinaryErrorModel();
         errorModel.initByName(
-                "alpha", "0.1",
-                "beta", "0.2",
+                "alpha", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "beta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();
@@ -47,8 +39,8 @@ public class BinaryErrorModelTest {
 
         BinaryErrorModel errorModel = new BinaryErrorModel();
         errorModel.initByName(
-                "alpha", "0.1",
-                "beta", "0.2",
+                "alpha", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "beta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();

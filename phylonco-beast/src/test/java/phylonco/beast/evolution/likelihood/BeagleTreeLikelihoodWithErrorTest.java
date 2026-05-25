@@ -2,7 +2,6 @@ package phylonco.beast.evolution.likelihood;
 
 
 import beagle.BeagleFactory;
-import beagle.BeagleFlag;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
 import beast.base.evolution.datatype.Binary;
@@ -14,10 +13,11 @@ import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.TreeParser;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.SimplexParam;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModel;
@@ -38,34 +38,27 @@ import static org.junit.Assert.*;
 public class BeagleTreeLikelihoodWithErrorTest {
 
     private static final double DELTA = 1e-10;
-    private static final boolean useGPU = true;
+    private static boolean beagleFound = false;
 
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
-    }
-
-    //executed only once, before the first test
+    // executed only once, before the first test
     @BeforeClass
     public static void setUpBeagle() {
         // add -Djava.library.path="$LD_LIBRARY_PATH:/usr/local/lib" before running tests
         // "/usr/local/lib" is the Beagle lib location in this case
+        System.out.println("Warning: Add -Djava.library.path=YOUR_LIB_PATH before running tests!");
         System.out.println("java.library.path = " + System.getProperty("java.library.path"));
-
         System.out.println(BeagleFactory.getVersionInformation());
-        // check if beagle resources cannot be found here
-        assertTrue("Cannot find beagle resources !",
-                BeagleFactory.getResourceDetails().size() > 0);
-
-        System.out.println("\n--- BEAGLE RESOURCES ---\n");
-        for (beagle.ResourceDetails details : BeagleFactory.getResourceDetails())
-            System.out.println(details.toString());
-
-        // CPU SSE
-        long beagleFlags = BeagleFlag.PROCESSOR_GPU.getMask() | BeagleFlag.VECTOR_SSE.getMask();
-        // GPU
-        if (useGPU) beagleFlags = BeagleFlag.PROCESSOR_GPU.getMask();
-        System.setProperty("beagle.preferred.flags", Long.toString(beagleFlags));
+        if (BeagleFactory.getResourceDetails().isEmpty()) {
+            beagleFound = false;
+            System.err.println("Warning: Cannot find beagle resources! Skipping BeagleTreeLikelihoodWithErrorTest");
+        } else {
+            beagleFound = true;
+            // print Beagle information
+            System.out.println("\n--- BEAGLE RESOURCES ---\n");
+            for (beagle.ResourceDetails details : BeagleFactory.getResourceDetails()) {
+                System.out.println(details.toString());
+            }
+        }
     }
 
     private static TreeParser getTree(Alignment data) {
@@ -80,7 +73,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
     private static SiteModel getSiteModel(SubstitutionModel subsModel) {
         SiteModel siteModel = new SiteModel();
-        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
+        siteModel.initByName(
+                "mutationRate", new RealScalarParam(1.0, PositiveReal.INSTANCE),
+                "gammaCategoryCount", 1,
+                "substModel", subsModel);
         siteModel.initAndValidate();
         return siteModel;
     }
@@ -104,6 +100,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
     @Test
     public void testJCLikelihoodSmallWithError() {
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
         Alignment data = new Alignment();
         Sequence seqA = new Sequence("a", "A");
         Sequence seqB = new Sequence("b", "A");
@@ -123,7 +123,9 @@ public class BeagleTreeLikelihoodWithErrorTest {
         Nucleotide datatype = new Nucleotide();
 
         ErrorModelBase errorModel = new ErrorModelBase();
-        errorModel.initByName("epsilon", "0.1", "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         double logP = getLogLikelihood(data, tree, siteModel, errorModel);
@@ -131,7 +133,7 @@ public class BeagleTreeLikelihoodWithErrorTest {
         assertEquals(expectedLogP, logP, DELTA);
     }
 
-    private double calculateLikelihoodBinary(String seq, String alpha, String beta) {
+    private double calculateLikelihoodBinary(String seq, double alpha, double beta) {
         Alignment data = new Alignment();
         Sequence seqA = new Sequence("a", seq.substring(0, 1));
         Sequence seqB = new Sequence("b", seq.substring(1));
@@ -144,7 +146,7 @@ public class BeagleTreeLikelihoodWithErrorTest {
         TreeParser tree = getTree(data);
 
         phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel subsModel = new BinarySubstitutionModel();
-        subsModel.initByName("lambda", "2.0");
+        subsModel.initByName("lambda", new RealScalarParam(2.0, PositiveReal.INSTANCE));
         subsModel.initAndValidate();
 
         SiteModel siteModel = getSiteModel(subsModel);
@@ -152,7 +154,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
         Binary datatype = new Binary();
 
         BinaryErrorModel errorModel = new BinaryErrorModel();
-        errorModel.initByName("alpha", alpha, "beta", beta, "datatype", datatype);
+        errorModel.initByName(
+                "alpha", new RealScalarParam(alpha, UnitInterval.INSTANCE),
+                "beta", new RealScalarParam(beta, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         return getLogLikelihood(data, tree, siteModel, errorModel);
@@ -160,43 +165,63 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
     @Test
     public void testBinaryLikelihoodSmallNoError() {
-        double logP = calculateLikelihoodBinary("00", "0.0", "0.0");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodBinary("00", 0.0, 0.0);
         double expectedLogP = -0.7595722922504291;
         assertEquals(expectedLogP, logP, DELTA);
     }
 
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase0() {
-        double logP = calculateLikelihoodBinary("00", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodBinary("00", 0.1, 0.2);
         double expectedLogP = -0.78543518416993563;
         assertEquals(expectedLogP, logP, DELTA);
     }
 
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase1() {
-        double logP = calculateLikelihoodBinary("11", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodBinary("11", 0.1, 0.2);
         double expectedLogP = -2.0989268283365146;
         assertEquals(expectedLogP, logP, DELTA);
     }
 
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase2() {
-        double logP = calculateLikelihoodBinary("01", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodBinary("01", 0.1, 0.2);
         double expectedLogP = -1.5571044248279775;
         assertEquals(expectedLogP, logP, DELTA);
     }
 
     @Test
     public void testBinaryLikelihoodSmallTotalProbability() {
-        double logP1 = calculateLikelihoodBinary("00", "0.1", "0.2");
-        double logP2 = calculateLikelihoodBinary("01", "0.1", "0.2");
-        double logP3 = calculateLikelihoodBinary("10", "0.1", "0.2");
-        double logP4 = calculateLikelihoodBinary("11", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP1 = calculateLikelihoodBinary("00", 0.1, 0.2);
+        double logP2 = calculateLikelihoodBinary("01", 0.1, 0.2);
+        double logP3 = calculateLikelihoodBinary("10", 0.1, 0.2);
+        double logP4 = calculateLikelihoodBinary("11", 0.1, 0.2);
         double probSum = Math.exp(logP1) + Math.exp(logP2) + Math.exp(logP3) + Math.exp(logP4);
         assertEquals(1.0, probSum, DELTA);
     }
 
-    private double calculateLikelihoodGT16(String seq, String epsilon, String delta) {
+    private double calculateLikelihoodGT16(String seq, double epsilon, double delta) {
         Alignment data = new Alignment();
         Sequence seqA = new Sequence("a", seq.substring(0, 1));
         Sequence seqB = new Sequence("b", seq.substring(1));
@@ -210,7 +235,7 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
         double[] pi = new double[16];
         Arrays.fill(pi, 1.0 / 16);
-        RealVectorParam f = new RealVectorParam(pi, UnitInterval.INSTANCE);
+        SimplexParam f = new SimplexParam(pi);
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
         freqs.initAndValidate();
@@ -232,7 +257,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
         NucleotideDiploid16 datatype = new NucleotideDiploid16();
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
-        errorModel.initByName("epsilon", epsilon, "delta", delta, "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(epsilon, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(delta, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         return getLogLikelihood(data, tree, siteModel, errorModel);
@@ -240,14 +268,22 @@ public class BeagleTreeLikelihoodWithErrorTest {
 
     @Test
     public void testGT16ErrorLikelihoodCase0() {
-        double logP = calculateLikelihoodGT16("00", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodGT16("00", 0.1, 0.2);
         double expectedLogP = -3.2683402019565975;
         assertEquals(expectedLogP, logP, DELTA);
     }
 
     @Test
     public void testGT16ErrorLikelihoodCase1() {
-        double logP = calculateLikelihoodGT16("01", "0.1", "0.2");
+        if (beagleFound == false) {
+            System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            return;
+        }
+        double logP = calculateLikelihoodGT16("01", 0.1, 0.2);
         double expectedLogP = -5.1071258693509041;
         assertEquals(expectedLogP, logP, DELTA);
     }

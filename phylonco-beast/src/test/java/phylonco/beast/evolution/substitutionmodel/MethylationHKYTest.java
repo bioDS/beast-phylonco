@@ -1,21 +1,14 @@
 package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
-import beast.base.inference.parameter.RealParameter;
 import beast.base.spec.domain.PositiveReal;
-import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import junit.framework.TestCase;
 import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
 
-import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.net.MalformedURLException;
 
 @Description("Test stationary distribution and matrix exponentiation for MethylationHKY matrix")
 public class MethylationHKYTest extends TestCase {
@@ -72,11 +65,6 @@ public class MethylationHKYTest extends TestCase {
         public testData(double[] input, double[] result){
             this(input, 0, result);
         }
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
     }
 
     @Test
@@ -252,15 +240,10 @@ public class MethylationHKYTest extends TestCase {
                     "beta", test.beta,
                     "gamma", test.gamma
             );
-            Method method = MethylationHKY.class.getDeclaredMethod("setupRateMatrix");
-            method.setAccessible(true);
-            method.invoke(substitutionModel);
-            // TODO: unit test fails here
-            Field privateField = GeneralSubstitutionModel.class.getDeclaredField("rateMatrix");
-            privateField.setAccessible(true);
-            double[][] rateMatrix = (double[][]) privateField.get(substitutionModel);
+            // test setupRateMatrix() method for MethylationHKY
+            substitutionModel.setupRateMatrix();
+            double[][] rateMatrix = substitutionModel.getRateMatrix();
             double[] flatMatrix = flattenMatrix(rateMatrix, 6, 6);
-            //printMatrix(flatMatrix, 6, 6);
             Assert.assertArrayEquals(test.result, flatMatrix, 1e-10);
         }
 

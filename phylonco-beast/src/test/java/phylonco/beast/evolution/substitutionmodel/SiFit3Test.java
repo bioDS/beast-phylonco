@@ -5,12 +5,7 @@ import beast.base.core.Description;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import junit.framework.TestCase;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
-
-import java.net.MalformedURLException;
 
 import static org.junit.Assert.assertArrayEquals;
 
@@ -29,11 +24,6 @@ public class SiFit3Test extends TestCase {
                 "lambdaL", new RealScalarParam(lambdaL, PositiveReal.INSTANCE)
         );
         nrOfStates = model.getStateCount();
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
     }
 
     /**

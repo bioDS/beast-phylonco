@@ -1,16 +1,11 @@
 package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.spec.domain.PositiveReal;
-import beast.base.spec.domain.UnitInterval;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
-import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
 
-import java.net.MalformedURLException;
 import java.util.Arrays;
 
 import static org.junit.Assert.assertArrayEquals;
@@ -40,11 +35,6 @@ public class GT16Test {
         );
 
         nrOfStates = gt16.getStateCount();
-    }
-
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
     }
 
     /**

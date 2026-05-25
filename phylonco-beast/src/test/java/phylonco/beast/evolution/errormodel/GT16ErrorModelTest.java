@@ -1,9 +1,9 @@
 package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.DataType;
-import org.junit.BeforeClass;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 
 import java.util.List;
@@ -13,11 +13,6 @@ import static junit.framework.Assert.assertEquals;
 public class GT16ErrorModelTest {
 
     private static double DELTA = 1e-10;
-
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
-    }
 
     /***
      * Given the true state is y, the conditional probability over all possible states is 1.
@@ -30,8 +25,8 @@ public class GT16ErrorModelTest {
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
         errorModel.initByName(
-                "epsilon", "0.1",
-                "delta", "0.2",
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();
@@ -92,8 +87,8 @@ public class GT16ErrorModelTest {
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
         errorModel.initByName(
-                "epsilon", Double.toString(epsilon),
-                "delta", Double.toString(delta),
+                "epsilon", new RealScalarParam(epsilon, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(delta, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();
@@ -118,8 +113,8 @@ public class GT16ErrorModelTest {
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
         errorModel.initByName(
-                "epsilon", Double.toString(epsilon),
-                "delta", Double.toString(delta),
+                "epsilon", new RealScalarParam(epsilon, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(delta, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();
@@ -144,8 +139,8 @@ public class GT16ErrorModelTest {
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
         errorModel.initByName(
-                "epsilon", "0.1",
-                "delta", "0.2",
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();
@@ -176,8 +171,8 @@ public class GT16ErrorModelTest {
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
         errorModel.initByName(
-                "epsilon", "0.1",
-                "delta", "0.2",
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
                 "datatype", datatype
         );
         errorModel.initAndValidate();

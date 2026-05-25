@@ -71,6 +71,7 @@ public class LikelihoodReadCountModelTest {
         RealVectorParam sParam = new RealVectorParam(s, PositiveReal.INSTANCE);
 
         // init params
+        // TODO: update unit tests to be type safe
         likelihoodReadCountModel.setInputValue("alignment", alignment);
         likelihoodReadCountModel.setInputValue("readCount", readCounts);
         likelihoodReadCountModel.setInputValue("epsilon", epsilon.toString());

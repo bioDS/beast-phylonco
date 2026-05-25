@@ -1,12 +1,9 @@
 package phylonco.beast.evolution.errormodel;
 
 import beast.base.evolution.datatype.Nucleotide;
-import org.junit.Before;
-import org.junit.BeforeClass;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
-
-import java.net.MalformedURLException;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -14,17 +11,15 @@ public class ErrorModelBaseTest {
 
     private static double DELTA = 1e-10;
 
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
-    }
 
     @Test
     public void testNucleotideErrorModelSumsToOne() {
         Nucleotide datatype = new Nucleotide();
 
         ErrorModelBase errorModel = new ErrorModelBase();
-        errorModel.initByName("epsilon", "0.1", "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
@@ -42,7 +37,9 @@ public class ErrorModelBaseTest {
         Nucleotide datatype = new Nucleotide();
 
         ErrorModelBase errorModel = new ErrorModelBase();
-        errorModel.initByName("epsilon", "0.1", "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         for (int observedState = 0; observedState < datatype.mapCodeToStateSet.length; observedState++) {

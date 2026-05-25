@@ -10,10 +10,10 @@ import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.evolution.substitutionmodel.JukesCantor;
 import beast.base.evolution.tree.TreeParser;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
-import org.junit.BeforeClass;
+import beast.base.spec.inference.parameter.SimplexParam;
 import org.junit.Test;
-import phylonco.beast.TestUtils;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
@@ -27,11 +27,6 @@ import static junit.framework.Assert.assertEquals;
 public class TreeLikelihoodWithErrorFastTest {
 
     private static double DELTA = 1e-10;
-
-    @BeforeClass
-    public static void setUpClass() {
-        TestUtils.loadServices();
-    }
 
     /**
      * results obtained from running the following code in R:
@@ -81,13 +76,18 @@ public class TreeLikelihoodWithErrorFastTest {
         subsModel.initAndValidate();
 
         SiteModel siteModel = new SiteModel();
-        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
+        siteModel.initByName(
+                "mutationRate", new RealScalarParam(1.0, PositiveReal.INSTANCE),
+                "gammaCategoryCount", 1,
+                "substModel", subsModel);
         siteModel.initAndValidate();
 
         Nucleotide datatype = new Nucleotide();
 
         ErrorModelBase errorModel = new ErrorModelBase();
-        errorModel.initByName("epsilon", "0.1", "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         TreeLikelihoodWithErrorFast likelihood = new TreeLikelihoodWithErrorFast();
@@ -104,7 +104,7 @@ public class TreeLikelihoodWithErrorFastTest {
         assertEquals(expectedLogP, logP, DELTA);
     }
 
-    private double calculateLikelihoodBinary(String seq, String alpha, String beta) {
+    private double calculateLikelihoodBinary(String seq, double alpha, double beta) {
         Alignment data = new Alignment();
         Sequence seqA = new Sequence("a", seq.substring(0, 1));
         Sequence seqB = new Sequence("b", seq.substring(1));
@@ -122,17 +122,23 @@ public class TreeLikelihoodWithErrorFastTest {
         );
 
         phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel subsModel = new BinarySubstitutionModel();
-        subsModel.initByName("lambda", "2.0");
+        subsModel.initByName("lambda", new RealScalarParam(2.0, PositiveReal.INSTANCE));
         subsModel.initAndValidate();
 
         SiteModel siteModel = new SiteModel();
-        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
+        siteModel.initByName(
+                "mutationRate", new RealScalarParam(1.0, PositiveReal.INSTANCE),
+                "gammaCategoryCount", 1,
+                "substModel", subsModel);
         siteModel.initAndValidate();
 
         Binary datatype = new Binary();
 
         BinaryErrorModel errorModel = new BinaryErrorModel();
-        errorModel.initByName("alpha", alpha, "beta", beta, "datatype", datatype);
+        errorModel.initByName(
+                "alpha", new RealScalarParam(alpha, UnitInterval.INSTANCE),
+                "beta", new RealScalarParam(beta, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         TreeLikelihoodWithErrorFast likelihood = new TreeLikelihoodWithErrorFast();
@@ -176,7 +182,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testBinaryLikelihoodSmallNoError() {
-        double logP = calculateLikelihoodBinary("00", "0.0", "0.0");
+        double logP = calculateLikelihoodBinary("00", 0.0, 0.0);
         double expectedLogP = -0.7595722922504291;
         assertEquals(expectedLogP, logP, DELTA);
     }
@@ -210,7 +216,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase0() {
-        double logP = calculateLikelihoodBinary("00", "0.1", "0.2");
+        double logP = calculateLikelihoodBinary("00", 0.1, 0.2);
         double expectedLogP = -0.78543518416993563;
         assertEquals(expectedLogP, logP, DELTA);
     }
@@ -244,7 +250,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase1() {
-        double logP = calculateLikelihoodBinary("11", "0.1", "0.2");
+        double logP = calculateLikelihoodBinary("11", 0.1, 0.2);
         double expectedLogP = -2.0989268283365146;
         assertEquals(expectedLogP, logP, DELTA);
     }
@@ -279,7 +285,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testBinaryLikelihoodSmallWithErrorCase2() {
-        double logP = calculateLikelihoodBinary("01", "0.1", "0.2");
+        double logP = calculateLikelihoodBinary("01", 0.1, 0.2);
         double expectedLogP = -1.5571044248279775;
         assertEquals(expectedLogP, logP, DELTA);
     }
@@ -289,15 +295,15 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testBinaryLikelihoodSmallTotalProbability() {
-        double logP1 = calculateLikelihoodBinary("00", "0.1", "0.2");
-        double logP2 = calculateLikelihoodBinary("01", "0.1", "0.2");
-        double logP3 = calculateLikelihoodBinary("10", "0.1", "0.2");
-        double logP4 = calculateLikelihoodBinary("11", "0.1", "0.2");
+        double logP1 = calculateLikelihoodBinary("00", 0.1, 0.2);
+        double logP2 = calculateLikelihoodBinary("01", 0.1, 0.2);
+        double logP3 = calculateLikelihoodBinary("10", 0.1, 0.2);
+        double logP4 = calculateLikelihoodBinary("11", 0.1, 0.2);
         double probSum = Math.exp(logP1) + Math.exp(logP2) + Math.exp(logP3) + Math.exp(logP4);
         assertEquals(1.0, probSum, DELTA);
     }
 
-    private double calculateLikelihoodGT16(String seq, String epsilon, String delta) {
+    private double calculateLikelihoodGT16(String seq, double epsilon, double delta) {
         Alignment data = new Alignment();
         Sequence seqA = new Sequence("a", seq.substring(0, 1));
         Sequence seqB = new Sequence("b", seq.substring(1));
@@ -316,7 +322,7 @@ public class TreeLikelihoodWithErrorFastTest {
 
         double[] pi = new double[16];
         Arrays.fill(pi, 1.0 / 16);
-        RealVectorParam f = new RealVectorParam(pi, UnitInterval.INSTANCE);
+        SimplexParam f = new SimplexParam(pi);
         Frequencies freqs = new Frequencies();
         freqs.initByName("frequencies", f, "estimate", false);
         freqs.initAndValidate();
@@ -334,13 +340,19 @@ public class TreeLikelihoodWithErrorFastTest {
         subsModel.initAndValidate();
 
         SiteModel siteModel = new SiteModel();
-        siteModel.initByName("mutationRate", "1.0", "gammaCategoryCount", 1, "substModel", subsModel);
+        siteModel.initByName(
+                "mutationRate", new RealScalarParam(1, PositiveReal.INSTANCE),
+                "gammaCategoryCount", 1,
+                "substModel", subsModel);
         siteModel.initAndValidate();
 
         NucleotideDiploid16 datatype = new NucleotideDiploid16();
 
         GT16ErrorModel errorModel = new GT16ErrorModel();
-        errorModel.initByName("epsilon", epsilon, "delta", delta, "datatype", datatype);
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(epsilon, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(delta, UnitInterval.INSTANCE),
+                "datatype", datatype);
         errorModel.initAndValidate();
 
         TreeLikelihoodWithErrorFast likelihood = new TreeLikelihoodWithErrorFast();
@@ -439,7 +451,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testGT16ErrorLikelihoodCase0() {
-        double logP = calculateLikelihoodGT16("00", "0.1", "0.2");
+        double logP = calculateLikelihoodGT16("00", 0.1, 0.2);
         double expectedLogP = -3.2683402019565975;
         assertEquals(expectedLogP, logP, DELTA);
     }
@@ -529,7 +541,7 @@ public class TreeLikelihoodWithErrorFastTest {
      */
     @Test
     public void testGT16ErrorLikelihoodCase1() {
-        double logP = calculateLikelihoodGT16("01", "0.1", "0.2");
+        double logP = calculateLikelihoodGT16("01", 0.1, 0.2);
         double expectedLogP = -5.1071258693509041;
         assertEquals(expectedLogP, logP, DELTA);
     }

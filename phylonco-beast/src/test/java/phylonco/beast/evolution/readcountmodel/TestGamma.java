@@ -6,6 +6,7 @@ import org.apache.commons.numbers.gamma.LogGamma;
 public class TestGamma {
 
     public static void testOne() {
+        // TODO: unit tests should be done using assertations etc
         double x = 142;
         double gamma = LogGamma.value(x);
         double logGamma = LogGamma.value(x);
