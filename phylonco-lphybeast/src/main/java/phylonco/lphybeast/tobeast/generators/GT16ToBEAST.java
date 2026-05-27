@@ -11,6 +11,7 @@ import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import phylonco.lphy.evolution.substitutionmodel.GT16;
+import beast.base.spec.type.Simplex;
 
 /**
  * This has to create TreeLikelihood.
@@ -31,9 +32,11 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
         ratesParameter.setInputValue("keys", "AC AG AT CG CT GT");
         ratesParameter.initAndValidate();
 
-        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
-                (RealParameter) context.getBEASTObject(freqs),
-                "0 1 2 3 4 5 6 7 8 9 a b c d e f");
+        Frequencies freqsParameter = new Frequencies((Simplex) context.getBEASTObject(gt16.getFreq()));
+
+//        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
+//                (RealParameter) context.getBEASTObject(freqs),
+//                "0 1 2 3 4 5 6 7 8 9 a b c d e f");
         freqsParameter.initAndValidate();
 
         beastGT16.setInputValue("nucRates", ratesParameter);

@@ -1,8 +1,8 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.linguaphylo</groupId>
-        <artifactId>beast-phylonco</artifactId>
+        <groupId>io.github.bioDS</groupId>
+        <artifactId>beast-phylonco-root</artifactId>
         <version>${revision}</version>
     </parent>
 
@@ -10,36 +10,38 @@
     <!-- phylonco-lphybeast version, it must be consisting with version.xml   -->
     <version>${revision}</version>
 
-
     <dependencies>
         <dependency>
             <groupId>io.github.linguaphylo</groupId>
             <artifactId>lphybeast</artifactId>
             <version>${lphybeast.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- FLC package -->
+        <dependency>
+            <groupId>io.github.bioDS</groupId>
+            <artifactId>phylonco-beast</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.github.bioDS</groupId>
+            <artifactId>phylonco-lphy</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>io.github.4ment</groupId>
             <artifactId>flc</artifactId>
             <version>${flc.version}</version>
         </dependency>
 
-        <!-- TODO: insert phylonco dependencies here-->
-        <!-- phylonco beast -->
-        <dependency>
-            <groupId>beast2</groupId>
-            <artifactId>beast-phylonco</artifactId>
-            <version>${revision}</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/phylonco.jar</systemPath>
-        </dependency>
-
-        <!-- phylonco lphy -->
-
-
     </dependencies>
-
 
     <build>
         <plugins>
@@ -48,6 +50,9 @@
                 <artifactId>maven-assembly-plugin</artifactId>
                 <version>3.7.1</version>
                 <configuration>
+                    <descriptors>
+                        <descriptor>src/assembly/phylonco-lphybeast-assembly.xml</descriptor>
+                    </descriptors>
                     <outputDirectory>${project.build.directory}</outputDirectory>
                     <appendAssemblyId>false</appendAssemblyId>
                     <finalName>${project.artifactId}-${project.version}</finalName>

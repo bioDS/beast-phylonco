@@ -4,7 +4,7 @@ import beast.base.core.BEASTInterface;
 import beast.base.core.Function;
 import beast.base.evolution.operator.AdaptableOperatorSampler;
 import beast.base.evolution.operator.kernel.AdaptableVarianceMultivariateNormalOperator;
-import beast.base.evolution.substitutionmodel.Frequencies;
+
 import beast.base.inference.operator.DeltaExchangeOperator;
 import beast.base.inference.operator.SwapOperator;
 import beast.base.inference.operator.kernel.Transform;
@@ -15,6 +15,9 @@ import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import phylonco.lphy.evolution.substitutionmodel.GT10;
+
+import beast.base.spec.type.Simplex;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,24 +41,18 @@ public class GT10ToBEAST implements GeneratorToBEAST<GT10, phylonco.beast.evolut
         ratesParameter.setInputValue("keys", "AC AG AT CG CT GT");
         ratesParameter.initAndValidate();
 
-        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
-                (RealParameter) context.getBEASTObject(freqs),
-                "0 1 2 3 4 5 6 7 8 9");
-        freqsParameter.initAndValidate();
+//        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
+//                (RealParameter) context.getBEASTObject(freqs),
+//                "0 1 2 3 4 5 6 7 8 9");
+//        freqsParameter.initAndValidate();
+
+        Frequencies freqsParameter = new Frequencies((Simplex) context.getBEASTObject(gt10.getFreq()));
 
         beastGT10.setInputValue("nucRates", ratesParameter);
         beastGT10.setInputValue("frequencies", freqsParameter);
+
         beastGT10.initAndValidate();
 
-        // set operators on frequency and rates
-        //addDeltaExchangeOperator(freqsParameter.frequenciesInput.get(), context);
-        //addDeltaExchangeOperator(ratesParameter, context);
-
-        // add extra operators
-        //addExtraDeltaExchangeOperators(freqsParameter, context);
-        //addExtraSwapOperators(freqsParameter, context);
-
-        //addAdaptableOperatorSampler(freqsParameter.frequenciesInput.get(), context);
         addAVMNOperator(freqsParameter.frequenciesInput.get(), context);
         addAVMNOperator(ratesParameter, context);
 
@@ -167,8 +164,6 @@ public class GT10ToBEAST implements GeneratorToBEAST<GT10, phylonco.beast.evolut
         //add AdaptableOperatorSampler
         AdaptableOperatorSampler adaptableOperatorSampler = new AdaptableOperatorSampler();
         adaptableOperatorSampler.setInputValue("parameter", parameter);
-
-
 
         //add DeltaExchangeOperator
         DeltaExchangeOperator deltaExchangeOperator = new DeltaExchangeOperator();

@@ -12,7 +12,6 @@ import lphy.base.function.io.ReadTrees;
 import lphy.core.model.Generator;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.ValueToBEAST;
-import lphybeast.spi.LPhyBEASTExt;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
@@ -32,25 +31,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lphybeast.spi.LPhyBEASTMapping;
 
-/**
- * The "Container" provider class of SPI
- * which include a list of {@link lphybeast.ValueToBEAST},
- * {@link lphybeast.GeneratorToBEAST}, and {@link DataType}
- * to extend.
- *
- * @author Walter Xie
- */
-public class LBPhylonco implements LPhyBEASTExt {
+
+public class LBPhylonco implements LPhyBEASTMapping {
 
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
 
-                ReadCountToBEAST.class,
+                ReadCountToBEAST.class //,
+                // TODO: move and release NestedBD lphybeast to separate package
                 //copy number model
-                IntegerCharacterMatrixToBEAST.class,
-                CopyNumberBDToBEAST.class
+//                IntegerCharacterMatrixToBEAST.class,
+//                CopyNumberBDToBEAST.class
         );
     }
 
@@ -58,12 +52,12 @@ public class LBPhylonco implements LPhyBEASTExt {
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
                 GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
-                ReadCountModelToBEAST.class,
-//                LocalClockToBeast.class//
+                ReadCountModelToBEAST.class //,
+                // TODO: move and release NestedBD lphybeast to separate package
                 // copy number model
-                PhyloDiscreteToBEAST.class,
-                NegativeBinomialErrorModelToBEAST.class,
-                DiscreteGaussianErrorModelToBEAST.class
+//                PhyloDiscreteToBEAST.class,
+//                NegativeBinomialErrorModelToBEAST.class,
+//                DiscreteGaussianErrorModelToBEAST.class
         );
     }
 

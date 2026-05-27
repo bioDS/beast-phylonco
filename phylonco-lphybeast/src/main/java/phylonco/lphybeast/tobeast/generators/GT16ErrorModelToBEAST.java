@@ -2,7 +2,7 @@ package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.datatype.DataType;
-import beast.base.evolution.sitemodel.SiteModel;
+
 import beast.base.inference.parameter.RealParameter;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.likelihood.PhyloCTMC;
@@ -16,38 +16,35 @@ import phylonco.beast.evolution.likelihood.TreeLikelihoodWithError;
 import phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast;
 import phylonco.lphy.evolution.alignment.GT16ErrorModel;
 
+import beast.base.spec.evolution.sitemodel.SiteModel;
+
 import java.util.Objects;
 
-/**
- * This has to create TreeLikelihood
- * @author Walter Xie
- */
+
 public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, TreeLikelihoodWithError> {
 
     @Override
-    public TreeLikelihoodWithError generatorToBEAST(GT16ErrorModel generator, BEASTInterface value, BEASTContext context) {
+    public TreeLikelihoodWithError generatorToBEAST(GT16ErrorModel lphyErrorModel, BEASTInterface value, BEASTContext context) {
 
         assert value instanceof beast.base.evolution.alignment.Alignment;
         beast.base.evolution.alignment.Alignment errAlignment = (beast.base.evolution.alignment.Alignment) value;
 
-        phylonco.beast.evolution.errormodel.GT16ErrorModel gt16ErrorModel =
+        phylonco.beast.evolution.errormodel.GT16ErrorModel beastGT16ErrorModel =
                 new phylonco.beast.evolution.errormodel.GT16ErrorModel();
 
         DataType beastDataType = errAlignment.getDataType();
-        gt16ErrorModel.setInputValue("datatype", beastDataType);
+        beastGT16ErrorModel.setInputValue("datatype", beastDataType);
 
-        RealParameter deltaParam = context.getAsRealParameter(generator.getDelta());
-        gt16ErrorModel.setInputValue("delta", deltaParam);
-        RealParameter epsilonParam = context.getAsRealParameter(generator.getEpsilon());
-        gt16ErrorModel.setInputValue("epsilon", epsilonParam);
-        gt16ErrorModel.initAndValidate();
+        beastGT16ErrorModel.setInputValue("delta", context.getBEASTObject(lphyErrorModel.getDelta()));
+        beastGT16ErrorModel.setInputValue("epsilon", context.getBEASTObject(lphyErrorModel.getEpsilon()));
+        beastGT16ErrorModel.initAndValidate();
 
         // Temporary solution to rm parent alignment if there is a child alignment created from it,
         // e.g. original alignment creates err alignment
         // A ~ PhyloCTMC(); E ~ ErrorModel(A);
         PhyloCTMC phyloCTMC = null;
         Value<Alignment> origAlignmentInput = null;
-        for (GraphicalModelNode<?> input : Objects.requireNonNull(generator.getInputs())) {
+        for (GraphicalModelNode<?> input : Objects.requireNonNull(lphyErrorModel.getInputs())) {
             if (input instanceof Value && input.value() instanceof Alignment) {
                 origAlignmentInput = (Value<Alignment>) input;
                 phyloCTMC = (PhyloCTMC) origAlignmentInput.getGenerator();
@@ -60,7 +57,7 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
         }
 
         TreeLikelihoodWithError treeLikelihoodWithError =
-                getTreeLikelihoodWithError(errAlignment, gt16ErrorModel, phyloCTMC, context);
+                getTreeLikelihoodWithError(errAlignment, beastGT16ErrorModel, phyloCTMC, context);
 
         // logging
         context.addExtraLoggable(treeLikelihoodWithError);

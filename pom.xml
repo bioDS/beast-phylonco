@@ -37,6 +37,7 @@
     <modules>
         <module>phylonco-beast</module>
         <module>phylonco-lphy</module>
+        <module>phylonco-lphybeast</module>
     </modules>
 
     <build>
@@ -65,23 +66,4 @@
         </plugins>
     </build>
 
-<!--    <dependencies>-->
-<!--         BEAST 3 -->
-<!--        <dependency>-->
-<!--            <groupId>io.github.compevol</groupId>-->
-<!--            <artifactId>beast-base</artifactId>-->
-<!--            <version>${beast.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>io.github.compevol</groupId>-->
-<!--            <artifactId>beast-pkgmgmt</artifactId>-->
-<!--            <version>${beast.version}</version>-->
-<!--        </dependency>-->
-<!--        <dependency>-->
-<!--            <groupId>junit</groupId>-->
-<!--            <artifactId>junit</artifactId>-->
-<!--            <version>5.8.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-<!--    </dependencies>-->
 </project>
