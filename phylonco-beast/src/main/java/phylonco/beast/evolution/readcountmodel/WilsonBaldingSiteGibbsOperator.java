@@ -102,6 +102,11 @@ public class WilsonBaldingSiteGibbsOperator extends TreeOperator {
     private int K;
     private boolean useEntropyWeighting;
 
+    // Wall-time instrumentation: total nanos spent in proposal() and call count.
+    // Reported via getPerformanceSuggestion().
+    private long totalProposalNanos = 0L;
+    private long numProposalCalls = 0L;
+
     // Per-site entropy weight: sum over leaves of Shannon entropy of P(g | reads_ls).
     // Function of read-count data only (computed once at init); preserves detailed
     // balance because forward and reverse site-selection probabilities agree.
@@ -229,6 +234,16 @@ public class WilsonBaldingSiteGibbsOperator extends TreeOperator {
 
     @Override
     public double proposal() {
+        final long startNanos = System.nanoTime();
+        try {
+            return proposalImpl();
+        } finally {
+            totalProposalNanos += System.nanoTime() - startNanos;
+            numProposalCalls++;
+        }
+    }
+
+    private double proposalImpl() {
         final Tree tree = (Tree) InputUtil.get(treeInput, this);
         final int internalNodes = tree.getInternalNodeCount();
 
@@ -599,4 +614,11 @@ public class WilsonBaldingSiteGibbsOperator extends TreeOperator {
         return size - 1;
     }
 
+    @Override
+    public String getPerformanceSuggestion() {
+        if (numProposalCalls == 0) return "no calls";
+        double meanMs = totalProposalNanos / 1e6 / numProposalCalls;
+        double totalS = totalProposalNanos / 1e9;
+        return String.format("avg %.2f ms/call, total %.1f s over %d calls", meanMs, totalS, numProposalCalls);
+    }
 }

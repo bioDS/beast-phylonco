@@ -111,6 +111,12 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
     private int K;
     private boolean useEntropyWeighting;
 
+    // Wall-time instrumentation: total nanos spent in proposal() and call count.
+    // Reported via getPerformanceSuggestion() so timing appears in BEAST's
+    // end-of-chain operator table.
+    private long totalProposalNanos = 0L;
+    private long numProposalCalls = 0L;
+
     // Per-site entropy weight: sum over leaves of Shannon entropy of P(g | reads_ls).
     // Function of read-count data only (computed once at init); preserves detailed
     // balance because forward and reverse site-selection probabilities agree.
@@ -238,6 +244,16 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
 
     @Override
     public double proposal() {
+        final long startNanos = System.nanoTime();
+        try {
+            return proposalImpl();
+        } finally {
+            totalProposalNanos += System.nanoTime() - startNanos;
+            numProposalCalls++;
+        }
+    }
+
+    private double proposalImpl() {
         final Tree tree = (Tree) InputUtil.get(treeInput, this);
         final int internalNodes = tree.getInternalNodeCount();
 
@@ -607,5 +623,13 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
 
     private int sisg(Node n) {
         return n.isLeaf() ? 0 : isg(n);
+    }
+
+    @Override
+    public String getPerformanceSuggestion() {
+        if (numProposalCalls == 0) return "no calls";
+        double meanMs = totalProposalNanos / 1e6 / numProposalCalls;
+        double totalS = totalProposalNanos / 1e9;
+        return String.format("avg %.2f ms/call, total %.1f s over %d calls", meanMs, totalS, numProposalCalls);
     }
 }
