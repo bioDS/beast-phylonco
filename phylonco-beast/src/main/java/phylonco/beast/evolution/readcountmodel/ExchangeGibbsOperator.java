@@ -147,11 +147,14 @@ public class ExchangeGibbsOperator extends TreeOperator {
         // Pick one affected leaf taxon k
         Node leafNode = allLeaves.get(Randomizer.nextInt(allLeaves.size()));
         int k = leafNode.getNr();
+        // tree leaf order and alignment column order are linked only by taxon
+        // name: do NOT assume k is the alignment column index, look it up.
+        int kAlignIdx = mutableAlignment.getTaxonIndex(leafNode.getID());
         boolean kFromI = iLeaves.contains(leafNode);
 
         // ---- Compute logQ_reverse (under current tree T, before exchange) ----
-        int[] currentSeq = mutableAlignment.getSiteValuesByTaxon(k);
-        double logQ_reverse = computeLogGibbsProb(k, currentSeq);
+        int[] currentSeq = mutableAlignment.getSiteValuesByTaxon(kAlignIdx);
+        double logQ_reverse = computeLogGibbsProb(k, kAlignIdx, currentSeq);
 
         // ---- Perform narrow exchange: T -> T' ----
         exchangeNodes(i, uncle, parentIndex, grandParent);
@@ -168,16 +171,18 @@ public class ExchangeGibbsOperator extends TreeOperator {
         if (kFromI) {
             Node fixLeaf = uncleLeaves.get(0);
             int fixNr = fixLeaf.getNr();
+            int fixAlignIdx = mutableAlignment.getTaxonIndex(fixLeaf.getID());
             maTreeLikelihood.getLogProbsForStateSequence(
-                    fixNr, mutableAlignment.getSiteValuesByTaxon(fixNr));
+                    fixNr, mutableAlignment.getSiteValuesByTaxon(fixAlignIdx));
         }
 
         // ---- Gibbs resample + compute logQ_forward (under new tree T') ----
         double[][] treeLogProb = new double[numStates][];
         double[][] rcLogLik = new double[numStates][];
         for (int g = 0; g < numStates; g++) {
+            // tree likelihood indexed by tree node nr; read counts indexed by alignment column
             treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g)).clone();
-            rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(k, allGSequences.get(g));
+            rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(kAlignIdx, allGSequences.get(g));
         }
 
         int[] newSeq = new int[numSites];
@@ -191,7 +196,7 @@ public class ExchangeGibbsOperator extends TreeOperator {
             newSeq[s] = sampleFromProbabilities(probs);
             logQ_forward += Math.log(probs[newSeq[s]]);
         }
-        mutableAlignment.setSiteValuesByTaxon(k, newSeq);
+        mutableAlignment.setSiteValuesByTaxon(kAlignIdx, newSeq);
 
         // ---- Return compound Hastings ratio ----
         return logHR_exchange + logQ_reverse - logQ_forward;
@@ -203,12 +208,13 @@ public class ExchangeGibbsOperator extends TreeOperator {
      * Uses the current tree state in maTreeLikelihood (call before or after
      * exchange as appropriate).
      */
-    private double computeLogGibbsProb(int k, int[] seq) {
+    private double computeLogGibbsProb(int k, int kAlignIdx, int[] seq) {
         double[][] treeLogProb = new double[numStates][];
         double[][] rcLogLik = new double[numStates][];
         for (int g = 0; g < numStates; g++) {
+            // tree likelihood indexed by tree node nr; read counts indexed by alignment column
             treeLogProb[g] = maTreeLikelihood.getLogProbsForStateSequence(k, allGSequences.get(g)).clone();
-            rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(k, allGSequences.get(g));
+            rcLogLik[g] = likelihoodReadCountModel.sequenceLogLikelihood(kAlignIdx, allGSequences.get(g));
         }
 
         double logProb = 0.0;
