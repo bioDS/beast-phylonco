@@ -39,6 +39,8 @@
         <provider classname="phylonco.beast.evolution.readcountmodel.GibbsSiteOperator"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.DataTemperedMCMC"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.ExchangeGibbsOperator"/>
+        <provider classname="phylonco.beast.evolution.readcountmodel.ExchangeSiteGibbsOperator"/>
+        <provider classname="phylonco.beast.evolution.readcountmodel.WilsonBaldingSiteGibbsOperator"/>
     </service>
 
 </package>
