@@ -1,6 +1,8 @@
 package phylonco.beast.evolution.readcountmodel;
 
 import beast.base.core.Input;
+import beast.base.evolution.tree.Node;
+import beast.base.evolution.tree.TreeInterface;
 import beast.base.inference.Operator;
 import beast.base.util.Randomizer;
 import mutablealignment.MATreeLikelihood;
@@ -23,6 +25,10 @@ public class GibbsAlignmentOperator extends Operator {
     private int numSites;
     private int numTaxa;
     private List<int[]> statesSequences;
+    // Alignment column index -> tree node nr (via taxon name).
+    // Needed because likelihoodCore probes are keyed by tree node, while
+    // alignment access and read-count likelihoods are keyed by alignment column.
+    private int[] alignIdxToTreeNodeNr;
 
 
 
@@ -44,6 +50,24 @@ public class GibbsAlignmentOperator extends Operator {
             statesSequences.add(stateSequence);
         }
 
+        // Cache alignment-column -> tree-node-nr mapping (via taxon name).
+        TreeInterface tree = maTreeLikelihood.treeInput.get();
+        alignIdxToTreeNodeNr = new int[numTaxa];
+        for (int a = 0; a < numTaxa; a++) {
+            String taxonName = mutableAlignment.getTaxaNames().get(a);
+            int found = -1;
+            for (Node leaf : tree.getExternalNodes()) {
+                if (taxonName.equals(leaf.getID())) {
+                    found = leaf.getNr();
+                    break;
+                }
+            }
+            if (found < 0) {
+                throw new RuntimeException("GibbsAlignmentOperator: alignment taxon '" +
+                        taxonName + "' not found in tree leaves");
+            }
+            alignIdxToTreeNodeNr[a] = found;
+        }
     }
 
 
@@ -56,11 +80,13 @@ public class GibbsAlignmentOperator extends Operator {
         double[] stateProbabilities;
         int[] randomTaxaOrder = generateRandomOrder(numTaxa);
         for (int k = 0; k < numTaxa; k++) {
-            int taxon = randomTaxaOrder[k];
+            int kAlignIdx = randomTaxaOrder[k];
+            int kNodeNr = alignIdxToTreeNodeNr[kAlignIdx];
             for (int i = 0; i < numStates; i++) {
-                stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(taxon, statesSequences.get(i));
-                // get new read count likelihood for taxon
-                readCountLogLikelihoods[i] = likelihoodReadCountModel.sequenceLogLikelihood(taxon, statesSequences.get(i));
+                // tree partials indexed by tree node nr
+                stateLogProbabilities[i] = maTreeLikelihood.getLogProbsForStateSequence(kNodeNr, statesSequences.get(i));
+                // read counts indexed by alignment column
+                readCountLogLikelihoods[i] = likelihoodReadCountModel.sequenceLogLikelihood(kAlignIdx, statesSequences.get(i));
             }
 
             for (int i = 0; i < numSites; i++) {
@@ -75,10 +101,10 @@ public class GibbsAlignmentOperator extends Operator {
             }
 
 
-            mutableAlignment.setSiteValuesByTaxon(taxon, newSeq);
+            mutableAlignment.setSiteValuesByTaxon(kAlignIdx, newSeq);
             // needed to update partial log likelihoods based on newly sampled sequence before
             // moving to next taxa. Don't need to use the result
-            maTreeLikelihood.getLogProbsForStateSequence(taxon, newSeq);
+            maTreeLikelihood.getLogProbsForStateSequence(kNodeNr, newSeq);
         }
         return Double.POSITIVE_INFINITY;
     }
