@@ -211,10 +211,12 @@ public class LikelihoodReadCountModel extends Distribution {
     // and params of negative binomial distribution(coverage model)
     /**
      * Recompute cached values from current parameter values.
-     * Package-private so GibbsSiteOperator can ensure caches are fresh
-     * before sampling (they may be stale after a rejected parameter proposal).
+     * Public so GibbsSiteOperator can ensure caches are fresh before sampling
+     * (they may be stale after a rejected parameter proposal), and so
+     * ReadCountTreeLikelihood (a different package) can refresh the caches
+     * before reading per-genotype likelihoods to build tip partials.
      */
-    void initialize() {
+    public void initialize() {
         double mean1;
         double mean2;
         double variance1;
@@ -311,6 +313,21 @@ public class LikelihoodReadCountModel extends Distribution {
     /** Returns the mapping from alignment taxon index to ReadCount taxon index. */
     public int[] getAlignToRCIndex() {
         return alignToRCIndex;
+    }
+
+    /** Total read depth (summed over the 4 nucleotides) for an alignment taxon at a site. */
+    public int getCoverage(int taxonIndex, int site) {
+        return coverages[taxonIndex][site];
+    }
+
+    /** The ReadCount data backing this model. */
+    public ReadCount getReadCount() {
+        return readCount;
+    }
+
+    /** The genotype datatype (NucleotideDiploid16 or NucleotideDiploid10). */
+    public DataType getDataType() {
+        return datatype;
     }
 
     //Calculate the log likelihood of read count model by summarizing the log likelihood at each site
