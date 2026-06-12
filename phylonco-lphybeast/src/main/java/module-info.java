@@ -5,6 +5,7 @@ open module phylonco.lphybeast {
     requires beast.base;
     requires lphy.base;
     requires flc;
+    requires beast.pkgmgmt;
 
     exports phylonco.lphybeast.spi;
     exports phylonco.lphybeast.tobeast.generators;

@@ -33,6 +33,8 @@ module phylonco.beast {
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithError,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow,
+            phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood,
+            phylonco.beast.evolution.likelihood.SampledGenotypeLogger,
             phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel,
             phylonco.beast.evolution.substitutionmodel.GT16,
             phylonco.beast.evolution.substitutionmodel.GT10,

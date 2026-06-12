@@ -1,7 +1,7 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
-import beast.base.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.inference.operator.DeltaExchangeOperator;
 import beast.base.inference.operator.SwapOperator;
 import beast.base.inference.parameter.BooleanParameter;
@@ -43,13 +43,16 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
         beastGT16.setInputValue("frequencies", freqsParameter);
         beastGT16.initAndValidate();
 
-        // set operators on frequency and rates
-        addDeltaExchangeOperator(freqsParameter.frequenciesInput.get(), context);
+        // set operator on rates (classic RealParameter from getBEASTObject)
         addDeltaExchangeOperator(ratesParameter, context);
 
-        // add extra operators
-        addExtraDeltaExchangeOperators(freqsParameter, context);
-        addExtraSwapOperators(freqsParameter, context);
+        // beast3 TODO: the frequencies are now a spec Simplex, which the classic
+        // DeltaExchangeOperator/SwapOperator (List<RealParameter>) cannot accept. The frequency
+        // delta-exchange/swap operators below need migrating to the spec-package operators before
+        // they can be re-enabled; until then GT16 frequencies are not operated on.
+        // addDeltaExchangeOperator(freqsParameter.frequenciesInput.get(), context);
+        // addExtraDeltaExchangeOperators(freqsParameter, context);
+        // addExtraSwapOperators(freqsParameter, context);
 
         return beastGT16;
     }

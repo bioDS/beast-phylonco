@@ -3,6 +3,7 @@ package phylonco.lphybeast.tobeast.generators;
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.likelihood.GenericTreeLikelihood;
 import beast.base.evolution.likelihood.ThreadedTreeLikelihood;
+import beast.base.inference.Distribution;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.core.model.Generator;
 import lphy.core.model.GraphicalModelNode;
@@ -23,10 +24,13 @@ import java.util.List;
  * @author Kylie Chen
  * @author Yuan Xu
  */
-public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, GenericTreeLikelihood>  {
+// beast3: phylonco's TreeLikelihoodWithError now extends the spec TreeLikelihood, which is NOT a
+// GenericTreeLikelihood, so the produced object is typed as the common supertype Distribution
+// (both TreeLikelihoodWithError and ThreadedTreeLikelihood are Distributions).
+public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignment, Distribution>  {
 
     @Override
-    public GenericTreeLikelihood generatorToBEAST(UnphaseGenotypeAlignment generator, BEASTInterface value, BEASTContext context) {
+    public Distribution generatorToBEAST(UnphaseGenotypeAlignment generator, BEASTInterface value, BEASTContext context) {
 
         assert value instanceof beast.base.evolution.alignment.Alignment;
         beast.base.evolution.alignment.Alignment unphasedErrAlignment = (beast.base.evolution.alignment.Alignment)value;
@@ -42,7 +46,7 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
             }
         }
 
-        GenericTreeLikelihood treeLikelihood = null;
+        Distribution treeLikelihood = null;
 
         // only cast if TreeLikelihoodWithError if using an error model
         if (context.getBEASTObject(errAligGenerator) instanceof TreeLikelihoodWithError) {
@@ -83,7 +87,7 @@ public class GTUnphaseToBEAST implements GeneratorToBEAST<UnphaseGenotypeAlignme
     }
 
     @Override
-    public Class<GenericTreeLikelihood> getBEASTClass() {
-        return GenericTreeLikelihood.class;
+    public Class<Distribution> getBEASTClass() {
+        return Distribution.class;
     }
 }

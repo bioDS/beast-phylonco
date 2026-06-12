@@ -18,13 +18,13 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
     private double wa;
     private double lambda;
     private double threshold;
-    private Value<ReadCountData> readCountData; ;
+    private Value<ReadCountData> readCountData;
     public ReadCountDataFilter(
             @ParameterInfo(name = "rc", narrativeName = "read count data", description = "read count data which used to filter variable sites.") Value<ReadCountData> readCountData,
-            @ParameterInfo(name = "fw", narrativeName = "expected frequence of alternative nucleotide", description = "the expected frequence of alternative nucleotide in beta-binomial distribution, by default is 0.001", optional = true) Value<Double> fw,
+            @ParameterInfo(name = "fw", narrativeName = "expected sequencing error", description = "the expected sequencing error in beta-binomial distribution, by default is 0.001", optional = true) Value<Double> fw,
             @ParameterInfo(name = "ww", narrativeName = "shape parameter of homozygous genotype(wild type)", description = "shape parameter of homozygous genotype in beta-binomial distribution, by default is 1.0", optional = true) Value<Double> ww,
             @ParameterInfo(name = "wa", narrativeName = "shape parameter of heterozygous genotype(mutant type)", description = "shape parameter of heterozygous genotype in beta-binomial distribution, by default is 2.0", optional = true) Value<Double> wa,
-            @ParameterInfo(name = "lambda", narrativeName = "prior probability of mutation", description = "prior probability of a mutation occurring at a locus, by default is 0.001", optional = true) Value<Double> lambda,
+            @ParameterInfo(name = "lambda", narrativeName = "prior probability of mutation", description = "prior probability of a mutation occurring at a locus, by default is 0.0001", optional = true) Value<Double> lambda,
             @ParameterInfo(name = "threshold", narrativeName = "threshold", description = "threshold for determining candidate status, by default is 0.95", optional = true) Value<Double> threshold) {
         this.readCountData = readCountData;
         if (fw != null) {
@@ -48,7 +48,7 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
         if (lambda != null) {
             this.lambda = lambda.value();
         } else {
-            this.lambda = 0.004;
+            this.lambda = 0.0001;
         }
 
         if (threshold != null) {

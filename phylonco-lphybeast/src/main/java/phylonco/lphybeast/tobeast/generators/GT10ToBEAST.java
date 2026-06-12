@@ -17,6 +17,7 @@ import lphybeast.GeneratorToBEAST;
 import phylonco.lphy.evolution.substitutionmodel.GT10;
 
 import beast.base.spec.type.Simplex;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 
 import java.util.ArrayList;
@@ -37,14 +38,11 @@ public class GT10ToBEAST implements GeneratorToBEAST<GT10, phylonco.beast.evolut
         Value<Double[]> rates = gt10.getRates();
         Value<Double[]> freqs = gt10.getFreq();
 
-        RealParameter ratesParameter = (RealParameter)context.getBEASTObject(rates);
+        // beast3: getBEASTObject returns the spec param produced for the LPhy value
+        // (a Dirichlet rates vector -> SimplexParam, which is a RealVectorParam).
+        RealVectorParam ratesParameter = (RealVectorParam) context.getBEASTObject(rates);
         ratesParameter.setInputValue("keys", "AC AG AT CG CT GT");
         ratesParameter.initAndValidate();
-
-//        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
-//                (RealParameter) context.getBEASTObject(freqs),
-//                "0 1 2 3 4 5 6 7 8 9");
-//        freqsParameter.initAndValidate();
 
         Frequencies freqsParameter = new Frequencies((Simplex) context.getBEASTObject(gt10.getFreq()));
 
@@ -53,8 +51,9 @@ public class GT10ToBEAST implements GeneratorToBEAST<GT10, phylonco.beast.evolut
 
         beastGT10.initAndValidate();
 
-        addAVMNOperator(freqsParameter.frequenciesInput.get(), context);
-        addAVMNOperator(ratesParameter, context);
+        // beast3 TODO: the custom AVMN operators on the spec Simplex rates/frequencies need the
+        // spec-package operators (the classic AVMN/Transform Function path can't take a Simplex).
+        // Until then, rely on LPhyBeast's default operator scheduling for these parameters.
 
         return beastGT10;
     }

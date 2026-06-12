@@ -41,6 +41,17 @@
             <version>${flc.version}</version>
         </dependency>
 
+        <!-- MutableAlignment is used at runtime by ReadCountTreeLikelihood (in phylonco-beast) to
+             build its internal identity-pattern scaffold; phylonco-beast's system-scoped dep is not
+             transitive (relative systemPath), so declare it here for the runtime/test classpath. -->
+        <dependency>
+            <groupId>beast2</groupId>
+            <artifactId>MutableAlignment</artifactId>
+            <version>0.0.2</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/../phylonco-beast/lib/MutableAlignment-0.0.2.jar</systemPath>
+        </dependency>
+
     </dependencies>
 
     <build>
