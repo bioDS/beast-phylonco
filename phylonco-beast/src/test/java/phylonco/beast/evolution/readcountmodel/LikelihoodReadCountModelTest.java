@@ -4,6 +4,7 @@ import beast.base.evolution.alignment.Alignment;
 
 import beast.base.parser.NexusParser;
 import beast.base.spec.domain.PositiveReal;
+import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.pkgmgmt.BEASTClassLoader;
 import org.junit.Before;
@@ -74,13 +75,13 @@ public class LikelihoodReadCountModelTest {
         // TODO: update unit tests to be type safe
         likelihoodReadCountModel.setInputValue("alignment", alignment);
         likelihoodReadCountModel.setInputValue("readCount", readCounts);
-        likelihoodReadCountModel.setInputValue("epsilon", epsilon.toString());
-        likelihoodReadCountModel.setInputValue("delta", delta.toString());
-        likelihoodReadCountModel.setInputValue("t", t.toString());
-        likelihoodReadCountModel.setInputValue("v", v.toString());
-        likelihoodReadCountModel.setInputValue("s", sParam);
-        likelihoodReadCountModel.setInputValue("w1", w1.toString());
-        likelihoodReadCountModel.setInputValue("w2", w2.toString());
+        likelihoodReadCountModel.setInputValue("epsilon", new RealScalarParam(epsilon, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("delta", new RealScalarParam(delta, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("t", new RealScalarParam(t, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("v", new RealScalarParam(v, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("s", new RealVectorParam<>(s, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("w1", new RealScalarParam(w1, PositiveReal.INSTANCE));
+        likelihoodReadCountModel.setInputValue("w2", new RealScalarParam(w2, PositiveReal.INSTANCE));
 
         // ...
 
