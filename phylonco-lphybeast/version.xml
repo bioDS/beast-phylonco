@@ -16,8 +16,10 @@
 <!-- any ? -->
     </service>
 
-    <!-- add lphybeast ext below  -->
-    <service type="lphybeast.spi.LPhyBEASTExt">
+    <!-- add lphybeast ext below: LBPhylonco implements lphybeast.spi.LPhyBEASTMapping, which is the
+         service type lphybeast core discovers via BEASTClassLoader.loadService(LPhyBEASTMapping.class)
+         (the old "LPhyBEASTExt" type was never found, so phylonco's generators didn't load). -->
+    <service type="lphybeast.spi.LPhyBEASTMapping">
         <provider classname="phylonco.lphybeast.spi.LBPhylonco"/>
     </service>
 

@@ -23,7 +23,10 @@ import java.util.Random;
 
 public class LikelihoodReadCountModel extends Distribution {
 
-    public Input<Alignment> alignmentInput = new Input<>("alignment", "alignment");
+    public Input<Alignment> alignmentInput = new Input<>("alignment",
+            "optional genotype alignment; in the integrated model there is no genotype alignment and "
+            + "the scaffold (taxa, site count, genotype datatype) is derived from the read counts "
+            + "(datatype set via setDataType()) instead");
     public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");
 
     // epsilon, allelic dropout, ... parameters
@@ -46,6 +49,8 @@ public class LikelihoodReadCountModel extends Distribution {
     private RealScalarParam w2;
     private Alignment alignment;
     private ReadCount readCount;
+    private int numTaxa;   // number of cells (from alignment, or from readCount when integrated)
+    private int numSites;  // number of sites (from alignment, or from readCount when integrated)
     private double[] negp1, negp2, negr1, negr2;
     private double[] wv;
     private double[][][] wPropensitiesLogGamma = new double[2][10][4];
@@ -138,15 +143,6 @@ public class LikelihoodReadCountModel extends Distribution {
 
     @Override
     public void initAndValidate() {
-        // fill genotype index table
-        // check data type is supported
-        datatype = alignmentInput.get().getDataType();
-        if (datatype instanceof NucleotideDiploid10) {
-            initGt10IndexTable();
-        } else if (datatype instanceof NucleotideDiploid16) {
-            initGt16IndexTable();
-        }
-        // checking parameters correct
         // get parameters
         epsilon = epsilonInput.get();
         delta = deltaInput.get();
@@ -158,29 +154,44 @@ public class LikelihoodReadCountModel extends Distribution {
         alignment = alignmentInput.get();
         readCount = readCountInput.get();
 
-        // Build mapping from alignment taxon index to ReadCount taxon index.
-        // The alignment and ReadCount may have taxa in different orders.
         String[] rcTaxaNames = readCount.getTaxaNames();
-        alignToRCIndex = new int[alignment.getTaxonCount()];
-        for (int i = 0; i < alignment.getTaxonCount(); i++) {
-            String alignTaxonName = alignment.getTaxaNames().get(i);
-            alignToRCIndex[i] = i; // default: identity mapping
-            for (int j = 0; j < rcTaxaNames.length; j++) {
-                if (alignTaxonName.equals(rcTaxaNames[j].trim())) {
-                    alignToRCIndex[i] = j;
-                    break;
+        if (alignment != null) {
+            // standalone use: scaffold comes from the genotype alignment
+            datatype = alignment.getDataType();
+            buildIndexTable();
+            numTaxa = alignment.getTaxonCount();
+            numSites = alignment.getSiteCount();
+            // Build mapping from alignment taxon index to ReadCount taxon index
+            // (the alignment and ReadCount may have taxa in different orders).
+            alignToRCIndex = new int[numTaxa];
+            for (int i = 0; i < numTaxa; i++) {
+                String alignTaxonName = alignment.getTaxaNames().get(i);
+                alignToRCIndex[i] = i; // default: identity mapping
+                for (int j = 0; j < rcTaxaNames.length; j++) {
+                    if (alignTaxonName.equals(rcTaxaNames[j].trim())) {
+                        alignToRCIndex[i] = j;
+                        break;
+                    }
                 }
             }
+        } else {
+            // integrated model: there is no genotype alignment, so the scaffold (cells, sites,
+            // taxon order) is the read-count data itself. The genotype datatype is supplied later
+            // via setDataType() (from the GT10/GT16 substitution model in ReadCountTreeLikelihood).
+            numTaxa = rcTaxaNames.length;
+            numSites = readCount.getSiteNumber();
+            alignToRCIndex = new int[numTaxa];
+            for (int i = 0; i < numTaxa; i++) alignToRCIndex[i] = i; // identity
         }
 
         negp1 = new double[s.size()];
         negp2 = new double[s.size()];
         negr1 = new double[s.size()];
         negr2 = new double[s.size()];
-        coverages = new int[alignment.getTaxonCount()][alignment.getSiteCount()];
-        for (int i = 0; i < alignment.getTaxonCount(); i++) {
+        coverages = new int[numTaxa][numSites];
+        for (int i = 0; i < numTaxa; i++) {
             int rcIdx = alignToRCIndex[i];
-            for (int j = 0; j < alignment.getSiteCount(); j++) {
+            for (int j = 0; j < numSites; j++) {
                 for (int k = 0; k < 4; k++) {
                     coverages[i][j] += readCount.getReadCounts(rcIdx,j)[k];
                     if (readCount.getReadCounts(rcIdx,j)[k] > maxReadCount) {
@@ -200,8 +211,8 @@ public class LikelihoodReadCountModel extends Distribution {
             readDepthLogGamma[i] = LogGamma.value(i);
         }
 
-        currentLogPi = new double[alignment.getTaxonCount()];
-        storedLogPi =  new double[alignment.getTaxonCount()];
+        currentLogPi = new double[numTaxa];
+        storedLogPi =  new double[numTaxa];
         rGammaLog = new double[2][s.size()];
         p1Log = new double[2][s.size()];
         p2Log = new double[2][s.size()];
@@ -210,14 +221,35 @@ public class LikelihoodReadCountModel extends Distribution {
         rc_wPropLogGamma = new double[2][maxReadCount+1][10][4];
     }
 
+    /** Builds the genotype-state -> nucleotide-pair propensity index table for the current datatype. */
+    private void buildIndexTable() {
+        if (datatype instanceof NucleotideDiploid10) {
+            initGt10IndexTable();
+        } else if (datatype instanceof NucleotideDiploid16) {
+            initGt16IndexTable();
+        }
+    }
+
+    /**
+     * Sets the genotype datatype when there is no genotype alignment (integrated model). Called by
+     * {@link phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood} with the datatype implied
+     * by the GT10/GT16 substitution model, and builds the genotype index table.
+     */
+    public void setDataType(DataType dataType) {
+        this.datatype = dataType;
+        buildIndexTable();
+    }
+
     // calculate propensities matrix of dirichlet multinomial distribution(read count model)
     // and params of negative binomial distribution(coverage model)
     /**
      * Recompute cached values from current parameter values.
-     * Package-private so GibbsSiteOperator can ensure caches are fresh
-     * before sampling (they may be stale after a rejected parameter proposal).
+     * Public so GibbsSiteOperator can ensure caches are fresh before sampling
+     * (they may be stale after a rejected parameter proposal), and so
+     * ReadCountTreeLikelihood (a different package) can refresh the caches
+     * before reading per-genotype likelihoods to build tip partials.
      */
-    void initialize() {
+    public void initialize() {
         double mean1;
         double mean2;
         double variance1;
@@ -314,6 +346,21 @@ public class LikelihoodReadCountModel extends Distribution {
     /** Returns the mapping from alignment taxon index to ReadCount taxon index. */
     public int[] getAlignToRCIndex() {
         return alignToRCIndex;
+    }
+
+    /** Total read depth (summed over the 4 nucleotides) for an alignment taxon at a site. */
+    public int getCoverage(int taxonIndex, int site) {
+        return coverages[taxonIndex][site];
+    }
+
+    /** The ReadCount data backing this model. */
+    public ReadCount getReadCount() {
+        return readCount;
+    }
+
+    /** The genotype datatype (NucleotideDiploid16 or NucleotideDiploid10). */
+    public DataType getDataType() {
+        return datatype;
     }
 
     //Calculate the log likelihood of read count model by summarizing the log likelihood at each site

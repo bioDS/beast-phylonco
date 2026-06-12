@@ -1,0 +1,17 @@
+<package name='lphybeast' version='2.0.0'>
+    <!-- Registers the lphybeast core SPI services so LPhyBeast can run headlessly without the
+         lphybeast BEAST package being installed in the BEAST package directory. Reconstructed from
+         the lphybeast jar's module-info `provides` clauses. -->
+    <service type="lphybeast.spi.LPhyBEASTMapping">
+        <provider classname="lphybeast.spi.LPhyBEASTMappingImpl"/>
+    </service>
+    <service type="lphybeast.spi.MCMCStrategy">
+        <provider classname="lphybeast.spi.DefaultMCMCStrategy"/>
+    </service>
+    <service type="lphybeast.spi.TreeLikelihoodStrategy">
+        <provider classname="lphybeast.spi.DefaultTreeLikelihoodStrategy"/>
+    </service>
+    <service type="lphybeast.spi.AlignmentHandler">
+        <provider classname="lphybeast.spi.DefaultAlignmentHandler"/>
+    </service>
+</package>
