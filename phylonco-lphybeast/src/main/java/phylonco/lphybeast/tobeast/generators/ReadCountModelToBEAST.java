@@ -145,10 +145,10 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         UpDownOperator operator = new UpDownOperator();
         operator.setID(id);
         for (Tensor arg: upArgs) {
-            operator.setInputValue("up", upArgs);
+            operator.setInputValue("up", arg);
         }
         for (Tensor arg: downArgs) {
-            operator.setInputValue("down", upArgs);
+            operator.setInputValue("down", arg);
         }
         operator.setInputValue("scaleFactor", 0.75);
         operator.setInputValue("weight", 10.0);
