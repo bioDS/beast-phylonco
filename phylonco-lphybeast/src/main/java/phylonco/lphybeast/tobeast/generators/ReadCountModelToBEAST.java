@@ -4,6 +4,8 @@ import beast.base.core.BEASTInterface;
 import beast.base.evolution.branchratemodel.BranchRateModel;
 import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.evolution.tree.Tree;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import lphy.base.evolution.likelihood.PhyloCTMC;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
@@ -14,6 +16,12 @@ import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import phylonco.beast.evolution.likelihood.SampledGenotypeLogger;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
+
+import beast.base.spec.evolution.operator.UpDownOperator;
+import beast.base.spec.type.Tensor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Translates an LPhy {@code r ~ ReadCountModel(D=A, ...)} into the integrated-genotype BEAST model:
@@ -113,7 +121,30 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         // LPhyBeast's default operator scheduling for the read-count parameters; re-add spec-package
         // operators here for better mixing once available.
 
+        // add UpDownOperator to s (up), t (down) and v (down)
+        List<Tensor> upParam = new ArrayList();
+        upParam.add((RealVectorParam) sParam);
+        List<Tensor> downParam = new ArrayList();
+        downParam.add((RealScalarParam) tParam);
+        downParam.add((RealScalarParam) vParam);
+        addUpDownOperator(context, upParam, downParam, "readCountModel.stv.UpDownOperator");
+
         return treeLikelihood;
+    }
+
+    // add up down operator 
+    private void addUpDownOperator(BEASTContext context, List<? extends Tensor> upArgs, List<? extends Tensor> downArgs, String id) {
+        UpDownOperator operator = new UpDownOperator();
+        operator.setID(id);
+        for (Tensor arg: upArgs) {
+            operator.setInputValue("up", upArgs);
+        }
+        for (Tensor arg: downArgs) {
+            operator.setInputValue("down", upArgs);
+        }
+        operator.setInputValue("scaleFactor", 0.75);
+        operator.setInputValue("weight", 10);
+        context.addExtraOperator(operator);
     }
 
     private void addSampledGenotypeLogger(BEASTContext context, ReadCountTreeLikelihood treeLikelihood,
