@@ -131,12 +131,11 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         downParam.add((RealScalarParam) vParam);
         addUpDownOperator(context, upParam, downParam, "readCountModel.stv.UpDownOperator");
 
-        // add AVMN operator
-//        List<Tensor> avmnParam = new ArrayList();
-//        avmnParam.add((RealScalarParam) tParam);
-//        avmnParam.add((RealVectorParam) sParam);
-//        addAVMNOperator(context, avmnParam);
-
+        // add AVMN operator to log transformed t and s
+        List<Tensor> avmnParam = new ArrayList();
+        avmnParam.add((RealScalarParam) tParam);
+        avmnParam.add((RealVectorParam) sParam);
+        addAVMNOperator(context, avmnParam);
         return treeLikelihood;
     }
 
@@ -152,6 +151,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         }
         operator.setInputValue("scaleFactor", 0.75);
         operator.setInputValue("weight", 10.0);
+        operator.initAndValidate();
         context.addExtraOperator(operator);
     }
 
@@ -164,7 +164,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
     // </transformations>
     // </operator>
     //
-    private void addAVMNOperator(BEASTContext context, List<Tensor> params) {
+    private void addAVMNOperator(BEASTContext context, List<? extends Tensor> params) {
         AdaptableVarianceMultivariateNormalOperator operator = new AdaptableVarianceMultivariateNormalOperator();
         List<Transform> transforms = new ArrayList<>();
         for (Tensor p: params) {
@@ -176,6 +176,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         operator.setInputValue("initial", 200);
         operator.setInputValue("weight", 15.0);
         operator.setID("readCountModel.AVMN");
+        operator.initAndValidate();
         context.addExtraOperator(operator);
     }
 
