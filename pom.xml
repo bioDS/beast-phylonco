@@ -38,6 +38,7 @@
         <module>phylonco-beast</module>
         <module>phylonco-lphy</module>
         <module>phylonco-lphybeast</module>
+        <module>phylonco-lphy-studio</module>
     </modules>
 
     <build>

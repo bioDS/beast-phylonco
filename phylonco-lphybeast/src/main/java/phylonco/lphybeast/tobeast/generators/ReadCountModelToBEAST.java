@@ -117,11 +117,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         // ---- tree-aware genotype reconstruction logger (replaces the sampled-alignment log) ----
         addSampledGenotypeLogger(context, treeLikelihood, siteModel, likelihoodReadCountModel, readCountData);
 
-        // beast3 TODO: the PR added custom AVMN (log-transform over t,v) and up/down operators for
-        // the coverage parameters. Those use the classic Function/StateNode operator path, which the
-        // spec params don't fit (RealScalarParam is not a beast.base.core.Function). For now rely on
-        // LPhyBeast's default operator scheduling for the read-count parameters; re-add spec-package
-        // operators here for better mixing once available.
+        // beast3 TODO: test the custom AVMN and up/down operators for the coverage parameters
 
         // add UpDownOperator to s (up), t (down) and v (down)
         List<Tensor> upParam = new ArrayList();
@@ -156,14 +152,6 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
     }
 
     // add AVMN operator
-    // <operator id="AVMNOperator" spec="kernel.AdaptableVarianceMultivariateNormalOperator"
-    // beta="0.05" burnin="100" initial="200" weight="15.0">
-    // <transformations id="Transform$LogTransform" spec="operator.kernel.Transform$LogTransform">
-    //  <f idref="t"/>
-    //  <f idref="v"/>
-    // </transformations>
-    // </operator>
-    //
     private void addAVMNOperator(BEASTContext context, List<? extends Tensor> params) {
         AdaptableVarianceMultivariateNormalOperator operator = new AdaptableVarianceMultivariateNormalOperator();
         List<Transform> transforms = new ArrayList<>();

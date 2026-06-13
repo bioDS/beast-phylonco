@@ -1,19 +1,19 @@
 <project>
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>io.github.linguaphylo</groupId>
-        <artifactId>beast-phylonco</artifactId>
+        <groupId>io.github.bioDS</groupId>
+        <artifactId>beast-phylonco-root</artifactId>
         <version>${revision}</version>
     </parent>
 
     <artifactId>phylonco-lphy-studio</artifactId>
-    <version>1.2.1</version>
+    <version>${revision}</version>
 
     <dependencies>
         <dependency>
-            <groupId>io.github.linguaphylo</groupId>
+            <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-lphy</artifactId>
-            <version>${project.version}</version>
+            <version>${revision}</version>
         </dependency>
 
         <dependency>
