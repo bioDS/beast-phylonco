@@ -2,8 +2,10 @@ package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
 import beast.base.evolution.branchratemodel.BranchRateModel;
+import beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator;
 import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.evolution.tree.Tree;
+import beast.base.spec.inference.operator.Transform;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import lphy.base.evolution.likelihood.PhyloCTMC;
@@ -129,10 +131,16 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         downParam.add((RealScalarParam) vParam);
         addUpDownOperator(context, upParam, downParam, "readCountModel.stv.UpDownOperator");
 
+        // add AVMN operator
+//        List<Tensor> avmnParam = new ArrayList();
+//        avmnParam.add((RealScalarParam) tParam);
+//        avmnParam.add((RealVectorParam) sParam);
+//        addAVMNOperator(context, avmnParam);
+
         return treeLikelihood;
     }
 
-    // add up down operator 
+    // add up down operator
     private void addUpDownOperator(BEASTContext context, List<? extends Tensor> upArgs, List<? extends Tensor> downArgs, String id) {
         UpDownOperator operator = new UpDownOperator();
         operator.setID(id);
@@ -143,7 +151,31 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
             operator.setInputValue("down", upArgs);
         }
         operator.setInputValue("scaleFactor", 0.75);
-        operator.setInputValue("weight", 10);
+        operator.setInputValue("weight", 10.0);
+        context.addExtraOperator(operator);
+    }
+
+    // add AVMN operator
+    // <operator id="AVMNOperator" spec="kernel.AdaptableVarianceMultivariateNormalOperator"
+    // beta="0.05" burnin="100" initial="200" weight="15.0">
+    // <transformations id="Transform$LogTransform" spec="operator.kernel.Transform$LogTransform">
+    //  <f idref="t"/>
+    //  <f idref="v"/>
+    // </transformations>
+    // </operator>
+    //
+    private void addAVMNOperator(BEASTContext context, List<Tensor> params) {
+        AdaptableVarianceMultivariateNormalOperator operator = new AdaptableVarianceMultivariateNormalOperator();
+        List<Transform> transforms = new ArrayList<>();
+        for (Tensor p: params) {
+            transforms.add(new Transform.LogTransform(p));
+        }
+        operator.setInputValue("transformations", transforms);
+        operator.setInputValue("beta", 0.05);
+        operator.setInputValue("burnin", 100);
+        operator.setInputValue("initial", 200);
+        operator.setInputValue("weight", 15.0);
+        operator.setID("readCountModel.AVMN");
         context.addExtraOperator(operator);
     }
 
