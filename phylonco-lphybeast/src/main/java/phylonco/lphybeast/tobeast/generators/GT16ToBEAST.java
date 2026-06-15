@@ -7,6 +7,7 @@ import beast.base.inference.operator.SwapOperator;
 import beast.base.inference.parameter.BooleanParameter;
 import beast.base.inference.parameter.IntegerParameter;
 import beast.base.inference.parameter.RealParameter;
+import beast.base.spec.inference.parameter.RealVectorParam;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
@@ -25,25 +26,18 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
 
         phylonco.beast.evolution.substitutionmodel.GT16 beastGT16 = new phylonco.beast.evolution.substitutionmodel.GT16();
 
-        Value<Double[]> rates = gt16.getRates();
-        Value<Double[]> freqs = gt16.getFreq();
-
-        RealParameter ratesParameter = (RealParameter)context.getBEASTObject(rates);
+        RealVectorParam ratesParameter = (RealVectorParam) context.getBEASTObject(gt16.getRates());
         ratesParameter.setInputValue("keys", "AC AG AT CG CT GT");
         ratesParameter.initAndValidate();
 
         Frequencies freqsParameter = new Frequencies((Simplex) context.getBEASTObject(gt16.getFreq()));
-
-//        Frequencies freqsParameter = BEASTContext.createBEASTFrequencies(
-//                (RealParameter) context.getBEASTObject(freqs),
-//                "0 1 2 3 4 5 6 7 8 9 a b c d e f");
         freqsParameter.initAndValidate();
 
         beastGT16.setInputValue("nucRates", ratesParameter);
         beastGT16.setInputValue("frequencies", freqsParameter);
         beastGT16.initAndValidate();
 
-        // set operator on rates (classic RealParameter from getBEASTObject)
+        // set operator on rates for rates as a RealVectorParam
         addDeltaExchangeOperator(ratesParameter, context);
 
         // beast3 TODO: the frequencies are now a spec Simplex, which the classic
@@ -57,10 +51,10 @@ public class GT16ToBEAST implements GeneratorToBEAST<GT16, phylonco.beast.evolut
         return beastGT16;
     }
 
-    private void addDeltaExchangeOperator(RealParameter parameter, BEASTContext context) {
+    private void addDeltaExchangeOperator(RealVectorParam parameter, BEASTContext context) {
         DeltaExchangeOperator operator = new DeltaExchangeOperator();
         operator.setInputValue("parameter", parameter);
-        operator.setInputValue("weight", context.getOperatorWeight(parameter.getDimension() - 1));
+        operator.setInputValue("weight", context.getOperatorWeight(parameter.size() - 1));
         operator.setInputValue("autoOptimize", true);
         operator.initAndValidate();
         operator.setID(parameter.getID() + ".deltaExchange");
