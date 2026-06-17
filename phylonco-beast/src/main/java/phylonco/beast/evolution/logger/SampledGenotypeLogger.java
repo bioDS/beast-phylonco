@@ -1,4 +1,4 @@
-package phylonco.beast.evolution.likelihood;
+package phylonco.beast.evolution.logger;
 
 import beast.base.core.BEASTObject;
 import beast.base.core.Description;
@@ -12,6 +12,7 @@ import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 
 import java.io.PrintStream;

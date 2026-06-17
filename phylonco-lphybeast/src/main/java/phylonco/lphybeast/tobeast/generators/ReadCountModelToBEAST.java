@@ -1,10 +1,8 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
-import beast.base.evolution.branchratemodel.BranchRateModel;
 import beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator;
 import beast.base.spec.evolution.sitemodel.SiteModel;
-import beast.base.evolution.tree.Tree;
 import beast.base.spec.inference.operator.Transform;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
@@ -15,12 +13,12 @@ import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
 import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
-import phylonco.beast.evolution.likelihood.SampledGenotypeLogger;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 
 import beast.base.spec.evolution.operator.UpDownOperator;
 import beast.base.spec.type.Tensor;
+import phylonco.lphybeast.loggerhelper.AlignmentLoggerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -115,7 +113,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         }
 
         // ---- tree-aware genotype reconstruction logger (replaces the sampled-alignment log) ----
-        addSampledGenotypeLogger(context, treeLikelihood, siteModel, likelihoodReadCountModel, readCountData);
+        AlignmentLoggerHelper alignmentLoggerHelper = new AlignmentLoggerHelper(treeLikelihood, siteModel, likelihoodReadCountModel, readCountData, context);
+        context.addExtraLogger(alignmentLoggerHelper);
 
         // beast3 TODO: test the custom AVMN and up/down operators for the coverage parameters
 
@@ -131,6 +130,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         List<Tensor> avmnParam = new ArrayList();
         avmnParam.add((RealScalarParam) tParam);
         avmnParam.add((RealVectorParam) sParam);
+        avmnParam.add((RealScalarParam) vParam);
         addAVMNOperator(context, avmnParam);
         return treeLikelihood;
     }
@@ -146,7 +146,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
             operator.setInputValue("down", arg);
         }
         operator.setInputValue("scaleFactor", 0.75);
-        operator.setInputValue("weight", 10.0);
+        operator.setInputValue("weight", 15.0);
         operator.initAndValidate();
         context.addExtraOperator(operator);
     }
@@ -162,27 +162,10 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         operator.setInputValue("beta", 0.05);
         operator.setInputValue("burnin", 100);
         operator.setInputValue("initial", 200);
-        operator.setInputValue("weight", 15.0);
+        operator.setInputValue("weight", 25.0);
         operator.setID("readCountModel.AVMN");
         operator.initAndValidate();
         context.addExtraOperator(operator);
-    }
-
-    private void addSampledGenotypeLogger(BEASTContext context, ReadCountTreeLikelihood treeLikelihood,
-                                          SiteModel siteModel, LikelihoodReadCountModel readCountModel,
-                                          ReadCount readCount) {
-        SampledGenotypeLogger logger = new SampledGenotypeLogger();
-        logger.setInputValue("tree", (Tree) treeLikelihood.treeInput.get());
-        logger.setInputValue("siteModel", siteModel);
-        BranchRateModel branchRateModel = treeLikelihood.branchRateModelInput.get();
-        if (branchRateModel != null) {
-            logger.setInputValue("branchRateModel", branchRateModel);
-        }
-        logger.setInputValue("readCountModel", readCountModel);
-        logger.setInputValue("readCount", readCount);
-        logger.initAndValidate();
-        logger.setID("sampledGenotype");
-        context.addExtraLoggable(logger);
     }
 
     @Override
