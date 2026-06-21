@@ -22,6 +22,7 @@ module phylonco.beast {
     exports phylonco.beast.evolution.likelihood;
     exports phylonco.beast.evolution.readcountmodel;
     exports phylonco.beast.evolution.substitutionmodel;
+    exports phylonco.beast.evolution.operator;
     exports phylonco.beast.evolution.logger;
 
     provides beast.base.core.BEASTInterface with
@@ -47,5 +48,6 @@ module phylonco.beast {
             phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel,
             phylonco.beast.evolution.readcountmodel.GibbsSequenceOperator,
             phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator,
-            phylonco.beast.evolution.datatype.ReadCount;
+            phylonco.beast.evolution.datatype.ReadCount,
+            phylonco.beast.evolution.operator.BactrianSubtreeScale;
 }
