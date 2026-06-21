@@ -15,7 +15,7 @@ module phylonco.beast {
     requires java.xml;
 
     requires jdk.jfr;
-    requires MutableAlignment;
+    requires mutable.alignment;
 
     exports phylonco.beast.evolution.datatype;
     exports phylonco.beast.evolution.errormodel;
