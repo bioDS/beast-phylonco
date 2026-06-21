@@ -1,3 +1,5 @@
+import phylonco.beast.evolution.logger.SampledGenotypeLogger;
+
 module phylonco.beast {
     requires beast.base;
     requires beast.pkgmgmt;
@@ -13,7 +15,7 @@ module phylonco.beast {
     requires java.xml;
 
     requires jdk.jfr;
-    requires MutableAlignment;
+    requires mutable.alignment;
 
     exports phylonco.beast.evolution.datatype;
     exports phylonco.beast.evolution.errormodel;
@@ -21,6 +23,7 @@ module phylonco.beast {
     exports phylonco.beast.evolution.readcountmodel;
     exports phylonco.beast.evolution.substitutionmodel;
     exports phylonco.beast.evolution.operator;
+    exports phylonco.beast.evolution.logger;
 
     provides beast.base.core.BEASTInterface with
             phylonco.beast.evolution.datatype.NucleotideDiploid10,
@@ -35,7 +38,7 @@ module phylonco.beast {
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow,
             phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood,
-            phylonco.beast.evolution.likelihood.SampledGenotypeLogger,
+            SampledGenotypeLogger,
             phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel,
             phylonco.beast.evolution.substitutionmodel.GT16,
             phylonco.beast.evolution.substitutionmodel.GT10,
