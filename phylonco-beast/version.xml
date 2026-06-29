@@ -27,6 +27,7 @@
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast"/>
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow"/>
         <provider classname="phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood"/>
+        <provider classname="phylonco.beast.evolution.likelihood.BeagleReadCountTreeLikelihood"/>
         <provider classname="phylonco.beast.evolution.logger.SampledGenotypeLogger"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.GT16"/>
