@@ -567,9 +567,26 @@ public class LikelihoodReadCountModel extends Distribution {
 
     //calculate the likelihood given read count (multinomial distribution)
     public double logLikelihoodDirichletMD( int wIndex, int coverage, int[] readCountNumbers, double[] wPropensitiesLogGamma, int index){
-        double logLikelihood = logFFunctionCov(coverage, wIndex);
+        double logLikelihood = 0.0;
+        if (coverage > 0){
+            logLikelihood = readDepthLog[coverage]
+                    + wLogGamma[wIndex]
+                    + readDepthLogGamma[coverage]
+                    - c_wLogGamma[wIndex][coverage];
+        }
+        //double logLikelihood = logFFunctionCov(coverage, wIndex);
+
         for (int i = 0; i < readCountNumbers.length; i++) {
-            logLikelihood -= logFFunctionRC(readCountNumbers[i], wPropensitiesLogGamma[i], rc_wPropLogGamma[wIndex][readCountNumbers[i]][index][i]);
+            int rc = readCountNumbers[i];
+            if (rc > 0) {
+                logLikelihood -=
+                        readDepthLog[rc]
+                                + wPropensitiesLogGamma[i]
+                                + readDepthLogGamma[rc]
+                                - rc_wPropLogGamma[wIndex][rc][index][i];
+            }
+
+            //logLikelihood -= logFFunctionRC(readCountNumbers[i], wPropensitiesLogGamma[i], rc_wPropLogGamma[wIndex][readCountNumbers[i]][index][i]);
         }
         return logLikelihood;
     }

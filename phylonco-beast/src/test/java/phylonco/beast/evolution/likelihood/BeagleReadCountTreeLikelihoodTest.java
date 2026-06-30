@@ -230,43 +230,43 @@ public class BeagleReadCountTreeLikelihoodTest {
     }
 
     /** Core: 2 taxa x 2 sites, GT10. Integrated likelihood == hand Felsenstein integral. */
-//    @Test
-//    public void testIntegratedEqualsBruteForceTwoSite() {
-//        int nSites = 2;
-//        // a: site0 / site1 ; b: site0 / site1   (A:C:G:T per site, sites separated by ",")
-//        String readCountStr = "3:0:1:8,0:12:2:0\n7:1:0:4,0:1:9:1";
-//        Alignment scaffold = buildScaffold(nSites);
-//        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
-//        SiteModel siteModel = buildSiteModel();
-//        TreeParser tree = buildTree(scaffold);
-//
-//        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-//
-//        double logP = likelihood.calculateLogP();
-//        double logRef = referenceLogP(scaffold, rcm, siteModel, tree, nSites);
-//        assertEquals(logRef, logP, DELTA);
-//    }
+    @Test
+    public void testIntegratedEqualsBruteForceTwoSite() {
+        int nSites = 2;
+        // a: site0 / site1 ; b: site0 / site1   (A:C:G:T per site, sites separated by ",")
+        String readCountStr = "3:0:1:8,0:12:2:0\n7:1:0:4,0:1:9:1";
+        Alignment scaffold = buildScaffold(nSites);
+        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
+        SiteModel siteModel = buildSiteModel();
+        TreeParser tree = buildTree(scaffold);
+
+        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
+
+        double logP = likelihood.calculateLogP();
+        double logRef = referenceLogP(scaffold, rcm, siteModel, tree, nSites);
+        assertEquals(logRef, logP, DELTA);
+    }
 
     /** Underflow: a very-high-coverage site makes raw read-count likelihoods strongly negative;
      *  the integrated result must still match the (offset-robust) reference exactly. */
-//    @Test
-//    public void testUnderflowHighCoverage() {
-//        int nSites = 1;
-//        // coverage ~300 at one site for each cell
-//        String readCountStr = "120:5:170:5\n3:150:7:140";
-//        Alignment scaffold = buildScaffold(nSites);
-//        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
-//        SiteModel siteModel = buildSiteModel();
-//        TreeParser tree = buildTree(scaffold);
-//
-//        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-//
-//        double logP = likelihood.calculateLogP();
-//        double logRef = referenceLogP(scaffold, rcm, siteModel, tree, nSites);
-//        assertEquals(logRef, logP, DELTA);
-//        // sanity: a real (finite) number, not -Inf/NaN
-//        assertTrue(Double.isFinite(logP));
-//    }
+    @Test
+    public void testUnderflowHighCoverage() {
+        int nSites = 1;
+        // coverage ~300 at one site for each cell
+        String readCountStr = "120:5:170:5\n3:150:7:140";
+        Alignment scaffold = buildScaffold(nSites);
+        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
+        SiteModel siteModel = buildSiteModel();
+        TreeParser tree = buildTree(scaffold);
+
+        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
+
+        double logP = likelihood.calculateLogP();
+        double logRef = referenceLogP(scaffold, rcm, siteModel, tree, nSites);
+        assertEquals(logRef, logP, DELTA);
+        // sanity: a real (finite) number, not -Inf/NaN
+        assertTrue(Double.isFinite(logP));
+    }
 
     /** Stale-cache guard (must-fix #1): perturbing a read-count param then restoring it must
      *  return exactly the original logP — proves initialize() is refreshed on every rebuild. */
@@ -303,31 +303,31 @@ public class BeagleReadCountTreeLikelihoodTest {
 
     /** store()/restore() of globalLogOffset (must-fix #3): after store, a param change, then
      *  restore (with the param reverted), a fresh logP must equal the pre-move value. */
-//    @Test
-//    public void testStoreRestoreOffset() {
-//        int nSites = 2;
-//        String readCountStr = "3:0:1:8,0:12:2:0\n7:1:0:4,0:1:9:1";
-//        Alignment scaffold = buildScaffold(nSites);
-//        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
-//        SiteModel siteModel = buildSiteModel();
-//        TreeParser tree = buildTree(scaffold);
-//
-//        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-//        RealScalarParam epsilon = rcm.epsilonInput.get();
-//
-//        double logP0 = likelihood.calculateLogP();
-//
-//        likelihood.store();
-//        rcm.store();
-//        epsilon.set(0.2);
-//        likelihood.requiresRecalculation();
-//        likelihood.calculateLogP();
-//
-//        // reject: revert param and restore the calculation nodes
-//        epsilon.set(Double.parseDouble(EPSILON));
-//        likelihood.restore();
-//        rcm.restore();
-//        double logP2 = likelihood.calculateLogP();
-//        assertEquals(logP0, logP2, DELTA);
-//    }
+    @Test
+    public void testStoreRestoreOffset() {
+        int nSites = 2;
+        String readCountStr = "3:0:1:8,0:12:2:0\n7:1:0:4,0:1:9:1";
+        Alignment scaffold = buildScaffold(nSites);
+        LikelihoodReadCountModel rcm = buildReadCountModel(scaffold, readCountStr);
+        SiteModel siteModel = buildSiteModel();
+        TreeParser tree = buildTree(scaffold);
+
+        BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
+        RealScalarParam epsilon = rcm.epsilonInput.get();
+
+        double logP0 = likelihood.calculateLogP();
+
+        likelihood.store();
+        rcm.store();
+        epsilon.set(0.2);
+        likelihood.requiresRecalculation();
+        likelihood.calculateLogP();
+
+        // reject: revert param and restore the calculation nodes
+        epsilon.set(Double.parseDouble(EPSILON));
+        likelihood.restore();
+        rcm.restore();
+        double logP2 = likelihood.calculateLogP();
+        assertEquals(logP0, logP2, DELTA);
+    }
 }
