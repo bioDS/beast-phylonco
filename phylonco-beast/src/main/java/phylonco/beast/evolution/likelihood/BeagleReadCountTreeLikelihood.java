@@ -21,7 +21,6 @@ import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
@@ -76,9 +75,9 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
         dataInput.setRule(Input.Validate.OPTIONAL);
     }
 
-//    // summed log of the per-(tip,site) max-normalisation factors; added back to logP
-//    private double globalLogOffset = 0.0;
-//    private double storedGlobalLogOffset = 0.0;
+    // summed log of the per-(tip,site) max-normalisation factors; added back to logP
+    private double globalLogOffset = 0.0;
+    private double storedGlobalLogOffset = 0.0;
 
     @Override
     public void initAndValidate() {
@@ -517,10 +516,10 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
                     logRC[g] = readCountModel.logLiklihoodRC(g, reads, coverage, rcIdx);
                     if (logRC[g] > max) max = logRC[g];
                 }
-                //globalLogOffset += max;
+                globalLogOffset += max;
                 for (int state = 0; state < m_nStateCount; state++) {
-                    //partials[v++] = Math.exp(logRC[state] - max);
-                    partials[v++] = Math.exp(logRC[state]);
+                    partials[v++] = Math.exp(logRC[state] - max);
+                    //partials[v++] = Math.exp(logRC[state]);
                 }
             } else {
                 tipProbabilities = data.getTipLikelihoods(taxon, i);
@@ -706,7 +705,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
      */
     @Override
     public void store() {
-        //storedGlobalLogOffset = globalLogOffset;
+        storedGlobalLogOffset = globalLogOffset;
         readCountModel.store(); // read count model store
         partialBufferHelper.storeState();
         eigenBufferHelper.storeState();
@@ -723,7 +722,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
 
     @Override
     public void restore() {
-        //globalLogOffset = storedGlobalLogOffset;
+        globalLogOffset = storedGlobalLogOffset;
         updateSiteModel = true; // this is required to upload the categoryRates to BEAGLE after the restore
 
         readCountModel.restore(); // read count model restore
@@ -774,10 +773,10 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
                             logRC[g] = readCountModel.logLiklihoodRC(g, reads, coverage, rcIdx);
                             if (logRC[g] > max) max = logRC[g];
                         }
-                        //globalLogOffset += max;
+                        globalLogOffset += max;
                         for (int v = 0; v < m_nStateCount; v++) {
-                            //tipLikelihoods[v] = Math.exp(logRC[v] - max);
-                            tipLikelihoods[v] = Math.exp(logRC[v]);
+                            tipLikelihoods[v] = Math.exp(logRC[v] - max);
+                            //tipLikelihoods[v] = Math.exp(logRC[v]);
                         }
             }
             for (int s = 0; s < nrOfStates; s++) {
@@ -847,6 +846,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
 
         if (updateReadCountModel) {
             readCountModel.initialize();
+            globalLogOffset = 0.0;
         }
 
         final Node root = treeInput.get().getRoot();
@@ -1035,8 +1035,8 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
         updateSiteModel = false;
         //********************************************************************
 
-        //logP = logL + globalLogOffset;
-        logP = logL;
+        logP = logL + globalLogOffset;
+        //logP = logL;
         return logP;
     }
 
