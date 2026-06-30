@@ -79,6 +79,10 @@ public class LikelihoodReadCountModel extends Distribution {
     private int[][] gt16IndexTable;
     private int[][] gt10IndexTable;
 
+    private boolean nbDirty = true;
+    private boolean dirichletDirty = true;
+    private boolean deltaDirty = true;
+
     DataType datatype;    //private double[] sv;
 
     @Override
@@ -250,81 +254,111 @@ public class LikelihoodReadCountModel extends Distribution {
      * before reading per-genotype likelihoods to build tip partials.
      */
     public void initialize() {
-        double mean1;
-        double mean2;
-        double variance1;
-        double variance2;
         double eps = epsilon.get();
         double del = delta.get();
         double tv = t.get();
         double vv = v.get();
         double[] sv = s.getValues();
         wv = new double[]{w1.get(), w2.get()};
-        double[][] propensities;
+
+        if (nbDirty) {
+            updateNegativeBinomialCache(tv, vv, sv);
+            nbDirty = false;
+        }
+
+        if (dirichletDirty) {
+            updateDirichletCache(eps);
+            dirichletDirty = false;
+        }
+
+        if (deltaDirty) {
+            updateDeltaCache(del);
+            deltaDirty = false;
+        }
+    }
+
+    private void updateNegativeBinomialCache(double tv, double vv, double[] sv) {
+        double mean1;
+        double mean2;
+        double variance1;
+        double variance2;
 
         for (int i = 0; i < s.size(); i++) {
             mean1 = alpha[0] * tv * sv[i];
             mean2 = alpha[1] * tv * sv[i];
+
             variance1 = mean1 + Math.pow(alpha[0], 2) * vv * Math.pow(sv[i], 2);
             variance2 = mean2 + Math.pow(alpha[1], 2) * vv * Math.pow(sv[i], 2);
+
             negp1[i] = mean1 / variance1;
             negp2[i] = mean2 / variance2;
             negr1[i] = Math.pow(mean1, 2) / (variance1 - mean1);
             negr2[i] = Math.pow(mean2, 2) / (variance2 - mean2);
+
             rGammaLog[0][i] = LogGamma.value(negr1[i]);
             rGammaLog[1][i] = LogGamma.value(negr2[i]);
+
             p1Log[0][i] = Math.log(negp1[i]);
-            p1Log[1][i] = Math.log(1-negp1[i]);
+            p1Log[1][i] = Math.log(1 - negp1[i]);
             p2Log[0][i] = Math.log(negp2[i]);
-            p2Log[1][i] = Math.log(1-negp2[i]);
-            for (int j =0; j < maxReadDepth+1; j++) {
+            p2Log[1][i] = Math.log(1 - negp2[i]);
+
+            for (int j = 0; j < maxReadDepth + 1; j++) {
                 c_rLogGamma[0][i][j] = LogGamma.value(j + negr1[i]);
                 c_rLogGamma[1][i][j] = LogGamma.value(j + negr2[i]);
             }
         }
+    }
 
+    private void updateDirichletCache(double eps) {
         double x0, x1, x2, x3;
-        for (int i =0; i < wPropensitiesLogGamma.length; i++) {
-            x0 = LogGamma.value((1 -eps)*wv[i]);
-            x1 = LogGamma.value((eps/3)*wv[i]);
-            x2 = LogGamma.value((0.5 - eps/6)*wv[i]);
-            x3 = LogGamma.value((eps/6)*wv[i]);
+        double[][] propensities;
+
+        for (int i = 0; i < wPropensitiesLogGamma.length; i++) {
+            x0 = LogGamma.value((1 - eps) * wv[i]);
+            x1 = LogGamma.value((eps / 3) * wv[i]);
+            x2 = LogGamma.value((0.5 - eps / 6) * wv[i]);
+            x3 = LogGamma.value((eps / 6) * wv[i]);
+
             wPropensitiesLogGamma[i] = new double[][]{
-                    {x0, x1, x1, x1},   // AA or A_ 0
-                    {x2, x2, x3, x3},   // AC or CA 1
-                    {x2, x3, x2, x3},   // AG or GA 2
-                    {x2, x3, x3, x2},   // AT or TA 3
-                    {x1, x0, x1, x1},   // CC or C_ 4
-                    {x3, x2, x2, x3},   // CG or GC 5
-                    {x3, x2, x3, x2},   // CT or TC 6
-                    {x1, x1, x0, x1},   // GG or G_ 7
-                    {x3, x3, x2, x2},   // GT or TG 8
-                    {x1, x1, x1, x0},   // TT or T_ 9
+                    {x0, x1, x1, x1},
+                    {x2, x2, x3, x3},
+                    {x2, x3, x2, x3},
+                    {x2, x3, x3, x2},
+                    {x1, x0, x1, x1},
+                    {x3, x2, x2, x3},
+                    {x3, x2, x3, x2},
+                    {x1, x1, x0, x1},
+                    {x3, x3, x2, x2},
+                    {x1, x1, x1, x0},
             };
         }
 
         double y0, y1, y2, y3;
         for (int i = 0; i < rc_wPropLogGamma.length; i++) {
-            y0 = (1 -eps)*wv[i];
-            y1 = eps/3*wv[i];
-            y2 = (0.5 - eps/6)*wv[i];
-            y3 = eps/6*wv[i];
+            y0 = (1 - eps) * wv[i];
+            y1 = eps / 3 * wv[i];
+            y2 = (0.5 - eps / 6) * wv[i];
+            y3 = eps / 6 * wv[i];
+
             propensities = new double[][]{
-                    {y0, y1, y1, y1},   // AA or A_ 0
-                    {y2, y2, y3, y3},   // AC or CA 1
-                    {y2, y3, y2, y3},   // AG or GA 2
-                    {y2, y3, y3, y2},   // AT or TA 3
-                    {y1, y0, y1, y1},   // CC or C_ 4
-                    {y3, y2, y2, y3},   // CG or GC 5
-                    {y3, y2, y3, y2},   // CT or TC 6
-                    {y1, y1, y0, y1},   // GG or G_ 7
-                    {y3, y3, y2, y2},   // GT or TG 8
-                    {y1, y1, y1, y0},   // TT or T_ 9
+                    {y0, y1, y1, y1},
+                    {y2, y2, y3, y3},
+                    {y2, y3, y2, y3},
+                    {y2, y3, y3, y2},
+                    {y1, y0, y1, y1},
+                    {y3, y2, y2, y3},
+                    {y3, y2, y3, y2},
+                    {y1, y1, y0, y1},
+                    {y3, y3, y2, y2},
+                    {y1, y1, y1, y0},
             };
+
             for (int j = 0; j < rc_wPropLogGamma[i].length; j++) {
                 for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
                     for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
-                        rc_wPropLogGamma[i][j][k][l] = LogGamma.value(propensities[k][l] + j);
+                        rc_wPropLogGamma[i][j][k][l] =
+                                LogGamma.value(propensities[k][l] + j);
                     }
                 }
             }
@@ -338,9 +372,11 @@ public class LikelihoodReadCountModel extends Distribution {
 
         wLogGamma[0] = LogGamma.value(wv[0]);
         wLogGamma[1] = LogGamma.value(wv[1]);
-        deltaLog[0] = Math.log(del);
-        deltaLog[1] = Math.log(1-del);
+    }
 
+    private void updateDeltaCache(double del) {
+        deltaLog[0] = Math.log(del);
+        deltaLog[1] = Math.log(1 - del);
     }
 
     /** Returns the mapping from alignment taxon index to ReadCount taxon index. */
@@ -467,7 +503,6 @@ public class LikelihoodReadCountModel extends Distribution {
         double logPart2;
         double max;
 
-
         if (homozygous(genotypeState)) {
             logLikelihoodDirichletMDDiploid = logLikelihoodDirichletMD(0, coverage, readCountNumbers, wPropensitiesLogGamma[0][indices[0]], indices[0]);
             logCoverageLikelihoodDiploid = logCoverageLikelihood(coverage, negr2[taxonIndex], rGammaLog[1][taxonIndex], p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
@@ -555,6 +590,27 @@ public class LikelihoodReadCountModel extends Distribution {
         } else return 0.0;
     }
 
+    @Override
+    public boolean requiresRecalculation() {
+
+        if (t.somethingIsDirty() ||
+                v.somethingIsDirty() ||
+                s.somethingIsDirty()) {
+            nbDirty = true;
+        }
+
+        if (epsilon.somethingIsDirty() ||
+                w1.somethingIsDirty() ||
+                w2.somethingIsDirty()) {
+            dirichletDirty = true;
+        }
+
+        if (delta.somethingIsDirty()) {
+            deltaDirty = true;
+        }
+
+        return true;
+    }
 
     @Override
     public void store() {
@@ -570,14 +626,11 @@ public class LikelihoodReadCountModel extends Distribution {
     public void restore() {
         super.restore();
 
-        // Recompute cached arrays (negr1, negp1, wPropensitiesLogGamma, etc.)
-        // from the now-restored parameter values. Without this, these caches
-        // retain values computed from the rejected proposal.
+        nbDirty = true;
+        dirichletDirty = true;
+        deltaDirty = true;
         initialize();
 
-        /**
-         * swap storedLogPi and currentLogPi, so that currentLogPi is now uptodate again
-         */
         double[] tmp = storedLogPi;
         storedLogPi = currentLogPi;
         currentLogPi = tmp;
