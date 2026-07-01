@@ -261,11 +261,13 @@ public class ReadCountTreeLikelihoodTest {
         double logP0 = likelihood.calculateLogP();
 
         epsilon.set(0.2);
+        rcm.requiresRecalculation();
         likelihood.requiresRecalculation();
         double logP1 = likelihood.calculateLogP();
         assertNotEquals(logP0, logP1, DELTA); // the move actually changed something
 
         epsilon.set(Double.parseDouble(EPSILON));
+        rcm.requiresRecalculation();
         likelihood.requiresRecalculation();
         double logP2 = likelihood.calculateLogP();
         assertEquals(logP0, logP2, DELTA);

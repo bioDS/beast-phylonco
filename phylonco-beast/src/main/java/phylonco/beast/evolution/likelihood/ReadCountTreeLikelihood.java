@@ -4,6 +4,7 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.alignment.TaxonSet;
 import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.likelihood.BeerLikelihoodCore;
 import beast.base.evolution.sitemodel.SiteModelInterface;
@@ -104,10 +105,7 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         // build the identity-pattern scaffold the parent TreeLikelihood needs, from the read counts
         // (there is no genotype alignment in the model). Kept internal — not an XML input.
         if (dataInput.get() == null) {
-            scaffoldData = buildScaffold(genotypeDataType);
-            dataInput.setValue(scaffoldData, this);
-        } else {
-            scaffoldData = dataInput.get();
+            dataInput.setValue(buildScaffold(genotypeDataType), this);
         }
 
         // super.initAndValidate() builds the initial tip partials via setPartials -> getLeafPartials,
@@ -115,7 +113,7 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         globalLogOffset = 0.0;
         super.initAndValidate();
 
-        Alignment data = getAlignment();
+        Alignment data = dataInput.get();
         if (data.getPatternCount() != data.getSiteCount()) {
             throw new IllegalArgumentException(
                     "ReadCountTreeLikelihood requires an identity-pattern scaffold (patternCount == "
@@ -159,8 +157,11 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         }
         dense.setInputValue("userDataType", genotypeDataType);
         dense.initAndValidate();
+        TaxonSet taxonSet = new TaxonSet();
+        taxonSet.initByName("alignment", dense);
 
         MutableAlignment scaffold = new MutableAlignment(dense);
+        scaffold.setInputValue("taxa", taxonSet);
         scaffold.setID("readCountScaffold");
         scaffold.initAndValidate();
         return scaffold;
@@ -175,9 +176,6 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
      * scaffold alignment containing only taxa, site count and genotype
      * data type information.
      */
-    private Alignment getAlignment() {
-        return scaffoldData != null ? scaffoldData : dataInput.get();
-    }
 
     /**
      * Tip partial vector for one leaf: for each site (== pattern, identity), the per-genotype
@@ -186,7 +184,7 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
      */
     @Override
     protected double[] getLeafPartials(Node node) {
-        Alignment data = getAlignment();
+        Alignment data = dataInput.get();
         int nrOfStates = data.getDataType().getStateCount();
         int nrOfPatterns = data.getPatternCount();
         double[] partials = new double[nrOfPatterns * nrOfStates];
