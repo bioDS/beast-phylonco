@@ -69,6 +69,8 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
     private double globalLogOffset = 0.0;
     private double storedGlobalLogOffset = 0.0;
 
+    private Alignment scaffoldData;
+
     @Override
     public void initAndValidate() {
         readCountModel = readCountModelInput.get();
@@ -102,7 +104,10 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         // build the identity-pattern scaffold the parent TreeLikelihood needs, from the read counts
         // (there is no genotype alignment in the model). Kept internal — not an XML input.
         if (dataInput.get() == null) {
-            dataInput.setValue(buildScaffold(genotypeDataType), this);
+            scaffoldData = buildScaffold(genotypeDataType);
+            dataInput.setValue(scaffoldData, this);
+        } else {
+            scaffoldData = dataInput.get();
         }
 
         // super.initAndValidate() builds the initial tip partials via setPartials -> getLeafPartials,
@@ -110,7 +115,7 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         globalLogOffset = 0.0;
         super.initAndValidate();
 
-        Alignment data = dataInput.get();
+        Alignment data = getAlignment();
         if (data.getPatternCount() != data.getSiteCount()) {
             throw new IllegalArgumentException(
                     "ReadCountTreeLikelihood requires an identity-pattern scaffold (patternCount == "
@@ -162,13 +167,26 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
     }
 
     /**
+     * Use getAlignment() instead of dataInput.get()
+     * Returns the alignment used internally by the likelihood.
+     *
+     * In standalone mode this is the user-provided genotype alignment.
+     * In the integrated read-count model this is an internally constructed
+     * scaffold alignment containing only taxa, site count and genotype
+     * data type information.
+     */
+    private Alignment getAlignment() {
+        return scaffoldData != null ? scaffoldData : dataInput.get();
+    }
+
+    /**
      * Tip partial vector for one leaf: for each site (== pattern, identity), the per-genotype
      * read-count likelihood, max-normalised per site. Accumulates the per-site log-max into
      * {@link #globalLogOffset}.
      */
     @Override
     protected double[] getLeafPartials(Node node) {
-        Alignment data = dataInput.get();
+        Alignment data = getAlignment();
         int nrOfStates = data.getDataType().getStateCount();
         int nrOfPatterns = data.getPatternCount();
         double[] partials = new double[nrOfPatterns * nrOfStates];

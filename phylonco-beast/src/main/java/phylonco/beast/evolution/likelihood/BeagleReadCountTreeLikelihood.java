@@ -79,6 +79,8 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
     private double globalLogOffset = 0.0;
     private double storedGlobalLogOffset = 0.0;
 
+    private Alignment scaffoldData;
+
     @Override
     public void initAndValidate() {
         boolean forceJava = Boolean.valueOf(System.getProperty("java.only"));
@@ -121,10 +123,12 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
 
 // build scaffold if XML did not provide data
         if (dataInput.get() == null) {
-            dataInput.setValue(buildScaffold(genotypeDataType), this);
+            scaffoldData = buildScaffold(genotypeDataType);
+        } else {
+            scaffoldData = dataInput.get();
         }
 
-        m_siteModel.setDataType(dataInput.get().getDataType());
+        m_siteModel.setDataType(getAlignment().getDataType());
 
         alignToRC = readCountModel.getAlignToRCIndex();
         rcParams = new StateNode[]{
@@ -145,8 +149,8 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
         m_branchLengths = new double[m_nNodeCount];
         storedBranchLengths = new double[m_nNodeCount];
 
-        m_nStateCount = dataInput.get().getMaxStateCount();
-        patternCount = dataInput.get().getPatternCount();
+        m_nStateCount = getAlignment().getMaxStateCount();
+        patternCount = getAlignment().getPatternCount();
 
         eigenCount = 1;//this.branchSubstitutionModel.getEigenCount();
 
@@ -156,7 +160,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
             for (int i = 0; i < categoryRates.length; i++) {
                 if (categoryRates[i] == 0) {
                     proportionInvariant = m_siteModel.getRateForCategory(i, null);
-                    int patterns = dataInput.get().getPatternCount();
+                    int patterns = getAlignment().getPatternCount();
                     calcConstantPatternIndices(patterns, stateCount);
                     invariantCategory = i;
 
@@ -171,7 +175,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
                     break;
                 }
             }
-            if (getConstantPattern() != null && getConstantPattern().size() > dataInput.get().getPatternCount()) {
+            if (getConstantPattern() != null && getConstantPattern().size() > getAlignment().getPatternCount()) {
                 // if there are many more constant patterns than patterns (each pattern can
                 // have a number of constant patters, one for each state) it is less efficient
                 // to just calculate the TreeLikelihood for constant sites than optimising
@@ -356,7 +360,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
 
         Node[] nodes = treeInput.get().getNodesAsArray();
         for (int i = 0; i < tipCount; i++) {
-            int taxon = getTaxonIndex(nodes[i].getID(), dataInput.get());
+            int taxon = getTaxonIndex(nodes[i].getID(), getAlignment());
             if (m_bUseAmbiguities || m_bUseTipLikelihoods || useTipsEmpirical || readCountModel != null) {
                 setPartials(beagle, nodes[i], taxon, false);
             } else {
@@ -364,13 +368,13 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
             }
         }
 
-        if (dataInput.get().isAscertained) {
+        if (getAlignment().isAscertained) {
             ascertainedSitePatterns = true;
         }
 
         double[] patternWeights = new double[patternCount];
         for (int i = 0; i < patternCount; i++) {
-            patternWeights[i] = dataInput.get().getPatternWeight(i);
+            patternWeights[i] = getAlignment().getPatternWeight(i);
         }
         beagle.setPatternWeights(patternWeights);
 
@@ -404,6 +408,19 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
         currentCategoryWeights = new double[categoryRates.length];
 
         return true;
+    }
+
+    /**
+     * Use getAlignment() instead of dataInput.get()
+     * Returns the alignment used internally by the likelihood.
+     *
+     * In standalone mode this is the user-provided genotype alignment.
+     * In the integrated read-count model this is an internally constructed
+     * scaffold alignment containing only taxa, site count and genotype
+     * data type information.
+     */
+    private Alignment getAlignment() {
+        return scaffoldData != null ? scaffoldData : dataInput.get();
     }
 
     /**
@@ -495,7 +512,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
      */
     protected final void setPartials(Beagle beagle,
                                      Node node, int taxon, boolean flip) {
-        Alignment data = dataInput.get();
+        Alignment data = getAlignment();
 
         int nrOfStates = data.getDataType().getStateCount();
         int nrOfPatterns = data.getPatternCount();
@@ -587,7 +604,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
      */
     protected final void setStates(Beagle beagle,
                                    int nodeIndex, int taxon) {
-        Alignment data = dataInput.get();
+        Alignment data = getAlignment();
         int i;
 
         int[] states = new int[patternCount];
@@ -684,7 +701,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
             updateSubstitutionModel |= ((CalculationNode) substitutionModel).somethingIsDirty();
         }
 
-        if (dataInput.get().somethingIsDirty()) {
+        if (getAlignment().somethingIsDirty()) {
             hasDirt = Tree.IS_FILTHY;
             return true;
         }
@@ -750,7 +767,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
     // **************************************************************
 
     protected double[] getLeafPartials(Node node) {
-        Alignment data = dataInput.get();
+        Alignment data = getAlignment();
         int nrOfStates = data.getDataType().getStateCount();
         int nrOfPatterns = data.getPatternCount();
         double[] partials = new double[nrOfPatterns * nrOfStates];
@@ -968,11 +985,11 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
             if (ascertainedSitePatterns) {
                 // Need to correct for ascertainedSitePatterns
                 beagle.getSiteLogLikelihoods(patternLogLikelihoods);
-                logL = getAscertainmentCorrectedLogLikelihood(dataInput.get(),
-                        patternLogLikelihoods, dataInput.get().getWeights(), frequencies);
+                logL = getAscertainmentCorrectedLogLikelihood(getAlignment(),
+                        patternLogLikelihoods, getAlignment().getWeights(), frequencies);
             } else if (invariantCategory >= 0) {
                 beagle.getSiteLogLikelihoods(patternLogLikelihoods);
-                int [] patternWeights = dataInput.get().getWeights();
+                int [] patternWeights = getAlignment().getWeights();
                 proportionInvariant = m_siteModel.getProportionInvariant();
 
 
@@ -1193,7 +1210,7 @@ public class BeagleReadCountTreeLikelihood extends TreeLikelihood {
                 partialBufferHelper.flipOffset(nodeNum);
             }
 
-            int taxon = getTaxonIndex(node.getID(), dataInput.get());
+            int taxon = getTaxonIndex(node.getID(), getAlignment());
             setPartials(beagle, node, taxon, false);
         }
 
