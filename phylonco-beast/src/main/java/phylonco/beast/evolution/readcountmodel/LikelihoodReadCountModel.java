@@ -321,16 +321,16 @@ public class LikelihoodReadCountModel extends Distribution {
             x3 = LogGamma.value((eps / 6) * wv[i]);
 
             wPropensitiesLogGamma[i] = new double[][]{
-                    {x0, x1, x1, x1},
-                    {x2, x2, x3, x3},
-                    {x2, x3, x2, x3},
-                    {x2, x3, x3, x2},
-                    {x1, x0, x1, x1},
-                    {x3, x2, x2, x3},
-                    {x3, x2, x3, x2},
-                    {x1, x1, x0, x1},
-                    {x3, x3, x2, x2},
-                    {x1, x1, x1, x0},
+                    {x0, x1, x1, x1},   // AA or A_ 0
+                    {x2, x2, x3, x3},   // AC or CA 1
+                    {x2, x3, x2, x3},   // AG or GA 2
+                    {x2, x3, x3, x2},   // AT or TA 3
+                    {x1, x0, x1, x1},   // CC or C_ 4
+                    {x3, x2, x2, x3},   // CG or GC 5
+                    {x3, x2, x3, x2},   // CT or TC 6
+                    {x1, x1, x0, x1},   // GG or G_ 7
+                    {x3, x3, x2, x2},   // GT or TG 8
+                    {x1, x1, x1, x0},   // TT or T_ 9
             };
         }
 
@@ -342,16 +342,16 @@ public class LikelihoodReadCountModel extends Distribution {
             y3 = eps / 6 * wv[i];
 
             propensities = new double[][]{
-                    {y0, y1, y1, y1},
-                    {y2, y2, y3, y3},
-                    {y2, y3, y2, y3},
-                    {y2, y3, y3, y2},
-                    {y1, y0, y1, y1},
-                    {y3, y2, y2, y3},
-                    {y3, y2, y3, y2},
-                    {y1, y1, y0, y1},
-                    {y3, y3, y2, y2},
-                    {y1, y1, y1, y0},
+                    {y0, y1, y1, y1},   // AA or A_ 0
+                    {y2, y2, y3, y3},   // AC or CA 1
+                    {y2, y3, y2, y3},   // AG or GA 2
+                    {y2, y3, y3, y2},   // AT or TA 3
+                    {y1, y0, y1, y1},   // CC or C_ 4
+                    {y3, y2, y2, y3},   // CG or GC 5
+                    {y3, y2, y3, y2},   // CT or TC 6
+                    {y1, y1, y0, y1},   // GG or G_ 7
+                    {y3, y3, y2, y2},   // GT or TG 8
+                    {y1, y1, y1, y0},   // TT or T_ 9
             };
 
             for (int j = 0; j < rc_wPropLogGamma[i].length; j++) {

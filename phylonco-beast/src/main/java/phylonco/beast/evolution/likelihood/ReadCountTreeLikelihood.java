@@ -70,7 +70,6 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
     private double globalLogOffset = 0.0;
     private double storedGlobalLogOffset = 0.0;
 
-    private Alignment scaffoldData;
 
     @Override
     public void initAndValidate() {
@@ -166,16 +165,6 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         scaffold.initAndValidate();
         return scaffold;
     }
-
-    /**
-     * Use getAlignment() instead of dataInput.get()
-     * Returns the alignment used internally by the likelihood.
-     *
-     * In standalone mode this is the user-provided genotype alignment.
-     * In the integrated read-count model this is an internally constructed
-     * scaffold alignment containing only taxa, site count and genotype
-     * data type information.
-     */
 
     /**
      * Tip partial vector for one leaf: for each site (== pattern, identity), the per-genotype
