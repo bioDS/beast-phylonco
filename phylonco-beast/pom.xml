@@ -71,26 +71,12 @@
             <version>4.13.2</version>
             <scope>test</scope>
         </dependency>
-
-        <!-- TODO: update unit tests to Junit 5 in the future-->
-<!--        <dependency>-->
-<!--            <groupId>org.junit.jupiter</groupId>-->
-<!--            <artifactId>junit-jupiter</artifactId>-->
-<!--            <version>5.10.2</version>-->
-<!--            <scope>test</scope>-->
-<!--        </dependency>-->
-
-
-<!--        &lt;!&ndash; local jars NestedBD and MutableAlignment  &ndash;&gt;-->
-<!--        &lt;!&ndash; TODO: release these on maven and import from maven &ndash;&gt;-->
-<!--        <dependency>-->
-<!--            <groupId>beast2</groupId>-->
-<!--            <artifactId>NestedBD</artifactId>-->
-<!--            <version>1.9.6</version>-->
-<!--            <scope>system</scope>-->
-<!--            <systemPath>${project.basedir}/lib/NestedBD.v1.9.6.jar</systemPath>-->
-<!--        </dependency>-->
-
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.10.2</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.github.compevol</groupId>
             <artifactId>mutable-alignment</artifactId>

@@ -3,7 +3,7 @@ package phylonco.beast.evolution.readcountmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.branchratemodel.BranchRateModel;
-import beast.base.spec.evolution.sitemodel.SiteModel;
+import beast.base.evolution.sitemodel.SiteModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
@@ -98,7 +98,20 @@ public class GibbsSiteOperator extends Operator {
 
     public Input<Boolean> sampleAllSitesInput = new Input<>(
             "sampleAllSites",
-            "if true, sample all sites in one proposal; if false (default), sample one random site",
+            "if true, sample all sites in one proposal; if false (default), sample sites according to numSitesToResample",
+            false);
+
+    public Input<Integer> numSitesToResampleInput = new Input<>(
+            "numSitesToResample",
+            "number of sites to resample per proposal when sampleAllSites=false. " +
+                    "Default 1 (original behaviour). Sites are sampled without replacement.",
+            1);
+
+    public Input<Boolean> useEntropyWeightingInput = new Input<>(
+            "useEntropyWeighting",
+            "weight site-selection probability by per-site pooled-nucleotide Shannon entropy " +
+                    "(sum across leaves). Detailed balance preserved (always-accepted Gibbs; " +
+                    "site selection probability is a function of data only). Default false.",
             false);
 
     // Cached references
@@ -110,6 +123,10 @@ public class GibbsSiteOperator extends Operator {
     private LikelihoodReadCountModel readCountModel;
     private ReadCount readCount;
     private boolean sampleAllSites;
+    private int numSitesToResample;
+    private boolean useEntropyWeighting;
+    // Per-site entropy weight (pooled-nucleotide Shannon entropy), filled lazily on first proposal.
+    private double[] siteEntropy;
 
     // Dimensions
     private int numNodes;
@@ -133,6 +150,10 @@ public class GibbsSiteOperator extends Operator {
     // Mapping from alignment taxon index to ReadCount taxon index
     private int[] alignToRCIndex;
 
+    // Cached cumulative weights for weighted site sampling
+    private int[] cumulativeWeights;
+    private int totalWeight;
+
     @Override
     public void initAndValidate() {
         alignment = mutableAlignmentInput.get();
@@ -143,6 +164,11 @@ public class GibbsSiteOperator extends Operator {
         readCountModel = readCountModelInput.get();
         readCount = readCountInput.get();
         sampleAllSites = sampleAllSitesInput.get();
+        numSitesToResample = numSitesToResampleInput.get();
+        useEntropyWeighting = useEntropyWeightingInput.get();
+        if (numSitesToResample < 1) {
+            throw new IllegalArgumentException("numSitesToResample must be >= 1 (use sampleAllSites=true for all)");
+        }
 
         numStates = alignment.getDataType().getStateCount();
         numSites = alignment.getSiteCount();
@@ -191,23 +217,133 @@ public class GibbsSiteOperator extends Operator {
             int taxonIndex = alignment.getTaxonIndex(taxonName);
             nodeNrToTaxonIndex[leaf.getNr()] = taxonIndex;
         }
+
+        // Build cumulative weights for weighted site sampling
+        cumulativeWeights = new int[numSites];
+        updateCumulativeWeights();
+    }
+
+    /**
+     * Rebuild cumulative weight array from current pattern weights.
+     * Call this after pattern weights change (e.g. after DataTemperedMCMC adds sites).
+     */
+    public void updateCumulativeWeights() {
+        int[] weights = alignment.getWeights();
+        totalWeight = 0;
+        for (int i = 0; i < numSites; i++) {
+            totalWeight += weights[i];
+            cumulativeWeights[i] = totalWeight;
+        }
     }
 
     @Override
     public double proposal() {
+        int[] weights = alignment.getWeights();
         if (sampleAllSites) {
-            // Sample all sites
+            // Sample all active sites (skip sites with weight 0)
             for (int siteIndex = 0; siteIndex < numSites; siteIndex++) {
+                if (weights[siteIndex] > 0) {
+                    sampleSite(siteIndex);
+                }
+            }
+        } else if (numSitesToResample == 1 && !useEntropyWeighting) {
+            // Original fast path: sample one site weighted by patternWeight via cumulative search.
+            if (totalWeight > 0) {
+                int r = Randomizer.nextInt(totalWeight);
+                int siteIndex = Arrays.binarySearch(cumulativeWeights, 0, numSites, r + 1);
+                if (siteIndex < 0) {
+                    siteIndex = -siteIndex - 1;
+                }
                 sampleSite(siteIndex);
             }
         } else {
-            // Sample one random site
-            int siteIndex = Randomizer.nextInt(numSites);
-            sampleSite(siteIndex);
+            // K-site sampling without replacement, optionally weighted by entropy.
+            if (useEntropyWeighting && siteEntropy == null) {
+                computeSiteEntropies();
+            }
+            int[] picked = pickSites(weights, numSitesToResample);
+            if (picked != null) {
+                for (int s : picked) sampleSite(s);
+            }
         }
-
         // Gibbs operator: always accept
         return Double.POSITIVE_INFINITY;
+    }
+
+    /**
+     * Pick K distinct sites without replacement, weighted by patternWeight × siteEntropy
+     * (if useEntropyWeighting) or patternWeight alone.
+     */
+    private int[] pickSites(int[] weights, int K) {
+        double[] effective = new double[numSites];
+        int eligible = 0;
+        double totalEffective = 0.0;
+        for (int s = 0; s < numSites; s++) {
+            if (weights[s] <= 0) continue;
+            double w = useEntropyWeighting ? weights[s] * siteEntropy[s] : weights[s];
+            if (w > 0.0) {
+                effective[s] = w;
+                totalEffective += w;
+                eligible++;
+            }
+        }
+        if (eligible < K || totalEffective <= 0.0) return null;
+        int[] picked = new int[K];
+        for (int k = 0; k < K; k++) {
+            double r = Randomizer.nextDouble() * totalEffective;
+            double cum = 0.0;
+            int chosen = -1;
+            for (int s = 0; s < numSites; s++) {
+                if (effective[s] > 0.0) {
+                    cum += effective[s];
+                    if (r < cum) { chosen = s; break; }
+                }
+            }
+            if (chosen < 0) {
+                for (int s = numSites - 1; s >= 0; s--) {
+                    if (effective[s] > 0.0) { chosen = s; break; }
+                }
+            }
+            picked[k] = chosen;
+            totalEffective -= effective[chosen];
+            effective[chosen] = 0.0;
+        }
+        return picked;
+    }
+
+    /**
+     * Compute per-site pooled-nucleotide Shannon entropy across leaves.
+     * Same as ExchangeSiteGibbsOperator's siteEntropy. Function of read-count data only,
+     * so detailed balance is preserved.
+     */
+    private void computeSiteEntropies() {
+        siteEntropy = new double[numSites];
+        double floor = 0.0;
+        for (int s = 0; s < numSites; s++) {
+            int[] pooled = null;
+            int total = 0;
+            for (int t = 0; t < numTaxa; t++) {
+                int[] counts = readCount.getReadCounts(alignToRCIndex[t], s);
+                if (pooled == null) {
+                    pooled = new int[counts.length];
+                    floor = 0.05 * Math.log(counts.length);  // 5% of max entropy
+                }
+                for (int n = 0; n < counts.length; n++) {
+                    pooled[n] += counts[n];
+                    total += counts[n];
+                }
+            }
+            double h = 0.0;
+            if (total > 0 && pooled != null) {
+                for (int n = 0; n < pooled.length; n++) {
+                    if (pooled[n] > 0) {
+                        double p = (double) pooled[n] / total;
+                        h -= p * Math.log(p);
+                    }
+                }
+            }
+            siteEntropy[s] = h + floor;
+        }
     }
 
     /**
