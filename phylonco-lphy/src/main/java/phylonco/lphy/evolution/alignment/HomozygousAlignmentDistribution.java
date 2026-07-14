@@ -1,9 +1,12 @@
 package phylonco.lphy.evolution.alignment;
 
+import jebl.evolution.sequences.SequenceType;
 import lphy.base.distribution.ParametricDistribution;
 import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
+import lphy.base.evolution.datatype.DataType;
+import lphy.base.evolution.likelihood.AbstractPhyloCTMC;
 import lphy.base.function.io.ReaderConst;
 import lphy.core.model.RandomVariable;
 import lphy.core.model.Value;
@@ -11,6 +14,7 @@ import lphy.core.model.annotation.GeneratorInfo;
 import lphy.core.model.annotation.ParameterInfo;
 import org.apache.commons.math3.random.RandomGenerator;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
+import phylonco.lphy.evolution.datatype.UnphasedGenotype;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +23,20 @@ import java.util.TreeMap;
 
 import static lphy.base.evolution.SNPSampler.getAmbiguousStateIndex;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.getPhasedGenotypeIndex;
+import static phylonco.lphy.evolution.datatype.UnphasedGenotype.getUnphasedGenotypeIndex;
 
 public class HomozygousAlignmentDistribution extends ParametricDistribution<Alignment> {
     private Value<Alignment> alignmentValue;
+    private Value<SequenceType> dataType;
 
-    public HomozygousAlignmentDistribution(@ParameterInfo(name = ReaderConst.ALIGNMENT,
+    public HomozygousAlignmentDistribution(@ParameterInfo(name = AbstractPhyloCTMC.dataTypeParamName, description = "the data type used for simulations, default to nucleotide",
+            narrativeName = "data type used for simulations", optional = true) Value<SequenceType> dataType,
+                                           @ParameterInfo(name = ReaderConst.ALIGNMENT,
             description = "Convert the input haploid alignment into genotype alignment (homozygous).")
                                            Value<Alignment> alignmentValue) {
         if (alignmentValue == null) throw new IllegalArgumentException("The alignment can't be null!");
         this.alignmentValue = alignmentValue;
+        this.dataType = dataType;
     }
 
     @Override
@@ -50,13 +59,23 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
         String[] taxaNames = taxa.toArray(new String[0]);
 
         // initialise the new alignment
-        Alignment genotypeAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
-                originalAlignment.nchar(), PhasedGenotype.INSTANCE);
+        Alignment genotypeAlignment;
+        if (dataType.value() instanceof PhasedGenotype) {
+            genotypeAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
+                    originalAlignment.nchar(), PhasedGenotype.INSTANCE);
+        } else if (dataType.value() instanceof UnphasedGenotype) {
+            genotypeAlignment = new SimpleAlignment(Taxa.createTaxa(taxaNames),
+                    originalAlignment.nchar(), PhasedGenotype.INSTANCE);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported data type: " + dataType.value().getClass().getName());
+        }
+
 
         // set the alignment
         for (int i = 0; i < genotypeAlignment.ntaxa(); i++) {
             for (int j = 0; j < genotypeAlignment.nchar(); j++) {
-                int index = getHomozygousState(originalAlignment, i, j);
+                int index = getHomozygousState(originalAlignment, i, j, dataType.value());
 
                 // map the new alignment states
                 genotypeAlignment.setState(i, j, index);
@@ -65,7 +84,7 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
         return new RandomVariable<>(null, genotypeAlignment, this);
     }
 
-    public static int getHomozygousState(Alignment originalAlignment, int i, int j) {
+    public static int getHomozygousState(Alignment originalAlignment, int i, int j, SequenceType dataType) {
         // get the nucleotide index of each site
         int originalStateIndex = originalAlignment.getState(i, j);
 
@@ -73,7 +92,16 @@ public class HomozygousAlignmentDistribution extends ParametricDistribution<Alig
         int stateIndex = getAmbiguousStateIndex(originalStateIndex);
 
         // convert the nucleotide states into phased genotypes
-        int index = getPhasedGenotypeIndex(stateIndex, stateIndex);
+        int index;
+        if (dataType instanceof PhasedGenotype) {
+            index = getPhasedGenotypeIndex(stateIndex, stateIndex);
+        } else if (dataType instanceof UnphasedGenotype) {
+            index = getUnphasedGenotypeIndex(stateIndex, stateIndex);
+        } else {
+            throw new IllegalArgumentException(
+                    "Unsupported data type: " + dataType.getClass().getName());
+        }
+
         return index;
     }
 
