@@ -1,5 +1,6 @@
 package phylonco.lphy.evolution.datatype;
 
+import jebl.evolution.sequences.Nucleotides;
 import jebl.evolution.sequences.State;
 import lphy.base.evolution.datatype.DataType;
 
@@ -55,6 +56,82 @@ public class UnphasedGenotype extends DataType {
         STATES[10] = UNKNOWN_STATE;
         STATES[11] = GAP_STATE;
 
+    }
+
+    /**
+     *
+     * @param parent1_index must be the first parent canonical state index
+     * @param parent2_index must be the second parent canonical state index
+     * @return the phasedGenotype state
+     */
+    public static int getUnphasedGenotypeIndex(int parent1_index, int parent2_index) {
+        if (parent1_index < 0 || parent1_index >= 4 ||
+                parent2_index < 0 || parent2_index >= 4) {
+            throw new RuntimeException("The parents should be canonical states.");
+        }
+        int a = Math.min(parent1_index, parent2_index);
+        int b = Math.max(parent1_index, parent2_index);
+
+        switch (a) {
+            case 0:
+                return b;              // AA AC AG AT -> 0 1 2 3
+            case 1:
+                return 4 + (b - 1);    // CC CG CT -> 4 5 6
+            case 2:
+                return 7 + (b - 2);    // GG GT -> 7 8
+            case 3:
+                return 9;              // TT -> 9
+            default:
+                throw new AssertionError("The parents should be canonical states.");
+        }
+    }
+
+    /**
+     *
+     * @param stateIndex the phased genotype state index
+     * @return The two indices array for the two parents nucleotide states. The first index is the fist parent index and the
+     * second index is the second parent index.
+     */
+    public static int[] getNucleotideIndex(int stateIndex) {
+
+        switch (stateIndex) {
+            case 0: return new int[]{0, 0}; // AA
+            case 1: return new int[]{0, 1}; // AC
+            case 2: return new int[]{0, 2}; // AG
+            case 3: return new int[]{0, 3}; // AT
+            case 4: return new int[]{1, 1}; // CC
+            case 5: return new int[]{1, 2}; // CG
+            case 6: return new int[]{1, 3}; // CT
+            case 7: return new int[]{2, 2}; // GG
+            case 8: return new int[]{2, 3}; // GT
+            case 9: return new int[]{3, 3}; // TT
+
+            case 10:
+                int r = Nucleotides.getState(
+                        UnphasedGenotype.INSTANCE.getState(stateIndex).getCode()
+                ).getIndex();
+                return new int[]{r, r};
+
+            case 11:
+                int y = Nucleotides.getState(
+                        UnphasedGenotype.INSTANCE.getState(stateIndex).getCode()
+                ).getIndex();
+                return new int[]{y, y};
+
+            // ...
+
+            case 16:
+                int unknown = Nucleotides.getUnknownState().getIndex();
+                return new int[]{unknown, unknown};
+
+            case 17:
+                int gap = Nucleotides.getGapState().getIndex();
+                return new int[]{gap, gap};
+
+            default:
+                throw new IllegalArgumentException(
+                        "The unphased genotype state index is out of range.");
+        }
     }
 
     //*** Singleton ***//
