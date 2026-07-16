@@ -3,8 +3,38 @@ package phylonco.beast.evolution.datatype;
 import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType;
 
+import java.util.Map;
+
+import static java.util.Map.entry;
+
 @Description("Phased diploid nucleotide data type")
 public class NucleotideDiploid16 extends DataType.Base implements DiploidDataType {
+
+    /**
+     * indices need to match data in int[][] x
+     */
+    private static final Map<Integer, String> integerToGenotypeMap = Map.ofEntries(
+            entry(0, "AA"),
+            entry(1, "AC"),
+            entry(2, "AG"),
+            entry(3, "AT"),
+            entry(4, "CA"),
+            entry(5, "CC"),
+            entry(6, "CG"),
+            entry(7, "CT"),
+            entry(8, "GA"),
+            entry(9, "GC"),
+            entry(10, "GG"),
+            entry(11, "GT"),
+            entry(12, "TA"),
+            entry(13, "TC"),
+            entry(14, "TG"),
+            entry(15, "TT")
+    );
+
+    /**
+     * data indices in int[][] x need to match getIndex(String genotype) and integerToGenotypeMap
+     */
     int[][] x = {
             {0}, // AA - 0
             {1}, // AC - 1
@@ -44,6 +74,9 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
         return "nucleotideDiploid16";
     }
 
+    /**
+     * indices need to match data indices in int[][] x and integerToGenotypeMap
+     */
     @Override
     public int getIndex(String genotype) {
         switch (genotype) {
@@ -60,37 +93,37 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
             case "AT":
                 return 3;
             case "CA":
-                return getIndex("AC");
-            case "CC":
                 return 4;
+            case "CC":
+                return 5;
             case "C_":
                 return getIndex("CC");
             case "_C":
                 return getIndex("CC");
             case "CG":
-                return 5;
-            case "CT":
                 return 6;
-            case "GA":
-                return getIndex("AG");
-            case "GC":
-                return getIndex("CG");
-            case "GG":
+            case "CT":
                 return 7;
+            case "GA":
+                return 8;
+            case "GC":
+                return 9;
+            case "GG":
+                return 10;
             case "G_":
                 return getIndex("GG");
             case "_G":
                 return getIndex("GG");
             case "GT":
-                return 8;
+                return 11;
             case "TA":
-                return getIndex("AT");
+                return 12;
             case "TC":
-                return getIndex("CT");
+                return 13;
             case "TG":
-                return getIndex("GT");
+                return 14;
             case "TT":
-                return 9;
+                return 15;
             case "T_":
                 return getIndex("TT");
             case "_T":
@@ -106,5 +139,10 @@ public class NucleotideDiploid16 extends DataType.Base implements DiploidDataTyp
             indices[i] = getIndex(genotypes[i]);
         }
         return indices;
+    }
+
+    @Override
+    public String getGenotype(int index) {
+        return integerToGenotypeMap.get(index);
     }
 }

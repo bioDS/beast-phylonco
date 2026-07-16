@@ -6,4 +6,6 @@ public interface DiploidDataType {
 
     int[] getIndices(String[] genotypes);
 
+    String getGenotype(int index);
+
 }

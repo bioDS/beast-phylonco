@@ -3,8 +3,32 @@ package phylonco.beast.evolution.datatype;
 import beast.base.core.Description;
 import beast.base.evolution.datatype.DataType;
 
+import java.util.Map;
+
+import static java.util.Map.entry;
+
 @Description("Unphased diploid nucleotide data type")
-public class NucleotideDiploid10 extends DataType.Base implements DiploidDataType{
+public class NucleotideDiploid10 extends DataType.Base implements DiploidDataType {
+
+    /**
+     * indices need to match data in int[][] x
+     */
+    private static final Map<Integer, String> integerToGenotypeMap = Map.ofEntries(
+            entry(0, "AA"),
+            entry(1, "AC"),
+            entry(2, "AG"),
+            entry(3, "AT"),
+            entry(4, "CC"),
+            entry(5, "CG"),
+            entry(6, "CT"),
+            entry(7, "GG"),
+            entry(8, "GT"),
+            entry(9, "TT")
+    );
+
+    /**
+     * data indices in int[][] x need to match getIndex(String genotype) and integerToGenotypeMap
+     */
     int[][] x = {
             {0}, // AA - A
             {1}, // AC - M
@@ -32,6 +56,9 @@ public class NucleotideDiploid10 extends DataType.Base implements DiploidDataTyp
         return "nucleotideDiploid10";
     }
 
+    /**
+     * indices need to match data indices in int[][] x and integerToGenotypeMap
+     */
     @Override
     public int getIndex(String genotype) {
         switch (genotype) {
@@ -82,5 +109,10 @@ public class NucleotideDiploid10 extends DataType.Base implements DiploidDataTyp
             indices[i] = getIndex(genotypes[i]);
         }
         return indices;
+    }
+
+    @Override
+    public String getGenotype(int index) {
+        return integerToGenotypeMap.get(index);
     }
 }
