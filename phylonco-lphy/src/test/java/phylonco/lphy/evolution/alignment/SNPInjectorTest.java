@@ -28,7 +28,7 @@ public class SNPInjectorTest {
         Value<Variant[]> variantsValue = new Value<>("id", snps);
         Value<Alignment> alignmentValue = new Value<>("id", a);
 
-        SNPInjector injector = new SNPInjector(alignmentValue, variantsValue);
+        SNPInjector injector = new SNPInjector(alignmentValue, new Value("", PhasedGenotype.INSTANCE), variantsValue);
         Alignment alignment = injector.apply().value();
 
         Alignment homoAlignment = new SimpleAlignment(Taxa.createTaxa(alignment.getTaxaNames()),
