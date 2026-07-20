@@ -51,7 +51,10 @@ public class LBPhylonco implements LPhyBEASTMapping {
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
+                GT16ToBEAST.class,
+                GT10ToBEAST.class,
+                GTUnphaseToBEAST.class,
+                GT10ErrorModelToBEAST.class,
                 ReadCountModelToBEAST.class //,
                 // TODO: move and release NestedBD lphybeast to separate package
                 // copy number model
