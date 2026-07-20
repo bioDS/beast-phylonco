@@ -15,6 +15,7 @@ public class GT10ErrorModelTest {
      * Given the true state is y, the conditional probability over all possible states is 1.
      * sum( P(s | y) ) = 1,  where s are all possible states.
      * Tests sum( P(s | y) ) = 1 for all possible true states.
+     * Using delta = 0.2 and epsilon = 0.1
      ***/
     @Test
     public void testGT10ErrorSumsToOne() {
@@ -29,14 +30,37 @@ public class GT10ErrorModelTest {
         errorModel.initAndValidate();
 
         for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
-            System.out.println("genotype true: " + datatype.getGenotype(trueState));
             double sum = 0.0;
             for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
                 sum += errorModel.getProbability(observedState, trueState);
-                System.out.print(errorModel.getProbability(observedState, trueState) + " ");
             }
-            System.out.println("\nsum: " + sum);
-//            assertEquals(1.0, sum, DELTA);
+            assertEquals(1.0, sum, DELTA);
+        }
+
+    }
+
+    /***
+     * Given the true state is y, the conditional probability over all possible states is 1.
+     * Using delta = 0.6 and epsilon = 0.1
+     ***/
+    @Test
+    public void testGT10ErrorSumsToOneHighDelta() {
+        NucleotideDiploid10 datatype = new NucleotideDiploid10();
+
+        GT10ErrorModel errorModel = new GT10ErrorModel();
+        errorModel.initByName(
+                "epsilon", new RealScalarParam(0.1, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(0.6, UnitInterval.INSTANCE),
+                "datatype", datatype
+        );
+        errorModel.initAndValidate();
+
+        for (int trueState = 0; trueState < datatype.getStateCount(); trueState++) {
+            double sum = 0.0;
+            for (int observedState = 0; observedState < datatype.getStateCount(); observedState++) {
+                sum += errorModel.getProbability(observedState, trueState);
+            }
+            assertEquals(1.0, sum, DELTA);
         }
 
     }

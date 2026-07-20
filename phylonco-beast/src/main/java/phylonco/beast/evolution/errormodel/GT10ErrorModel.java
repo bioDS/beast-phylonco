@@ -70,8 +70,9 @@ public class GT10ErrorModel extends ErrorModel {
         return prob;
     }
 
-    // the error probabilities are the same as GT16 except for scenario II:
-    // P (ab | aa) = (1 – delta) * (1.0 / 3.0) * epsilon
+    // the error probabilities are the same as GT16 except for scenario II and VI which are updated to
+    // scenario II: P (ab | aa) = (1 – delta) * (1/3) * epsilon
+    // scenario VI: P(ac | ab) = P (ca | ab) = P(cb | ab) = P(bc | ab)
     private double getProbabilityUnambiguous(int observedState, int trueState) {
         double d = delta.get();
         double e = epsilon.get();
@@ -94,11 +95,12 @@ public class GT10ErrorModel extends ErrorModel {
                 // P(aa | aa) = (1 - epsilon) + (1/2) * delta * epsilon
                 prob = 1 - e + (1.0 / 2.0) * d * e;
             } else if (observedFirst == trueFirst || observedSecond == trueSecond) {
-                // scenario II
+                // scenario II updated to
                 // P(ab | aa) =
                 // P(ba | aa) = (1 - delta) * (1/3) * epsilon
                 prob = (1 - d) * (1.0 / 3.0) * e;
             } else if (observedFirst == observedSecond) {
+                // scenario III
                 // P(bb | aa) = (1/6) * delta * epsilon
                 prob = (1.0 / 6.0) * d * e;
             } else {
@@ -108,23 +110,28 @@ public class GT10ErrorModel extends ErrorModel {
         } else {
             // true state heterozygous
             if (observedState == trueState) {
+                // scenario VII
                 // P(ab | ab) = (1 - delta) * (1 - epsilon)
                 prob = (1 - d) * (1 - e);
             } else if (observedFirst == observedSecond) {
                 // observed is homozygous
                 if (observedFirst == trueFirst || observedSecond == trueSecond) {
+                    // scenario IV
                     // P(aa | ab) =
                     // P(bb | ab) = (1/2) * delta + (1/6) * epsilon - (1/3) * delta * epsilon
                     prob = (1.0 / 2.0) * d + (1.0 / 6.0) * e - (1.0 / 3.0) * d * e;
                 } else {
+                    // scenario V
                     // P(cc | ab) = (1/6) * delta * epsilon
                     prob = (1.0 / 6.0) * d * e;
                 }
             } else {
                 // observed is heterozygous
-                if (observedFirst == trueFirst || observedSecond == trueSecond) {
-                    // P(ac | ab) =
-                    // P(cb | ab) = (1 - delta) * (1/6) * epsilon
+                if (observedFirst == trueFirst || observedSecond == trueFirst ||
+                        observedSecond == trueSecond || observedFirst == trueSecond  ) {
+                    // scenario VI
+                    // P(ac | ab) = P(ca | ab) = P(cb | ab) = P(bc | ab)
+                    // = (1 - delta) * (1/6) * epsilon
                     prob = (1 - d) * (1.0 / 6.0) * e;
                 } else {
                     // P(cd | ab) = 0
