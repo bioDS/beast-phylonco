@@ -13,30 +13,30 @@ import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
 import phylonco.beast.evolution.errormodel.ErrorModel;
 import phylonco.beast.evolution.likelihood.TreeLikelihoodWithError;
 import phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast;
-import phylonco.lphy.evolution.alignment.GT16ErrorModel;
+import phylonco.lphy.evolution.alignment.GT10ErrorModel;
 
 import beast.base.spec.evolution.sitemodel.SiteModel;
 
 import java.util.Objects;
 
 
-public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, TreeLikelihoodWithError> {
+public class GT10ErrorModelToBEAST implements GeneratorToBEAST<GT10ErrorModel, TreeLikelihoodWithError> {
 
     @Override
-    public TreeLikelihoodWithError generatorToBEAST(GT16ErrorModel lphyErrorModel, BEASTInterface value, BEASTContext context) {
+    public TreeLikelihoodWithError generatorToBEAST(GT10ErrorModel lphyErrorModel, BEASTInterface value, BEASTContext context) {
 
         assert value instanceof beast.base.evolution.alignment.Alignment;
         beast.base.evolution.alignment.Alignment errAlignment = (beast.base.evolution.alignment.Alignment) value;
 
-        phylonco.beast.evolution.errormodel.GT16ErrorModel beastGT16ErrorModel =
-                new phylonco.beast.evolution.errormodel.GT16ErrorModel();
+        phylonco.beast.evolution.errormodel.GT10ErrorModel beastGT10ErrorModel =
+                new phylonco.beast.evolution.errormodel.GT10ErrorModel();
 
         DataType beastDataType = errAlignment.getDataType();
-        beastGT16ErrorModel.setInputValue("datatype", beastDataType);
+        beastGT10ErrorModel.setInputValue("datatype", beastDataType);
 
-        beastGT16ErrorModel.setInputValue("delta", context.getBEASTObject(lphyErrorModel.getDelta()));
-        beastGT16ErrorModel.setInputValue("epsilon", context.getBEASTObject(lphyErrorModel.getEpsilon()));
-        beastGT16ErrorModel.initAndValidate();
+        beastGT10ErrorModel.setInputValue("delta", context.getBEASTObject(lphyErrorModel.getDelta()));
+        beastGT10ErrorModel.setInputValue("epsilon", context.getBEASTObject(lphyErrorModel.getEpsilon()));
+        beastGT10ErrorModel.initAndValidate();
 
         // Temporary solution to rm parent alignment if there is a child alignment created from it,
         // e.g. original alignment creates err alignment
@@ -56,7 +56,7 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
         }
 
         TreeLikelihoodWithError treeLikelihoodWithError =
-                getTreeLikelihoodWithError(errAlignment, beastGT16ErrorModel, phyloCTMC, context);
+                getTreeLikelihoodWithError(errAlignment, beastGT10ErrorModel, phyloCTMC, context);
 
         // logging
         context.addExtraLoggable(treeLikelihoodWithError);
@@ -98,8 +98,8 @@ public class GT16ErrorModelToBEAST implements GeneratorToBEAST<GT16ErrorModel, T
 
 
     @Override
-    public Class<GT16ErrorModel> getGeneratorClass() {
-        return GT16ErrorModel.class;
+    public Class<GT10ErrorModel> getGeneratorClass() {
+        return GT10ErrorModel.class;
     }
 
     @Override

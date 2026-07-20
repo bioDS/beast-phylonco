@@ -33,6 +33,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
     public List<Class<? extends GenerativeDistribution>> declareDistributions() {
         return Arrays.asList(
                 GT16ErrorModel.class,
+                GT10ErrorModel.class,
                 HomozygousAlignmentDistribution.class,
                 HeterozygousMutateAlignment.class,
                 // read count model

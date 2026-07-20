@@ -1,0 +1,17 @@
+data {
+  n = 25;
+  l = 1000;
+}
+model {
+  π ~ Dirichlet(conc=[3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0, 3.0]);
+  rates ~ Dirichlet(conc=[1.0, 2.0, 1.0, 1.0, 2.0, 1.0]);
+  Q = gt10(rates=rates, freq=π);
+  Θ ~ LogNormal(meanlog=-2.0, sdlog=1.0);
+  ψ ~ Coalescent(n=n, theta=Θ);
+  A ~ PhyloCTMC(L=l, Q=Q, dataType=unphasedGenotype(), tree=ψ);
+  // GT10 error model parameters
+  epsilon ~ Beta(alpha=1, beta=30);
+  delta ~ Beta(alpha=1, beta=4);
+  E ~ GT10ErrorModel(delta=delta, epsilon=epsilon, alignment=A);
+}
+

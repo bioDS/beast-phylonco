@@ -22,6 +22,7 @@
         <provider classname="phylonco.beast.evolution.errormodel.ErrorModel"/>
         <provider classname="phylonco.beast.evolution.errormodel.ErrorModelBase"/>
         <provider classname="phylonco.beast.evolution.errormodel.GT16ErrorModel"/>
+        <provider classname="phylonco.beast.evolution.errormodel.GT10ErrorModel"/>
         <provider classname="phylonco.beast.evolution.likelihood.BeagleTreeLikelihoodWithError"/>
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithError"/>
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast"/>

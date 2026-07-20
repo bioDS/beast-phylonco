@@ -33,6 +33,7 @@ module phylonco.beast {
             phylonco.beast.evolution.errormodel.BinaryErrorModel,
             phylonco.beast.evolution.errormodel.ErrorModelBase,
             phylonco.beast.evolution.errormodel.GT16ErrorModel,
+            phylonco.beast.evolution.errormodel.GT10ErrorModel,
             phylonco.beast.evolution.likelihood.BeagleTreeLikelihoodWithError,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithError,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast,
