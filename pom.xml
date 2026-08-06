@@ -21,6 +21,9 @@
         <lphybeast.version>1.4.0-beta1</lphybeast.version>
         <beast.version>2.8.0-beta7</beast.version>
         <flc.version>1.3.0-beta1</flc.version>
+
+        <!-- default args for `mvn -pl phylonco-lphybeast-launcher exec:exec` -->
+        <lphybeast.args>-h</lphybeast.args>
     </properties>
 
     <modules>
@@ -28,6 +31,7 @@
         <module>phylonco-lphy</module>
         <module>phylonco-lphybeast</module>
         <module>phylonco-lphy-studio</module>
+        <module>phylonco-lphybeast-launcher</module>
     </modules>
 
     <build>
