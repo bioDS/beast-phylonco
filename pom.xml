@@ -1,37 +1,26 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
 <modelVersion>4.0.0</modelVersion>
-    <!-- inherit pom in lphybeast-root -->
-    <parent>
-        <groupId>io.github.linguaphylo</groupId>
-        <artifactId>lphybeast-root</artifactId>
-        <!--  lphybeast version here    -->
-        <version>2.0.0-SNAPSHOT</version>
-    </parent>
-
     <!-- phylonco version   -->
     <groupId>io.github.bioDS</groupId>
     <artifactId>beast-phylonco-root</artifactId>
-    <version>${revision}</version>
+    <version>1.3.0</version>
     <packaging>pom</packaging>
 
     <name>beast-phylonco</name>
     <url>https://github.com/biods/beast-phylonco</url>
 
     <properties>
-        <lphy.version>1.8.0-beta1</lphy.version>
-        <lphybeast.version>2.0.0-SNAPSHOT</lphybeast.version>
-        <revision>1.3.0</revision>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
         <maven.compiler.release>25</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- dependencies       -->
-        <beast.version>2.8.0-beta5</beast.version>
+        <lphy.version>1.8.0-beta1</lphy.version>
+        <lphybeast.version>1.4.0-beta1</lphybeast.version>
+        <beast.version>2.8.0-beta7</beast.version>
         <flc.version>1.3.0-beta1</flc.version>
-        <mutable.alignment.version>0.1.0-SNAPSHOT</mutable.alignment.version>
-
-        <maven.compiler.source>25</maven.compiler.source>
-        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <modules>

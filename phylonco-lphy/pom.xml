@@ -4,11 +4,11 @@
     <parent>
         <groupId>io.github.bioDS</groupId>
         <artifactId>beast-phylonco-root</artifactId>
-        <version>${revision}</version>
+        <version>1.3.0</version>
     </parent>
 
     <artifactId>phylonco-lphy</artifactId>
-    <version>${revision}</version>
+    <version>1.3.0-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
