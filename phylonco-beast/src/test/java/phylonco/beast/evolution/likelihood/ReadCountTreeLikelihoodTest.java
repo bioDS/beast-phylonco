@@ -10,8 +10,8 @@ import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import phylonco.beast.evolution.substitutionmodel.GT10;
@@ -19,9 +19,9 @@ import phylonco.beast.evolution.substitutionmodel.GT10;
 import java.util.Arrays;
 
 import static beast.pkgmgmt.BEASTClassLoader.addServices;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Validates that {@link ReadCountTreeLikelihood} (which integrates the latent genotypes out via
@@ -48,7 +48,7 @@ public class ReadCountTreeLikelihoodTest {
     private static final String W1 = "100.0";
     private static final String W2 = "2.0";
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         addServices("version.xml");
     }

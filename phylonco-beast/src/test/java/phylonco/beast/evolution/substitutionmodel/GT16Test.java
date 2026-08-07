@@ -4,11 +4,11 @@ import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 public class GT16Test {
 

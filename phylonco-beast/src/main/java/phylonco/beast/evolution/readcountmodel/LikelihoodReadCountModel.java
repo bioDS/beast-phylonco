@@ -117,24 +117,32 @@ public class LikelihoodReadCountModel extends Distribution {
     }
 
     private void initGt16IndexTable() {
-        NucleotideDiploid16 datatype = new NucleotideDiploid16();
+        // wPropensitiesLogGamma / rc_wPropLogGamma are indexed by the fixed 10-row canonical,
+        // phase-independent genotype-pair order (AA,AC,AG,AT,CC,CG,CT,GG,GT,TT — see
+        // updateDirichletCache()), which matches NucleotideDiploid10's own state numbering.
+        // GT16's own getIndex() additionally distinguishes phase (e.g. "GA" != "AG") and has
+        // heterozygous ambiguity codes, so its raw state indices (0-21) cannot be used to index
+        // that 10-row table directly (e.g. "G_" resolves to GT16's GG=10, overflowing it).
+        // Every phased/ambiguous genotype below is therefore resolved through NucleotideDiploid10
+        // using its canonical (alphabetically-ordered) pair string instead.
+        NucleotideDiploid10 datatype = new NucleotideDiploid10();
         // get genotype indices from data type NucleotideDiploid16
         gt16IndexTable = new int[22][];
         gt16IndexTable[0] = datatype.getIndices(new String[]{"AA", "A_"});
         gt16IndexTable[1] = datatype.getIndices(new String[]{"AC", "A_", "C_"});
         gt16IndexTable[2] = datatype.getIndices(new String[]{"AG", "A_", "G_"});
         gt16IndexTable[3] = datatype.getIndices(new String[]{"AT", "A_", "T_"});
-        gt16IndexTable[4] = datatype.getIndices(new String[]{"CA", "C_", "A_"});
+        gt16IndexTable[4] = datatype.getIndices(new String[]{"AC", "C_", "A_"});  // CA -> canonical AC
         gt16IndexTable[5] = datatype.getIndices(new String[]{"CC", "C_"});
         gt16IndexTable[6] = datatype.getIndices(new String[]{"CG", "C_", "G_"});
         gt16IndexTable[7] = datatype.getIndices(new String[]{"CT", "C_", "T_"});
-        gt16IndexTable[8] = datatype.getIndices(new String[]{"GA", "G_", "A_"});
-        gt16IndexTable[9] = datatype.getIndices(new String[]{"GC", "G_", "C_"});
+        gt16IndexTable[8] = datatype.getIndices(new String[]{"AG", "G_", "A_"});  // GA -> canonical AG
+        gt16IndexTable[9] = datatype.getIndices(new String[]{"CG", "G_", "C_"});  // GC -> canonical CG
         gt16IndexTable[10] = datatype.getIndices(new String[]{"GG", "G_"});
         gt16IndexTable[11] = datatype.getIndices(new String[]{"GT", "G_", "T_"});
-        gt16IndexTable[12] = datatype.getIndices(new String[]{"TA", "T_", "A_"});
-        gt16IndexTable[13] = datatype.getIndices(new String[]{"TC", "T_", "C_"});
-        gt16IndexTable[14] = datatype.getIndices(new String[]{"TG", "T_", "G_"});
+        gt16IndexTable[12] = datatype.getIndices(new String[]{"AT", "T_", "A_"}); // TA -> canonical AT
+        gt16IndexTable[13] = datatype.getIndices(new String[]{"CT", "T_", "C_"}); // TC -> canonical CT
+        gt16IndexTable[14] = datatype.getIndices(new String[]{"GT", "T_", "G_"}); // TG -> canonical GT
         gt16IndexTable[15] = datatype.getIndices(new String[]{"TT", "T_"});
         gt16IndexTable[16] = datatype.getIndices(new String[]{"AC", "A_", "C_"});  // AC or CA - M
         gt16IndexTable[17] = datatype.getIndices(new String[]{"AG", "A_", "G_"});  // AG or GA - R

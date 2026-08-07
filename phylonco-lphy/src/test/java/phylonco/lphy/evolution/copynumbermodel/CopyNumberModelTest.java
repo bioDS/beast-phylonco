@@ -1,8 +1,8 @@
 package phylonco.lphy.evolution.copynumbermodel;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import lphy.core.model.Value;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the copy number birth-death model in {@link CopyNumberBD}.
@@ -320,10 +320,9 @@ public class CopyNumberModelTest {
                     meanExp, meanObs, lowerBound, upperBound, withinRange);
         } else {
             // Assertion for unit testing
-            assertTrue(String.format(
-                            "%s test failed: expected %.4f not in CI [%.4f, %.4f]",
-                            testType, meanExp, lowerBound, upperBound),
-                    withinRange);
+            assertTrue(withinRange, String.format(
+                    "%s test failed: expected %.4f not in CI [%.4f, %.4f]",
+                    testType, meanExp, lowerBound, upperBound));
         }
     }
 

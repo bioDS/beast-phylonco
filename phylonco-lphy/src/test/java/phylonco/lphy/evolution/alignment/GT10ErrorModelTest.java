@@ -4,10 +4,10 @@ import lphy.base.evolution.Taxa;
 import lphy.base.evolution.alignment.Alignment;
 import lphy.base.evolution.alignment.SimpleAlignment;
 import lphy.core.model.Value;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import phylonco.lphy.evolution.datatype.UnphasedGenotype;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GT10ErrorModelTest {
 

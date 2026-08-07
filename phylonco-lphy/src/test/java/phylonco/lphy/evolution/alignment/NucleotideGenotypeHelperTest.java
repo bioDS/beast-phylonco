@@ -2,14 +2,14 @@ package phylonco.lphy.evolution.alignment;
 
 import jebl.evolution.sequences.NucleotideState;
 import jebl.evolution.sequences.State;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeState;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static phylonco.lphy.evolution.datatype.PhasedGenotype.*;
 
 public class NucleotideGenotypeHelperTest {
@@ -26,76 +26,76 @@ public class NucleotideGenotypeHelperTest {
             int[] observed = getNucleotideIndex(stateIndex);
             if (stateIndex == 0) {
                 int[] expected = {0, 0};
-                assertArrayEquals("StateIndex is 0", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 0");
             } else if (stateIndex == 1) {
                 int[] expected = {0, 1};
-                assertArrayEquals("StateIndex is 1", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 1");
             } else if (stateIndex == 2) {
                 int[] expected = {0, 2};
-                assertArrayEquals("StateIndex is 2", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 2");
             } else if (stateIndex == 3) {
                 int[] expected = {0, 3};
-                assertArrayEquals("StateIndex is 3", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 3");
             } else if (stateIndex == 4) {
                 int[] expected = {1, 0};
-                assertArrayEquals("StateIndex is 4", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 4");
             } else if (stateIndex == 5) {
                 int[] expected = {1, 1};
-                assertArrayEquals("StateIndex is 5", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 5");
             } else if (stateIndex == 6) {
                 int[] expected = {1, 2};
-                assertArrayEquals("StateIndex is 6", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 6");
             } else if (stateIndex == 7) {
                 int[] expected = {1, 3};
-                assertArrayEquals("StateIndex is 7", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 7");
             } else if (stateIndex == 8) {
                 int[] expected = {2, 0};
-                assertArrayEquals("StateIndex is 8", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 8");
             } else if (stateIndex == 9) {
                 int[] expected = {2, 1};
-                assertArrayEquals("StateIndex is 9", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 9");
             } else if (stateIndex == 10) {
                 int[] expected = {2, 2};
-                assertArrayEquals("StateIndex is 10", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 10");
             } else if (stateIndex == 11) {
                 int[] expected = {2, 3};
-                assertArrayEquals("StateIndex is 11", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 11");
             } else if (stateIndex == 12) {
                 int[] expected = {3, 0};
-                assertArrayEquals("StateIndex is 12", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 12");
             } else if (stateIndex == 13) {
                 int[] expected = {3, 1};
-                assertArrayEquals("StateIndex is 13", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 13");
             } else if (stateIndex == 14) {
                 int[] expected = {3, 2};
-                assertArrayEquals("StateIndex is 14", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 14");
             } else if (stateIndex == 15) {
                 int[] expected = {3, 3};
-                assertArrayEquals("StateIndex is 15", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 15");
             } else if (stateIndex == 16) {
                 int[] expected = {6, 6};
-                assertArrayEquals("StateIndex is 16", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 16");
             } else if (stateIndex == 17) {
                 int[] expected = {4, 4};
-                assertArrayEquals("StateIndex is 17", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 17");
             } else if (stateIndex == 18) {
                 int[] expected = {7, 7};
-                assertArrayEquals("StateIndex is 17", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 17");
             } else if (stateIndex == 19) {
                 int[] expected = {8, 8};
-                assertArrayEquals("StateIndex is 19", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 19");
             } else if (stateIndex == 20) {
                 int[] expected = {5, 5};
-                assertArrayEquals("StateIndex is 20", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 20");
             } else if (stateIndex == 21) {
                 int[] expected = {9, 9};
-                assertArrayEquals("StateIndex is 21", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 21");
             } else if (stateIndex == 22) {
                 int[] expected = {15, 15};
-                assertArrayEquals("StateIndex is 22", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 22");
             } else if (stateIndex == 23) {
                 int[] expected = {16, 16};
-                assertArrayEquals("StateIndex is 23", expected, observed);
+                assertArrayEquals(expected, observed, "StateIndex is 23");
             }
             stateIndex++;
             if (stateIndex == -1) {
@@ -107,7 +107,7 @@ public class NucleotideGenotypeHelperTest {
                     // the test would fail if there is no exception been thrown
                     fail("Expected an exception to be thrown");
                 } catch (Exception e) {
-                    assertEquals("Exception message", expectedErrorMessage, e.getMessage());
+                    assertEquals(expectedErrorMessage, e.getMessage(), "Exception message");
                 }
             }
         }
@@ -130,58 +130,58 @@ public class NucleotideGenotypeHelperTest {
                 if (parent1_index == 0) {
                     if (parent2_index == 0) {
                         int expected = 0;
-                        assertEquals("0-0", expected, observed);
+                        assertEquals(expected, observed, "0-0");
                     } else if (parent2_index == 1) {
                         int expected = 1;
-                        assertEquals("0-1", expected, observed);
+                        assertEquals(expected, observed, "0-1");
                     } else if (parent2_index == 2) {
                         int expected = 2;
-                        assertEquals("0-2", expected, observed);
+                        assertEquals(expected, observed, "0-2");
                     } else if (parent2_index == 3) {
                         int expected = 3;
-                        assertEquals("0-3", expected, observed);
+                        assertEquals(expected, observed, "0-3");
                     }
                 } else if (parent1_index == 1) {
                     if (parent2_index == 0) {
                         int expected = 4;
-                        assertEquals("1-0", expected, observed);
+                        assertEquals(expected, observed, "1-0");
                     } else if (parent2_index == 1) {
                         int expected = 5;
-                        assertEquals("1-1", expected, observed);
+                        assertEquals(expected, observed, "1-1");
                     } else if (parent2_index == 2) {
                         int expected = 6;
-                        assertEquals("1-2", expected, observed);
+                        assertEquals(expected, observed, "1-2");
                     } else if (parent2_index == 3) {
                         int expected = 7;
-                        assertEquals("1-3", expected, observed);
+                        assertEquals(expected, observed, "1-3");
                     }
                 } else if (parent1_index == 2) {
                     if (parent2_index == 0) {
                         int expected = 8;
-                        assertEquals("2-0", expected, observed);
+                        assertEquals(expected, observed, "2-0");
                     } else if (parent2_index == 1) {
                         int expected = 9;
-                        assertEquals("2-1", expected, observed);
+                        assertEquals(expected, observed, "2-1");
                     } else if (parent2_index == 2) {
                         int expected = 10;
-                        assertEquals("2-2", expected, observed);
+                        assertEquals(expected, observed, "2-2");
                     } else if (parent2_index == 3) {
                         int expected = 11;
-                        assertEquals("2-3", expected, observed);
+                        assertEquals(expected, observed, "2-3");
                     }
                 } else if (parent1_index == 3) {
                     if (parent2_index == 0) {
                         int expected = 12;
-                        assertEquals("3-0", expected, observed);
+                        assertEquals(expected, observed, "3-0");
                     } else if (parent2_index == 1) {
                         int expected = 13;
-                        assertEquals("3-1", expected, observed);
+                        assertEquals(expected, observed, "3-1");
                     } else if (parent2_index == 2) {
                         int expected = 14;
-                        assertEquals("3-2", expected, observed);
+                        assertEquals(expected, observed, "3-2");
                     } else if (parent2_index == 3) {
                         int expected = 15;
-                        assertEquals("3-3", expected, observed);
+                        assertEquals(expected, observed, "3-3");
                     }
                 }
             }
@@ -196,7 +196,7 @@ public class NucleotideGenotypeHelperTest {
                 // the test would fail if there is no exception been thrown
                 fail("Expected an exception to be thrown");
             } catch (Exception e) {
-                assertEquals("Exception message", expectedErrorMessage, e.getMessage());
+                assertEquals(expectedErrorMessage, e.getMessage(), "Exception message");
             }
         }
     }

@@ -16,7 +16,7 @@ import beast.base.inference.MCMC;
 import beast.base.inference.State;
 import beast.base.inference.parameter.RealParameter;
 import beast.base.util.Randomizer;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -24,7 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link BactrianSubtreeScale}.
@@ -56,11 +56,11 @@ public class BactrianSubtreeScaleTest {
     private void assertValid(Tree tree) {
         for (Node node : tree.getNodesAsArray()) {
             if (!node.isRoot()) {
-                assertTrue("node " + node.getNr() + " height " + node.getHeight()
-                                + " not below parent " + node.getParent().getHeight(),
-                        node.getHeight() < node.getParent().getHeight() + 1e-12);
+                assertTrue(node.getHeight() < node.getParent().getHeight() + 1e-12,
+                        "node " + node.getNr() + " height " + node.getHeight()
+                                + " not below parent " + node.getParent().getHeight());
             }
-            assertTrue("negative height", node.getHeight() >= 0.0);
+            assertTrue(node.getHeight() >= 0.0, "negative height");
         }
     }
 
@@ -81,12 +81,12 @@ public class BactrianSubtreeScaleTest {
                 // tree must be untouched on a rejected-before-mutation proposal
                 assertValid(tree);
             } else {
-                assertTrue("non-finite logHR " + logHR, !Double.isNaN(logHR) && !Double.isInfinite(logHR));
+                assertTrue(!Double.isNaN(logHR) && !Double.isInfinite(logHR), "non-finite logHR " + logHR);
                 assertValid(tree);
             }
         }
         // on an ultrametric tree the carried-subtree floor and the destination check can never fire
-        assertTrue("unexpected flat rejects on ultrametric tree: " + infinite, infinite == 0);
+        assertTrue(infinite == 0, "unexpected flat rejects on ultrametric tree: " + infinite);
     }
 
     /** Mean tree height over the post-burnin samples of a 2-column (Sample, height) trace file. */
@@ -175,7 +175,7 @@ public class BactrianSubtreeScaleTest {
         double meanScale = sampleYuleMeanHeight(scaleMove, testTree, 321);
 
         double relDiff = Math.abs(meanScale - meanSlide) / meanSlide;
-        assertTrue("Yule mean tree height disagrees: slide=" + meanSlide
-                + " scale=" + meanScale + " relDiff=" + relDiff, relDiff < 0.05);
+        assertTrue(relDiff < 0.05, "Yule mean tree height disagrees: slide=" + meanSlide
+                + " scale=" + meanScale + " relDiff=" + relDiff);
     }
 }

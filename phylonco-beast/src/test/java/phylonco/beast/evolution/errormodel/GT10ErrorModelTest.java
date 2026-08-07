@@ -2,10 +2,10 @@ package phylonco.beast.evolution.errormodel;
 
 import beast.base.spec.domain.UnitInterval;
 import beast.base.spec.inference.parameter.RealScalarParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class GT10ErrorModelTest {
 

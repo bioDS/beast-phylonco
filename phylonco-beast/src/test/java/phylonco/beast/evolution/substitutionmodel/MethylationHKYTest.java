@@ -3,15 +3,14 @@ package phylonco.beast.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
-import junit.framework.TestCase;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Description("Test stationary distribution and matrix exponentiation for MethylationHKY matrix")
-public class MethylationHKYTest extends TestCase {
+public class MethylationHKYTest {
 
     /** Helper function for printing matrices in array form
      *
@@ -93,7 +92,7 @@ public class MethylationHKYTest extends TestCase {
                     "beta", test.beta,
                     "gamma", test.gamma
                     );
-            Assert.assertArrayEquals(test.result, substitutionModel.getFrequencies(), 1e-10);
+            Assertions.assertArrayEquals(test.result, substitutionModel.getFrequencies(), 1e-10);
         }
     }
 
@@ -158,7 +157,7 @@ public class MethylationHKYTest extends TestCase {
             double[] matrix = new double[6 * 6];
             substitutionModel.getTransitionProbabilities(null, test.time, 0, 1, matrix);
             //printMatrix(matrix, 6, 6);
-            Assert.assertArrayEquals(test.result, matrix, 1e-9);
+            Assertions.assertArrayEquals(test.result, matrix, 1e-9);
         }
     }
 
@@ -202,7 +201,7 @@ public class MethylationHKYTest extends TestCase {
             double[][] unnormalizedMatrix = (double[][]) method.invoke(substitutionModel);
             double[] flatMatrix = flattenMatrix(unnormalizedMatrix, 6, 6);
             //printMatrix(flatMatrix, 6, 6);
-            Assert.assertArrayEquals(test.result, flatMatrix, 1e-10);
+            Assertions.assertArrayEquals(test.result, flatMatrix, 1e-10);
         }
     }
 
@@ -244,7 +243,7 @@ public class MethylationHKYTest extends TestCase {
             substitutionModel.setupRateMatrix();
             double[][] rateMatrix = substitutionModel.getRateMatrix();
             double[] flatMatrix = flattenMatrix(rateMatrix, 6, 6);
-            Assert.assertArrayEquals(test.result, flatMatrix, 1e-10);
+            Assertions.assertArrayEquals(test.result, flatMatrix, 1e-10);
         }
 
     }

@@ -16,8 +16,8 @@ import beast.base.evolution.tree.TreeParser;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModel;
@@ -27,7 +27,7 @@ import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
 import java.util.Arrays;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * This requires Beagle installed, and the Beagle lib location,
@@ -41,7 +41,7 @@ public class BeagleTreeLikelihoodWithErrorTest {
     private static boolean beagleFound = false;
 
     // executed only once, before the first test
-    @BeforeClass
+    @BeforeAll
     public static void setUpBeagle() {
         // add -Djava.library.path="$LD_LIBRARY_PATH:/usr/local/lib" before running tests
         // "/usr/local/lib" is the Beagle lib location in this case
@@ -92,7 +92,7 @@ public class BeagleTreeLikelihoodWithErrorTest {
                 "useAmbiguities", true,
                 "useTipLikelihoods", true,
                 "errorModel", errorModel);
-        assertNotNull("BeagleTreeLikelihoodWithError beagle = " + likelihood.beagle, likelihood.beagle);
+        assertNotNull(likelihood.beagle, "BeagleTreeLikelihoodWithError beagle = " + likelihood.beagle);
 
         return likelihood.calculateLogP();
     }
@@ -102,6 +102,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testJCLikelihoodSmallWithError() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         Alignment data = new Alignment();
@@ -167,6 +171,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testBinaryLikelihoodSmallNoError() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodBinary("00", 0.0, 0.0);
@@ -178,6 +186,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testBinaryLikelihoodSmallWithErrorCase0() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodBinary("00", 0.1, 0.2);
@@ -189,6 +201,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testBinaryLikelihoodSmallWithErrorCase1() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodBinary("11", 0.1, 0.2);
@@ -200,6 +216,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testBinaryLikelihoodSmallWithErrorCase2() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodBinary("01", 0.1, 0.2);
@@ -211,6 +231,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testBinaryLikelihoodSmallTotalProbability() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP1 = calculateLikelihoodBinary("00", 0.1, 0.2);
@@ -270,6 +294,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testGT16ErrorLikelihoodCase0() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodGT16("00", 0.1, 0.2);
@@ -281,6 +309,10 @@ public class BeagleTreeLikelihoodWithErrorTest {
     public void testGT16ErrorLikelihoodCase1() {
         if (beagleFound == false) {
             System.err.println("Warning: Cannot find beagle resources! Skipping test.");
+            // TODO: Kylie to check - silently returning here reports this test as "passed" without running any
+            // assertions when BEAGLE isn't installed, masking a missing/broken BEAGLE setup as
+            // green. Check whether this should fail (or use Assumptions.assumeTrue, which reports
+            // as "skipped" rather than "passed") instead.
             return;
         }
         double logP = calculateLikelihoodGT16("01", 0.1, 0.2);

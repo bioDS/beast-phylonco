@@ -13,7 +13,7 @@ import beast.base.evolution.tree.TreeParser;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
 import beast.base.spec.inference.parameter.SimplexParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.errormodel.BinaryErrorModel;
 import phylonco.beast.evolution.errormodel.ErrorModelBase;
@@ -22,7 +22,7 @@ import phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel;
 
 import java.util.Arrays;
 
-import static junit.framework.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TreeLikelihoodWithErrorFastTest {
 

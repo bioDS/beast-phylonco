@@ -3,9 +3,9 @@ package phylonco.beast.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @Description("Test Binary substitution model matrix exponentiation")
 public class BinarySubstitutionModelTest {

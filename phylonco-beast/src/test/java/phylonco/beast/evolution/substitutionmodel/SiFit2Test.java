@@ -4,9 +4,9 @@ import beast.base.core.Description;
 
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.inference.parameter.RealScalarParam;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @Description("Test SiFit2 matrix exponentiation")
 public class SiFit2Test {

@@ -30,8 +30,21 @@ public class TreeLikelihoodWithError extends TreeLikelihood {
         // current implementation only supports BeerTreeLikelihoodCore implementation
         // beagle support to be added in the future
         super.implementationInput.setValue("beast.base.evolution.likelihood.TreeLikelihood", this);
+        // "java.only" is a global JVM system property, not an instance setting, so it must be
+        // restored after use - otherwise it leaks into every other TreeLikelihood/BeagleXxx
+        // instance created later in the same JVM (e.g. other tests in the same surefire fork),
+        // forcing them into the same early-return, half-initialised "forceJava" path.
+        String previousJavaOnly = System.getProperty("java.only");
         System.setProperty("java.only", "true"); // use java implementation for likelihood core
-        super.initAndValidate();
+        try {
+            super.initAndValidate();
+        } finally {
+            if (previousJavaOnly == null) {
+                System.clearProperty("java.only");
+            } else {
+                System.setProperty("java.only", previousJavaOnly);
+            }
+        }
     }
 
     /**

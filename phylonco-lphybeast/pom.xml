@@ -8,7 +8,7 @@
 
     <artifactId>phylonco-lphybeast</artifactId>
     <!-- phylonco-lphybeast version, it must be consisting with version.xml   -->
-    <version>1.3.0-SNAPSHOT</version>
+    <version>${phylonco-lphybeast.version}</version>
 
     <dependencies>
         <dependency>
@@ -19,20 +19,19 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>5.10.2</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-beast</artifactId>
-            <version>${project.version}</version>
+            <version>${phylonco-beast.version}</version>
         </dependency>
 
         <dependency>
             <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-lphy</artifactId>
-            <version>${project.version}</version>
+            <version>${phylonco-lphy.version}</version>
         </dependency>
 
         <dependency>
@@ -47,7 +46,6 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
-                <version>3.7.1</version>
                 <configuration>
                     <descriptors>
                         <descriptor>src/assembly/phylonco-lphybeast-assembly.xml</descriptor>

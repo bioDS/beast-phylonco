@@ -6,6 +6,7 @@
         <version>1.3.0</version>
     </parent>
     <artifactId>phylonco-lphybeast-launcher</artifactId>
+    <version>${phylonco-lphybeast-launcher.version}</version>
     <packaging>pom</packaging>
     <name>phylonco-lphybeast-launcher</name>
 
@@ -25,17 +26,17 @@
         <dependency>
             <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-lphybeast</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${phylonco-lphybeast.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-lphy</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${phylonco-lphy.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.bioDS</groupId>
             <artifactId>phylonco-beast</artifactId>
-            <version>1.3.0-SNAPSHOT</version>
+            <version>${phylonco-beast.version}</version>
         </dependency>
         <dependency>
             <groupId>io.github.4ment</groupId>
@@ -48,7 +49,6 @@
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>exec-maven-plugin</artifactId>
-            <version>3.6.3</version>
             <configuration>
                 <executable>java</executable>
                 <classpathScope>compile</classpathScope>
