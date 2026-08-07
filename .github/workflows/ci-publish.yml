@@ -68,7 +68,7 @@ jobs:
       # top of this file for where that's controlled.
       - name: Deploy all modules to GitHub Packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/beast3'
-        run: mvn deploy -DskipTests
+        run: mvn verify -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
