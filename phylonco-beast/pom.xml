@@ -11,6 +11,9 @@
     <version>${phylonco-beast.version}</version>
 
     <properties>
+        <!-- the only module deploying right now - see root pom for the default -->
+        <maven.deploy.skip>false</maven.deploy.skip>
+
         <!-- version names should be consistent with version.xml, and jars in lib  -->
         <beast.module>beast.base</beast.module>
         <beast.main>beast.base.minimal.BeastMain</beast.main>

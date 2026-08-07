@@ -8,7 +8,58 @@
     <packaging>pom</packaging>
 
     <name>beast-phylonco</name>
-    <url>https://github.com/biods/beast-phylonco</url>
+    <description>A BEAST package for Bayesian inference of molecular data for cancer evolution, implementing error models and substitution models for inference of timed trees.</description>
+    <url>https://github.com/bioDS/beast-phylonco</url>
+
+    <licenses>
+        <license>
+            <name>GNU Lesser General Public License v2.1</name>
+            <url>https://www.gnu.org/licenses/old-licenses/lgpl-2.1.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Kylie Chen</name>
+            <url>https://github.com/kche309</url>
+        </developer>
+        <developer>
+            <name>Yao Xiao</name>
+        </developer>
+        <developer>
+            <name>Eva Li</name>
+        </developer>
+        <developer>
+            <name>Walter Xie</name>
+        </developer>
+        <developer>
+            <name>Ming Yao</name>
+        </developer>
+        <developer>
+            <name>Yuan Xu</name>
+        </developer>
+        <developer>
+            <name>Alexei Drummond</name>
+            <url>https://github.com/alexeid</url>
+        </developer>
+        <developer>
+            <name>Jiří Moravec</name>
+        </developer>
+    </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/bioDS/beast-phylonco.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/bioDS/beast-phylonco.git</developerConnection>
+        <url>https://github.com/bioDS/beast-phylonco</url>
+    </scm>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <url>https://maven.pkg.github.com/bioDS/beast-phylonco</url>
+        </repository>
+    </distributionManagement>
 
     <properties>
         <maven.compiler.source>25</maven.compiler.source>
@@ -35,6 +86,11 @@
 
         <!-- default args for `mvn -pl phylonco-lphybeast-launcher exec:exec` -->
         <lphybeast.args>-h</lphybeast.args>
+
+        <!-- Only phylonco-beast is ready to deploy at the moment; every other module opts
+             out here and phylonco-beast overrides this back to false in its own pom.
+             `mvn verify` (build/test) is unaffected - this only skips the deploy phase. -->
+        <maven.deploy.skip>true</maven.deploy.skip>
     </properties>
 
     <modules>

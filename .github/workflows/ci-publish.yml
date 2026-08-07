@@ -43,6 +43,10 @@ jobs:
           gpg-private-key: ${{ secrets.GPG_PRIVATE_KEY }}
           gpg-passphrase: GPG_PASSPHRASE
 
+      # Tag push only: rewrites every module's <version> to match the tag (e.g. tag `v1.3.0` ->
+      # version `1.3.0`, stripping the leading `v`) before packaging/publishing, so the
+      # published artifact version matches the release tag rather than whatever `-SNAPSHOT`
+      # version happens to be checked into pom.xml.
       - name: Set release version from tag
         if: startsWith(github.ref, 'refs/tags/v')
         run: |
@@ -50,16 +54,26 @@ jobs:
           echo "Publishing version: $VERSION"
           mvn versions:set -DnewVersion=$VERSION -DgenerateBackupPoms=false
 
+      # Ordinary push/PR path only (skipped on a release tag push, which goes straight to
+      # publishing below instead). Builds and tests every module in the reactor - phylonco-beast,
+      # phylonco-lphy, phylonco-lphybeast, phylonco-lphy-studio, phylonco-lphybeast-launcher -
+      # regardless of which of them are actually deployable right now (see maven.deploy.skip
+      # above); this step never deploys anything either way.
       - name: Build and test
         if: "!startsWith(github.ref, 'refs/tags/v')"
         run: mvn verify
 
+      # Ordinary push to master only (not PRs, not tags). The step name says "all modules" but
+      # only phylonco-beast actually publishes anywhere - see the maven.deploy.skip note at the
+      # top of this file for where that's controlled.
       - name: Deploy all modules to GitHub Packages
         if: github.event_name == 'push' && github.ref == 'refs/heads/master'
         run: mvn deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      # Release-tag push only - like the GitHub Packages deploy above, only phylonco-beast
+      # actually publishes here (maven.deploy.skip is false only in phylonco-beast/pom.xml).
       - name: Publish to Maven Central
         if: startsWith(github.ref, 'refs/tags/v')
         run: mvn -Prelease clean deploy
