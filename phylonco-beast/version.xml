@@ -2,9 +2,7 @@
     <!-- phylonco beast -->
     <depends on='BEAST.base' atleast='2.8.0'/>
     <depends on='BEAST.app' atleast='2.8.0'/>
-    <depends on='BEASTLabs' atleast='2.1.0'/>
     <depends on='MutableAlignment' atleast='0.1.1'/>
-    <depends on='NestedBD' atleast='1.9.6'/>
 
     <!-- add BEAST2 service below  -->
     <service type="beast.base.evolution.datatype.DataType">

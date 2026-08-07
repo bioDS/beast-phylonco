@@ -18,11 +18,13 @@
         <beast.pkg.name>beast-phylonco</beast.pkg.name>
 
         <mutable.alignment.version>0.1.1</mutable.alignment.version>
+        <beagle.version>1.0.0</beagle.version>
 
         <!-- apache commons -->
         <commons-math4-legacy.version>4.0-beta1</commons-math4-legacy.version>
         <commons-math4-core.version>4.0-beta1</commons-math4-core.version>
         <commons-statistics.version>1.2</commons-statistics.version>
+        <commons-numbers-gamma.version>1.2</commons-numbers-gamma.version>
     </properties>
 
     <dependencies>
@@ -47,6 +49,20 @@
             <groupId>io.github.compevol</groupId>
             <artifactId>mutable-alignment</artifactId>
             <version>${mutable.alignment.version}</version>
+        </dependency>
+
+        <!-- pulled in transitively via beast-base, but imported directly and required in
+             module-info.java, so declared explicitly rather than relying on beast-base's
+             own transitive graph -->
+        <dependency>
+            <groupId>io.github.beagle-dev</groupId>
+            <artifactId>beagle</artifactId>
+            <version>${beagle.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-numbers-gamma</artifactId>
+            <version>${commons-numbers-gamma.version}</version>
         </dependency>
 
         <!-- Commons Math 4 -->
