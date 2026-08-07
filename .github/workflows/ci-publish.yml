@@ -2,10 +2,10 @@ name: CI & Publish
 
 on:
   push:
-    branches: [ master ]
+    branches: [ beast3 ]
     tags: [ 'v*' ]
   pull_request:
-    branches: [ master ]
+    branches: [ beast3 ]
 
 jobs:
   build:
@@ -67,7 +67,7 @@ jobs:
       # only phylonco-beast actually publishes anywhere - see the maven.deploy.skip note at the
       # top of this file for where that's controlled.
       - name: Deploy all modules to GitHub Packages
-        if: github.event_name == 'push' && github.ref == 'refs/heads/master'
+        if: github.event_name == 'push' && github.ref == 'refs/heads/beast3'
         run: mvn deploy -DskipTests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
