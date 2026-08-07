@@ -2,7 +2,7 @@ package phylonco.beast.evolution.substitutionmodel;
 
 import beast.base.core.Description;
 import beast.base.core.Input;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
 import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
@@ -28,11 +28,11 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
  */
 @Description("SiFit binary substitution model")
 public class SiFit2 extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealScalarParam> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
-    final public Input<RealScalarParam> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Binary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Binary model",  Input.Validate.REQUIRED);
 
-    private RealScalarParam lambdaD;
-    private RealScalarParam lambdaL;
+    private RealScalar lambdaD;
+    private RealScalar lambdaL;
 
     protected double[] frequencies;
 

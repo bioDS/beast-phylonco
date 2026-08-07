@@ -4,16 +4,16 @@ import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 
 @Description("Binary error model with parameters as false positive and false negative probabilities")
 public class BinaryErrorModel extends ErrorModel {
-	
-    final public Input<RealScalarParam> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);
-    final public Input<RealScalarParam> betaInput = new Input<>("beta", "the false negative probability",  Input.Validate.REQUIRED);
 
-    private RealScalarParam alpha;
-    private RealScalarParam beta;
+    final public Input<RealScalar> alphaInput = new Input<>("alpha", "the false positive probability", Input.Validate.REQUIRED);
+    final public Input<RealScalar> betaInput = new Input<>("beta", "the false negative probability",  Input.Validate.REQUIRED);
+
+    private RealScalar alpha;
+    private RealScalar beta;
 
     @Override
     public void initAndValidate() {

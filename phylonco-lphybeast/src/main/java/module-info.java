@@ -9,8 +9,10 @@ open module phylonco.lphybeast {
     requires com.google.common;
     requires beast.classic;
 
+    exports phylonco.lphybeast.loggerhelper;
     exports phylonco.lphybeast.spi;
     exports phylonco.lphybeast.tobeast.generators;
+    exports phylonco.lphybeast.tobeast.values;
 
     provides lphybeast.spi.LPhyBEASTMapping with phylonco.lphybeast.spi.LBPhylonco;
 }

@@ -3,14 +3,14 @@ package phylonco.beast.evolution.errormodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 
 @Description("Error model base implementation")
 public class ErrorModelBase extends ErrorModel {
 
-    final public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);
+    final public Input<RealScalar> epsilonInput = new Input<>("epsilon", "the per state error rate", Input.Validate.REQUIRED);
 
-    private RealScalarParam epsilon;
+    private RealScalar epsilon;
 
     @Override
     public void initAndValidate() {

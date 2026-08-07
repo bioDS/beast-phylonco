@@ -6,7 +6,7 @@ import beast.base.evolution.datatype.DataType;
 import beast.base.evolution.substitutionmodel.ComplexColtEigenSystem;
 import beast.base.spec.evolution.substitutionmodel.ComplexSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 
 import org.apache.commons.math4.legacy.linear.Array2DRowRealMatrix;
 import org.apache.commons.math4.legacy.linear.RealMatrix;
@@ -18,20 +18,20 @@ import phylonco.beast.evolution.datatype.NucleotideMethylation;
 
 @Description("Covarion model for methylation data based on HKY nucleotide substitution model.")
 public class MethylationHKY extends ComplexSubstitutionModel implements SubstitutionModel {
-    public Input<RealScalarParam> kappaInput = new Input<RealScalarParam>(
+    public Input<RealScalar> kappaInput = new Input<RealScalar>(
             "kappa", "kappa parameter of the HKY model", Input.Validate.REQUIRED);
-    public Input<RealScalarParam> alphaInput = new Input<RealScalarParam>(
+    public Input<RealScalar> alphaInput = new Input<RealScalar>(
             "alpha", "rate of methylation (C->MetC)", Input.Validate.REQUIRED);
-    public Input<RealScalarParam> betaInput = new Input<RealScalarParam>(
+    public Input<RealScalar> betaInput = new Input<RealScalar>(
             "beta", "rate of demethylation (MetC->C)", Input.Validate.REQUIRED);
-    public Input<RealScalarParam> gammaInput = new Input<RealScalarParam>(
+    public Input<RealScalar> gammaInput = new Input<RealScalar>(
             "gamma", "rate of demethylation of MetC into Thymine", Input.Validate.REQUIRED);
 
 
-    private RealScalarParam kappaPar;
-    private RealScalarParam alphaPar;
-    private RealScalarParam betaPar;
-    private RealScalarParam gammaPar;
+    private RealScalar kappaPar;
+    private RealScalar alphaPar;
+    private RealScalar betaPar;
+    private RealScalar gammaPar;
 
     public MethylationHKY() {
         ratesInput.setRule(Input.Validate.OPTIONAL);

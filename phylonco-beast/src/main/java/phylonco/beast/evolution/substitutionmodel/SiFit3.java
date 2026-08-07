@@ -5,7 +5,7 @@ import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
 import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 import phylonco.beast.evolution.datatype.Ternary;
 
 /**
@@ -50,12 +50,12 @@ import phylonco.beast.evolution.datatype.Ternary;
  */
 @Description("SiFit ternary substitution model")
 public class SiFit3 extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealScalarParam> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
-    final public Input<RealScalarParam> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> lambdaDInput = new Input<>("lambdaD", "lambda D the rate of deletions in the SiFit Ternary model",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> lambdaLInput = new Input<>("lambdaL", "lambda L the rate of LOH in the SiFit Ternary model",  Input.Validate.REQUIRED);
     final public Input<Boolean> mutationPathInput = new Input<>("mutationPath", "allow mutation paths from state 1 to 0 and state 1 to 2", false);
 
-    private RealScalarParam lambdaD;
-    private RealScalarParam lambdaL;
+    private RealScalar lambdaD;
+    private RealScalar lambdaL;
     private Boolean mutationPath;
 
     protected double[] frequencies;

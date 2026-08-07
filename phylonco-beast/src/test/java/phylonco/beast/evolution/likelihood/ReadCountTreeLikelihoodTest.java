@@ -256,7 +256,7 @@ public class ReadCountTreeLikelihoodTest {
         TreeParser tree = buildTree(scaffold);
 
         ReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-        RealScalarParam epsilon = rcm.epsilonInput.get();
+        RealScalarParam epsilon = (RealScalarParam) rcm.epsilonInput.get();
 
         double logP0 = likelihood.calculateLogP();
 
@@ -285,7 +285,7 @@ public class ReadCountTreeLikelihoodTest {
         TreeParser tree = buildTree(scaffold);
 
         ReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-        RealScalarParam epsilon = rcm.epsilonInput.get();
+        RealScalarParam epsilon = (RealScalarParam) rcm.epsilonInput.get();
 
         double logP0 = likelihood.calculateLogP();
 

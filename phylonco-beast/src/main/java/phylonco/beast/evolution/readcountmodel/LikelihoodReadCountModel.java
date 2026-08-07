@@ -5,10 +5,13 @@ package phylonco.beast.evolution.readcountmodel;
 import beast.base.core.Input;
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.datatype.DataType;
+import beast.base.inference.CalculationNode;
 import beast.base.inference.Distribution;
 import beast.base.inference.State;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.type.RealScalar;
+import beast.base.spec.type.RealVector;
 import mutablealignment.MutableAlignment;
 
 import org.apache.commons.numbers.gamma.LogGamma;
@@ -30,23 +33,23 @@ public class LikelihoodReadCountModel extends Distribution {
     public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");
 
     // epsilon, allelic dropout, ... parameters
-    public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "sequencing error");
-    public Input<RealScalarParam> deltaInput = new Input<>("delta", "allelic dropout probability");
-    public Input<RealScalarParam> tInput = new Input<>("t", "mean of allelic coverage");
-    public Input<RealScalarParam> vInput = new Input<>("v", "variance of allelic coverage");
-    public Input<RealVectorParam> sInput = new Input<>("s", "size factor of cell");
-    public Input<RealScalarParam> w1Input = new Input<>("w1", "homozygous genotype overdispersion parameter of Dirichlet multinomial distribution");
-    public Input<RealScalarParam> w2Input = new Input<>("w2", "heterogeneous genotype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealScalar> epsilonInput = new Input<>("epsilon", "sequencing error");
+    public Input<RealScalar> deltaInput = new Input<>("delta", "allelic dropout probability");
+    public Input<RealScalar> tInput = new Input<>("t", "mean of allelic coverage");
+    public Input<RealScalar> vInput = new Input<>("v", "variance of allelic coverage");
+    public Input<RealVector> sInput = new Input<>("s", "size factor of cell");
+    public Input<RealScalar> w1Input = new Input<>("w1", "homozygous genotype overdispersion parameter of Dirichlet multinomial distribution");
+    public Input<RealScalar> w2Input = new Input<>("w2", "heterogeneous genotype overdispersion parameter of Dirichlet multinomial distribution");
 
     // other parameters of read count model
 
-    private RealScalarParam epsilon;
-    private RealScalarParam delta;
-    private RealScalarParam t;
-    private RealScalarParam v;
-    private RealVectorParam s;
-    private RealScalarParam w1;
-    private RealScalarParam w2;
+    private RealScalar epsilon;
+    private RealScalar delta;
+    private RealScalar t;
+    private RealScalar v;
+    private RealVector s;
+    private RealScalar w1;
+    private RealScalar w2;
     private Alignment alignment;
     private ReadCount readCount;
     private int numTaxa;   // number of cells (from alignment, or from readCount when integrated)
@@ -266,7 +269,7 @@ public class LikelihoodReadCountModel extends Distribution {
         double del = delta.get();
         double tv = t.get();
         double vv = v.get();
-        double[] sv = s.getValues();
+        double[] sv = ((RealVectorParam) s).getValues();
         wv = new double[]{w1.get(), w2.get()};
 
         if (nbDirty) {
@@ -618,19 +621,19 @@ public class LikelihoodReadCountModel extends Distribution {
     @Override
     public boolean requiresRecalculation() {
 
-        if (t.somethingIsDirty() ||
-                v.somethingIsDirty() ||
-                s.somethingIsDirty()) {
+        if (((CalculationNode) t).somethingIsDirty() ||
+                ((CalculationNode) v).somethingIsDirty() ||
+                ((CalculationNode) s).somethingIsDirty()) {
             nbDirty = true;
         }
 
-        if (epsilon.somethingIsDirty() ||
-                w1.somethingIsDirty() ||
-                w2.somethingIsDirty()) {
+        if (((CalculationNode) epsilon).somethingIsDirty() ||
+                ((CalculationNode) w1).somethingIsDirty() ||
+                ((CalculationNode) w2).somethingIsDirty()) {
             dirichletDirty = true;
         }
 
-        if (delta.somethingIsDirty()) {
+        if (((CalculationNode) delta).somethingIsDirty()) {
             deltaDirty = true;
         }
 

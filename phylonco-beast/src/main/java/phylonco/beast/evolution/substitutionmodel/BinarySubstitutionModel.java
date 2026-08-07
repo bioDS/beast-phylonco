@@ -3,6 +3,7 @@ package phylonco.beast.evolution.substitutionmodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 import beast.base.evolution.datatype.Binary;
 import beast.base.evolution.datatype.DataType;
 import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
@@ -13,9 +14,9 @@ import beast.base.evolution.substitutionmodel.SubstitutionModel;
  */
 @Description("A binary substitution model with a single rate parameter")
 public class BinarySubstitutionModel extends GeneralSubstitutionModel implements SubstitutionModel {
-    final public Input<RealScalarParam> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> lambdaInput = new Input<>("lambda", "lambda the rate of deletion and back mutation",  Input.Validate.REQUIRED);
 
-    private RealScalarParam lambda;
+    private RealScalar lambda;
 
     protected double[] frequencies;
 

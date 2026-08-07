@@ -6,6 +6,7 @@ import beast.base.evolution.datatype.DataType;
 import beast.base.spec.evolution.substitutionmodel.GeneralSubstitutionModel;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.type.RealVector;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 
 import java.util.Arrays;
@@ -21,9 +22,9 @@ import java.util.List;
 @Description("GT10 diploid substitution model from CellPhy paper")
 public class GT10 extends GeneralSubstitutionModel implements SubstitutionModel {
 
-    final public Input<RealVectorParam> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
+    final public Input<RealVector> nucRatesInput = new Input<>("nucRates", "rate parameters for AC, AG, AT, CG, CT, GT");
 
-    private RealVectorParam rates;
+    private RealVector rates;
 
     public GT10() {
         super.ratesInput.setRule(Input.Validate.OPTIONAL);
@@ -44,8 +45,10 @@ public class GT10 extends GeneralSubstitutionModel implements SubstitutionModel 
             throw new IllegalArgumentException("nucRates dimension not equal to 6.");
         } else {
             List<String> keys = Arrays.asList("AC", "AG", "AT", "CG", "CT", "GT");
+            // need key
+            RealVectorParam ratesParam = (RealVectorParam) rates;
             for (String k: keys) {
-                if (rates.get(k) == null)
+                if (ratesParam.get(k) == null)
                     throw new IllegalArgumentException("nucRates key needs to be specified for " + k);
             }
         }
@@ -72,12 +75,13 @@ public class GT10 extends GeneralSubstitutionModel implements SubstitutionModel 
 
     @Override
     protected void setupRateMatrixUnnormalized() {
-        double rateAC = rates.get("AC");
-        double rateAG = rates.get("AG");
-        double rateAT = rates.get("AT");
-        double rateCG = rates.get("CG");
-        double rateCT = rates.get("CT");
-        double rateGT = rates.get("GT");
+        RealVectorParam ratesParam = (RealVectorParam) rates;
+        double rateAC = ratesParam.get("AC");
+        double rateAG = ratesParam.get("AG");
+        double rateAT = ratesParam.get("AT");
+        double rateCG = ratesParam.get("CG");
+        double rateCT = ratesParam.get("CT");
+        double rateGT = ratesParam.get("GT");
 
         setupRateMatrixUnnormalized(rateAC, rateAG, rateAT, rateCG, rateCT, rateGT);
     }

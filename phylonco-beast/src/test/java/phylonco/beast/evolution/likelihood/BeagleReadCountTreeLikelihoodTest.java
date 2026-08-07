@@ -304,7 +304,7 @@ public class BeagleReadCountTreeLikelihoodTest {
         TreeParser tree = buildTree(scaffold);
 
         BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-        RealScalarParam epsilon = rcm.epsilonInput.get();
+        RealScalarParam epsilon = (RealScalarParam) rcm.epsilonInput.get();
 
         double logP0 = likelihood.calculateLogP();
 
@@ -345,7 +345,7 @@ public class BeagleReadCountTreeLikelihoodTest {
         TreeParser tree = buildTree(scaffold);
 
         BeagleReadCountTreeLikelihood likelihood = buildLikelihood(scaffold, rcm, siteModel, tree);
-        RealScalarParam epsilon = rcm.epsilonInput.get();
+        RealScalarParam epsilon = (RealScalarParam) rcm.epsilonInput.get();
 
         double logP0 = likelihood.calculateLogP();
 

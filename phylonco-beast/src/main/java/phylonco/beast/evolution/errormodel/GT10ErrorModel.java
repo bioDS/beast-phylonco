@@ -3,7 +3,7 @@ package phylonco.beast.evolution.errormodel;
 import beast.base.core.Description;
 import beast.base.core.Input;
 import beast.base.evolution.datatype.DataType;
-import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.type.RealScalar;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 
 import static beast.base.evolution.datatype.DataType.GAP_CHAR;
@@ -19,11 +19,11 @@ import static beast.base.evolution.datatype.DataType.MISSING_CHAR;
 @Description("GT10 diploid error model from CellPhy paper")
 public class GT10ErrorModel extends ErrorModel {
 
-    final public Input<RealScalarParam> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);
-    final public Input<RealScalarParam> epsilonInput = new Input<>("epsilon", "the sequencing error probability",  Input.Validate.REQUIRED);
+    final public Input<RealScalar> deltaInput = new Input<>("delta", "the allelic dropout probability", Input.Validate.REQUIRED);
+    final public Input<RealScalar> epsilonInput = new Input<>("epsilon", "the sequencing error probability",  Input.Validate.REQUIRED);
 
-    private RealScalarParam delta;
-    private RealScalarParam epsilon;
+    private RealScalar delta;
+    private RealScalar epsilon;
 
     @Override
     public void initAndValidate() {

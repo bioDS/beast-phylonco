@@ -92,13 +92,13 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         readCountModel.initialize();
         alignToRC = readCountModel.getAlignToRCIndex();
         rcParams = new StateNode[]{
-                readCountModel.epsilonInput.get(),
-                readCountModel.deltaInput.get(),
-                readCountModel.tInput.get(),
-                readCountModel.vInput.get(),
-                readCountModel.sInput.get(),
-                readCountModel.w1Input.get(),
-                readCountModel.w2Input.get(),
+                (StateNode) readCountModel.epsilonInput.get(),
+                (StateNode) readCountModel.deltaInput.get(),
+                (StateNode) readCountModel.tInput.get(),
+                (StateNode) readCountModel.vInput.get(),
+                (StateNode) readCountModel.sInput.get(),
+                (StateNode) readCountModel.w1Input.get(),
+                (StateNode) readCountModel.w2Input.get(),
         };
 
         // build the identity-pattern scaffold the parent TreeLikelihood needs, from the read counts
