@@ -1,0 +1,98 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<beast version="2.8"
+       namespace="beast.core:beast.core.util:beast.evolution.alignment:beast.evolution.nuc:beast.evolution.operators:beast.evolution.sitemodel:beast.evolution.substitutionmodel:beast.evolution.tree.coalescent:beast.base.core:beast.base.evolution.alignment:beast.base.evolution.likelihood:beast.base.evolution.operator:beast.base.evolution.sitemodel:beast.base.evolution.substitutionmodel:beast.base.evolution.tree:beast.base.evolution.tree.coalescent:beast.base.inference:beast.base.inference.operator:beast.base.inference.util:beast.pkgmgmt"
+       required="BEAST.base v2.7.4:phylonco v1.0.0">
+
+    <!-- Diploid sequence -->
+    <data id="alignment" dataType="nucleotideDiploid16">
+        <sequence taxon="human">
+            0123456789aaabbbcccdddeee
+        </sequence>
+        <sequence taxon="chimp">
+            0123456789aaabbbcccdddeee
+        </sequence>
+
+    </data>
+
+    <parameter id="rates" dimension="6" keys="AC AG AT CG CT GT" spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal">
+        0.0097 0.0638 0.1485 0.2435 0.0725 0.462
+    </parameter>
+
+    <parameter id="freqParameter" dimension="16" spec="beast.base.spec.inference.parameter.SimplexParam">
+        0.0625
+    </parameter>
+
+    <!-- The GT16 substitution model             -->
+    <input spec="phylonco.beast.evolution.substitutionmodel.GT16" id="gt16">
+        <nucRates idref="rates"/>
+        <frequencies frequencies="@freqParameter" id="estimatedFreqs" spec="beast.base.spec.evolution.substitutionmodel.Frequencies"/>
+    </input>
+
+    <!-- site model -->
+    <input spec="beast.base.spec.evolution.sitemodel.SiteModel" id="siteModel" gammaCategoryCount="1">
+        <substModel idref="gt16"/>
+    </input>
+
+    <input spec="beast.base.spec.evolution.likelihood.TreeLikelihood" id="treeLikelihood">
+        <data idref="alignment"/>
+        <tree idref="tree"/>
+        <siteModel idref="siteModel"/>
+    </input>
+
+    <tree id="tree"/>
+
+    <tree spec="beast.base.spec.evolution.tree.coalescent.RandomTree" id="coalescentSimulator" initial="@tree" taxa="@alignment">
+        <populationModel spec="beast.base.spec.evolution.tree.coalescent.ConstantPopulation">
+            <popSize value="1" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real"/>
+        </populationModel>
+    </tree>
+
+    <run spec="MCMC" id="mcmc" chainLength="5000000" preBurnin="50000">
+
+        <init idref="coalescentSimulator"/>
+
+        <distribution spec="beast.base.inference.CompoundDistribution" id="posterior">
+            <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
+                <distribution id="ratePrior" spec="beast.base.spec.inference.distribution.Dirichlet" param="@rates" alpha="1.0 1.0 1.0 1.0 1.0 1.0"/>
+                <distribution id="frequenciesPrior" spec="beast.base.spec.inference.distribution.Dirichlet" param="@freqParameter" alpha="1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0 1.0"/>
+            </distribution>
+
+            <distribution id="likelihood" idref="treeLikelihood"/>
+        </distribution>
+
+        <!-- GT16 substitution model rates operator -->
+        <operator id="rateExchanger" spec="beast.base.spec.inference.operator.DeltaExchangeOperator" weight="1" delta="0.01">
+            <parameter idref="rates"/>
+        </operator>
+
+        <!-- GT16 substitution model frequencies operator -->
+        <operator id="frequenciesExchanger" spec="beast.base.spec.inference.operator.DeltaExchangeOperator" weight="1" delta="0.01">
+            <parameter idref="freqParameter"/>
+        </operator>
+
+        <operator id="treeScaler" scaleFactor="0.5" weight="1" tree="@tree" spec="beast.base.spec.evolution.operator.ScaleTreeOperator"/>
+        <operator id="subtreeSlide" spec="beast.base.evolution.operator.kernel.BactrianSubtreeSlide" weight="5" size="1.0" tree="@tree"/>
+        <operator id="uniform" weight="10" tree="@tree" spec="beast.base.evolution.operator.Uniform"/>
+        <operator id="narrow" spec="Exchange" isNarrow="true" weight="1" tree="@tree"/>
+        <operator id="wide" spec="Exchange" isNarrow="false" weight="1" tree="@tree"/>
+        <operator id="wilsonBalding" spec="WilsonBalding" weight="1" tree="@tree"/>
+
+        <logger logEvery="10000" fileName="test_GT16.$(seed).log">
+            <model idref="likelihood"/>
+            <log idref="likelihood"/>
+            <log idref="rates"/>
+            <log spec="beast.base.evolution.tree.TreeStatLogger" tree="@tree"/>
+        </logger>
+        <logger logEvery="10000" fileName="test_GT16.$(seed).trees">
+            <log idref="tree"/>
+        </logger>
+        <logger logEvery="10000">
+            <model idref="likelihood"/>
+            <log idref="likelihood"/>
+            <ESS spec="beast.base.spec.inference.util.ESS" name="log" arg="@likelihood"/>
+            <log idref="rates"/>
+            <ESS spec="beast.base.spec.inference.util.ESS" name="log" arg="@rates"/>
+        </logger>
+    </run>
+
+</beast>
