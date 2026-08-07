@@ -9,7 +9,9 @@ If you have any questions, please use the `beast-users` google group https://gro
 
 ## Software requirements
 
-This package requires Java 17 and at least [BEAST v2.7](https://github.com/CompEvol/beast2)
+This package requires Java 25 and [BEAST 3](https://github.com/CompEvol/beast3) (currently
+tracking `2.8.0-beta7`). If you need a package built against BEAST v2.7 instead, use a
+release prior to the BEAST3 migration.
 
 For dependencies and lphy / lphybeast setup instructions see the [latest release notes](https://github.com/bioDS/beast-phylonco/releases/latest)
 
@@ -59,7 +61,8 @@ For the GT16 model, VCF files can be converted to Nexus or FASTA format using ww
 ### Running BEAST 
 Start the BEAST software
 
-Set the input file to one of the examples e.g., `examples/test_GT16_error.xml`
+Set the input file to one of the examples e.g., `examples/test_GT16_error_b3.xml`. See
+[Project folder structure](#project-folder-structure) for what else lives under `examples/`.
 
 ### Running BEAST on command line
 These models can be run using the Java implementation (slower), or the Beagle implementation (faster). 
@@ -103,6 +106,19 @@ To run Beagle with GPU use:
 ~/beast/bin/beast -beagle_GPU beast.xml
 ```
 
+**Maven option (developers)**
+
+If you're building from source rather than an installed package, run an example
+straight through the Maven build instead:
+```bash
+mvn -pl phylonco-beast exec:exec -Dbeast.args="examples/test_GT16_error_b3.xml"
+```
+
+To only check that an XML parses without running the full analysis, add `-validate`:
+```bash
+mvn -pl phylonco-beast exec:exec -Dbeast.args="-validate examples/test_GT16_error_b3.xml"
+```
+
 ### How to setup model via BEAUti
 BEAUti currently supports the GT16 Substitution model and Binary Substitution model. Support for error models in Beauti will be added soon. 
 
@@ -123,6 +139,46 @@ This requires editing the XML generated from Beauti, see examples in the `exampl
 Project now uses Maven, for details see [dev notes](https://github.com/LinguaPhylo/linguaPhylo/blob/master/DEV_NOTE.md)
 
 For manual beast package installation instructions, see [here](http://www.beast2.org/managing-packages/)
+
+### Building `phylonco-beast`
+
+Build the whole project, skipping tests:
+```bash
+mvn clean package -DskipTests
+```
+
+Or just the `phylonco-beast` module and its dependencies:
+```bash
+mvn -pl phylonco-beast -am clean package -DskipTests
+```
+
+Run the test suite:
+```bash
+mvn -pl phylonco-beast -am test
+```
+
+### Project folder structure
+
+BEAUti templates live under `fxtemplates/` (bundled into the package jar); example
+analysis XMLs live under `examples/`, not under `phylonco-beast/src/`:
+
+```
+fxtemplates/                     BEAUti templates (GT16, Binary, MethylationHKY)
+examples/
+├── data/                        shared alignments (.nex / .fasta), not XML
+├── legacy/                      superseded BEAST2-format XMLs, kept for reference
+│   └── L86/
+├── readcounts/                  read-count model XMLs (not yet migrated to BEAST3)
+├── L86/
+│   └── *_b3.xml                 BEAST3-format L86 examples
+└── *_b3.xml                     BEAST3-format examples (GT16, SiFit3, error models, ...)
+```
+
+`phylonco-beast/src/main/java/module-info.java` and `phylonco-beast/version.xml` both declare which
+classes are exposed as BEAST services — when adding a new `Operator`/`Distribution`/etc.,
+keep the `exports`/`provides` list in `module-info.java` and the `<service>` list in
+`version.xml` in sync with the actual source tree, or the class won't be discoverable by
+BEAST's package manager even though it compiles fine.
 
 ## Citations
 * BEAST v2.5: [Bouckaert at al. (2019)](https://doi.org/10.1371/journal.pcbi.1006650)
