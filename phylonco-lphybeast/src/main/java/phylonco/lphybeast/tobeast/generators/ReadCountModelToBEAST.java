@@ -1,11 +1,14 @@
 package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
+import beast.base.evolution.tree.Tree;
+import beast.base.inference.StateNode;
 import beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator;
 import beast.base.spec.evolution.sitemodel.SiteModel;
 import beast.base.spec.inference.operator.Transform;
 import beast.base.spec.inference.parameter.RealScalarParam;
 import beast.base.spec.inference.parameter.RealVectorParam;
+import lphy.base.evolution.likelihood.AbstractPhyloCTMC;
 import lphy.base.evolution.likelihood.PhyloCTMC;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
@@ -13,6 +16,7 @@ import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
 import phylonco.beast.evolution.datatype.ReadCount;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
+import phylonco.beast.evolution.operator.BactrianSubtreeScale;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 
@@ -22,6 +26,8 @@ import phylonco.lphybeast.loggerhelper.AlignmentLoggerHelper;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static lphybeast.BEASTContext.getOperatorWeight;
 
 /**
  * Translates an LPhy {@code r ~ ReadCountModel(D=A, ...)} into the integrated-genotype BEAST model:
@@ -53,6 +59,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         Value w1Value = generator.getParams().get("w1");
         Value w2Value = generator.getParams().get("w2");
         Value alignmentValue = generator.getParams().get("D");
+        Value TreeValue = (Value) alignmentValue.getGenerator().getParams().get(AbstractPhyloCTMC.treeParamName);
 
         // beast3: getBEASTObject returns the spec param produced for each LPhy value
         // (RealScalarParam for the scalar distributions, RealVectorParam for s ~ ...replicates),
@@ -64,6 +71,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         BEASTInterface sParam = context.getBEASTObject(sValue);
         BEASTInterface w1Param = context.getBEASTObject(w1Value);
         BEASTInterface w2Param = context.getBEASTObject(w2Value);
+        Tree tree = (Tree) context.getBEASTObject(TreeValue);
 
         if (!(value instanceof ReadCount readCountData)) {
             throw new IllegalArgumentException("Require read count data");
@@ -118,20 +126,27 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
 
         // beast3 TODO: test the custom AVMN and up/down operators for the coverage parameters
 
-        // add UpDownOperator to s (up), t (down) and v (down)
+        // add UpDownOperator to t (up), v (up),  and s (down)
         List<Tensor> upParam = new ArrayList();
-        upParam.add((RealVectorParam) sParam);
         List<Tensor> downParam = new ArrayList();
-        downParam.add((RealScalarParam) tParam);
-        downParam.add((RealScalarParam) vParam);
+        upParam.add((RealScalarParam) tParam);
+        upParam.add((RealScalarParam) vParam);
+        addUpDownOperator(context, upParam, downParam, "readCountModel.tv.UpDownOperator");
+        downParam.add((RealVectorParam) sParam);
         addUpDownOperator(context, upParam, downParam, "readCountModel.stv.UpDownOperator");
 
-        // add AVMN operator to log transformed t and s
+        // add AVMN operator to log transformed t, v, and s
         List<Tensor> avmnParam = new ArrayList();
         avmnParam.add((RealScalarParam) tParam);
         avmnParam.add((RealVectorParam) sParam);
         avmnParam.add((RealScalarParam) vParam);
         addAVMNOperator(context, avmnParam);
+
+        context.addSkipOperator((StateNode) tParam);
+        context.addSkipOperator((StateNode) vParam);
+
+        addSubtreeScaleOperator(context, tree);
+
         return treeLikelihood;
     }
 
@@ -164,6 +179,15 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         operator.setInputValue("initial", 200);
         operator.setInputValue("weight", 25.0);
         operator.setID("readCountModel.AVMN");
+        operator.initAndValidate();
+        context.addExtraOperator(operator);
+    }
+
+    private void addSubtreeScaleOperator(BEASTContext context, Tree tree) {
+        BactrianSubtreeScale operator = new BactrianSubtreeScale();
+        operator.setInputValue("tree", tree);
+        operator.setInputValue("weight", getOperatorWeight(tree.getInternalNodeCount()));
+        operator.setID(tree.getID() + "." + "subtreeScale");
         operator.initAndValidate();
         context.addExtraOperator(operator);
     }
