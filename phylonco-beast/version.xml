@@ -36,6 +36,7 @@
         <provider classname="phylonco.beast.evolution.substitutionmodel.SiFit3"/>
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
         <provider classname="phylonco.beast.evolution.operator.BactrianSubtreeScale"/>
+        <provider classname="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel"/>
         <!-- readcountmodel package is not yet migrated to BEAST3 spec classes - kept out of the
              active provider list until that migration is done.
         <provider classname="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel"/>

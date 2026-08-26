@@ -48,10 +48,10 @@ module phylonco.beast {
             phylonco.beast.evolution.substitutionmodel.SiFit2,
             phylonco.beast.evolution.substitutionmodel.SiFit3,
             phylonco.beast.evolution.datatype.ReadCount,
-            phylonco.beast.evolution.operator.BactrianSubtreeScale;
+            phylonco.beast.evolution.operator.BactrianSubtreeScale,
+            phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
             // readcountmodel package is not yet migrated to BEAST3 spec classes - kept out of
             // the active provider list until that migration is done.
-            // phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel,
             // phylonco.beast.evolution.readcountmodel.GibbsSequenceOperator,
             // phylonco.beast.evolution.readcountmodel.GibbsAlignmentOperator,
             // phylonco.beast.evolution.readcountmodel.ExchangeGibbsOperator,
