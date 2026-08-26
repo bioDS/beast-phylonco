@@ -178,15 +178,24 @@ public class ReadMpileupDataFilter extends ReadMpileup {
         double[] logPa = new double[m];
         for (int i = 0; i < m; i++) {
             PileupSite.CellPileupData cellPileupData = cellData.get(taxaNames[i]);
-            int c = cellPileupData.readCount();
             String read = translateRead(ref, cellPileupData.reads());
             String[] parts = read.split(":");
             int[] counts = new int[4];
             for (int j = 0; j < counts.length; j++) {
                 counts[j] = Integer.parseInt(parts[j].substring(1));
             }
+            // Reference canonical nucleotide count.
             int r = counts[ref];
-            int s = c-r;
+            // Non-reference canonical nucleotide count.
+            // Deletions, skips and other non-ACGT observations are excluded.
+            int s = 0;
+            for (int base = 0; base < counts.length; base++) {
+                if (base != ref) {
+                    s += counts[base];
+                }
+            }
+            // Effective depth used by the nucleotide model.
+            int c = r + s;
             logPwt[i] = logProbOfBetaBinomial(s, c, fw, ww);
             logPa[i] = logProbOfBetaBinomial(s, c, fa, wa);
         }
