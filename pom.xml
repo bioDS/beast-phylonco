@@ -69,8 +69,8 @@
 
         <!-- dependencies       -->
         <lphy.version>1.8.0-beta1</lphy.version>
-        <lphybeast.version>1.4.0-beta1</lphybeast.version>
-        <beast.version>2.8.0-beta7</beast.version>
+        <lphybeast.version>1.4.0</lphybeast.version>
+        <beast.version>2.8.0-SNAPSHOT</beast.version>
         <flc.version>1.3.0-beta1</flc.version>
 
         <!-- own module versions, referenced by sibling modules instead of ${project.version} -->
