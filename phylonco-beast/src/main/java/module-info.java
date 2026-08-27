@@ -17,6 +17,7 @@ module phylonco.beast {
     requires jdk.jfr;
     requires mutable.alignment;
 
+    exports phylonco.beast.evolution.alignment;
     exports phylonco.beast.evolution.datatype;
     exports phylonco.beast.evolution.errormodel;
     exports phylonco.beast.evolution.likelihood;
@@ -48,6 +49,7 @@ module phylonco.beast {
             phylonco.beast.evolution.substitutionmodel.SiFit2,
             phylonco.beast.evolution.substitutionmodel.SiFit3,
             phylonco.beast.evolution.datatype.ReadCount,
+            phylonco.beast.evolution.alignment.ReadCountAlignment,
             phylonco.beast.evolution.operator.BactrianSubtreeScale,
             phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
             // readcountmodel package is not yet migrated to BEAST3 spec classes - kept out of
