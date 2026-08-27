@@ -8,13 +8,17 @@ import beast.pkgmgmt.BEASTClassLoader;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
+import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 
 import java.io.File;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 import static beast.pkgmgmt.BEASTClassLoader.addServices;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -110,5 +114,57 @@ public class ReadCountAlignmentXMLTest {
 
         double logP = posteriorOf(mcmc).getCurrentLogP();
         assertTrue(Double.isFinite(logP), "posterior is not finite after the run: " + logP);
+    }
+
+    /** The base XML's four-per-cell size factor, as written into a temp copy of the XML. */
+    private static final String S_FOUR =
+            "<parameter id=\"s\" dimension=\"4\" spec=\"beast.base.spec.inference.parameter.RealVectorParam\" domain=\"PositiveReal\">\n"
+            + "        1.04 1.04 1.02 1.01\n    </parameter>";
+
+    /** Writes a copy of the base XML with the s parameter replaced, and parses it. */
+    private MCMC parseWithSizeFactor(String replacement) throws Exception {
+        URL url = getClass().getClassLoader().getResource("readCountAlignment.xml");
+        String xml = Files.readString(new File(url.toURI()).toPath(), StandardCharsets.UTF_8);
+        assertTrue(xml.contains(S_FOUR), "base XML no longer contains the expected s parameter");
+        File out = File.createTempFile("readCountAlignmentS", ".xml");
+        out.deleteOnExit();
+        Files.writeString(out.toPath(), xml.replace(S_FOUR, replacement), StandardCharsets.UTF_8);
+        return (MCMC) new XMLParser().parseFile(out);
+    }
+
+    private static LikelihoodReadCountModel readCountModelOf(MCMC mcmc) {
+        for (Distribution d : ((CompoundDistribution) mcmc.posteriorInput.get()).pDistributions.get()) {
+            if (d instanceof ReadCountTreeLikelihood) {
+                return ((ReadCountTreeLikelihood) d).readCountModelInput.get();
+            }
+        }
+        throw new AssertionError("no ReadCountTreeLikelihood in the posterior");
+    }
+
+    /**
+     * A BEAUti template cannot know the cell count, so it writes a single size factor. That must be
+     * broadcast to one entry per cell rather than silently mis-sizing the model's arrays.
+     */
+    @Test
+    public void testSingleSizeFactorIsBroadcastToCells() throws Exception {
+        MCMC mcmc = parseWithSizeFactor(
+                "<parameter id=\"s\" spec=\"beast.base.spec.inference.parameter.RealVectorParam\" domain=\"PositiveReal\">1.04</parameter>");
+
+        assertEquals(4, readCountModelOf(mcmc).sInput.get().size());
+        assertTrue(Double.isFinite(initialLogP(mcmc)));
+    }
+
+    /** Any other dimension mismatch is a usable error, not an AIOOBE inside the likelihood. */
+    @Test
+    public void testWrongSizeFactorDimensionIsRejected() throws Exception {
+        Exception e = assertThrows(Exception.class, () -> parseWithSizeFactor(
+                "<parameter id=\"s\" dimension=\"3\" spec=\"beast.base.spec.inference.parameter.RealVectorParam\" domain=\"PositiveReal\">1.0 1.0 1.0</parameter>"));
+
+        String message = "";
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            message += t.getMessage() + " ";
+        }
+        assertTrue(message.contains("one value per cell"),
+                "expected a size-factor dimension message, got: " + message);
     }
 }
