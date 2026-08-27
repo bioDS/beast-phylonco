@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ReadCount extends BEASTObject {
+public class ReadCount extends BEASTObject implements ReadCountMatrix {
     int ntaxa;
     int nchar;
     int data[][][];
