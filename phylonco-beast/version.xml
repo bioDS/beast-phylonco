@@ -50,4 +50,9 @@
         -->
     </service>
 
+    <!-- BEAUti file importers -->
+    <service type="beastfx.app.inputeditor.AlignmentImporter">
+        <provider classname="phylonco.beast.evolution.alignment.ReadCountNexusImporter"/>
+    </service>
+
 </package>

@@ -159,11 +159,12 @@ mvn -pl phylonco-beast -am test
 
 ### Project folder structure
 
-BEAUti templates live under `fxtemplates/` (bundled into the package jar); example
-analysis XMLs live under `examples/`, not under `phylonco-beast/src/`:
+BEAUti templates live under `phylonco-beast/src/main/resources/fxtemplates/`, so they are
+bundled into the package jar where BEAUti finds them on the classpath; example analysis
+XMLs live under `examples/`, not under `phylonco-beast/src/`:
 
 ```
-fxtemplates/                     BEAUti templates (GT16, Binary, MethylationHKY)
+phylonco-beast/src/main/resources/fxtemplates/   BEAUti templates (GT16, Binary, MethylationHKY)
 examples/
 ├── data/                        shared alignments (.nex / .fasta), not XML
 ├── legacy/                      superseded BEAST2-format XMLs, kept for reference
