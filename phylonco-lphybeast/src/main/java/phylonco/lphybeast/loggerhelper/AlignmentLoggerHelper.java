@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 import lphy.core.model.GraphicalModelNode;
 import lphybeast.BEASTContext;
 import lphybeast.tobeast.loggers.LoggerHelper;
-import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import phylonco.beast.evolution.logger.SampledGenotypeLogger;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
@@ -24,12 +24,12 @@ public class AlignmentLoggerHelper implements LoggerHelper {
     final protected ReadCountTreeLikelihood treeLikelihood;
     final protected SiteModel siteModel;
     final protected LikelihoodReadCountModel readCountModel;
-    final protected ReadCount readCount;
+    final protected ReadCountMatrix readCount;
     private SampledGenotypeLogger sampledGenotypeLogger;
     String fileName;
 
     public AlignmentLoggerHelper(ReadCountTreeLikelihood treeLikelihood, SiteModel siteModel, LikelihoodReadCountModel readCountModel,
-                                 ReadCount readCount, BEASTContext context) {
+                                 ReadCountMatrix readCount, BEASTContext context) {
         this.context = context;
         this.treeLikelihood = treeLikelihood;
         this.siteModel = siteModel;
