@@ -17,8 +17,6 @@ import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.SNPInjector;
-import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
-import phylonco.lphy.evolution.copynumbermodel.ReadCopyProfile;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotype;
@@ -39,12 +37,7 @@ public class LBPhylonco implements LPhyBEASTMapping {
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
-
-                ReadCountToBEAST.class //,
-                // TODO: move and release NestedBD lphybeast to separate package
-                //copy number model
-//                IntegerCharacterMatrixToBEAST.class,
-//                CopyNumberBDToBEAST.class
+                ReadCountToBEAST.class
         );
     }
 
@@ -55,12 +48,7 @@ public class LBPhylonco implements LPhyBEASTMapping {
                 GT10ToBEAST.class,
                 GTUnphaseToBEAST.class,
                 GT10ErrorModelToBEAST.class,
-                ReadCountModelToBEAST.class //,
-                // TODO: move and release NestedBD lphybeast to separate package
-                // copy number model
-//                PhyloDiscreteToBEAST.class,
-//                NegativeBinomialErrorModelToBEAST.class,
-//                DiscreteGaussianErrorModelToBEAST.class
+                ReadCountModelToBEAST.class
         );
     }
 
@@ -80,10 +68,7 @@ public class LBPhylonco implements LPhyBEASTMapping {
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 UniformDiscrete.class,
-                CopyNumberBD.class,
                 ReadTaxaReadCountMatrix.class,
-                CopyNumberBD.class,
-                ReadCopyProfile.class,
                 ReadCountDataFilter.class,
                 MpileupToReadCount.class,
                 ReadCountToNexus.class,

@@ -4,7 +4,6 @@ import lphy.base.spi.LPhyBaseImpl;
 import lphy.core.model.BasicFunction;
 import lphy.core.model.GenerativeDistribution;
 import phylonco.lphy.evolution.alignment.*;
-import phylonco.lphy.evolution.copynumbermodel.*;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotypeFunction;
 import phylonco.lphy.evolution.readcountmodel.*;
@@ -39,11 +38,7 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 // read count model
                 ReadCountModel.class,
                 PloidyModel.class,
-                CoverageModel.class,
-                // copy number model
-                PhyloDiscrete.class,
-                NegativeBinomialErrorModel.class,
-                DiscreteGaussianErrorModel.class
+                CoverageModel.class
         );
                   }
 
@@ -53,9 +48,6 @@ public class PhyloncoImpl extends LPhyBaseImpl {
                 GT16.class, GT10.class,
                 PhasedGenotypeFunction.class, UnphasedGenotypeFunction.class, UnphaseGenotypeAlignment.class,
                 HaploidAlignment.class, SNPInjector.class,
-//                CopyNumberBD.class
-                CopyNumberBD.class,
-                ReadCopyProfile.class,
                 ReadTaxaReadCountMatrix.class,
                 ReadCountDataFilter.class, ReadCountDataSubset.class,
                 CopyReadCount.class, ReadCountToNexus.class, ReadReadCountNexus.class,
