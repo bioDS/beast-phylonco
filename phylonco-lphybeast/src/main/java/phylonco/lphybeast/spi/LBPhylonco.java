@@ -18,8 +18,6 @@ import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.lphy.evolution.alignment.HaploidAlignment;
 import phylonco.lphy.evolution.alignment.HomozygousAlignmentDistribution;
 import phylonco.lphy.evolution.alignment.SNPInjector;
-import phylonco.lphy.evolution.copynumbermodel.CopyNumberBD;
-import phylonco.lphy.evolution.copynumbermodel.ReadCopyProfile;
 import phylonco.lphy.evolution.datatype.PhasedGenotype;
 import phylonco.lphy.evolution.datatype.PhasedGenotypeFunction;
 import phylonco.lphy.evolution.datatype.UnphasedGenotype;
@@ -46,24 +44,18 @@ public class LBPhylonco implements LPhyBEASTExt {
     @Override
     public List<Class<? extends ValueToBEAST>> getValuesToBEASTs() {
         return Arrays.asList(
-
-                ReadCountToBEAST.class,
-                //copy number model
-                IntegerCharacterMatrixToBEAST.class,
-                CopyNumberBDToBEAST.class
+                ReadCountToBEAST.class
         );
     }
 
     @Override
     public List<Class<? extends GeneratorToBEAST>> getGeneratorToBEASTs() {
         return Arrays.asList(GT16ErrorModelToBEAST.class,
-                GT16ToBEAST.class, GT10ToBEAST.class, GTUnphaseToBEAST.class,
+                GT16ToBEAST.class,
+                GT10ToBEAST.class,
+                GTUnphaseToBEAST.class,
                 ReadCountModelToBEAST.class,
 //                LocalClockToBeast.class//
-                // copy number model
-                PhyloDiscreteToBEAST.class,
-                NegativeBinomialErrorModelToBEAST.class,
-                DiscreteGaussianErrorModelToBEAST.class
         );
     }
 
@@ -83,10 +75,7 @@ public class LBPhylonco implements LPhyBEASTExt {
                 MRCA.class, SNPInjector.class,
                 PloidyModel.class, CoverageModel.class,
                 UniformDiscrete.class,
-                CopyNumberBD.class,
                 ReadTaxaReadCountMatrix.class,
-                CopyNumberBD.class,
-                ReadCopyProfile.class,
                 ReadCountDataFilter.class,
                 MpileupToReadCount.class,
                 ReadCountToNexus.class,
