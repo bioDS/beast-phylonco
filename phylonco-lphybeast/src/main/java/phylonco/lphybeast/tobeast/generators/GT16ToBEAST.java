@@ -2,7 +2,7 @@ package phylonco.lphybeast.tobeast.generators;
 
 import beast.base.core.BEASTInterface;
 import beast.base.spec.evolution.substitutionmodel.Frequencies;
-import beast.base.inference.operator.DeltaExchangeOperator;
+import beast.base.spec.inference.operator.DeltaExchangeOperator;
 import beast.base.inference.operator.SwapOperator;
 import beast.base.inference.parameter.BooleanParameter;
 import beast.base.inference.parameter.IntegerParameter;
