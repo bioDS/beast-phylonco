@@ -58,4 +58,10 @@ module phylonco.beast {
             // phylonco.beast.evolution.readcountmodel.ExchangeSiteGibbsOperator,
             // phylonco.beast.evolution.readcountmodel.GibbsSiteOperator,
             // phylonco.beast.evolution.readcountmodel.WilsonBaldingSiteGibbsOperator
+            
+        provides beast.base.evolution.datatype.DataType with
+            phylonco.beast.evolution.datatype.NucleotideDiploid16,
+            phylonco.beast.evolution.datatype.NucleotideDiploid10,
+            phylonco.beast.evolution.datatype.NucleotideMethylation,
+            phylonco.beast.evolution.datatype.Ternary;
 }
