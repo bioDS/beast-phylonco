@@ -200,6 +200,8 @@ public class LikelihoodReadCountModel extends Distribution {
             for (int i = 0; i < numTaxa; i++) alignToRCIndex[i] = i; // identity
         }
 
+        resolveSizeFactorDimension();
+
         negp1 = new double[s.size()];
         negp2 = new double[s.size()];
         negr1 = new double[s.size()];
@@ -251,6 +253,27 @@ public class LikelihoodReadCountModel extends Distribution {
      * {@link phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood} with the datatype implied
      * by the GT10/GT16 substitution model, and builds the genotype index table.
      */
+    /**
+     * {@code s} carries one size factor per cell. A BEAUti template cannot know the cell count when
+     * it writes the parameter, so a dimension-1 {@code s} is broadcast to one entry per cell here.
+     * Any other mismatch is an error: left alone it surfaces much later as an
+     * ArrayIndexOutOfBoundsException inside the likelihood rather than as a usable message.
+     */
+    private void resolveSizeFactorDimension() {
+        if (s.size() == numTaxa) {
+            return;
+        }
+        if (s.size() == 1 && s instanceof RealVectorParam) {
+            RealVectorParam sParam = (RealVectorParam) s;
+            sParam.dimensionInput.setValue(numTaxa, sParam);
+            sParam.initAndValidate();
+            return;
+        }
+        throw new IllegalArgumentException("s (size factor) has dimension " + s.size()
+                + " but there are " + numTaxa + " cells; give s one value per cell, or a single "
+                + "value to be used for every cell");
+    }
+
     public void setDataType(DataType dataType) {
         this.datatype = dataType;
         buildIndexTable();
