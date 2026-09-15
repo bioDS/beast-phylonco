@@ -1,0 +1,81 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<beast version="2.8"
+       namespace="beast.base.core:beast.base.inference:beast.base.evolution.tree:beast.pkgmgmt">
+
+    <data id="rcData" spec="phylonco.beast.evolution.alignment.ReadCountAlignment"
+          dataType="nucleotideDiploid10">
+        <sequence taxon="a" value="12:0:0:0,0:10:0:0,6:5:0:0,0:0:9:0,0:0:0:11,7:0:6:0"/>
+        <sequence taxon="b" value="10:0:0:0,0:9:0:0,8:0:0:0,0:0:7:0,0:0:0:9,0:0:12:0"/>
+        <sequence taxon="c" value="9:0:0:0,0:11:0:0,5:6:0:0,0:0:8:0,0:0:0:10,6:0:5:0"/>
+        <sequence taxon="d" value="11:0:0:0,0:8:0:0,7:0:0:0,0:0:10:0,0:0:0:8,0:0:9:0"/>
+    </data>
+
+
+    <parameter id="nucRates" dimension="6" keys="AC AG AT CG CT GT"
+               spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal">
+        1.0 2.0 3.0 4.0 5.0 6.0
+    </parameter>
+    <parameter id="freqParameter" dimension="10" spec="beast.base.spec.inference.parameter.SimplexParam">
+        0.1
+    </parameter>
+
+    <parameter id="epsilon" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">0.06</parameter>
+    <parameter id="delta" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">0.5</parameter>
+    <parameter id="t" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">9.996182050184155</parameter>
+    <parameter id="v" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">1.0670434040009762</parameter>
+    <parameter id="s" dimension="4" spec="beast.base.spec.inference.parameter.RealVectorParam" domain="PositiveReal">
+        1.04 1.04 1.02 1.01
+    </parameter>
+    <parameter id="w1" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">100.0</parameter>
+    <parameter id="w2" spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal">2.0</parameter>
+
+    <input spec="phylonco.beast.evolution.substitutionmodel.GT10" id="gt10">
+        <nucRates idref="nucRates"/>
+        <frequencies frequencies="@freqParameter" id="estimatedFreqs"
+                     spec="beast.base.spec.evolution.substitutionmodel.Frequencies" estimate="false"/>
+    </input>
+
+    <input spec="beast.base.spec.evolution.sitemodel.SiteModel" id="siteModel" gammaCategoryCount="1">
+        <substModel idref="gt10"/>
+    </input>
+
+    <tree spec="beast.base.evolution.tree.TreeParser" id="tree" IsLabelledNewick="true"
+          newick="((a:0.3,b:0.3):0.2,(c:0.3,d:0.3):0.2);" taxa="@rcData"/>
+
+    <input spec="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel" id="readCountModel"
+           readCount="@rcData" epsilon="@epsilon" delta="@delta" t="@t" v="@v" s="@s" w1="@w1" w2="@w2"/>
+
+    <input spec="phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood" id="treeLikelihood"
+           tree="@tree" siteModel="@siteModel" readCountModel="@readCountModel" data="@rcData"/>
+
+    <run spec="MCMC" id="mcmc" chainLength="2000" preBurnin="0" storeEvery="100000">
+        <distribution spec="beast.base.inference.CompoundDistribution" id="posterior">
+            <distribution id="prior" spec="beast.base.inference.CompoundDistribution">
+                <distribution id="epsilon.prior" spec="beast.base.spec.inference.distribution.Beta"
+                              param="@epsilon" alpha="1.0" beta="30.0"/>
+                <distribution id="delta.prior" spec="beast.base.spec.inference.distribution.Beta"
+                              param="@delta" alpha="3.0" beta="40.0"/>
+            </distribution>
+            <distribution id="likelihood" idref="treeLikelihood"/>
+        </distribution>
+
+        <operator id="epsilonScaler" spec="beast.base.spec.inference.operator.ScaleOperator"
+                  parameter="@epsilon" scaleFactor="0.8" weight="2"/>
+        <operator id="deltaScaler" spec="beast.base.spec.inference.operator.ScaleOperator"
+                  parameter="@delta" scaleFactor="0.8" weight="2"/>
+        <operator id="tScaler" spec="beast.base.spec.inference.operator.ScaleOperator"
+                  parameter="@t" scaleFactor="0.8" weight="1"/>
+        <operator id="sScaler" spec="beast.base.spec.inference.operator.ScaleOperator"
+                  parameter="@s" scaleFactor="0.8" weight="1"/>
+        <operator id="treeScaler" spec="beast.base.spec.evolution.operator.ScaleTreeOperator"
+                  tree="@tree" scaleFactor="0.8" weight="2"/>
+        <operator id="uniform" spec="beast.base.evolution.operator.Uniform" tree="@tree" weight="5"/>
+
+        <logger logEvery="1000">
+            <log idref="posterior"/>
+            <log idref="likelihood"/>
+            <log idref="epsilon"/>
+            <log idref="delta"/>
+        </logger>
+    </run>
+</beast>

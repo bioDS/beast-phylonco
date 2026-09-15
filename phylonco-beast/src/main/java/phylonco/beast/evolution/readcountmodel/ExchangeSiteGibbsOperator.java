@@ -12,6 +12,7 @@ import beast.base.inference.util.InputUtil;
 import beast.base.util.Randomizer;
 import mutablealignment.MutableAlignment;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +74,7 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
             "read count likelihood model",
             Input.Validate.REQUIRED);
 
-    public Input<ReadCount> readCountInput = new Input<>(
+    public Input<ReadCountMatrix> readCountInput = new Input<>(
             "readCount",
             "read count data",
             Input.Validate.REQUIRED);
@@ -101,7 +102,7 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
     private SubstitutionModel substitutionModel;
     private BranchRateModel.Base branchRateModel;
     private LikelihoodReadCountModel readCountModel;
-    private ReadCount readCount;
+    private ReadCountMatrix readCount;
 
     private int numStates;
     private int numSites;
@@ -167,7 +168,7 @@ public class ExchangeSiteGibbsOperator extends TreeOperator {
         categoryLogProbs = new double[numCategories];
 
         // Map alignment taxon names to ReadCount taxon indices.
-        String[] rcTaxaNames = readCount.getTaxaNames();
+        String[] rcTaxaNames = readCount.getTaxonNames();
         alignToRCIndex = new int[numTaxa];
         for (int i = 0; i < numTaxa; i++) {
             String alignTaxonName = alignment.getTaxaNames().get(i);

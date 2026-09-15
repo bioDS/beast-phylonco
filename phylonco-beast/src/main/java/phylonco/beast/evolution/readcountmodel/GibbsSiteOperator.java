@@ -11,6 +11,7 @@ import beast.base.inference.Operator;
 import beast.base.util.Randomizer;
 import mutablealignment.MutableAlignment;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 
 import java.util.Arrays;
 
@@ -91,7 +92,7 @@ public class GibbsSiteOperator extends Operator {
             "read count likelihood model",
             Input.Validate.REQUIRED);
 
-    public Input<ReadCount> readCountInput = new Input<>(
+    public Input<ReadCountMatrix> readCountInput = new Input<>(
             "readCount",
             "read count data",
             Input.Validate.REQUIRED);
@@ -121,7 +122,7 @@ public class GibbsSiteOperator extends Operator {
     private SiteModel.Base siteModel;
     private BranchRateModel.Base branchRateModel;
     private LikelihoodReadCountModel readCountModel;
-    private ReadCount readCount;
+    private ReadCountMatrix readCount;
     private boolean sampleAllSites;
     private int numSitesToResample;
     private boolean useEntropyWeighting;
@@ -177,7 +178,7 @@ public class GibbsSiteOperator extends Operator {
         numCategories = siteModel.getCategoryCount();
 
         // Build mapping from alignment taxon index to ReadCount taxon index
-        String[] rcTaxaNames = readCount.getTaxaNames();
+        String[] rcTaxaNames = readCount.getTaxonNames();
         alignToRCIndex = new int[numTaxa];
         for (int i = 0; i < numTaxa; i++) {
             String alignTaxonName = alignment.getTaxaNames().get(i);

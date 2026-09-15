@@ -24,3 +24,4 @@ tmp/
 *.log
 *.trees
 *.state
+state.backup.xml

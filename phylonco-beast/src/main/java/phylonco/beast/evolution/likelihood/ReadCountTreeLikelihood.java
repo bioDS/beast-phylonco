@@ -16,6 +16,7 @@ import mutablealignment.MutableAlignment;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 
 import java.util.List;
@@ -142,8 +143,8 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
      * keeps one pattern per site (no compression), which the per-site read-count mapping relies on.
      */
     private Alignment buildScaffold(DataType genotypeDataType) {
-        ReadCount rc = readCountModel.getReadCount();
-        String[] taxa = rc.getTaxaNames();
+        ReadCountMatrix rc = readCountModel.getReadCount();
+        String[] taxa = rc.getTaxonNames();
         int nSites = rc.getSiteNumber();
         String genoChar = genotypeDataType.getCharacter(0); // any valid genotype char; value ignored
         StringBuilder sb = new StringBuilder(nSites);

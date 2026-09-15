@@ -12,6 +12,7 @@ import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.util.Randomizer;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 
@@ -41,7 +42,7 @@ public class SampledGenotypeLogger extends BEASTObject implements Loggable {
             "branchRateModel", "branch rate model for relaxed clock (optional)", Input.Validate.OPTIONAL);
     final public Input<LikelihoodReadCountModel> readCountModelInput = new Input<>(
             "readCountModel", "read-count model supplying P(reads | genotype)", Input.Validate.REQUIRED);
-    final public Input<ReadCount> readCountInput = new Input<>(
+    final public Input<ReadCountMatrix> readCountInput = new Input<>(
             "readCount", "read count data", Input.Validate.REQUIRED);
 
     private Tree tree;
@@ -49,7 +50,7 @@ public class SampledGenotypeLogger extends BEASTObject implements Loggable {
     private SubstitutionModel substitutionModel;
     private BranchRateModel branchRateModel;
     private LikelihoodReadCountModel readCountModel;
-    private ReadCount readCount;
+    private ReadCountMatrix readCount;
     private DataType datatype;
 
     private int numNodes;
@@ -86,7 +87,7 @@ public class SampledGenotypeLogger extends BEASTObject implements Loggable {
         numNodes = tree.getNodeCount();
         numCategories = siteModel.getCategoryCount();
 
-        rcTaxaNames = readCount.getTaxaNames();
+        rcTaxaNames = readCount.getTaxonNames();
 
         // map each tree leaf (by taxon name) to its ReadCount row
         nodeNrToRCIndex = new int[numNodes];

@@ -19,6 +19,7 @@ import org.apache.commons.numbers.gamma.LogGamma;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.datatype.ReadCountMatrix;
 
 import java.util.List;
 import java.util.Random;
@@ -30,7 +31,7 @@ public class LikelihoodReadCountModel extends Distribution {
             "optional genotype alignment; in the integrated model there is no genotype alignment and "
             + "the scaffold (taxa, site count, genotype datatype) is derived from the read counts "
             + "(datatype set via setDataType()) instead");
-    public Input<ReadCount> readCountInput = new Input<>("readCount", "nucleotide read counts");
+    public Input<ReadCountMatrix> readCountInput = new Input<>("readCount", "nucleotide read counts");
 
     // epsilon, allelic dropout, ... parameters
     public Input<RealScalar> epsilonInput = new Input<>("epsilon", "sequencing error");
@@ -51,7 +52,7 @@ public class LikelihoodReadCountModel extends Distribution {
     private RealScalar w1;
     private RealScalar w2;
     private Alignment alignment;
-    private ReadCount readCount;
+    private ReadCountMatrix readCount;
     private int numTaxa;   // number of cells (from alignment, or from readCount when integrated)
     private int numSites;  // number of sites (from alignment, or from readCount when integrated)
     private double[] negp1, negp2, negr1, negr2;
@@ -169,7 +170,7 @@ public class LikelihoodReadCountModel extends Distribution {
         alignment = alignmentInput.get();
         readCount = readCountInput.get();
 
-        String[] rcTaxaNames = readCount.getTaxaNames();
+        String[] rcTaxaNames = readCount.getTaxonNames();
         if (alignment != null) {
             // standalone use: scaffold comes from the genotype alignment
             datatype = alignment.getDataType();
@@ -401,7 +402,7 @@ public class LikelihoodReadCountModel extends Distribution {
     }
 
     /** The ReadCount data backing this model. */
-    public ReadCount getReadCount() {
+    public ReadCountMatrix getReadCount() {
         return readCount;
     }
 
