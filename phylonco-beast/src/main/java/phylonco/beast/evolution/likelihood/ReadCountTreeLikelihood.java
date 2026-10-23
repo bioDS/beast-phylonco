@@ -13,6 +13,7 @@ import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
 import beast.base.inference.StateNode;
 import mutablealignment.MutableAlignment;
+import phylonco.beast.evolution.alignment.ReadCountAlignment;
 import phylonco.beast.evolution.datatype.NucleotideDiploid10;
 import phylonco.beast.evolution.datatype.NucleotideDiploid16;
 import phylonco.beast.evolution.datatype.ReadCount;
@@ -106,6 +107,12 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         // (there is no genotype alignment in the model). Kept internal — not an XML input.
         if (dataInput.get() == null) {
             dataInput.setValue(buildScaffold(genotypeDataType), this);
+        } else if (dataInput.get() instanceof ReadCountAlignment) {
+            // the substitution model is authoritative for the genotype state count. A
+            // ReadCountAlignment declares a datatype of its own (it must, to be an Alignment), so
+            // reconcile rather than reject: BEAUti lets the user switch GT16 to GT10 in the Site
+            // Model tab after the partition already exists.
+            ((ReadCountAlignment) dataInput.get()).setGenotypeDataType(genotypeDataType);
         }
 
         // super.initAndValidate() builds the initial tip partials via setPartials -> getLeafPartials,
