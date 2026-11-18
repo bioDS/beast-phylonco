@@ -71,7 +71,7 @@ public class ReadCountTemplateTest {
     }
 
     private static File resourceFile(String name) throws Exception {
-        URL url = ReadCountTemplateTest.class.getClassLoader().getResource(name);
+        URL url = ReadCountTemplateTest.class.getResource("/" + name);
         assertTrue(url != null, "missing resource " + name);
         return new File(url.toURI());
     }
@@ -257,4 +257,73 @@ public class ReadCountTemplateTest {
         java.util.Arrays.fill(a, v);
         return a;
     }
+
+    @Test
+    public void testSwitchFromYuleToConstantCoalescent() throws Exception {
+        BeautiDoc doc = beautiDocFor(writeNexus());
+        doc.scrubAll(false, false);
+
+        @SuppressWarnings("unchecked")
+        var priors = (java.util.List<BEASTInterface>)
+                doc.pluginmap.get("prior").getInput("distribution").get();
+
+        BEASTInterface yule = priors.stream()
+                .filter(prior -> prior.getID() != null
+                        && prior.getID().startsWith("YuleModel.t:"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Default Yule prior is missing"));
+
+        var coalescent = doc.beautiConfig.subTemplatesInput.get().stream()
+                .filter(template -> "CoalescentConstantPopulation".equals(template.getID()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Constant Coalescent template is missing"));
+
+        String treeSuffix = yule.getID().substring("YuleModel".length());
+        String birthRateId = "birthRate" + treeSuffix;
+        String scalerId = "YuleBirthRateScaler" + treeSuffix;
+
+        String birthRatePriorId = "YuleBirthRatePrior" + treeSuffix;
+
+        assertTrue(priors.stream()
+                        .anyMatch(prior -> birthRatePriorId.equals(prior.getID())),
+                "Default Yule birth-rate prior must be in the posterior");
+
+        var state = (beast.base.inference.State) doc.pluginmap.get("state");
+        var mcmc = (MCMC) doc.pluginmap.get("mcmc");
+
+        assertTrue(state.stateNodeInput.get().stream()
+                        .anyMatch(node -> birthRateId.equals(node.getID())),
+                "Default Yule birthRate must be in the MCMC state");
+
+        assertTrue(mcmc.operatorsInput.get().stream()
+                        .anyMatch(operator -> scalerId.equals(operator.getID())),
+                "Default Yule birth-rate scaler must be in the MCMC operator list");
+
+        var selection = new java.util.ArrayList<>(priors);
+        BEASTInterface replacement = coalescent.createSubNet(
+                doc.getContextFor(yule), selection, selection.indexOf(yule), true);
+        doc.connect(replacement, "prior", "distribution");
+
+        File out = File.createTempFile("readCountCoalescent", ".xml");
+        out.deleteOnExit();
+        doc.save(out);
+
+        assertFalse(priors.stream()
+                        .anyMatch(prior -> birthRatePriorId.equals(prior.getID())),
+                "Yule birth-rate prior remains in the posterior after switching to Coalescent");
+
+        assertFalse(state.stateNodeInput.get().stream()
+                        .anyMatch(node -> birthRateId.equals(node.getID())),
+                "Yule birthRate remains in the MCMC state after switching to Coalescent");
+
+        assertFalse(mcmc.operatorsInput.get().stream()
+                        .anyMatch(operator -> scalerId.equals(operator.getID())),
+                "Yule birth-rate scaler remains in the MCMC operator list after switching to Coalescent");
+
+        assertTrue(priors.stream().anyMatch(prior -> prior.getID() != null
+                && prior.getID().startsWith("CoalescentConstant.t:")));
+        assertFalse(priors.stream().anyMatch(prior -> prior.getID() != null
+                && prior.getID().startsWith("YuleModel.t:")));
+    }
+
 }
