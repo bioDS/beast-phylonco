@@ -254,10 +254,10 @@ public class ReadCountTemplateTest {
         LikelihoodReadCountModel rcm = new LikelihoodReadCountModel();
         rcm.initByName("readCount", data,
                 "epsilon", new RealScalarParam(0.01, UnitInterval.INSTANCE),
-                "delta", new RealScalarParam(0.05, UnitInterval.INSTANCE),
-                "t", scalar(5.0), "v", scalar(1.0),
+                "delta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
+                "t", scalar(5.0), "v", scalar(20.0),
                 "s", new RealVectorParam(uniform(data.getTaxaNumber(), 1.0), PositiveReal.INSTANCE),
-                "w1", scalar(100.0), "w2", scalar(2.0));
+                "w1", scalar(1.0), "w2", scalar(5.0));
 
         ReadCountTreeLikelihood handBuilt = new ReadCountTreeLikelihood();
         handBuilt.initByName("data", data, "tree", generated.treeInput.get(),

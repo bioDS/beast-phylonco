@@ -284,11 +284,11 @@ ClusterTree/clusterType/,
                  single value here and broadcast to the cell count by LikelihoodReadCountModel, since
                  a template cannot know how many cells the imported data has -->
             <parameter id='rcEpsilon.s:$(n)' spec='beast.base.spec.inference.parameter.RealScalarParam' domain='UnitInterval'>0.01</parameter>
-            <parameter id='rcDelta.s:$(n)'   spec='beast.base.spec.inference.parameter.RealScalarParam' domain='UnitInterval'>0.05</parameter>
+            <parameter id='rcDelta.s:$(n)'   spec='beast.base.spec.inference.parameter.RealScalarParam' domain='UnitInterval'>0.2</parameter>
             <parameter id='rcT.s:$(n)'       spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>5.0</parameter>
-            <parameter id='rcV.s:$(n)'       spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>1.0</parameter>
-            <parameter id='rcW1.s:$(n)'      spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>100.0</parameter>
-            <parameter id='rcW2.s:$(n)'      spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>2.0</parameter>
+            <parameter id='rcV.s:$(n)'       spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>20.0</parameter>
+            <parameter id='rcW1.s:$(n)'      spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>1.0</parameter>
+            <parameter id='rcW2.s:$(n)'      spec='beast.base.spec.inference.parameter.RealScalarParam' domain='PositiveReal'>5.0</parameter>
             <parameter id='rcS.s:$(n)'       spec='beast.base.spec.inference.parameter.RealVectorParam' domain='PositiveReal'>1.0</parameter>
 
             <plugin spec='phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel' id='readCountModel.s:$(n)'
@@ -335,24 +335,24 @@ ClusterTree/clusterType/,
                 <beta  spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="30.0" estimate="false"/>
             </distribution>
             <distribution id='rcDeltaPrior.s:$(n)' spec='beast.base.spec.inference.distribution.Beta' param='@rcDelta.s:$(n)'>
-                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="3.0" estimate="false"/>
-                <beta  spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="40.0" estimate="false"/>
+                <alpha spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.0" estimate="false"/>
+                <beta  spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="4.0" estimate="false"/>
             </distribution>
             <distribution id='rcTPrior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@rcT.s:$(n)'>
-                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.702" estimate="false"/>
-                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.8671" estimate="false"/>
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.7" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.05" estimate="false"/>
             </distribution>
             <distribution id='rcVPrior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@rcV.s:$(n)'>
-                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.8" estimate="false"/>
-                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.475" estimate="false"/>
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="2.96" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.13" estimate="false"/>
             </distribution>
             <distribution id='rcW1Prior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@rcW1.s:$(n)'>
-                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="4.6" estimate="false"/>
-                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.1" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.5" estimate="false"/>
             </distribution>
             <distribution id='rcW2Prior.s:$(n)' spec='beast.base.spec.inference.distribution.LogNormal' param='@rcW2.s:$(n)'>
-                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="0.9" estimate="false"/>
-                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="1.25" estimate="false"/>
+                <M spec="beast.base.spec.inference.parameter.RealScalarParam" domain="Real" value="1.0" estimate="false"/>
+                <S spec="beast.base.spec.inference.parameter.RealScalarParam" domain="PositiveReal" value="0.8" estimate="false"/>
             </distribution>
             <distribution id='rcSPrior.s:$(n)' spec='beast.base.spec.inference.distribution.IID' param='@rcS.s:$(n)'>
                 <distr spec='beast.base.spec.inference.distribution.LogNormal'>
