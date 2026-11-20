@@ -22,9 +22,13 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
+import java.io.InputStream;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 import static beast.pkgmgmt.BEASTClassLoader.addServices;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,7 +61,8 @@ public class ReadCountTemplateTest {
             """;
 
     @BeforeAll
-    public static void setUpClass() {
+    public static void setUpClass() throws Exception {
+        isolateFromInstalledPackages();
         // BeautiDoc lives in beastfx, so the JavaFX toolkit has to exist even though this test
         // never shows a window
         System.setProperty("prism.order", "sw");
@@ -68,6 +73,35 @@ public class ReadCountTemplateTest {
         }
         BEASTClassLoader.initServices();
         addServices("version.xml");
+    }
+
+    /**
+     * BEAUti merges the template fragments (TreePriors.xml, ClockModels.xml, ...) it finds in
+     * package folders. A real BEAUti finds beast.fx's in its installed BEAST.app; in a test JVM,
+     * with beast-fx on the class path, it finds only what happens to be installed in the user's
+     * package folder, so the test passed or failed depending on the machine (and found no
+     * TreePriors.xml on CI). Give it beast-fx's own fragments, from the beast-fx jar, and an empty
+     * user package folder.
+     */
+    private static void isolateFromInstalledPackages() throws Exception {
+        Path root = Files.createTempDirectory("readCountTemplateTest");
+        Path fxtemplates = Files.createDirectories(root.resolve("beast.fx").resolve("fxtemplates"));
+        Path beastFxJar = Path.of(BeautiDoc.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        int n = 0;
+        try (JarFile jar = new JarFile(beastFxJar.toFile())) {
+            for (JarEntry e : java.util.Collections.list(jar.entries())) {
+                String name = e.getName();
+                if (name.startsWith("beast.fx/fxtemplates/") && name.endsWith(".xml") && name.indexOf('/', 21) < 0) {
+                    try (InputStream in = jar.getInputStream(e)) {
+                        Files.copy(in, fxtemplates.resolve(name.substring(21)));
+                        n++;
+                    }
+                }
+            }
+        }
+        assertTrue(n > 0, "no beast.fx/fxtemplates in " + beastFxJar);
+        System.setProperty("BEAST_PACKAGE_PATH", root.toString());
+        System.setProperty("beast.user.package.dir", Files.createDirectories(root.resolve("user")).toString());
     }
 
     private static File resourceFile(String name) throws Exception {
