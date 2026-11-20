@@ -167,4 +167,27 @@ public class ReadCountAlignmentXMLTest {
         assertTrue(message.contains("one value per cell"),
                 "expected a size-factor dimension message, got: " + message);
     }
+
+    /**
+     * The substitution model is authoritative for the genotype state count. BEAUti lets the user
+     * switch GT16 to GT10 in the Site Model tab after the partition exists, so a ReadCountAlignment
+     * declaring the other datatype is reconciled rather than rejected.
+     */
+    @Test
+    public void testSubstModelDrivesTheGenotypeDataType() throws Exception {
+        URL url = getClass().getClassLoader().getResource("readCountAlignment.xml");
+        String xml = Files.readString(new File(url.toURI()).toPath(), StandardCharsets.UTF_8);
+        // declare 16 genotype states on the data while the substitution model stays GT10
+        xml = xml.replace("nucleotideDiploid10", "nucleotideDiploid16");
+        File out = File.createTempFile("readCountAlignmentDataType", ".xml");
+        out.deleteOnExit();
+        Files.writeString(out.toPath(), xml, StandardCharsets.UTF_8);
+
+        MCMC mcmc = (MCMC) new XMLParser().parseFile(out);
+        ReadCountAlignment data = dataOf(mcmc);
+
+        assertEquals(10, data.getDataType().getStateCount(),
+                "the GT10 substitution model should have driven the alignment back to 10 states");
+        assertTrue(Double.isFinite(initialLogP(mcmc)));
+    }
 }

@@ -1,0 +1,363 @@
+package phylonco.beast.evolution.alignment;
+
+import beast.base.core.BEASTInterface;
+import beast.base.inference.CompoundDistribution;
+import beast.base.inference.Distribution;
+import beast.base.inference.MCMC;
+import beast.base.parser.XMLParser;
+import beast.pkgmgmt.BEASTClassLoader;
+import beastfx.app.inputeditor.BeautiDoc;
+import phylonco.beast.evolution.substitutionmodel.GT16;
+import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
+import beast.base.spec.inference.parameter.SimplexParam;
+import beast.base.spec.inference.parameter.RealVectorParam;
+import beast.base.spec.inference.parameter.RealScalarParam;
+import beast.base.spec.evolution.substitutionmodel.Frequencies;
+import beast.base.spec.evolution.sitemodel.SiteModel;
+import beast.base.spec.domain.UnitInterval;
+import beast.base.spec.domain.PositiveReal;
+import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
+import javafx.application.Platform;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
+
+import static beast.pkgmgmt.BEASTClassLoader.addServices;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * Drives BEAUti headlessly over the read-count template: load the template, add a read-count
+ * partition the way the import menu would, write the XML, then parse and run it in BEAST. This is
+ * the check that the template's connectors actually produce a runnable analysis.
+ */
+public class ReadCountTemplateTest {
+
+    private static final String NEXUS = """
+            #NEXUS
+
+            begin taxa;
+            \tdimensions ntax=4;
+            \ttaxlabels cell1 cell2 cell3 cell4;
+            end;
+
+            begin characters;\tdimensions nchar=6;
+            \tformat datatype=readCount;
+            \tmatrix
+            \t\tcell1 12:0:0:0,0:10:0:0,6:5:0:0,0:0:9:0,0:0:0:11,7:0:6:0;
+            \t\tcell2 10:0:0:0,0:9:0:0,8:0:0:0,0:0:7:0,0:0:0:9,0:0:12:0;
+            \t\tcell3 9:0:0:0,0:11:0:0,5:6:0:0,0:0:8:0,0:0:0:10,6:0:5:0;
+            \t\tcell4 11:0:0:0,0:8:0:0,7:0:0:0,0:0:10:0,0:0:0:8,0:0:9:0;
+            end;
+            """;
+
+    @BeforeAll
+    public static void setUpClass() throws Exception {
+        isolateFromInstalledPackages();
+        // BeautiDoc lives in beastfx, so the JavaFX toolkit has to exist even though this test
+        // never shows a window
+        System.setProperty("prism.order", "sw");
+        try {
+            Platform.startup(() -> { });
+        } catch (IllegalStateException alreadyRunning) {
+            // fine: the toolkit is up
+        }
+        BEASTClassLoader.initServices();
+        addServices("version.xml");
+    }
+
+    /**
+     * BEAUti merges the template fragments (TreePriors.xml, ClockModels.xml, ...) it finds in
+     * package folders. A real BEAUti finds beast.fx's in its installed BEAST.app; in a test JVM,
+     * with beast-fx on the class path, it finds only what happens to be installed in the user's
+     * package folder, so the test passed or failed depending on the machine (and found no
+     * TreePriors.xml on CI). Give it beast-fx's own fragments, from the beast-fx jar, and an empty
+     * user package folder.
+     */
+    private static void isolateFromInstalledPackages() throws Exception {
+        Path root = Files.createTempDirectory("readCountTemplateTest");
+        Path fxtemplates = Files.createDirectories(root.resolve("beast.fx").resolve("fxtemplates"));
+        Path beastFxJar = Path.of(BeautiDoc.class.getProtectionDomain().getCodeSource().getLocation().toURI());
+        int n = 0;
+        try (JarFile jar = new JarFile(beastFxJar.toFile())) {
+            for (JarEntry e : java.util.Collections.list(jar.entries())) {
+                String name = e.getName();
+                if (name.startsWith("beast.fx/fxtemplates/") && name.endsWith(".xml") && name.indexOf('/', 21) < 0) {
+                    try (InputStream in = jar.getInputStream(e)) {
+                        Files.copy(in, fxtemplates.resolve(name.substring(21)));
+                        n++;
+                    }
+                }
+            }
+        }
+        assertTrue(n > 0, "no beast.fx/fxtemplates in " + beastFxJar);
+        System.setProperty("BEAST_PACKAGE_PATH", root.toString());
+        System.setProperty("beast.user.package.dir", Files.createDirectories(root.resolve("user")).toString());
+    }
+
+    private static File resourceFile(String name) throws Exception {
+        URL url = ReadCountTemplateTest.class.getResource("/" + name);
+        assertTrue(url != null, "missing resource " + name);
+        return new File(url.toURI());
+    }
+
+    private static File writeNexus() throws Exception {
+        File nexus = File.createTempFile("readCounts", ".nexus");
+        nexus.deleteOnExit();
+        Files.writeString(nexus.toPath(), NEXUS, StandardCharsets.UTF_8);
+        return nexus;
+    }
+
+    /** Loads the template and adds the read-count partition, as the import menu would. */
+    private static BeautiDoc beautiDocFor(File nexus) throws Exception {
+        BeautiDoc doc = new BeautiDoc();
+        String templateXML = doc.processTemplate(
+                resourceFile("fxtemplates/ReadCountModel.xml").getAbsolutePath());
+        doc.initialize(BeautiDoc.ActionOnExit.UNKNOWN, null, templateXML, "readCountTemplateTest");
+
+        BEASTInterface imported = new ReadCountNexusImporter().loadFile(nexus).get(0);
+        doc.addAlignmentWithSubnet((ReadCountAlignment) imported,
+                doc.beautiConfig.partitionTemplate.get());
+        return doc;
+    }
+
+    @Test
+    public void testTemplateGeneratesRunnableXML() throws Exception {
+        File nexus = writeNexus();
+        BeautiDoc doc = beautiDocFor(nexus);
+
+        File out = File.createTempFile("readCountBeauti", ".xml");
+        out.deleteOnExit();
+        doc.save(out);
+
+        String xml = Files.readString(out.toPath(), StandardCharsets.UTF_8);
+        assertTrue(xml.contains("ReadCountTreeLikelihood"), "no read-count tree likelihood in:\n" + xml);
+        assertTrue(xml.contains("LikelihoodReadCountModel"), "no read-count model in:\n" + xml);
+        assertTrue(xml.contains("ReadCountAlignment"), "read counts not written as data in:\n" + xml);
+
+        // the tree prior and its operators are connected, so the tree is actually sampled
+        assertTrue(xml.contains("YuleModel.t:"), "no tree prior in the XML");
+        for (String op : new String[]{"YuleModelTreeScaler", "YuleModelUniformOperator",
+                "YuleModelSubtreeSlide", "YuleModelNarrow", "YuleModelWide",
+                "YuleModelWilsonBalding", "YuleBirthRateScaler"}) {
+            assertTrue(xml.contains(op + ".t:"), "missing tree operator " + op);
+        }
+
+        // every read-count parameter is estimated: a state node, with a prior and an operator
+        String state = xml.substring(xml.indexOf("<state "), xml.indexOf("</state>"));
+        for (String param : new String[]{"rcEpsilon", "rcDelta", "rcT", "rcV", "rcS", "rcW1", "rcW2"}) {
+            assertTrue(state.contains("id=\"" + param + ".s:"),
+                    param + " is not a state node, so it would be held fixed:\n" + state);
+            assertTrue(xml.contains(param + "Prior.s:"), "no prior for " + param);
+            assertTrue(xml.contains(param + "Scaler.s:"), "no operator for " + param);
+        }
+        // the single size factor in the template was broadcast to one per cell
+        assertTrue(state.contains("id=\"rcS.s:") && state.contains("dimension=\"4\""),
+                "rcS was not resized to the cell count:\n" + state);
+
+        // the alignment is constant data: it must not be registered as a state node
+        assertFalse(state.contains("<stateNode id=\"" + doc.alignments.get(0).getID()),
+                "the read-count alignment was added to the state");
+
+        MCMC mcmc = (MCMC) new XMLParser().parseFile(out);
+
+        // the read-count model must be wired in only through the tree likelihood. If a connector
+        // also put it in the posterior it would be counted twice.
+        assertEquals(0, countReadCountModelsIn(mcmc.posteriorInput.get()),
+                "LikelihoodReadCountModel is in the posterior as well as in the tree likelihood, "
+                        + "so its contribution would be double counted");
+
+        mcmc.chainLengthInput.setValue(200L, mcmc);
+        mcmc.initAndValidate();
+        File stateFile = File.createTempFile("readCountTemplate", ".state");
+        stateFile.deleteOnExit();
+        mcmc.setStateFile(stateFile.getAbsolutePath(), false);
+        mcmc.run();
+
+        double logP = mcmc.posteriorInput.get().getCurrentLogP();
+        assertTrue(Double.isFinite(logP), "BEAUti-generated XML has a non-finite posterior: " + logP);
+    }
+
+    /** Counts LikelihoodReadCountModel instances reachable as posterior sub-distributions. */
+    private static int countReadCountModelsIn(Distribution d) {
+        if (d instanceof LikelihoodReadCountModel) {
+            return 1;
+        }
+        int n = 0;
+        if (d instanceof CompoundDistribution) {
+            for (Distribution child : ((CompoundDistribution) d).pDistributions.get()) {
+                n += countReadCountModelsIn(child);
+            }
+        }
+        return n;
+    }
+
+    /**
+     * The analysis BEAUti generates must be the same model a hand-built one is. This rebuilds the
+     * read-count tree likelihood independently, from the separately imported alignment and the
+     * template's documented parameter values, over the tree BEAUti produced, and checks the two
+     * agree. A mis-wired template (wrong data on the likelihood, a missing readCountModel, the
+     * wrong site model) would show up here as a different likelihood, where a finiteness check
+     * alone would pass.
+     */
+    @Test
+    public void testGeneratedLikelihoodMatchesAHandBuiltOne() throws Exception {
+        File nexus = writeNexus();
+        BeautiDoc doc = beautiDocFor(nexus);
+        File out = File.createTempFile("readCountBeautiCompare", ".xml");
+        out.deleteOnExit();
+        doc.save(out);
+
+        MCMC mcmc = (MCMC) new XMLParser().parseFile(out);
+        mcmc.chainLengthInput.setValue(0L, mcmc);
+        mcmc.initAndValidate();
+        mcmc.robustlyCalcPosterior(mcmc.posteriorInput.get());
+
+        ReadCountTreeLikelihood generated = null;
+        for (Distribution d : ((CompoundDistribution) mcmc.posteriorInput.get()).pDistributions.get()) {
+            generated = findLikelihood(d);
+            if (generated != null) {
+                break;
+            }
+        }
+        assertTrue(generated != null, "no ReadCountTreeLikelihood in the generated analysis");
+
+        // rebuild the same likelihood from scratch: independently imported data, the template's
+        // parameter values written out here rather than read back from the generated model, and
+        // the tree BEAUti initialised (the starting tree is random, so it has to be shared)
+        ReadCountAlignment data = (ReadCountAlignment) new ReadCountNexusImporter()
+                .loadFile(nexus).get(0);
+
+        SimplexParam freqs = new SimplexParam(uniform(16, 0.0625));
+        Frequencies frequencies = new Frequencies();
+        frequencies.initByName("frequencies", freqs, "estimate", false);
+        RealVectorParam nucRates = new RealVectorParam(uniform(6, 1.0 / 6.0), PositiveReal.INSTANCE);
+        nucRates.setInputValue("keys", "AC AG AT CG CT GT");
+        nucRates.initAndValidate();
+        GT16 gt16 = new GT16();
+        gt16.initByName("nucRates", nucRates, "frequencies", frequencies);
+
+        SiteModel siteModel = new SiteModel();
+        siteModel.initByName("substModel", gt16, "gammaCategoryCount", 0,
+                "mutationRate", scalar(1.0), "shape", scalar(1.0),
+                "proportionInvariant", new RealScalarParam(0.0, UnitInterval.INSTANCE));
+
+        LikelihoodReadCountModel rcm = new LikelihoodReadCountModel();
+        rcm.initByName("readCount", data,
+                "epsilon", new RealScalarParam(0.01, UnitInterval.INSTANCE),
+                "delta", new RealScalarParam(0.2, UnitInterval.INSTANCE),
+                "t", scalar(5.0), "v", scalar(20.0),
+                "s", new RealVectorParam(uniform(data.getTaxaNumber(), 1.0), PositiveReal.INSTANCE),
+                "w1", scalar(1.0), "w2", scalar(5.0));
+
+        ReadCountTreeLikelihood handBuilt = new ReadCountTreeLikelihood();
+        handBuilt.initByName("data", data, "tree", generated.treeInput.get(),
+                "siteModel", siteModel, "readCountModel", rcm);
+
+        assertEquals(generated.calculateLogP(), handBuilt.calculateLogP(), 1e-9,
+                "the BEAUti-generated likelihood differs from an equivalent hand-built one");
+    }
+
+    private static ReadCountTreeLikelihood findLikelihood(Distribution d) {
+        if (d instanceof ReadCountTreeLikelihood) {
+            return (ReadCountTreeLikelihood) d;
+        }
+        if (d instanceof CompoundDistribution) {
+            for (Distribution child : ((CompoundDistribution) d).pDistributions.get()) {
+                ReadCountTreeLikelihood found = findLikelihood(child);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
+    }
+
+    private static RealScalarParam scalar(double v) {
+        return new RealScalarParam(v, PositiveReal.INSTANCE);
+    }
+
+    private static double[] uniform(int n, double v) {
+        double[] a = new double[n];
+        java.util.Arrays.fill(a, v);
+        return a;
+    }
+
+    @Test
+    public void testSwitchFromYuleToConstantCoalescent() throws Exception {
+        BeautiDoc doc = beautiDocFor(writeNexus());
+        doc.scrubAll(false, false);
+
+        @SuppressWarnings("unchecked")
+        var priors = (java.util.List<BEASTInterface>)
+                doc.pluginmap.get("prior").getInput("distribution").get();
+
+        BEASTInterface yule = priors.stream()
+                .filter(prior -> prior.getID() != null
+                        && prior.getID().startsWith("YuleModel.t:"))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Default Yule prior is missing"));
+
+        var coalescent = doc.beautiConfig.subTemplatesInput.get().stream()
+                .filter(template -> "CoalescentConstantPopulation".equals(template.getID()))
+                .findFirst()
+                .orElseThrow(() -> new AssertionError("Constant Coalescent template is missing"));
+
+        String treeSuffix = yule.getID().substring("YuleModel".length());
+        String birthRateId = "birthRate" + treeSuffix;
+        String scalerId = "YuleBirthRateScaler" + treeSuffix;
+
+        String birthRatePriorId = "YuleBirthRatePrior" + treeSuffix;
+
+        assertTrue(priors.stream()
+                        .anyMatch(prior -> birthRatePriorId.equals(prior.getID())),
+                "Default Yule birth-rate prior must be in the posterior");
+
+        var state = (beast.base.inference.State) doc.pluginmap.get("state");
+        var mcmc = (MCMC) doc.pluginmap.get("mcmc");
+
+        assertTrue(state.stateNodeInput.get().stream()
+                        .anyMatch(node -> birthRateId.equals(node.getID())),
+                "Default Yule birthRate must be in the MCMC state");
+
+        assertTrue(mcmc.operatorsInput.get().stream()
+                        .anyMatch(operator -> scalerId.equals(operator.getID())),
+                "Default Yule birth-rate scaler must be in the MCMC operator list");
+
+        var selection = new java.util.ArrayList<>(priors);
+        BEASTInterface replacement = coalescent.createSubNet(
+                doc.getContextFor(yule), selection, selection.indexOf(yule), true);
+        doc.connect(replacement, "prior", "distribution");
+
+        File out = File.createTempFile("readCountCoalescent", ".xml");
+        out.deleteOnExit();
+        doc.save(out);
+
+        assertFalse(priors.stream()
+                        .anyMatch(prior -> birthRatePriorId.equals(prior.getID())),
+                "Yule birth-rate prior remains in the posterior after switching to Coalescent");
+
+        assertFalse(state.stateNodeInput.get().stream()
+                        .anyMatch(node -> birthRateId.equals(node.getID())),
+                "Yule birthRate remains in the MCMC state after switching to Coalescent");
+
+        assertFalse(mcmc.operatorsInput.get().stream()
+                        .anyMatch(operator -> scalerId.equals(operator.getID())),
+                "Yule birth-rate scaler remains in the MCMC operator list after switching to Coalescent");
+
+        assertTrue(priors.stream().anyMatch(prior -> prior.getID() != null
+                && prior.getID().startsWith("CoalescentConstant.t:")));
+        assertFalse(priors.stream().anyMatch(prior -> prior.getID() != null
+                && prior.getID().startsWith("YuleModel.t:")));
+    }
+
+}
