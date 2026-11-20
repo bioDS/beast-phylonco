@@ -14,7 +14,7 @@ import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
-import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.alignment.ReadCountAlignment;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import phylonco.beast.evolution.operator.BactrianSubtreeScale;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
@@ -73,7 +73,7 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         BEASTInterface w2Param = context.getBEASTObject(w2Value);
         Tree tree = (Tree) context.getBEASTObject(TreeValue);
 
-        if (!(value instanceof ReadCount readCountData)) {
+        if (!(value instanceof ReadCountAlignment readCountData)) {
             throw new IllegalArgumentException("Require read count data");
         }
 
@@ -92,19 +92,19 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         likelihoodReadCountModel.initAndValidate();
 
         // ---- build the integrated tree likelihood (the single posterior factor) ----
-        // It builds its identity-pattern scaffold internally from the read counts (no data input).
+        // The ReadCountAlignment is the data: it carries the read counts and is the partition
+        // alignment the parent TreeLikelihood needs, so no genotype scaffold is involved. This is
+        // the same wiring the BEAUti template produces.
         PhyloCTMC phyloCTMC = (PhyloCTMC) alignmentValue.getGenerator();
 
         ReadCountTreeLikelihood treeLikelihood = new ReadCountTreeLikelihood();
         PhyloCTMCToBEAST.constructTreeAndBranchRate(phyloCTMC, treeLikelihood, context, true);
         SiteModel siteModel = PhyloCTMCToBEAST.constructSiteModel(phyloCTMC, context);
+        treeLikelihood.setInputValue("data", readCountData);
         treeLikelihood.setInputValue("siteModel", siteModel);
         treeLikelihood.setInputValue("readCountModel", likelihoodReadCountModel);
         treeLikelihood.initAndValidate();
         treeLikelihood.setID((value.getID() != null ? value.getID() : "readCount") + ".treeLikelihood");
-        // the scaffold was built internally during initAndValidate only to satisfy the parent
-        // TreeLikelihood; drop it so the XML contains no genotype alignment (rebuilt from read counts)
-        treeLikelihood.dropScaffoldInput();
 
         // ---- the genotype alignment A is integrated out: remove A and its tree likelihood from the
         //      model, so the XML contains no genotype alignment (the only data is the read counts) ----

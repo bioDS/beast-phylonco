@@ -133,15 +133,6 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         }
     }
 
-    /**
-     * Drops the internally-built scaffold from the {@code data} input so a generator does not
-     * serialise it into the XML (the integrated model has no genotype alignment — the only data is
-     * the read counts). BEAST rebuilds the scaffold from the read counts in {@link #initAndValidate}
-     * when it parses and initialises the run.
-     */
-    public void dropScaffoldInput() {
-        dataInput.setValue(null, this);
-    }
 
     /**
      * Builds the constant identity-pattern scaffold the parent {@code TreeLikelihood} requires, from

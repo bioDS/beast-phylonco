@@ -3,6 +3,7 @@ package phylonco.lphybeast.integration;
 import beast.base.parser.XMLParser;
 import lphybeast.LPhyBeastCMD;
 import org.junit.jupiter.api.Test;
+import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
 import picocli.CommandLine;
 
 import java.nio.file.Files;
@@ -12,6 +13,7 @@ import java.nio.file.Paths;
 import static beast.pkgmgmt.BEASTClassLoader.addServices;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -22,8 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  */
 public class ReadCountModelXMLTest {
 
-    // TODO: this test runs on Intellij but fails on maven command line
-    //    @Test
+    @Test
     public void testReadCountIntegratedXML() throws Exception {
         // Absolute paths: LPhyBeast switches the working dir to the script's folder, which would
         // break relative-path resolution in its input validation.
@@ -54,6 +55,13 @@ public class ReadCountModelXMLTest {
         assertTrue(xml.contains("SampledGenotypeLogger") || xml.contains("sampledGenotype"),
                 "XML must contain the SampledGenotypeLogger");
 
+        // the read counts are the partition alignment, the same shape the BEAUti template
+        // produces, so there is no separate ReadCount blob and no genotype scaffold
+        assertTrue(xml.contains("ReadCountAlignment"),
+                "read counts must be written as a ReadCountAlignment");
+        assertFalse(xml.contains("MutableAlignment"),
+                "XML must NOT contain a genotype scaffold alignment");
+
         // the old sampled-genotype machinery must be gone
         assertFalse(xml.contains("MATreeLikelihood"),
                 "XML must NOT contain the old MATreeLikelihood");
@@ -81,5 +89,29 @@ public class ReadCountModelXMLTest {
         state.setPosterior(posterior);
         double logP = state.robustlyCalcPosterior(posterior);
         assertTrue(Double.isFinite(logP), "initial posterior must be finite, was " + logP);
+
+        // the same alignment object is both the tree likelihood's data and the read-count model's
+        // data: one object, wired the way the BEAUti template wires it
+        ReadCountTreeLikelihood likelihood = findReadCountLikelihood(posterior);
+        assertTrue(likelihood != null, "no ReadCountTreeLikelihood in the generated posterior");
+        assertSame(likelihood.dataInput.get(), likelihood.readCountModelInput.get().getReadCount(),
+                "the tree likelihood's data and the read-count model's data must be the same object");
+    }
+
+    private static ReadCountTreeLikelihood findReadCountLikelihood(
+            beast.base.inference.Distribution d) {
+        if (d instanceof ReadCountTreeLikelihood) {
+            return (ReadCountTreeLikelihood) d;
+        }
+        if (d instanceof beast.base.inference.CompoundDistribution) {
+            for (beast.base.inference.Distribution child
+                    : ((beast.base.inference.CompoundDistribution) d).pDistributions.get()) {
+                ReadCountTreeLikelihood found = findReadCountLikelihood(child);
+                if (found != null) {
+                    return found;
+                }
+            }
+        }
+        return null;
     }
 }

@@ -1,57 +1,60 @@
 package phylonco.lphybeast.tobeast.values;
 
+import beast.base.evolution.alignment.Sequence;
 import lphy.core.model.Value;
 import lphybeast.BEASTContext;
 import lphybeast.ValueToBEAST;
-import phylonco.beast.evolution.datatype.ReadCount;
+import phylonco.beast.evolution.alignment.ReadCountAlignment;
 import phylonco.lphy.evolution.readcountmodel.ReadCountData;
 
-public class ReadCountToBEAST implements ValueToBEAST <ReadCountData, ReadCount> {
+/**
+ * Converts LPhy read-count data into a {@link ReadCountAlignment}: one sequence per cell, sites
+ * separated by ',' and the four base counts by ':'.
+ *
+ * <p>This is the same object BEAUti produces for an imported read-count file, so both routes into
+ * BEAST generate the same shape of XML, and the read counts are the partition alignment rather than
+ * a separate data object plus a genotype scaffold.</p>
+ *
+ * <p>The declared genotype datatype is left at the alignment's default: {@code ReadCountTreeLikelihood}
+ * sets it from the GT10/GT16 substitution model, which is authoritative.</p>
+ */
+public class ReadCountToBEAST implements ValueToBEAST<ReadCountData, ReadCountAlignment> {
 
     @Override
-    public ReadCount valueToBEAST(Value<ReadCountData> value, BEASTContext context) {
-//        ReadCount readCount = new ReadCount(value.value().getTaxa().getDimension(), value.value().nchar());
-        ReadCount readCount = new ReadCount();
-        String readC = new String();
-        int n = value.value().getTaxa().getDimension();
-        int l = value.value().nchar();
+    public ReadCountAlignment valueToBEAST(Value<ReadCountData> value, BEASTContext context) {
+        ReadCountData data = value.value();
+        int n = data.getTaxa().getDimension();
+        int l = data.nchar();
+        String[] taxaNames = data.getTaxaNames();
+
+        ReadCountAlignment alignment = new ReadCountAlignment();
         for (int i = 0; i < n; i++) {
-            // n taxa
+            StringBuilder counts = new StringBuilder();
             for (int j = 0; j < l; j++) {
-                // n sites
-                int countA = value.value().getState(i,j).getCount("A");
-                int countC = value.value().getState(i,j).getCount("C");
-                int countG = value.value().getState(i,j).getCount("G");
-                int countT = value.value().getState(i,j).getCount("T");
-                readC += String.format("%d:%d:%d:%d", countA, countC, countG, countT);
-                if (j < l - 1) {
-                    readC += ",";
+                if (j > 0) {
+                    counts.append(",");
                 }
-                // read count per site
+                counts.append(String.format("%d:%d:%d:%d",
+                        data.getState(i, j).getCount("A"),
+                        data.getState(i, j).getCount("C"),
+                        data.getState(i, j).getCount("G"),
+                        data.getState(i, j).getCount("T")));
             }
-            readC += "\n"; // new line character per taxa
+            alignment.setInputValue("sequence", new Sequence(taxaNames[i], counts.toString()));
         }
 
-        String[] taxaNames = value.value().getTaxaNames();
-        String taxaString = new String();
-        for (int i = 0; i < taxaNames.length; i++) {
-            taxaString += taxaNames[i];
-            taxaString += " ";
-        }
-        int[] sitesIndex = value.value().getSitesIndex();
-        String sitesString = new String();
+        int[] sitesIndex = data.getSitesIndex();
+        StringBuilder sites = new StringBuilder();
         for (int i = 0; i < sitesIndex.length; i++) {
-            sitesString += sitesIndex[i] - 1; //change to 0-based
-            sitesString += " ";
+            if (i > 0) {
+                sites.append(" ");
+            }
+            sites.append(sitesIndex[i] - 1); // LPhy site indices are 1-based
         }
+        alignment.setInputValue("sitesIndex", sites.toString());
 
-
-
-        readCount.setInputValue("value", readC);
-        readCount.setInputValue("taxaNames", taxaString);
-        readCount.setInputValue("sitesIndex", sitesString);
-        readCount.initAndValidate();
-        return readCount;
+        alignment.initAndValidate();
+        return alignment;
     }
 
     @Override
