@@ -25,7 +25,7 @@ public class ReadCountDataFilter extends DeterministicFunction<ReadCountData> {
             @ParameterInfo(name = "ww", narrativeName = "shape parameter of homozygous genotype(wild type)", description = "shape parameter of homozygous genotype in beta-binomial distribution, by default is 1.0", optional = true) Value<Double> ww,
             @ParameterInfo(name = "wa", narrativeName = "shape parameter of heterozygous genotype(mutant type)", description = "shape parameter of heterozygous genotype in beta-binomial distribution, by default is 2.0", optional = true) Value<Double> wa,
             @ParameterInfo(name = "lambda", narrativeName = "prior probability of mutation", description = "prior probability of a mutation occurring at a locus, by default is 0.0001", optional = true) Value<Double> lambda,
-            @ParameterInfo(name = "threshold", narrativeName = "threshold", description = "threshold for determining candidate status, by default is 0.95", optional = true) Value<Double> threshold) {
+            @ParameterInfo(name = "threshold", narrativeName = "threshold", description = "Maximum posterior probability of no mutation (default 0.05, equivalent to requiring mutation posterior > 0.95)", optional = true) Value<Double> threshold) {
         this.readCountData = readCountData;
         if (fw != null) {
             this.fw = fw.value();
