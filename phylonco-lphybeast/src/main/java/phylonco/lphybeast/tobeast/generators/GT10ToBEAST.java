@@ -51,9 +51,43 @@ public class GT10ToBEAST implements GeneratorToBEAST<GT10, phylonco.beast.evolut
 
         beastGT10.initAndValidate();
 
-        // beast3 TODO: the custom AVMN operators on the spec Simplex rates/frequencies need the
-        // spec-package operators (the classic AVMN/Transform Function path can't take a Simplex).
-        // Until then, rely on LPhyBeast's default operator scheduling for these parameters.
+        // An adaptive multivariate normal operator on the log-constrained-sum (log-ratio) scale of the
+        // genotype frequencies and the rates, so that every entry moves in proportion to its size (a
+        // delta exchange step suits the large entries or the small ones, not both), plus delta exchange
+        // at a low weight. On the CRC09-like sparse simulation this took the slowest frequency and rate
+        // from ESS 22-36 to 274-591 in 1M steps.
+        List<beast.base.spec.type.Tensor> simplexes = new ArrayList<>();
+        if (rates.isRandom()) simplexes.add(ratesParameter);
+        BEASTInterface freqs0 = context.getBEASTObject(gt10.getFreq());
+        if (freqs.isRandom() && freqs0 instanceof RealVectorParam fp) simplexes.add(fp);
+        if (!simplexes.isEmpty()) {
+            beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator avmn =
+                    new beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator();
+            List<beast.base.spec.inference.operator.Transform> transforms = new ArrayList<>();
+            for (beast.base.spec.type.Tensor p : simplexes) {
+                transforms.add(new beast.base.spec.inference.operator.Transform.LogConstrainedSumTransform(p, 1.0));
+            }
+            avmn.setInputValue("transformations", transforms);
+            avmn.setInputValue("beta", 0.05);
+            avmn.setInputValue("burnin", 100);
+            avmn.setInputValue("initial", 200);
+            avmn.setInputValue("weight", 10.0);
+            avmn.setID("substModel.AVMN");
+            avmn.initAndValidate();
+            context.addExtraOperator(avmn);
+            for (beast.base.spec.type.Tensor p : simplexes) {
+                RealVectorParam param = (RealVectorParam) p;
+                beast.base.spec.inference.operator.DeltaExchangeOperator delta =
+                        new beast.base.spec.inference.operator.DeltaExchangeOperator();
+                delta.setInputValue("rvparameter", param);
+                delta.setInputValue("delta", 1.0 / param.size());
+                delta.setInputValue("weight", 1.0);
+                delta.setID(param.getID() + ".deltaExchange");
+                delta.initAndValidate();
+                context.addExtraOperator(delta);
+                context.addSkipOperator((beast.base.inference.StateNode) param);
+            }
+        }
 
         return beastGT10;
     }

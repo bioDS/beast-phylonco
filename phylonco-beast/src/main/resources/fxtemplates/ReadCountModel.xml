@@ -373,8 +373,27 @@ ClusterTree/clusterType/,
             <operator id='rcW1Scaler.s:$(n)'      spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.8" weight="1" parameter="@rcW1.s:$(n)"/>
             <operator id='rcW2Scaler.s:$(n)'      spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.8" weight="1" parameter="@rcW2.s:$(n)"/>
             <operator id='rcSScaler.s:$(n)'       spec='beast.base.spec.inference.operator.ScaleOperator' scaleFactor="0.8" weight="3" parameter="@rcS.s:$(n)"/>
-            <operator id='gt16RatesExchanger.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta='0.16' weight='2' parameter='@gt16Rates.s:$(n)'/>
-            <operator id='gt16FreqsExchanger.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta='0.01' weight='2' parameter='@freqParameter.s:$(n)'/>
+            <operator id='gt16RatesExchanger.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta='0.16' weight='1' parameter='@gt16Rates.s:$(n)'/>
+            <operator id='gt16FreqsExchanger.s:$(n)' spec='beast.base.spec.inference.operator.DeltaExchangeOperator' delta='0.01' weight='1' parameter='@freqParameter.s:$(n)'/>
+            <!-- t * c, v * c^2 and every s / c leave the coverage model's likelihood unchanged (mean alpha t s,
+                 variance alpha t s + alpha^2 v s^2): the ridge along which t, v and s are correlated -->
+            <operator id='rcCoverageRidge.s:$(n)' spec='phylonco.beast.evolution.operator.PowerScaleOperator' power='1 2 -1' scaleFactor='0.1' weight='6'>
+                <parameter idref='rcT.s:$(n)'/>
+                <parameter idref='rcV.s:$(n)'/>
+                <parameter idref='rcS.s:$(n)'/>
+            </operator>
+            <!-- the error-model parameters together, on the log scale; each is added when estimated -->
+            <operator id='rcErrorAVMN.s:$(n)' spec='beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator'
+                      beta='0.05' burnin='400' initial='800' weight='4' allowNonsense='true'>
+                <transformations id='rcErrorAVMNLogTransform.s:$(n)' spec='beast.base.spec.inference.operator.Transform$LogTransform'/>
+            </operator>
+            <!-- the substitution rates and the genotype frequencies on the log-ratio scale, so that every
+                 entry moves in proportion to its size; each simplex has its own constrained-sum transform -->
+            <operator id='gtSubstAVMN.s:$(n)' spec='beast.base.spec.evolution.operator.AdaptableVarianceMultivariateNormalOperator'
+                      beta='0.05' burnin='400' initial='800' weight='4' allowNonsense='true'>
+                <transformations id='gtRatesAVMNSumTransform.s:$(n)' spec='beast.base.spec.inference.operator.Transform$LogConstrainedSumTransform' sum='1.0'/>
+                <transformations id='gtFreqsAVMNSumTransform.s:$(n)' spec='beast.base.spec.inference.operator.Transform$LogConstrainedSumTransform' sum='1.0'/>
+            </operator>
 
             <operator id="YuleModelTreeScaler.t:$(n)" spec='beast.base.spec.evolution.operator.ScaleTreeOperator' scaleFactor="0.5" weight="3" tree="@Tree.t:$(n)"/>
             <operator id='YuleModelUniformOperator.t:$(n)' spec='kernel.BactrianNodeOperator' weight="30" tree="@Tree.t:$(n)"/>
@@ -420,6 +439,15 @@ ClusterTree/clusterType/,
             <connect srcID='rcW2Scaler.s:$(n)'      targetID='mcmc' inputName='operator' if='inlikelihood(rcW2.s:$(n)) and rcW2.s:$(n)/estimate=true'>Scale heterozygous overdispersion of partition s:$(n)</connect>
             <connect srcID='gt16RatesExchanger.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'>Exchange GT16 rates of partition s:$(n)</connect>
             <connect srcID='gt16FreqsExchanger.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'>Exchange GT16 frequencies of partition s:$(n)</connect>
+            <connect srcID='rcCoverageRidge.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(rcT.s:$(n)) and rcT.s:$(n)/estimate=true and rcV.s:$(n)/estimate=true and rcS.s:$(n)/estimate=true'>Scale t, v and s along the coverage ridge of partition s:$(n)</connect>
+            <connect srcID='rcEpsilon.s:$(n)' targetID='rcErrorAVMNLogTransform.s:$(n)' inputName='f' if='inlikelihood(rcEpsilon.s:$(n)) and rcEpsilon.s:$(n)/estimate=true'/>
+            <connect srcID='rcDelta.s:$(n)'   targetID='rcErrorAVMNLogTransform.s:$(n)' inputName='f' if='inlikelihood(rcDelta.s:$(n)) and rcDelta.s:$(n)/estimate=true'/>
+            <connect srcID='rcW1.s:$(n)'      targetID='rcErrorAVMNLogTransform.s:$(n)' inputName='f' if='inlikelihood(rcW1.s:$(n)) and rcW1.s:$(n)/estimate=true'/>
+            <connect srcID='rcW2.s:$(n)'      targetID='rcErrorAVMNLogTransform.s:$(n)' inputName='f' if='inlikelihood(rcW2.s:$(n)) and rcW2.s:$(n)/estimate=true'/>
+            <connect srcID='rcErrorAVMN.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(rcEpsilon.s:$(n)) and rcEpsilon.s:$(n)/estimate=true'>Error-model parameters together (AVMN) of partition s:$(n)</connect>
+            <connect srcID='gt16Rates.s:$(n)'     targetID='gtRatesAVMNSumTransform.s:$(n)' inputName='f' if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'/>
+            <connect srcID='freqParameter.s:$(n)' targetID='gtFreqsAVMNSumTransform.s:$(n)' inputName='f' if='inlikelihood(freqParameter.s:$(n)) and freqParameter.s:$(n)/estimate=true'/>
+            <connect srcID='gtSubstAVMN.s:$(n)' targetID='mcmc' inputName='operator' if='inlikelihood(gt16Rates.s:$(n)) and gt16Rates.s:$(n)/estimate=true'>Rates and genotype frequencies together (AVMN) of partition s:$(n)</connect>
 
             <connect srcID='YuleModelTreeScaler.t:$(n)'      targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Scale tree of partition t:$(n)</connect>
             <connect srcID='YuleModelUniformOperator.t:$(n)' targetID='mcmc' inputName='operator' if='inposterior(Tree.t:$(n)) and Tree.t:$(n)/estimate=true'>Draw internal node heights of partition t:$(n)</connect>
