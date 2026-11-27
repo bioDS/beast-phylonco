@@ -26,6 +26,7 @@
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast"/>
         <provider classname="phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow"/>
         <provider classname="phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood"/>
+        <provider classname="phylonco.beast.evolution.likelihood.ThreadedReadCountTreeLikelihood"/>
         <provider classname="phylonco.beast.evolution.likelihood.BeagleReadCountTreeLikelihood"/>
         <provider classname="phylonco.beast.evolution.logger.SampledGenotypeLogger"/>
         <provider classname="phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel"/>
@@ -37,6 +38,7 @@
         <provider classname="phylonco.beast.evolution.datatype.ReadCount"/>
         <provider classname="phylonco.beast.evolution.alignment.ReadCountAlignment"/>
         <provider classname="phylonco.beast.evolution.operator.BactrianSubtreeScale"/>
+        <provider classname="phylonco.beast.evolution.operator.PowerScaleOperator"/>
         <provider classname="phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel"/>
         <!-- readcountmodel package is not yet migrated to BEAST3 spec classes - kept out of the
              active provider list until that migration is done.

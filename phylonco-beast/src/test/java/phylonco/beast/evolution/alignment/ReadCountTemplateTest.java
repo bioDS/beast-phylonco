@@ -160,6 +160,16 @@ public class ReadCountTemplateTest {
             assertTrue(xml.contains(param + "Prior.s:"), "no prior for " + param);
             assertTrue(xml.contains(param + "Scaler.s:"), "no operator for " + param);
         }
+        // the coverage ridge operator and the two AVMNs, with the estimated parameters in their transforms
+        for (String op : new String[]{"rcCoverageRidge", "rcErrorAVMN", "gtSubstAVMN"}) {
+            assertTrue(xml.contains("id=\"" + op + ".s:"), "missing operator " + op);
+        }
+        String errorAVMN = xml.substring(xml.indexOf("id=\"rcErrorAVMN.s:"));
+        errorAVMN = errorAVMN.substring(0, errorAVMN.indexOf("</operator>"));
+        for (String param : new String[]{"rcEpsilon", "rcDelta", "rcW1", "rcW2"}) {
+            assertTrue(errorAVMN.contains(param + ".s:"), param + " not in the error-model AVMN:\n" + errorAVMN);
+        }
+
         // the single size factor in the template was broadcast to one per cell
         assertTrue(state.contains("id=\"rcS.s:") && state.contains("dimension=\"4\""),
                 "rcS was not resized to the cell count:\n" + state);
@@ -169,6 +179,25 @@ public class ReadCountTemplateTest {
                 "the read-count alignment was added to the state");
 
         MCMC mcmc = (MCMC) new XMLParser().parseFile(out);
+
+        // each new operator proposes a valid state on the parsed model
+        beast.base.inference.State st = mcmc.startStateInput.get();
+        st.initAndValidate();
+        st.setPosterior(mcmc.posteriorInput.get());
+        st.robustlyCalcPosterior(mcmc.posteriorInput.get());
+        int exercised = 0;
+        for (beast.base.inference.Operator op : mcmc.operatorsInput.get()) {
+            String id = op.getID();
+            if (!id.startsWith("rcCoverageRidge") && !id.startsWith("rcErrorAVMN") && !id.startsWith("gtSubstAVMN")) continue;
+            exercised++;
+            for (int i = 0; i < 20; i++) {
+                st.store(i);
+                assertFalse(Double.isNaN(op.proposal()), id + " Hastings ratio");
+                st.restore();
+                st.setEverythingDirty(false);
+            }
+        }
+        assertEquals(3, exercised, "the three new operators are in the MCMC");
 
         // the read-count model must be wired in only through the tree likelihood. If a connector
         // also put it in the posterior it would be counted twice.

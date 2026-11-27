@@ -96,6 +96,67 @@ public class ReadCountModelXMLTest {
         assertTrue(likelihood != null, "no ReadCountTreeLikelihood in the generated posterior");
         assertSame(likelihood.dataInput.get(), likelihood.readCountModelInput.get().getReadCount(),
                 "the tree likelihood's data and the read-count model's data must be the same object");
+
+        // the operators: the coverage ridge operator in place of the up/down operators, an AVMN on
+        // the error-model parameters and one on the GT10 frequencies and rates (log-ratio scale)
+        assertTrue(xml.contains("id=\"coverage.ridge\"") && xml.contains("PowerScaleOperator")
+                && xml.contains("power=\"1 2 -1\""), "coverage ridge operator");
+        assertFalse(xml.contains("UpDownOperator"), "no UpDownOperator on the coverage parameters");
+        assertTrue(xml.contains("id=\"errorModel.AVMN\""), "error-model AVMN");
+        assertTrue(xml.contains("id=\"substModel.AVMN\"") && xml.contains("LogConstrainedSumTransform"),
+                "frequency and rate AVMN on the log-constrained-sum scale");
+        // each new operator proposes a valid state on the parsed model
+        for (beast.base.inference.Operator op : mcmc.operatorsInput.get()) {
+            String id = op.getID();
+            if (!"coverage.ridge".equals(id) && !"errorModel.AVMN".equals(id) && !"substModel.AVMN".equals(id)) continue;
+            for (int i = 0; i < 20; i++) {
+                state.store(i);
+                double logHR = op.proposal();
+                assertFalse(Double.isNaN(logHR), id + " Hastings ratio");
+                state.restore();
+                state.setEverythingDirty(false);
+            }
+        }
+        assertTrue(Double.isFinite(state.robustlyCalcPosterior(posterior)), "posterior after the proposals");
+    }
+
+    private static double initialPosterior(Path xmlFile) throws Exception {
+        beast.base.inference.MCMC mcmc = (beast.base.inference.MCMC) new XMLParser().parseFile(xmlFile.toFile());
+        beast.base.inference.State state = mcmc.startStateInput.get();
+        state.initAndValidate();
+        state.setPosterior(mcmc.posteriorInput.get());
+        return state.robustlyCalcPosterior(mcmc.posteriorInput.get());
+    }
+
+    /**
+     * -Dphylonco.threads=4 gives the threaded likelihood, with the same initial posterior as the same
+     * XML with the single-threaded class (two generations in one JVM need not draw the same data).
+     */
+    @Test
+    public void testThreadsProperty() throws Exception {
+        addServices(Paths.get("..", "phylonco-beast", "version.xml").toString());
+        addServices(Paths.get("..", "phylonco-beast", "lib", "MutableAlignment.version.xml").toString());
+        String old = System.getProperty("phylonco.threads");
+        System.setProperty("phylonco.threads", "4");
+        try {
+            Path script = Paths.get("src/test/resources/gt10ReadCountIntegrated.lphy").toAbsolutePath();
+            Path out = Paths.get("target/gt10ReadCountIntegrated_threads.xml").toAbsolutePath();
+            Files.deleteIfExists(out);
+            String[] args = {"-seed", "777", "-vf", "lphybeast.version.xml", "-vf", "version.xml", "-l", "2000",
+                    "-o", out.toString(), script.toString()};
+            assertEquals(0, new CommandLine(new LPhyBeastCMD()).execute(args));
+            String xml = Files.readString(out);
+            assertTrue(xml.contains("ThreadedReadCountTreeLikelihood") && xml.contains("threads=\"4\""), "threaded likelihood");
+            Path single = Paths.get("target/gt10ReadCountIntegrated_threads_as_single.xml").toAbsolutePath();
+            String asSingle = xml.replace("phylonco.beast.evolution.likelihood.ThreadedReadCountTreeLikelihood",
+                    "phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood").replace(" threads=\"4\"", "");
+            assertFalse(asSingle.contains("ThreadedReadCountTreeLikelihood"), "switched back to the single-threaded class");
+            Files.writeString(single, asSingle);
+            assertEquals(initialPosterior(single), initialPosterior(out), 0.0, "threads do not change the posterior");
+        } finally {
+            if (old == null) System.clearProperty("phylonco.threads");
+            else System.setProperty("phylonco.threads", old);
+        }
     }
 
     private static ReadCountTreeLikelihood findReadCountLikelihood(

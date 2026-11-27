@@ -237,10 +237,15 @@ public class LikelihoodReadCountModel extends Distribution {
         c_rLogGamma = new double[2][s.size()][maxReadDepth+1];
         c_wLogGamma = new double[2][maxReadDepth+1];
         rc_wPropLogGamma = new double[2][maxReadCount+1][10][4];
+        covA = new double[s.size()][maxReadDepth + 1];
+        covB = new double[s.size()][maxReadDepth + 1];
+        covX = new double[s.size()][maxReadDepth + 1];
+        covStamp = new int[s.size()][maxReadDepth + 1];
     }
 
     /** Builds the genotype-state -> nucleotide-pair propensity index table for the current datatype. */
     private void buildIndexTable() {
+        termPairs = null;
         if (datatype instanceof NucleotideDiploid10) {
             initGt10IndexTable();
         } else if (datatype instanceof NucleotideDiploid16) {
@@ -312,13 +317,36 @@ public class LikelihoodReadCountModel extends Distribution {
         }
     }
 
+    /** Runs body(from, to) over a range [0, n), possibly split across threads (default: serially). */
+    @FunctionalInterface
+    public interface RangeRunner {
+        void run(int n, java.util.function.BiConsumer<Integer, Integer> body);
+    }
+
+    private RangeRunner rangeRunner = (n, body) -> body.accept(0, n);
+
+    /**
+     * Lets the cache rebuilds split their loops (by cell for the coverage tables, by read count for
+     * the Dirichlet tables) across threads; every entry is computed as before, so the values do not
+     * change.
+     */
+    public void setRangeRunner(RangeRunner runner) {
+        rangeRunner = runner;
+    }
+
     private void updateNegativeBinomialCache(double tv, double vv, double[] sv) {
+        coverageStamp++;
         double mean1;
         double mean2;
         double variance1;
         double variance2;
 
-        for (int i = 0; i < s.size(); i++) {
+        rangeRunner.run(s.size(), (from, to) -> negativeBinomialCacheRange(tv, vv, sv, from, to));
+    }
+
+    private void negativeBinomialCacheRange(double tv, double vv, double[] sv, int from, int to) {
+        double mean1, mean2, variance1, variance2;
+        for (int i = from; i < to; i++) {
             mean1 = alpha[0] * tv * sv[i];
             mean2 = alpha[1] * tv * sv[i];
 
@@ -389,20 +417,27 @@ public class LikelihoodReadCountModel extends Distribution {
                     {y1, y1, y1, y0},   // TT or T_ 9
             };
 
-            for (int j = 0; j < rc_wPropLogGamma[i].length; j++) {
-                for (int k = 0; k < rc_wPropLogGamma[i][j].length; k++) {
-                    for (int l = 0; l < rc_wPropLogGamma[i][j][k].length; l++) {
-                        rc_wPropLogGamma[i][j][k][l] =
-                                LogGamma.value(propensities[k][l] + j);
+            final int wi = i;
+            final double[][] prop = propensities;
+            rangeRunner.run(rc_wPropLogGamma[wi].length, (from, to) -> {
+                for (int j = from; j < to; j++) {
+                    for (int k = 0; k < rc_wPropLogGamma[wi][j].length; k++) {
+                        for (int l = 0; l < rc_wPropLogGamma[wi][j][k].length; l++) {
+                            rc_wPropLogGamma[wi][j][k][l] =
+                                    LogGamma.value(prop[k][l] + j);
+                        }
                     }
                 }
-            }
+            });
         }
 
         for (int i = 0; i < c_wLogGamma.length; i++) {
-            for (int j = 0; j < c_wLogGamma[i].length; j++) {
-                c_wLogGamma[i][j] = LogGamma.value(wv[i] + j);
-            }
+            final int wi = i;
+            rangeRunner.run(c_wLogGamma[wi].length, (from, to) -> {
+                for (int j = from; j < to; j++) {
+                    c_wLogGamma[wi][j] = LogGamma.value(wv[wi] + j);
+                }
+            });
         }
 
         wLogGamma[0] = LogGamma.value(wv[0]);
@@ -410,6 +445,7 @@ public class LikelihoodReadCountModel extends Distribution {
     }
 
     private void updateDeltaCache(double del) {
+        coverageStamp++;
         deltaLog[0] = Math.log(del);
         deltaLog[1] = Math.log(1 - del);
     }
@@ -565,6 +601,157 @@ public class LikelihoodReadCountModel extends Distribution {
         }
         return logLikelihood;
     }
+    // ------------------------------------------------------------------ GT10 tip likelihoods by terms
+    //
+    // logLiklihoodRC evaluates, for each genotype, two or three Dirichlet-multinomial terms (the
+    // diploid one and the haploid ones under allelic dropout). Over the ten GT10 genotypes these are
+    // only a few distinct (overdispersion, propensity row) pairs, and they depend on epsilon, w1 and
+    // w2 alone, not on the coverage parameters t, v, s or on delta. ReadCountTreeLikelihood caches
+    // them per cell and site (dirichletTerms) and rebuilds the ten likelihoods from the cache
+    // (logLikelihoodsFromTerms) with the same arithmetic as logLiklihoodRC, so the results are
+    // identical.
+
+    private int[][] termPairs;    // distinct {wIndex, propensity row}
+    private int[][] genotypeTerms; // genotype -> indices into termPairs: diploid, haploid(s)
+
+    private void ensureTermPairs() {
+        if (termPairs != null) return;
+        if (!(datatype instanceof NucleotideDiploid10)) {
+            throw new IllegalStateException("tip likelihoods by terms are implemented for GT10 only");
+        }
+        java.util.List<int[]> pairs = new java.util.ArrayList<>();
+        genotypeTerms = new int[10][];
+        for (int g = 0; g < 10; g++) {
+            int[] idx = gt10IndexTable[g];
+            boolean hom = homozygous(g);
+            int n = hom ? 2 : 3;
+            genotypeTerms[g] = new int[n];
+            for (int k = 0; k < n; k++) {
+                int[] pair = {k == 0 && !hom ? 1 : 0, idx[k]};
+                int found = -1;
+                for (int q = 0; q < pairs.size(); q++) {
+                    if (pairs.get(q)[0] == pair[0] && pairs.get(q)[1] == pair[1]) found = q;
+                }
+                if (found < 0) { pairs.add(pair); found = pairs.size() - 1; }
+                genotypeTerms[g][k] = found;
+            }
+        }
+        termPairs = pairs.toArray(new int[0][]);
+    }
+
+    /** Number of distinct Dirichlet-multinomial terms per cell and site (GT10). */
+    public int dirichletTermCount() {
+        ensureTermPairs();
+        return termPairs.length;
+    }
+
+    /**
+     * The distinct Dirichlet-multinomial log terms of one cell and site, written to out[off ...].
+     * They depend on epsilon, w1 and w2 only; call initialize() first.
+     */
+    public void dirichletTerms(int[] readCountNumbers, int coverage, double[] out, int off) {
+        ensureTermPairs();
+        for (int q = 0; q < termPairs.length; q++) {
+            int w = termPairs[q][0], row = termPairs[q][1];
+            out[off + q] = logLikelihoodDirichletMD(w, coverage, readCountNumbers, wPropensitiesLogGamma[w][row], row);
+        }
+    }
+
+    /**
+     * logLiklihoodRC for each of the ten GT10 genotypes, from the cell and site's Dirichlet terms
+     * (dirichletTerms at the current epsilon, w1, w2) and the current coverage and dropout
+     * parameters; the same arithmetic as logLiklihoodRC, so the values are identical.
+     */
+    public void logLikelihoodsFromTerms(double[] terms, int off, int coverage, int taxonIndex, double[] out) {
+        ensureTermPairs();
+        double covDiploid = logCoverageLikelihood(coverage, negr2[taxonIndex], rGammaLog[1][taxonIndex],
+                p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]);
+        double covHaploid = logCoverageLikelihood(coverage, negr1[taxonIndex], rGammaLog[0][taxonIndex],
+                p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]);
+        for (int g = 0; g < 10; g++) {
+            int[] k = genotypeTerms[g];
+            double logPart0 = terms[off + k[0]] + covDiploid + deltaLog[1];
+            if (k.length == 2) {
+                double logPart1 = terms[off + k[1]] + covHaploid + deltaLog[0];
+                double max = Math.max(logPart0, logPart1);
+                out[g] = max + Math.log(Math.exp(logPart0 - max) + Math.exp(logPart1 - max));
+            } else {
+                double logPart1 = log0_5 + terms[off + k[1]] + covHaploid + deltaLog[0];
+                double logPart2 = log0_5 + terms[off + k[2]] + covHaploid + deltaLog[0];
+                double max = Math.max(logPart0, Math.max(logPart1, logPart2));
+                out[g] = max + Math.log(Math.exp(logPart0 - max) + Math.exp(logPart1 - max) + Math.exp(logPart2 - max));
+            }
+        }
+    }
+
+    /**
+     * Linear-space form of the cached terms for tipPartialsFromTerms: out[off + q] = exp(terms[q] - max)
+     * for the cell and site's terms (dirichletTerms), and out[off + count] = max.
+     */
+    public void linearTerms(double[] terms, int termOff, double[] out, int off) {
+        int n = dirichletTermCount();
+        double max = Double.NEGATIVE_INFINITY;
+        for (int q = 0; q < n; q++) max = Math.max(max, terms[termOff + q]);
+        for (int q = 0; q < n; q++) out[off + q] = Math.exp(terms[termOff + q] - max);
+        out[off + n] = max;
+    }
+
+    // coverage and dropout weights by cell and depth: for a diploid read set exp(covDiploid +
+    // log(1 - delta) - X), for a haploid one exp(covHaploid + log(delta) - X), and X; rebuilt lazily
+    // after any change to t, v, s or delta
+    private double[][] covA, covB, covX;     // [taxon][depth]
+    private int[][] covStamp;                // entry valid when equal to coverageStamp
+    private int coverageStamp = 1;
+
+    // allocated in initAndValidate, so that threads filling different cells' rows share no state
+    private void ensureCoverageWeight(int taxonIndex, int coverage) {
+        if (covStamp[taxonIndex][coverage] != coverageStamp) {
+            double lA = logCoverageLikelihood(coverage, negr2[taxonIndex], rGammaLog[1][taxonIndex],
+                    p2Log[0][taxonIndex], p2Log[1][taxonIndex], c_rLogGamma[1][taxonIndex][coverage]) + deltaLog[1];
+            double lB = logCoverageLikelihood(coverage, negr1[taxonIndex], rGammaLog[0][taxonIndex],
+                    p1Log[0][taxonIndex], p1Log[1][taxonIndex], c_rLogGamma[0][taxonIndex][coverage]) + deltaLog[0];
+            double x = Math.max(lA, lB);
+            covA[taxonIndex][coverage] = Math.exp(lA - x);
+            covB[taxonIndex][coverage] = Math.exp(lB - x);
+            covX[taxonIndex][coverage] = x;
+            covStamp[taxonIndex][coverage] = coverageStamp;
+        }
+    }
+
+    /**
+     * Max-normalised tip partials of one cell and site for the ten GT10 genotypes, written to
+     * out[outOff ...], from its cached terms in log form (terms, dirichletTerms) and linear form
+     * (linear, linearTerms); returns the log of the normalising factor, so that
+     * log P(reads | g) = log(out[g]) + return value, equal to logLiklihoodRC up to rounding. A
+     * cell and site whose terms would underflow in linear form is computed by logLikelihoodsFromTerms.
+     */
+    public double tipPartialsFromTerms(double[] terms, int termOff, double[] linear, int linOff, int coverage,
+                                       int taxonIndex, double[] out, int outOff, double[] scratch) {
+        ensureTermPairs();
+        ensureCoverageWeight(taxonIndex, coverage);
+        double a = covA[taxonIndex][coverage], b = covB[taxonIndex][coverage];
+        double m = 0.0;
+        for (int g = 0; g < 10; g++) {
+            int[] k = genotypeTerms[g];
+            double v = k.length == 2
+                    ? a * linear[linOff + k[0]] + b * linear[linOff + k[1]]
+                    : a * linear[linOff + k[0]] + 0.5 * b * (linear[linOff + k[1]] + linear[linOff + k[2]]);
+            out[outOff + g] = v;
+            if (v > m) m = v;
+        }
+        if (m > 1e-250) {
+            double inv = 1.0 / m;
+            for (int g = 0; g < 10; g++) out[outOff + g] *= inv;
+            return Math.log(m) + linear[linOff + termPairs.length] + covX[taxonIndex][coverage];
+        }
+        // underflow in linear form: the log-space computation
+        logLikelihoodsFromTerms(terms, termOff, coverage, taxonIndex, scratch);
+        double max = Double.NEGATIVE_INFINITY;
+        for (int g = 0; g < 10; g++) if (scratch[g] > max) max = scratch[g];
+        for (int g = 0; g < 10; g++) out[outOff + g] = Math.exp(scratch[g] - max);
+        return max;
+    }
+
     //calculate the probability at each site given read count(coverage)(negative-binomial distribution)
     public double logCoverageLikelihood(int c, double r, double rGammaLog, double pLog0, double pLog1, double c_rLogGamma) {
         // negative binomial pmf

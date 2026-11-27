@@ -40,6 +40,7 @@ module phylonco.beast {
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow,
             phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood,
+            phylonco.beast.evolution.likelihood.ThreadedReadCountTreeLikelihood,
             phylonco.beast.evolution.likelihood.BeagleReadCountTreeLikelihood,
             phylonco.beast.evolution.logger.SampledGenotypeLogger,
             phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel,
@@ -51,6 +52,7 @@ module phylonco.beast {
             phylonco.beast.evolution.datatype.ReadCount,
             phylonco.beast.evolution.alignment.ReadCountAlignment,
             phylonco.beast.evolution.operator.BactrianSubtreeScale,
+            phylonco.beast.evolution.operator.PowerScaleOperator,
             phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
             // readcountmodel package is not yet migrated to BEAST3 spec classes - kept out of
             // the active provider list until that migration is done.

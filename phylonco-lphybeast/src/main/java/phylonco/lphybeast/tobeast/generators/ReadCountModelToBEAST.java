@@ -16,11 +16,12 @@ import lphybeast.GeneratorToBEAST;
 import lphybeast.tobeast.generators.PhyloCTMCToBEAST;
 import phylonco.beast.evolution.alignment.ReadCountAlignment;
 import phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood;
+import phylonco.beast.evolution.likelihood.ThreadedReadCountTreeLikelihood;
 import phylonco.beast.evolution.operator.BactrianSubtreeScale;
+import phylonco.beast.evolution.operator.PowerScaleOperator;
 import phylonco.beast.evolution.readcountmodel.LikelihoodReadCountModel;
 import phylonco.lphy.evolution.readcountmodel.ReadCountModel;
 
-import beast.base.spec.evolution.operator.UpDownOperator;
 import beast.base.spec.type.Tensor;
 import phylonco.lphybeast.loggerhelper.AlignmentLoggerHelper;
 
@@ -46,6 +47,22 @@ import static lphybeast.BEASTContext.getOperatorWeight;
  * can drive the {@code Function}/{@code StateNode}-based AVMN and up/down operators below.</p>
  */
 public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, ReadCountTreeLikelihood> {
+
+    /**
+     * Threads per likelihood evaluation: the system property phylonco.threads (e.g.
+     * -Dphylonco.threads=8 for LPhyBEAST); above 1 the XML uses ThreadedReadCountTreeLikelihood,
+     * which computes exactly the same likelihood.
+     */
+    static int threads() {
+        String t = System.getProperty("phylonco.threads");
+        if (t == null || t.isBlank()) return 1;
+        try {
+            return Math.max(1, Integer.parseInt(t.trim()));
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("phylonco.threads must be an integer, got '" + t + "'");
+        }
+    }
+
     @Override
     public ReadCountTreeLikelihood generatorToBEAST(ReadCountModel generator, BEASTInterface value, BEASTContext context) {
         // ---- pull the LPhy parameter values ----
@@ -97,7 +114,10 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         // the same wiring the BEAUti template produces.
         PhyloCTMC phyloCTMC = (PhyloCTMC) alignmentValue.getGenerator();
 
-        ReadCountTreeLikelihood treeLikelihood = new ReadCountTreeLikelihood();
+        int threads = threads();
+        ReadCountTreeLikelihood treeLikelihood = threads > 1 ? new ThreadedReadCountTreeLikelihood()
+                : new ReadCountTreeLikelihood();
+        if (threads > 1) treeLikelihood.setInputValue("threads", threads);
         PhyloCTMCToBEAST.constructTreeAndBranchRate(phyloCTMC, treeLikelihood, context, true);
         SiteModel siteModel = PhyloCTMCToBEAST.constructSiteModel(phyloCTMC, context);
         treeLikelihood.setInputValue("data", readCountData);
@@ -124,23 +144,25 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         AlignmentLoggerHelper alignmentLoggerHelper = new AlignmentLoggerHelper(treeLikelihood, siteModel, likelihoodReadCountModel, readCountData, context);
         context.addExtraLogger(alignmentLoggerHelper);
 
-        // beast3 TODO: test the custom AVMN and up/down operators for the coverage parameters
-
-        // add UpDownOperator to t (up), v (up),  and s (down)
-        List<Tensor> upParam = new ArrayList();
-        List<Tensor> downParam = new ArrayList();
-        upParam.add((RealScalarParam) tParam);
-        upParam.add((RealScalarParam) vParam);
-        addUpDownOperator(context, upParam, downParam, "readCountModel.tv.UpDownOperator");
-        downParam.add((RealVectorParam) sParam);
-        addUpDownOperator(context, upParam, downParam, "readCountModel.stv.UpDownOperator");
+        // the coverage model is unchanged by t * c, v * c^2 and every s / c (mean alpha t s, variance
+        // alpha t s + alpha^2 v s^2), the ridge along which the posterior of t, v and s runs; the
+        // ridge operator moves along it (UpDownOperator scales v by c and leaves it)
+        addCoverageRidgeOperator(context, (RealScalarParam) tParam, (RealScalarParam) vParam, (RealVectorParam) sParam);
 
         // add AVMN operator to log transformed t, v, and s
         List<Tensor> avmnParam = new ArrayList();
         avmnParam.add((RealScalarParam) tParam);
         avmnParam.add((RealVectorParam) sParam);
         avmnParam.add((RealScalarParam) vParam);
-        addAVMNOperator(context, avmnParam);
+        addAVMNOperator(context, avmnParam, "readCountModel.AVMN", 25.0);
+
+        // the error-model parameters together (log scale): epsilon trades off against w1, w2, delta
+        List<Tensor> errorParam = new ArrayList();
+        errorParam.add((RealScalarParam) epsilonParam);
+        errorParam.add((RealScalarParam) deltaParam);
+        errorParam.add((RealScalarParam) w1Param);
+        errorParam.add((RealScalarParam) w2Param);
+        addAVMNOperator(context, errorParam, "errorModel.AVMN", 10.0);
 
         context.addSkipOperator((StateNode) tParam);
         context.addSkipOperator((StateNode) vParam);
@@ -150,24 +172,22 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         return treeLikelihood;
     }
 
-    // add up down operator
-    private void addUpDownOperator(BEASTContext context, List<? extends Tensor> upArgs, List<? extends Tensor> downArgs, String id) {
-        UpDownOperator operator = new UpDownOperator();
-        operator.setID(id);
-        for (Tensor arg: upArgs) {
-            operator.setInputValue("up", arg);
-        }
-        for (Tensor arg: downArgs) {
-            operator.setInputValue("down", arg);
-        }
-        operator.setInputValue("scaleFactor", 0.75);
-        operator.setInputValue("weight", 15.0);
+    // t * c, v * c^2, s / c: the coverage model's likelihood is unchanged along this ridge
+    private void addCoverageRidgeOperator(BEASTContext context, RealScalarParam t, RealScalarParam v, RealVectorParam s) {
+        PowerScaleOperator operator = new PowerScaleOperator();
+        operator.setID("coverage.ridge");
+        operator.setInputValue("parameter", t);
+        operator.setInputValue("parameter", v);
+        operator.setInputValue("parameter", s);
+        operator.setInputValue("power", "1 2 -1");
+        operator.setInputValue("scaleFactor", 0.1);
+        operator.setInputValue("weight", 30.0);
         operator.initAndValidate();
         context.addExtraOperator(operator);
     }
 
-    // add AVMN operator
-    private void addAVMNOperator(BEASTContext context, List<? extends Tensor> params) {
+    // add AVMN operator on log-transformed parameters
+    private void addAVMNOperator(BEASTContext context, List<? extends Tensor> params, String id, double weight) {
         AdaptableVarianceMultivariateNormalOperator operator = new AdaptableVarianceMultivariateNormalOperator();
         List<Transform> transforms = new ArrayList<>();
         for (Tensor p: params) {
@@ -177,8 +197,8 @@ public class ReadCountModelToBEAST implements GeneratorToBEAST<ReadCountModel, R
         operator.setInputValue("beta", 0.05);
         operator.setInputValue("burnin", 100);
         operator.setInputValue("initial", 200);
-        operator.setInputValue("weight", 25.0);
-        operator.setID("readCountModel.AVMN");
+        operator.setInputValue("weight", weight);
+        operator.setID(id);
         operator.initAndValidate();
         context.addExtraOperator(operator);
     }
