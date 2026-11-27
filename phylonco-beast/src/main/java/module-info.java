@@ -40,6 +40,7 @@ module phylonco.beast {
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorFast,
             phylonco.beast.evolution.likelihood.TreeLikelihoodWithErrorSlow,
             phylonco.beast.evolution.likelihood.ReadCountTreeLikelihood,
+            phylonco.beast.evolution.likelihood.ThreadedReadCountTreeLikelihood,
             phylonco.beast.evolution.likelihood.BeagleReadCountTreeLikelihood,
             phylonco.beast.evolution.logger.SampledGenotypeLogger,
             phylonco.beast.evolution.substitutionmodel.BinarySubstitutionModel,
