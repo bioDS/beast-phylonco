@@ -12,6 +12,7 @@ import beast.base.evolution.sitemodel.SiteModelInterface;
 import beast.base.evolution.substitutionmodel.SubstitutionModel;
 import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.Tree;
+import beast.base.evolution.tree.TreeInterface;
 import beast.base.inference.StateNode;
 import mutablealignment.MutableAlignment;
 import phylonco.beast.evolution.alignment.ReadCountAlignment;
@@ -367,6 +368,84 @@ public class ReadCountTreeLikelihood extends TreeLikelihoodWithErrorFast {
         double core = super.calculateLogP();
         logP = core + globalLogOffset;
         return logP;
+    }
+
+    // ------------------------------------------------------------------ genotype sampling
+
+    /**
+     * Draws a joint sample of the genotypes of every node at every site, given the read counts and
+     * the current tree and parameters: per site a rate category and the root genotype (the root
+     * frequencies times the root partials), then
+     * each child's genotype given its parent's (transition matrix times the child's partials) down
+     * the tree. Reads the likelihood core's current partials and transition matrices, so the last
+     * calculateLogP must be at the current state (as at logging time in an MCMC run, or after an
+     * explicit calculateLogP).
+     *
+     * @param random     source of uniform numbers in [0, 1)
+     * @param nodeStates nodeStates[site][node number] receives the sampled genotypes
+     */
+    public void sampleGenotypes(java.util.function.DoubleSupplier random, int[][] nodeStates) {
+        TreeInterface tree = treeInput.get();
+        final int S = substitutionModel.getStateCount();
+        final int nCat = m_siteModel.getCategoryCount();
+        final int nNodes = tree.getNodeCount();
+        final int nPatterns = dataInput.get().getPatternCount();
+        double[][] partials = new double[nNodes][nCat * nPatterns * S];
+        double[][][] matrices = new double[nNodes][nCat][S * S];
+        for (Node node : tree.getNodesAsArray()) {
+            int nr = node.getNr();
+            nodePartials(nr, partials[nr]);
+            if (!node.isRoot()) {
+                for (int c = 0; c < nCat; c++) branchMatrix(nr, c, matrices[nr][c]);
+            }
+        }
+        double[] rootDist = rootFrequenciesInput.get() != null
+                ? rootFrequenciesInput.get().getFreqs() : substitutionModel.getFrequencies();
+        Node root = tree.getRoot();
+        double[] proportions = m_siteModel.getCategoryProportions(root);
+        double[] w = new double[Math.max(S, nCat)];
+        for (int k = 0; k < nPatterns; k++) {
+            double[] rp = partials[root.getNr()];
+            // rate category, then the root genotype
+            for (int c = 0; c < nCat; c++) {
+                double sum = 0.0;
+                for (int g = 0, v = (c * nPatterns + k) * S; g < S; g++, v++) sum += rootDist[g] * rp[v];
+                w[c] = proportions[c] * sum;
+            }
+            int cat = draw(w, nCat, random);
+            for (int g = 0, v = (cat * nPatterns + k) * S; g < S; g++, v++) w[g] = rootDist[g] * rp[v];
+            nodeStates[k][root.getNr()] = draw(w, S, random);
+            sampleDown(root, k, cat, nPatterns, S, partials, matrices, nodeStates, w, random);
+        }
+    }
+
+    private void sampleDown(Node node, int k, int cat, int nPatterns, int S, double[][] partials,
+                            double[][][] matrices, int[][] nodeStates, double[] w,
+                            java.util.function.DoubleSupplier random) {
+        int parent = nodeStates[k][node.getNr()];
+        for (Node child : node.getChildren()) {
+            int nr = child.getNr();
+            double[] P = matrices[nr][cat], cp = partials[nr];
+            for (int g = 0, v = (cat * nPatterns + k) * S; g < S; g++, v++) w[g] = P[parent * S + g] * cp[v];
+            nodeStates[k][nr] = draw(w, S, random);
+            if (!child.isLeaf()) sampleDown(child, k, cat, nPatterns, S, partials, matrices, nodeStates, w, random);
+        }
+    }
+
+    /** Index drawn with probability proportional to w[0..n-1]. */
+    private static int draw(double[] w, int n, java.util.function.DoubleSupplier random) {
+        double total = 0.0;
+        for (int i = 0; i < n; i++) total += w[i];
+        if (!(total > 0.0)) {
+            throw new IllegalStateException("genotype sampling: all weights are zero (partials underflowed)");
+        }
+        double u = random.getAsDouble() * total, cum = 0.0;
+        for (int i = 0; i < n; i++) {
+            cum += w[i];
+            if (u < cum) return i;
+        }
+        for (int i = n - 1; i >= 0; i--) if (w[i] > 0) return i;
+        return n - 1;
     }
 
     @Override

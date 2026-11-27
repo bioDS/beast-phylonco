@@ -30,10 +30,20 @@ import java.util.Arrays;
  * genotype. Sampling the ancestral (internal) states is what conditions the leaf genotypes on the
  * tree; only the leaf genotypes are emitted here (one taxon-named column each), the direct analog
  * of the old MutableAlignment log but now conditioned on the tree rather than read counts alone.</p>
+ *
+ * <p>The sample is drawn by {@link ReadCountTreeLikelihood#sampleGenotypes} from the likelihood's
+ * current partials and transition matrices, so it uses the same model as the likelihood (root
+ * frequencies, rate categories) and costs only the
+ * down-pass. The likelihood is the treeLikelihood input or, when that is not given, the
+ * ReadCountTreeLikelihood that uses the readCountModel. Without either (a read-count model not
+ * used by a ReadCountTreeLikelihood) the logger recomputes the partials itself, with the
+ * substitution model's frequencies at the root.</p>
  */
 @Description("Tree-aware sample of per-cell genotypes (leaf states from a joint ancestral down-pass)")
 public class SampledGenotypeLogger extends BEASTObject implements Loggable {
 
+    final public Input<ReadCountTreeLikelihood> treeLikelihoodInput = new Input<>("treeLikelihood",
+            "the read-count tree likelihood to sample from (default: the one that uses readCountModel)");
     final public Input<Tree> treeInput = new Input<>(
             "tree", "phylogenetic tree", Input.Validate.REQUIRED);
     final public Input<SiteModelInterface.Base> siteModelInput = new Input<>(
@@ -71,6 +81,10 @@ public class SampledGenotypeLogger extends BEASTObject implements Loggable {
     private String[] rcTaxaNames;
     // accumulates the sampled genotype string for each ReadCount taxon across sites
     private char[][] sampledSeq;        // [rcTaxon][site]
+
+    private ReadCountTreeLikelihood likelihood;   // resolved at the first log
+    private boolean resolved = false;
+    private int[][] nodeStates;                    // [site][node]
 
     @Override
     public void initAndValidate() {
@@ -124,14 +138,46 @@ public class SampledGenotypeLogger extends BEASTObject implements Loggable {
 
     @Override
     public void log(long sample, PrintStream out) {
-        // refresh the read-count caches from the current parameter values
-        readCountModel.initialize();
-        for (int site = 0; site < numSites; site++) {
-            sampleSite(site);
+        ReadCountTreeLikelihood l = likelihood();
+        if (l != null) {
+            if (nodeStates == null) nodeStates = new int[numSites][numNodes];
+            l.sampleGenotypes(Randomizer::nextDouble, nodeStates);
+            for (Node leaf : tree.getExternalNodes()) {
+                int rcIdx = nodeNrToRCIndex[leaf.getNr()];
+                for (int site = 0; site < numSites; site++) {
+                    sampledSeq[rcIdx][site] = datatype.getCharacter(nodeStates[site][leaf.getNr()]).charAt(0);
+                }
+            }
+        } else {
+            // refresh the read-count caches from the current parameter values
+            readCountModel.initialize();
+            for (int site = 0; site < numSites; site++) {
+                sampleSite(site);
+            }
         }
         for (int t = 0; t < rcTaxaNames.length; t++) {
             out.print(new String(sampledSeq[t]) + "\t");
         }
+    }
+
+    /** The likelihood to sample from: the input, or the ReadCountTreeLikelihood using readCountModel. */
+    public ReadCountTreeLikelihood likelihood() {
+        if (!resolved) {
+            likelihood = treeLikelihoodInput.get();
+            if (likelihood == null) {
+                for (beast.base.core.BEASTInterface o : readCountModel.getOutputs()) {
+                    if (o instanceof ReadCountTreeLikelihood rctl && rctl.treeInput.get() == tree) {
+                        likelihood = rctl;
+                        break;
+                    }
+                }
+            }
+            if (likelihood != null && likelihood.treeInput.get() != tree) {
+                throw new IllegalArgumentException("treeLikelihood uses a different tree from the logger's");
+            }
+            resolved = true;
+        }
+        return likelihood;
     }
 
     /** Joint sample of all node genotypes at one site (ported from GibbsSiteOperator.sampleSite). */

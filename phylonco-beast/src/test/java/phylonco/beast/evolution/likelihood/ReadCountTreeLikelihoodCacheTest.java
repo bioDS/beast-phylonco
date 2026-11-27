@@ -2,6 +2,7 @@ package phylonco.beast.evolution.likelihood;
 
 import beast.base.evolution.alignment.Alignment;
 import beast.base.evolution.alignment.Sequence;
+import beast.base.evolution.tree.Node;
 import beast.base.evolution.tree.TreeParser;
 import beast.base.spec.domain.PositiveReal;
 import beast.base.spec.evolution.sitemodel.SiteModel;
@@ -25,6 +26,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
  * the Dirichlet-multinomial terms reproduce LikelihoodReadCountModel.logLiklihoodRC, and along MCMC-like
  * sequences of accepted and rejected read-count moves the likelihood equals one built from scratch,
  * with the terms recomputed only for epsilon, w1 and w2 and only the moved cell rebuilt for one size factor.
+ * Genotype sampling through the likelihood matches the exact posterior marginals of the genotypes.
  */
 public class ReadCountTreeLikelihoodCacheTest {
 
@@ -37,7 +39,6 @@ public class ReadCountTreeLikelihoodCacheTest {
             + "8:1:0:0,0:7:0:0,0:0:0:9\n"
             + "3:5:0:0,0:5:6:0,5:0:0:0\n"
             + "10:0:0:0,0:0:8:0,2:0:0:6";
-
 
     @BeforeAll
     public static void setUpClass() {
@@ -124,7 +125,7 @@ public class ReadCountTreeLikelihoodCacheTest {
     }
 
     private static final double[] SIZE = {1.0, 0.8, 1.2, 1.1};
-
+    private static final String[] GT10 = {"AA", "AC", "AG", "AT", "CC", "CG", "CT", "GG", "GT", "TT"};
 
     private static Frequencies germlineRoot(double het) {
         double[] f = new double[N];
@@ -266,5 +267,99 @@ public class ReadCountTreeLikelihoodCacheTest {
                         "state after move " + which + (accept ? " accepted" : " rejected"));
             }
         }
+    }
+
+    // ------------------------------------------------ genotype sampling
+
+    /**
+     * sampleGenotypes draws from the posterior of the genotypes given the reads: the sampled marginals
+     * of every leaf and of the root match the exact ones (summing over the root and both internal
+     * nodes of the 4-cell tree).
+     */
+    @Test
+    public void testSampleGenotypesMatchesExactMarginals() {
+        ReadCountTreeLikelihood l = likelihood("rootFrequencies", germlineRoot(0.01));
+        l.calculateLogP();
+        TreeParser tree = (TreeParser) l.treeInput.get();
+        GT10 subs = (GT10) ((SiteModel) l.siteModelInput.get()).substModelInput.get();
+        LikelihoodReadCountModel rcm = l.readCountModelInput.get();
+        rcm.initialize();
+        Node root = tree.getRoot(), x = root.getLeft(), y = root.getRight();
+        double[][] P = new double[tree.getNodeCount()][N * N];
+        for (Node node : tree.getNodesAsArray()) {
+            if (!node.isRoot()) subs.getTransitionProbabilities(node, node.getLength(), 0.0, 1.0, P[node.getNr()]);
+        }
+        double[] pi = germlineRoot(0.01).getFreqs();
+        int nSamples = 20000;
+        int[][] states = new int[3][tree.getNodeCount()];
+        java.util.Random random = new java.util.Random(3);
+        int[][][] counts = new int[3][tree.getNodeCount()][N];
+        for (int i = 0; i < nSamples; i++) {
+            l.sampleGenotypes(random::nextDouble, states);
+            for (int k = 0; k < 3; k++) for (int nr = 0; nr < tree.getNodeCount(); nr++) counts[k][nr][states[k][nr]]++;
+        }
+        for (int k = 0; k < 3; k++) {
+            double[] rootDist = pi;
+            // tip likelihoods
+            double[][] tip = new double[tree.getNodeCount()][N];
+            for (Node leaf : tree.getExternalNodes()) {
+                int c = java.util.Arrays.asList(TAXA).indexOf(leaf.getID());
+                int[] reads = rcm.getReadCount().getReadCounts(c, k);
+                for (int g = 0; g < N; g++) tip[leaf.getNr()][g] = Math.exp(rcm.logLiklihoodRC(g, reads, rcm.getCoverage(c, k), c));
+            }
+            double[][] exact = new double[tree.getNodeCount()][N];
+            double total = 0.0;
+            for (int r = 0; r < N; r++) for (int a = 0; a < N; a++) for (int b = 0; b < N; b++) {
+                double w = rootDist[r] * P[x.getNr()][r * N + a] * P[y.getNr()][r * N + b];
+                // leaf terms below x and y, each leaf's own weight vector, and their sums
+                Node[] leaves = {x.getLeft(), x.getRight(), y.getLeft(), y.getRight()};
+                int[] parent = {a, a, b, b};
+                double[][] lw = new double[4][N];
+                double[] ls = new double[4];
+                for (int j = 0; j < 4; j++) {
+                    for (int g = 0; g < N; g++) {
+                        lw[j][g] = P[leaves[j].getNr()][parent[j] * N + g] * tip[leaves[j].getNr()][g];
+                        ls[j] += lw[j][g];
+                    }
+                }
+                double joint = w * ls[0] * ls[1] * ls[2] * ls[3];
+                total += joint;
+                exact[root.getNr()][r] += joint;
+                for (int j = 0; j < 4; j++) {
+                    for (int g = 0; g < N; g++) exact[leaves[j].getNr()][g] += joint / ls[j] * lw[j][g];
+                }
+            }
+            for (int nr : new int[]{root.getNr(), x.getLeft().getNr(), x.getRight().getNr(), y.getLeft().getNr(),
+                    y.getRight().getNr()}) {
+                for (int g = 0; g < N; g++) {
+                    double p = exact[nr][g] / total, f = counts[k][nr][g] / (double) nSamples;
+                    double tol = 5 * Math.sqrt(p * (1 - p) / nSamples) + 1e-3;
+                    assertEquals(p, f, tol, "site " + k + " node " + nr + " genotype " + GT10[g]);
+                }
+            }
+        }
+    }
+
+    /** The logger finds the likelihood that uses its read-count model, and logs one genotype per site. */
+    @Test
+    public void testGenotypeLoggerSamplesThroughTheLikelihood() {
+        ReadCountTreeLikelihood l = likelihood("rootFrequencies", germlineRoot(0.01));
+        l.calculateLogP();
+        LikelihoodReadCountModel rcm = l.readCountModelInput.get();
+        phylonco.beast.evolution.logger.SampledGenotypeLogger logger = new phylonco.beast.evolution.logger.SampledGenotypeLogger();
+        logger.initByName("tree", l.treeInput.get(), "siteModel", l.siteModelInput.get(), "readCountModel", rcm,
+                "readCount", rcm.getReadCount());
+        assertTrue(logger.likelihood() == l, "logger samples through the ReadCountTreeLikelihood");
+        java.io.ByteArrayOutputStream bytes = new java.io.ByteArrayOutputStream();
+        java.io.PrintStream out = new java.io.PrintStream(bytes);
+        logger.init(out);
+        out.println();
+        logger.log(0, out);
+        out.flush();
+        String[] lines = bytes.toString().trim().split("\n");
+        String[] header = lines[0].trim().split("\t"), row = lines[1].trim().split("\t");
+        assertEquals(TAXA.length, header.length);
+        assertEquals(TAXA.length, row.length);
+        for (String g : row) assertEquals(3, g.length(), "one genotype per site: " + g);
     }
 }
